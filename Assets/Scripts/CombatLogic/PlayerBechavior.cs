@@ -33,13 +33,10 @@ public class PlayerBechavior : MonoBehaviour
             GameObject cardObject = cardObjects[i];
             CardsSOTest card = playerCards[Random.Range(0, playerCards.Count)];
 
-            cardObject.GetComponent<MeshRenderer>().material = card.cardMaterial;
+            cardObject.GetComponent<SpriteRenderer>().sprite = card.graphics;
             cardObject.GetComponent<PlayerCardLogic>().SetCardProperties(card.power);
             cardObject.SetActive(true);
-
         }
-
-
     }
 
     public void RefillCards()
