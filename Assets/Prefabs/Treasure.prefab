@@ -12,7 +12,8 @@ GameObject:
   - component: {fileID: 2763891981581866094}
   - component: {fileID: 3226048072426658362}
   - component: {fileID: 6159927807306290385}
-  m_Layer: 0
+  - component: {fileID: 7760514332157214496}
+  m_Layer: 6
   m_Name: Treasure
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -108,3 +109,20 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &7760514332157214496
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8174134825137076215}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 63a891d1646a1ee41b443cd607480cc7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseColor: {r: 1, g: 0.8784314, b: 0, a: 1}
+  highlightColor: {r: 1, g: 0.9512579, b: 0.5990566, a: 1}
+  raycastLayer:
+    serializedVersion: 2
+    m_Bits: 64
