@@ -575,3 +575,27 @@ public class GoldForBonus : ConsumableCards
         // add gold
     }
 }
+
+public class CopyPaste : ConsumableCards
+{
+    public CopyPaste(CardVisualData visual)
+        :base("CopyPaste", "Copy one consumable card", visual)
+    {}
+
+    public override void ApplyEffect(PlayerOverlay player)
+    {
+        // copy consumapble card
+    }
+}
+
+public class LookIntoTheFuture : ConsumableCards
+{
+    public LookIntoTheFuture(CardVisualData visual)
+        :base("LookIntoTheFuture", "You can check next three enemy minions", visual)
+    {}
+
+    public override void ApplyEffect(PlayerOverlay player)
+    {
+        // look for cards
+    }
+}
