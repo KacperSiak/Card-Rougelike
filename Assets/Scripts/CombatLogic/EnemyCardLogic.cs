@@ -2,11 +2,11 @@ using UnityEngine;
 
 public class EnemyCardLogic : MonoBehaviour
 {
-    public int EnemyPower { get; private set; }
+    public CardsSOTest Card { get; private set; }
 
-    public void SetCardProperties(int power)
+    public void SetCardProperties(CardsSOTest card)
     {
-        EnemyPower = power;
+        Card = card;
     }
 
 

@@ -34,7 +34,7 @@ public class PlayerBechavior : MonoBehaviour
             CardsSOTest card = playerCards[Random.Range(0, playerCards.Count)];
 
             cardObject.GetComponent<SpriteRenderer>().sprite = card.graphics;
-            cardObject.GetComponent<PlayerCardLogic>().SetCardProperties(card.power);
+            cardObject.GetComponent<PlayerCardLogic>().SetCardProperties(card);
             cardObject.SetActive(true);
         }
     }

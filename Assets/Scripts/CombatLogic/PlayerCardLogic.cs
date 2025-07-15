@@ -4,39 +4,46 @@ public class PlayerCardLogic : MonoBehaviour
 {
     private Vector3 defaultPosition;
     private bool isSelected = false;
-    public int PlayerPower { get; private set; }
+    public CardsSOTest Card { get; private set; }
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         defaultPosition = transform.position;
-        Debug.Log(PlayerPower);
+        Debug.Log(Card.power);
     }
 
-    public void SetCardProperties(int power)
+    public void SetCardProperties(CardsSOTest card)
     {
-        PlayerPower = power;
+        Card = card;
     }
 
     private void OnMouseEnter()
     {
         if(!isSelected)
-        transform.position += new Vector3(0, 0.3f, 0); // Move the card up slightly when hovered
+        transform.position += new Vector3(0, 0.1f, 0); // Move the card up slightly when hovered
     }
 
     private void OnMouseExit()
     {
         if(!isSelected)
-         transform.position = defaultPosition; // Reset position when not hovered
+        transform.position = defaultPosition; // Reset position when not hovered
     }
 
     private void OnMouseDown()
     {
         if (!isSelected)
         {
-            isSelected = true; 
-            transform.position = new Vector3(0, 2, 0); // Tems until i create responsive places near enemy cards
+            transform.position += new Vector3(0, 0.1f, 0);
+            DamageManager.Instance.pCards.Add(gameObject);
+            isSelected = true;
+        }
+        else
+        {
+            transform.position = defaultPosition; 
+            DamageManager.Instance.pCards.Remove(gameObject);
+            isSelected = false;
         }
 
     }
