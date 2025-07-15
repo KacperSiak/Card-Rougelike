@@ -13,6 +13,8 @@ public class PlayerOverlay : MonoBehaviour
     public List<NormalCard> deckList;
     [SerializeField] private TextMeshProUGUI text;
 
+    [SerializeReference] public List<ConsumableCards> consumables;
+
     void Start()
     {
         
@@ -22,5 +24,16 @@ public class PlayerOverlay : MonoBehaviour
     void Update()
     {
         
+    }
+
+
+    public void AddNormalCard(NormalCard card)
+    {
+        deckList.Add(card);
+    }
+
+    public void RemoveNormalCard(NormalCard card)
+    {
+        deckList.Remove(card);
     }
 }
