@@ -24,8 +24,9 @@ public class Sacrifice : CardEffect
 {
     public override void ApplyEffect(PlayerOverlay player)
     {
-        player.currentHP *= 0.75f;
-        player.addDamage = 5;
+        //player.currentHP *= 0.75f;
+        //player.addDamage = 5;
+        Debug.Log("Odpalam siê!");
     }
 }
 
@@ -36,6 +37,7 @@ public class RollForPack : CardEffect
     {
         // remove rolls
         // gives pack
+        Debug.Log("Ja te¿ siê odpalam!");
     }
 }
 
@@ -44,8 +46,9 @@ public class RelicBlood : CardEffect
 {
     public override void ApplyEffect(PlayerOverlay player)
     {
-        player.maxHP *= 0.8f;
+        //player.maxHP *= 0.8f;
         // relic slots +1
+        Debug.Log("OI ja te¿ :)!");
     }
 }
 
