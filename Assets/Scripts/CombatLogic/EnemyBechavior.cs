@@ -21,7 +21,6 @@ public class EnemyBechavior : MonoBehaviour
             for (; j < cardsInSuit; j++)
             {
                 cardsBySuit[i].Add(enemyCards[j]);
-                Debug.Log($"Card {j} added to suit {i}");
             }
 
         }   

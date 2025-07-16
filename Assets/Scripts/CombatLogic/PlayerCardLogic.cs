@@ -4,6 +4,7 @@ public class PlayerCardLogic : MonoBehaviour
 {
     private Vector3 defaultPosition;
     private bool isSelected = false;
+    public bool isUsed = false; 
     public CardsSOTest Card { get; private set; }
 
 
@@ -11,7 +12,6 @@ public class PlayerCardLogic : MonoBehaviour
     void Start()
     {
         defaultPosition = transform.position;
-        Debug.Log(Card.power);
     }
 
     public void SetCardProperties(CardsSOTest card)
@@ -35,15 +35,21 @@ public class PlayerCardLogic : MonoBehaviour
     {
         if (!isSelected)
         {
+            if (DamageManager.Instance.pCards.Count == 3)
+                return; // Prevent selecting more than 3 cards
+
             transform.position += new Vector3(0, 0.1f, 0);
             DamageManager.Instance.pCards.Add(gameObject);
             isSelected = true;
+            Debug.Log("pCards count: " + DamageManager.Instance.pCards.Count);
         }
-        else
+
+        else if(!isUsed)
         {
             transform.position = defaultPosition; 
             DamageManager.Instance.pCards.Remove(gameObject);
             isSelected = false;
+            Debug.Log("pCards count: " + DamageManager.Instance.pCards.Count);
         }
 
     }

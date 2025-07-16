@@ -9,7 +9,8 @@ public class CardHolderLogic : MonoBehaviour
     [SerializeField] private Material defaultMaterial;
     private bool isOccupied = false;
     private ComboTypes comboType;
-    //private List<GameObject> combination;
+    private List<PlayerCardLogic> playerCards = new List<PlayerCardLogic>();
+    //private List<GameObject> combination; in case we want to store the combination of enemy's cards, to block certain player reactions(like place card if its power lower than enemy's combo)
 
     public void SetProperties(ComboTypes comboType)
     { 
@@ -34,7 +35,13 @@ public class CardHolderLogic : MonoBehaviour
             return;
         }
 
-        switch(comboType)
+        foreach (GameObject card in DamageManager.Instance.pCards)
+        {
+            playerCards.Add(card.GetComponent<PlayerCardLogic>());
+            Debug.Log("playerCards count: " + playerCards.Count);
+        }
+
+        switch (comboType)
             {
             case ComboTypes.Clean:
                 ValidateClean();
@@ -49,23 +56,32 @@ public class CardHolderLogic : MonoBehaviour
 
     }
 
-    //TO DO: Refactor this method, validating should be for all three cards and need to prevent chaotic selection
-
     private void ValidateSingle()
     {
         bool isValid = true;
 
         if (DamageManager.Instance.pCards.Count > 1)
         {
-            isValid = DamageManager.Instance.pCards[0].GetComponent<PlayerCardLogic>().Card.suit != DamageManager.Instance.pCards[1].GetComponent<PlayerCardLogic>().Card.suit;
-        }
-        else if (DamageManager.Instance.pCards[0].GetComponent<PlayerCardLogic>().Card.power != DamageManager.Instance.pCards[1].GetComponent<PlayerCardLogic>().Card.power)
-        {
-            isValid = false;
+            isValid = playerCards[0].Card.suit != playerCards[playerCards.Count - 1].Card.suit;
+            Debug.Log("valid or not: " + isValid);
+
+            for (int i = 0; i < playerCards.Count - 2; i++)
+            {
+                if (!isValid)
+                {
+                    playerCards.Clear();
+                    Debug.Log("playerCards count: " + playerCards.Count);
+                    Debug.Log("valid or not: " + isValid);
+                    return;
+                }
+
+                isValid = playerCards[i].Card.suit != playerCards[i + 1].Card.suit;
+                isValid = playerCards[i].Card.power == playerCards[i + 1].Card.power;
+                Debug.Log("valid or not: " + isValid);
+            }
         }
 
-        if (!isValid) return;
-
+        Debug.Log("valid or not: " + isValid);
         ReactOnValidated();
 
     }
@@ -74,11 +90,49 @@ public class CardHolderLogic : MonoBehaviour
     {
         bool isValid = true;
 
-        if (DamageManager.Instance.pCards.Count == 1) 
+        if (DamageManager.Instance.pCards.Count == 1)
+        {
             isValid = false;
+            playerCards.Clear();
+            Debug.Log("playerCards count: " + playerCards.Count);
+            return;
+        }
 
-        if (!isValid) return;
+        isValid = playerCards[0].Card.suit == playerCards[playerCards.Count - 1].Card.suit;
+        Debug.Log("valid or not: " + isValid);
 
+        for (int i = 0; i < playerCards.Count - 2; i++)
+        {
+            if (!isValid) break;
+
+            isValid = playerCards[i].Card.suit == playerCards[i + 1].Card.suit;
+            isValid = playerCards[i].Card.power + 1 == playerCards[i + 1].Card.power;
+            Debug.Log("valid or not: " + isValid);
+        }
+
+        Debug.Log("valid or not: " + isValid);
+
+        if (!isValid)
+        {
+            isValid = playerCards[0].Card.suit != playerCards[playerCards.Count - 1].Card.suit;
+            Debug.Log("valid or not: " + isValid);
+
+            for (int i = 0; i < playerCards.Count - 2; i++)
+            {
+                if (!isValid)
+                {
+                    playerCards.Clear();
+                    Debug.Log("valid or not: " + isValid);
+                    return;
+                }
+
+                isValid = playerCards[i].Card.suit != playerCards[i + 1].Card.suit;
+                isValid = playerCards[i].Card.power == playerCards[i + 1].Card.power;
+                Debug.Log("valid or not: " + isValid);
+            }
+        }
+
+        Debug.Log("valid or not: " + isValid);
         ReactOnValidated();
     }
 
@@ -88,13 +142,25 @@ public class CardHolderLogic : MonoBehaviour
 
         if (DamageManager.Instance.pCards.Count > 1)
         {
-            isValid = DamageManager.Instance.pCards[0].GetComponent<PlayerCardLogic>().Card.suit == DamageManager.Instance.pCards[1].GetComponent<PlayerCardLogic>().Card.suit;
+            isValid = playerCards[0].Card.suit == playerCards[playerCards.Count - 1].Card.suit;
+            Debug.Log("valid or not: " + isValid);
+
+            for (int i = 0; i < playerCards.Count - 2; i++)
+            {
+                if (!isValid)
+                {
+                    playerCards.Clear();
+                    Debug.Log("valid or not: " + isValid);
+                    return;
+                } 
+
+                isValid = playerCards[i].Card.suit == playerCards[i + 1].Card.suit;
+                isValid = playerCards[i].Card.power + 1 == playerCards[i + 1].Card.power;
+                Debug.Log("valid or not: " + isValid);
+            }
         }
 
-
-
-        if (!isValid) return;
-
+        Debug.Log("valid or not: " + isValid);
         ReactOnValidated();
     }
 
@@ -108,10 +174,13 @@ public class CardHolderLogic : MonoBehaviour
             pPower += card.GetComponent<PlayerCardLogic>().Card.power;
             card.transform.position = new Vector3(transform.position.x + position, transform.position.y, transform.position.z);
             position += 1;
-            card.GetComponent<PlayerCardLogic>().enabled = false; 
+            card.GetComponent<PlayerCardLogic>().isUsed = true;
         }
 
         DamageManager.Instance.pCards.Clear();
+        playerCards.Clear();
+        Debug.Log("playerCards count: " + playerCards.Count);
+        Debug.Log("pCards count: " + DamageManager.Instance.pCards.Count);
     }
 
 }

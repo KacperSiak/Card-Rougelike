@@ -10,7 +10,7 @@ public class DamageManager : MonoBehaviour
     public List<GameObject> cardHolders;
 
     private int enemyPower;
-   private int playerPower;
+    private int playerPower;
 
     void Awake()
     {
