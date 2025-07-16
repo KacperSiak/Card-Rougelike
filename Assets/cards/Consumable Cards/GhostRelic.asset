@@ -9,10 +9,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0c7a8030593fff14c831fbe50bf3be59, type: 3}
+  m_Script: {fileID: 11500000, guid: 4dce2b1003ba8b94499851aac558fec9, type: 3}
   m_Name: GhostRelic
   m_EditorClassIdentifier: 
-  CardID: GhostRelic
   cardName: GhostRelic
-  description: You get one relic only for next fight even if your all slots are taken
+  cardDescription: You get one relic only for next fight even if your all slots are
+    taken
   icon: {fileID: 0}
+  cardEffects:
+  - rid: 5888606414989164637
+  references:
+    version: 2
+    RefIds:
+    - rid: 5888606414989164637
+      type: {class: GhostRelic, ns: , asm: Assembly-CSharp}
+      data: 

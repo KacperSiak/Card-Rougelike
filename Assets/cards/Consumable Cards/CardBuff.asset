@@ -9,10 +9,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0c7a8030593fff14c831fbe50bf3be59, type: 3}
+  m_Script: {fileID: 11500000, guid: 4dce2b1003ba8b94499851aac558fec9, type: 3}
   m_Name: CardBuff
   m_EditorClassIdentifier: 
-  CardID: CardBuff
-  cardName: CardBuff
-  description: Card counts X2/X3
+  cardName: Card Buff
+  cardDescription: Card counts X2/X3
   icon: {fileID: 0}
+  cardEffects:
+  - rid: 5888606414989164627
+  references:
+    version: 2
+    RefIds:
+    - rid: 5888606414989164627
+      type: {class: CardBuff, ns: , asm: Assembly-CSharp}
+      data: 
