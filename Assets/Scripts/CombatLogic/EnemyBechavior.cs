@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 
@@ -32,7 +33,7 @@ public class EnemyBechavior : MonoBehaviour
     public void CombatStarts()
     { 
        EnemyHealth = 50; // Set initial health for the enemy(average enemy?)
-       
+
         //temporary
        PlaceCards(startIndex: 0, activationIndex: 0);
        PlaceCards(startIndex: 3, activationIndex: 1); 
@@ -61,42 +62,109 @@ public class EnemyBechavior : MonoBehaviour
         bool isClean = cleanOrDirty == 1;
         Debug.Log($"Is clean: {isClean}");
         int cardsInCombo = 3;
+        int cardsBuffer = 2;
 
         int randomCleanSuit = Random.Range(0, cardsBySuit.Count);
-        int randomDirtySuit = Random.Range(0, cardsBySuit.Count - cardsInCombo);
-        int randomCard = Random.Range(0, cardsSameSuit - cardsInCombo);
+        int randomCleanCard = Random.Range(0, cardsBySuit[randomCleanSuit].Count - cardsBuffer); 
+
+        int randomDirtySuit = Random.Range(0, cardsBySuit.Count - cardsBuffer);
+        int randomDirtyCard = cardsBySuit[randomDirtySuit][Random.Range(0, cardsBySuit[randomDirtySuit].Count)].power;
+
         int key = DamageManager.Instance.eCards.Count == 0 ? 0 : DamageManager.Instance.eCards.Count;
         DamageManager.Instance.eCards.Add(key, new List<GameObject>());
 
-
-        for (int i = 0; i < cardsInCombo; i++)
+        if (isClean)
         {
-            if (!isClean) break;
+            switch (cardsBySuit[randomCleanSuit].Count)
+            {
+                case 1:
+                case 2:
+                    SpawnSingle(indexObject, activationIndex);
+                    return;
+            }
 
-            GameObject cardObject = cardObjects[indexObject++];
-            CardsSOTest card = cardsBySuit[randomCleanSuit][randomCard++];
+            for (int i = 0, j = 1; i < cardsInCombo; i++)
+            {
+                for (; j < cardsInCombo; j++)
+                {
+                    Debug.Log($"Card {cardsBySuit[randomCleanSuit][randomCleanCard].power + j} and {cardsBySuit[randomCleanSuit][randomCleanCard + j].power} are in sequence");
+                    if (cardsBySuit[randomCleanSuit][randomCleanCard].power + j != cardsBySuit[randomCleanSuit][randomCleanCard + j].power)
+                    {
+                        PlaceCards(indexObject, activationIndex);
+                        return;
+                    }
+                }
 
-            cardObject.GetComponent<SpriteRenderer>().sprite = card.graphics;
-            cardObject.GetComponent<EnemyCardLogic>().SetCardProperties(card);
-            cardObject.SetActive(true);
+                Debug.Log($"Card {cardsBySuit[randomCleanSuit][randomCleanCard].power} is clean");
 
-            DamageManager.Instance.eCards[key].Add(cardObject);
-            DamageManager.Instance.SetCardHolder(activationIndex, type: ComboTypes.Clean);
+                GameObject cardObject = cardObjects[indexObject++];
+                CardsSOTest card = cardsBySuit[randomCleanSuit][randomCleanCard];
+                cardsBySuit[randomCleanSuit].RemoveAt(randomCleanCard);
+
+                cardObject.GetComponent<SpriteRenderer>().sprite = card.graphics;
+                cardObject.GetComponent<EnemyCardLogic>().SetCardProperties(card);
+                cardObject.SetActive(true);
+
+                DamageManager.Instance.eCards[key].Add(cardObject);
+                DamageManager.Instance.SetCardHolder(activationIndex, type: ComboTypes.Clean);
+            }
+
+            if (cardsBySuit[randomCleanSuit].Count == 0)
+                cardsBySuit.Remove(randomCleanSuit);
         }
 
-        for (int i = 0; i < cardsInCombo; i++)
+        else
         {
-            if (isClean) break;
+            Debug.Log("I'm here");
+            
+            if (cardsBySuit.Count < 3)
+            {
+                PlaceCards(indexObject, activationIndex);
+                return;
+            }
 
-            GameObject cardObject = cardObjects[indexObject++];
-            CardsSOTest card = cardsBySuit[randomDirtySuit++][randomCard];
+            List<int> index = new List<int>();
 
-            cardObject.GetComponent<SpriteRenderer>().sprite = card.graphics;
-            cardObject.GetComponent<EnemyCardLogic>().SetCardProperties(card);
-            cardObject.SetActive(true);
+            Debug.Log("I'm here under count");
 
-            DamageManager.Instance.eCards[key].Add(cardObject);
-            DamageManager.Instance.SetCardHolder(activationIndex, type: ComboTypes.Dirty);
+            for (int i = randomDirtySuit, count = 1; i < randomDirtySuit + 3; i++, count++) //here is a problem
+            {
+                foreach (var card in cardsBySuit[i])
+                {
+                    if (card.power == randomDirtyCard)
+                    {
+                        index.Add(cardsBySuit[i].IndexOf(card));
+                        break;
+                    }
+                }
+
+                if (index.Count != count)
+                {
+                    PlaceCards(indexObject, activationIndex);
+                    return;
+                }
+            }
+
+            Debug.Log("I'm here under for check");
+
+            for (int i = 0; i < cardsInCombo; i++)
+            {
+                GameObject cardObject = cardObjects[indexObject++];
+                CardsSOTest card = cardsBySuit[randomDirtySuit][index[i]]; 
+                cardsBySuit[randomDirtySuit].Remove(card);
+
+                if (cardsBySuit[randomDirtySuit].Count == 0)
+                    cardsBySuit.Remove(randomDirtySuit);
+
+                randomDirtySuit++;
+
+                cardObject.GetComponent<SpriteRenderer>().sprite = card.graphics;
+                cardObject.GetComponent<EnemyCardLogic>().SetCardProperties(card);
+                cardObject.SetActive(true);
+
+                DamageManager.Instance.eCards[key].Add(cardObject);
+                DamageManager.Instance.SetCardHolder(activationIndex, type: ComboTypes.Dirty);
+            }
         }
 
     }
@@ -104,11 +172,16 @@ public class EnemyBechavior : MonoBehaviour
     private void SpawnSingle(int cardObjectIndex, int activationIndex)
     {
         int randomSuit = Random.Range(0, cardsBySuit.Count);
-        int randomCard = Random.Range(0, cardsSameSuit);
+        int randomCard = Random.Range(0, cardsBySuit[randomSuit].Count);
 
+        Debug.Log($"Random suit: {randomSuit}, Random card: {randomCard}");
 
         GameObject cardObject = cardObjects[cardObjectIndex];
         CardsSOTest card = cardsBySuit[randomSuit][randomCard];
+        cardsBySuit[randomSuit].RemoveAt(randomCard); 
+
+        if (cardsBySuit[randomSuit].Count == 0)
+           cardsBySuit.Remove(randomSuit);
 
         cardObject.GetComponent<SpriteRenderer>().sprite = card.graphics;
         cardObject.GetComponent<EnemyCardLogic>().SetCardProperties(card);

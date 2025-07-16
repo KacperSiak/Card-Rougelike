@@ -9,6 +9,7 @@ public class PlayerBechavior : MonoBehaviour
     public int PlayerHealth { get; private set; }
     private int cardsInHand = 6; // Number of cards in hand
     [SerializeField] private List<CardsSOTest> playerCards = new List<CardsSOTest>();
+    private List<CardsSOTest> playerCardsInGame;
     [SerializeField] private List<GameObject> cardObjects = new List<GameObject>();
 
     void Start()
@@ -23,6 +24,7 @@ public class PlayerBechavior : MonoBehaviour
         PlayerHealth = 50; // Set initial health for the player 
 
         //temporary
+        playerCardsInGame = new List<CardsSOTest>(playerCards);
         SetPlayerCards();
     }
 
@@ -31,7 +33,8 @@ public class PlayerBechavior : MonoBehaviour
         for (int i = 0; i < cardsInHand; i++)
         {
             GameObject cardObject = cardObjects[i];
-            CardsSOTest card = playerCards[Random.Range(0, playerCards.Count)];
+            CardsSOTest card = playerCardsInGame[Random.Range(0, playerCardsInGame.Count)];
+            playerCardsInGame.Remove(card); 
 
             cardObject.GetComponent<SpriteRenderer>().sprite = card.graphics;
             cardObject.GetComponent<PlayerCardLogic>().SetCardProperties(card);

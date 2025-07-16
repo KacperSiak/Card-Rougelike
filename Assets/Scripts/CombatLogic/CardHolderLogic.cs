@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class CardHolderLogic : MonoBehaviour
 {
+   
+    // HERE IS A PROBLEM, I CAN PLACE ABSOLUTELY ANY COMBINATION OF CARDS ON SINGLE, BUT IT SHOULD NOT BE LIKE THAT
+    
     public int pPower { get; private set; }
     [SerializeField] private Material highlightMaterial;
     [SerializeField] private Material defaultMaterial;
