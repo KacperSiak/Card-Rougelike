@@ -9,10 +9,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0c7a8030593fff14c831fbe50bf3be59, type: 3}
+  m_Script: {fileID: 11500000, guid: 4dce2b1003ba8b94499851aac558fec9, type: 3}
   m_Name: Mulligan
   m_EditorClassIdentifier: 
-  CardID: Mulligan
   cardName: Mulligan
-  description: Shuffle your hand into your deck and draw that many cards
+  cardDescription: Shuffle your hand into your deck and draw that many cards
   icon: {fileID: 0}
+  cardEffects:
+  - rid: 5888606414989164651
+  references:
+    version: 2
+    RefIds:
+    - rid: 5888606414989164651
+      type: {class: Mulligan, ns: , asm: Assembly-CSharp}
+      data: 

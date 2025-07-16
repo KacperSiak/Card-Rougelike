@@ -9,11 +9,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0c7a8030593fff14c831fbe50bf3be59, type: 3}
+  m_Script: {fileID: 11500000, guid: 4dce2b1003ba8b94499851aac558fec9, type: 3}
   m_Name: TwoForOne
   m_EditorClassIdentifier: 
-  CardID: TwoForOne
   cardName: TwoForOne
-  description: Remove two random relic of the same rarity but adds one with better
+  cardDescription: Remove two random relic of the same rarity but adds one with better
     rarity
   icon: {fileID: 0}
+  cardEffects:
+  - rid: 5888606414989164665
+  references:
+    version: 2
+    RefIds:
+    - rid: 5888606414989164665
+      type: {class: TwoForOne, ns: , asm: Assembly-CSharp}
+      data: 
