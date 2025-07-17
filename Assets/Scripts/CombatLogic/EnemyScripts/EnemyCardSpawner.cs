@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class EnemyCardSpawner : MonoBehaviour
 {
+    [SerializeField] EnemyAttackManager _enemyAttackManager;
     private int _cardsInCombo = 3;
     private int _cardsBuffer = 2;
 
@@ -55,11 +56,14 @@ public class EnemyCardSpawner : MonoBehaviour
                 cardObject.SetActive(true);
 
                 EnemyCardManager.Instance.UpdateCardsInGame(key, cardObject);
-                EnemyCardManager.Instance.SetupCardHolder(indexCardHolder, type: ComboTypes.Clean);
             }
 
             if (cardsBySuit[randomCleanSuit].Count == 0)
                 cardsBySuit.Remove(randomCleanSuit);
+
+            EnemyCardManager.Instance.SetupCardHolder(indexCardHolder, type: ComboTypes.Clean);
+            _enemyAttackManager.SetRoundAttack(key);
+
         }
 
         else
@@ -112,8 +116,11 @@ public class EnemyCardSpawner : MonoBehaviour
                 cardObject.SetActive(true);
 
                 EnemyCardManager.Instance.UpdateCardsInGame(key, cardObject);
-                EnemyCardManager.Instance.SetupCardHolder(indexCardHolder, type: ComboTypes.Dirty);
             }
+
+            EnemyCardManager.Instance.SetupCardHolder(indexCardHolder, type: ComboTypes.Dirty);
+            _enemyAttackManager.SetRoundAttack(key);
+
         }
 
     }
@@ -140,5 +147,6 @@ public class EnemyCardSpawner : MonoBehaviour
         EnemyCardManager.Instance.SetupCardsInGame(keySingle);
         EnemyCardManager.Instance.UpdateCardsInGame(keySingle, cardObject);
         EnemyCardManager.Instance.SetupCardHolder(activationIndex, type: ComboTypes.Single);
+        _enemyAttackManager.SetRoundAttack(keySingle);
     }
 }
