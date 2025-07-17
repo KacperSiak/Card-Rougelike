@@ -219,7 +219,6 @@ public class MapGenerator : MonoBehaviour
 
     void ConnectNodes()
     {
-        // Połączenia między poziomami (vertical connections)
         for (int level = 0; level < mapLevels.Count - 1; level++)
         {
             List<MapNode> currentLevel = mapLevels[level];
@@ -249,10 +248,8 @@ public class MapGenerator : MonoBehaviour
             }
         }
         
-        // Sprawdź czy wszystkie węzły mają przynajmniej jedno połączenie
         EnsureAllNodesConnected();
         
-        // Połączenia poziome (horizontal connections)
         if (horizontalConnectionChance > 0f)
         {
             CreateHorizontalConnections();
@@ -270,7 +267,6 @@ public class MapGenerator : MonoBehaviour
             {
                 if (node.ConnectedNodes.Count == 0)
                 {
-                    // Znajdź najbliższy węzeł z poprzedniego poziomu
                     MapNode closestNode = previousLevel[0];
                     float closestDistance = Vector2.Distance(node.Position, closestNode.Position);
                     
@@ -284,7 +280,6 @@ public class MapGenerator : MonoBehaviour
                         }
                     }
                     
-                    // Połącz z najbliższym węzłem
                     if (!node.ConnectedNodes.Contains(closestNode))
                         node.ConnectedNodes.Add(closestNode);
                     if (!closestNode.ConnectedNodes.Contains(node))
