@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 7354651899467801654}
   - component: {fileID: 7539550161150349764}
   - component: {fileID: 4672777742501627643}
+  - component: {fileID: 1936177305450364864}
   m_Layer: 6
   m_Name: Elite
   m_TagString: Untagged
@@ -126,3 +127,17 @@ MonoBehaviour:
   raycastLayer:
     serializedVersion: 2
     m_Bits: 64
+--- !u!114 &1936177305450364864
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 346377116009525048}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 914779a2139080543ae8f3a5b2cdbeab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneToLoad: 
+  playerMarkerPrefab: {fileID: 2953499796673057148, guid: 3a5a5f682334fbd4283dcb16d646bf80, type: 3}

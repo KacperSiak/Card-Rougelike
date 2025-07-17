@@ -24,14 +24,14 @@ public class HoverHighlighter : MonoBehaviour
         // Sprawdź komponenty
         if (objectRenderer == null)
         {
-            Debug.LogError($"HoverHighlighter: Brak komponentu Renderer na obiekcie {gameObject.name}");
+            Debug.LogError($"HoverHighlighter: Missing Renderer component on object {gameObject.name}");
             enabled = false;
             return;
         }
         
         if (objectCollider == null)
         {
-            Debug.LogError($"HoverHighlighter: Brak komponentu Collider na obiekcie {gameObject.name}");
+            Debug.LogError($"HoverHighlighter: Missing Collider component on object {gameObject.name}");
             enabled = false;
             return;
         }
@@ -47,7 +47,7 @@ public class HoverHighlighter : MonoBehaviour
     {
         if (Camera.main == null)
         {
-            Debug.LogError("HoverHighlighter: Brak Camera.main");
+            Debug.LogError("HoverHighlighter: Missing main camera");
             return;
         }
 
@@ -88,7 +88,7 @@ public class HoverHighlighter : MonoBehaviour
         SetColor(highlight);
         
         isHighlighted = highlight;
-        Debug.Log($"{(highlight ? "Podświetlono" : "Zdjęto podświetlenie z")} obiekt: {gameObject.name}");
+        Debug.Log($"{(highlight ? "Highlighted" : "Removed highlight from")} object: {gameObject.name}");
     }
     
     private void SetColor(bool highlight)

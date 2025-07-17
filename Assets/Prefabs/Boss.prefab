@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 4101705939632077544}
   - component: {fileID: 3550335008559182698}
   - component: {fileID: 5598675946734125360}
+  - component: {fileID: 6983081205575591072}
   m_Layer: 6
   m_Name: Boss
   m_TagString: Untagged
@@ -126,3 +127,17 @@ MonoBehaviour:
   raycastLayer:
     serializedVersion: 2
     m_Bits: 64
+--- !u!114 &6983081205575591072
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2933860668956614407}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 914779a2139080543ae8f3a5b2cdbeab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneToLoad: Experimental
+  playerMarkerPrefab: {fileID: 2953499796673057148, guid: 3a5a5f682334fbd4283dcb16d646bf80, type: 3}

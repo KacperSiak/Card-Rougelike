@@ -223,7 +223,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 5, y: 0, z: -15}
-  m_LocalScale: {x: 2, y: 1, z: 5}
+  m_LocalScale: {x: 4, y: 1, z: 5}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -298,7 +298,14 @@ MonoBehaviour:
   minNodesPerLevel: 2
   maxNodesPerLevel: 3
   horizontalSpacing: 5
-  verticalSpacing: 6
+  verticalSpacing: 5
+  randomizePositions: 1
+  horizontalRandomRange: 1
+  verticalRandomRange: 1
+  showConnections: 1
+  connectionMaterial: {fileID: 2100000, guid: 48a306c2c149cec4ba5543902c74ce82, type: 2}
+  connectionWidth: 0.2
+  playerMarkerPrefab: {fileID: 2953499796673057148, guid: 3a5a5f682334fbd4283dcb16d646bf80, type: 3}
 --- !u!1 &1301801508
 GameObject:
   m_ObjectHideFlags: 0
@@ -550,13 +557,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1665362194}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.08370785, y: -0.9015064, z: 0.20208928, w: -0.37341538}
-  m_LocalPosition: {x: -7.4072466, y: 7.2127705, z: 0.70830333}
+  m_LocalRotation: {x: -0.18301237, y: -0.68301284, z: 0.18301241, w: -0.68301284}
+  m_LocalPosition: {x: -20.089054, y: 13.975699, z: -13.792529}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 154.73, y: -45, z: 180}
+  m_LocalEulerAnglesHint: {x: 150, y: -90, z: 180}
 --- !u!1 &1681245142
 GameObject:
   m_ObjectHideFlags: 0

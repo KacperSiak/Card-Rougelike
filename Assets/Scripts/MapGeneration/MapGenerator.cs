@@ -9,7 +9,6 @@ public class NodeTypeSettings
     public NodeType type;
     public int minCount;
     public int maxCount;
-    [Range(0f, 1f)]
     public float spawnChance;
     public GameObject prefab;
 }
@@ -29,6 +28,18 @@ public class MapGenerator : MonoBehaviour
     public int maxNodesPerLevel = 4;
     public float horizontalSpacing = 5f;
     public float verticalSpacing = 6f;
+    
+    [Header("Position Randomization")]
+    public bool randomizePositions = true;
+    public float horizontalRandomRange = 2f;
+    public float verticalRandomRange = 1f;
+
+    [Header("Connection Visualization")]
+    public bool showConnections = true;
+    public Material connectionMaterial;
+    public float connectionWidth = 0.1f;
+    
+    private Material cachedLineMaterial;
 
     public List<List<MapNode>> mapLevels = new List<List<MapNode>>();
     
@@ -73,6 +84,13 @@ public class MapGenerator : MonoBehaviour
         GenerateMapStructure();
         ConnectNodes();
         InstantiateMapVisuals();
+        if (showConnections)
+        {
+            DrawConnections();
+        }
+        
+        NodeClickHandler.ResetCache();
+        NodeClickHandler.LoadPlayerPosition();
     }
 
     void ResetMapState()
@@ -101,10 +119,22 @@ public class MapGenerator : MonoBehaviour
                     break;
                 }
 
+                float baseX = i * horizontalSpacing;
+                float baseY = -level * verticalSpacing;
+
+                if (randomizePositions)
+                {
+                    baseX += Random.Range(-horizontalRandomRange, horizontalRandomRange);
+                    baseY += Random.Range(-verticalRandomRange, verticalRandomRange);
+                }
+                
+                float totalWidth = (nodesCount - 1) * horizontalSpacing;
+                float offsetX = -totalWidth / 2f;
+
                 MapNode node = new MapNode
                 {
                     Type = GetRandomNodeType(level),
-                    Position = new Vector2(i * horizontalSpacing, -level * verticalSpacing)
+                    Position = new Vector2(baseX + offsetX, baseY)
                 };
                 currentLevelNodes.Add(node);
             }
@@ -189,10 +219,101 @@ public class MapGenerator : MonoBehaviour
                     } while (connectedIndices.Contains(index));
 
                     connectedIndices.Add(index);
-                    node.ConnectedNodes.Add(nextLevel[index]);
+                    MapNode targetNode = nextLevel[index];
+                    
+                    if (!node.ConnectedNodes.Contains(targetNode))
+                        node.ConnectedNodes.Add(targetNode);
+                    if (!targetNode.ConnectedNodes.Contains(node))
+                        targetNode.ConnectedNodes.Add(node);
                 }
             }
         }
+        
+        for (int level = 0; level < mapLevels.Count; level++)
+        {
+            List<MapNode> currentLevel = mapLevels[level];
+            
+            for (int i = 0; i < currentLevel.Count - 1; i++)
+            {
+                MapNode nodeA = currentLevel[i];
+                MapNode nodeB = currentLevel[i + 1];
+                
+                if (Random.value < 0.5f)
+                {
+                    if (!nodeA.ConnectedNodes.Contains(nodeB))
+                        nodeA.ConnectedNodes.Add(nodeB);
+                    if (!nodeB.ConnectedNodes.Contains(nodeA))
+                        nodeB.ConnectedNodes.Add(nodeA);
+                }
+            }
+        }
+    }
+
+    void DrawConnections()
+    {
+        HashSet<string> drawnConnections = new HashSet<string>();
+        
+        foreach (var level in mapLevels)
+        {
+            foreach (var node in level)
+            {
+                Vector3 startPos = new Vector3(node.Position.x, 0.1f, node.Position.y);
+
+                foreach (var connectedNode in node.ConnectedNodes)
+                {
+                    Vector3 endPos = new Vector3(connectedNode.Position.x, 0.1f, connectedNode.Position.y);
+                    
+                    string connectionKey = $"{Mathf.Min(startPos.x, endPos.x)}_{Mathf.Min(startPos.z, endPos.z)}_{Mathf.Max(startPos.x, endPos.x)}_{Mathf.Max(startPos.z, endPos.z)}";
+                    
+                    if (!drawnConnections.Contains(connectionKey))
+                    {
+                        CreateConnectionLine(startPos, endPos, $"Connection_{connectionKey}");
+                        drawnConnections.Add(connectionKey);
+                    }
+                }
+            }
+        }
+    }
+
+    void CreateConnectionLine(Vector3 startPos, Vector3 endPos, string name)
+    {
+        GameObject lineObj = new GameObject(name);
+        lineObj.transform.SetParent(transform);
+        
+        LineRenderer line = lineObj.AddComponent<LineRenderer>();
+        line.material = GetLineMaterial();
+        line.startWidth = connectionWidth;
+        line.endWidth = connectionWidth;
+        line.positionCount = 2;
+        line.useWorldSpace = true;
+        line.sortingOrder = -1;
+        
+        line.SetPosition(0, startPos);
+        line.SetPosition(1, endPos);
+    }
+
+    Material GetLineMaterial()
+    {
+        if (connectionMaterial != null)
+            return connectionMaterial;
+            
+        if (cachedLineMaterial == null)
+        {
+            cachedLineMaterial = CreateDefaultLineMaterial();
+        }
+        
+        return cachedLineMaterial;
+    }
+
+    Material CreateDefaultLineMaterial()
+    {
+        Material mat = new Material(Shader.Find("Unlit/Color"));
+        if (mat.shader == null)
+        {
+            mat = new Material(Shader.Find("Standard"));
+        }
+        mat.color = new Color(0.8f, 0.8f, 0.8f, 0.7f);
+        return mat;
     }
 
     GameObject GetPrefabForNodeType(NodeType type)
@@ -251,5 +372,4 @@ public class MapGenerator : MonoBehaviour
             Debug.LogWarning($"Total spawn chances = {totalChance:F2}, should be close to 1.0");
         }
     }
-
 }
