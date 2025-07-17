@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardName: RollForPack
   cardDescription: You lose all roll tickets for shops but you get the pack of cards
-  icon: {fileID: 0}
+  icon: {fileID: -1614491412, guid: 28a5df7ffde1bb5408169991d42c3ab0, type: 3}
   cardEffects:
   - rid: 5888606414989164661
   references:

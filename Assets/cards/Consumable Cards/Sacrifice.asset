@@ -15,7 +15,7 @@ MonoBehaviour:
   cardName: Sacrifice
   cardDescription: You lose 25% of your hp but next turn you deal 5 more dmg for
     every killed minion
-  icon: {fileID: 0}
+  icon: {fileID: 721527010, guid: 28a5df7ffde1bb5408169991d42c3ab0, type: 3}
   cardEffects:
   - rid: 5888606414989164662
   references:
@@ -23,5 +23,4 @@ MonoBehaviour:
     RefIds:
     - rid: 5888606414989164662
       type: {class: Sacrifice, ns: , asm: Assembly-CSharp}
-      data:
-        damage: 0
+      data: 
