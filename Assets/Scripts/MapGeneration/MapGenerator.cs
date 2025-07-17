@@ -39,6 +39,15 @@ public class MapGenerator : MonoBehaviour
     public Material connectionMaterial;
     public float connectionWidth = 0.1f;
     
+    [Header("Node Connections")]
+    public int minConnectionsPerNode = 1;
+    public int maxConnectionsPerNode = 2;
+    [Range(0f, 1f)]
+    public float horizontalConnectionChance = 0.3f;
+    
+    [Header("Camera")]
+    public CameraController cameraController;
+    
     private Material cachedLineMaterial;
 
     public List<List<MapNode>> mapLevels = new List<List<MapNode>>();
@@ -46,7 +55,6 @@ public class MapGenerator : MonoBehaviour
     private Dictionary<NodeType, int> currentCounts = new Dictionary<NodeType, int>();
     private Dictionary<NodeType, NodeTypeSettings> settingsLookup = new Dictionary<NodeType, NodeTypeSettings>();
     private bool bossAssigned = false;
-
 
     void Start()
     {
@@ -84,6 +92,7 @@ public class MapGenerator : MonoBehaviour
         GenerateMapStructure();
         ConnectNodes();
         InstantiateMapVisuals();
+
         if (showConnections)
         {
             DrawConnections();
@@ -91,6 +100,16 @@ public class MapGenerator : MonoBehaviour
         
         NodeClickHandler.ResetCache();
         NodeClickHandler.LoadPlayerPosition();
+        
+        SetupCameraBounds();
+    }
+    
+    void SetupCameraBounds()
+    {
+        if (cameraController != null)
+        {
+            cameraController.SetBoundsFromMap();
+        }
     }
 
     void ResetMapState()
@@ -200,6 +219,7 @@ public class MapGenerator : MonoBehaviour
 
     void ConnectNodes()
     {
+        // Połączenia między poziomami (vertical connections)
         for (int level = 0; level < mapLevels.Count - 1; level++)
         {
             List<MapNode> currentLevel = mapLevels[level];
@@ -207,7 +227,7 @@ public class MapGenerator : MonoBehaviour
 
             foreach (var node in currentLevel)
             {
-                int connections = Random.Range(1, Mathf.Min(3, nextLevel.Count + 1));
+                int connections = Random.Range(minConnectionsPerNode, Mathf.Min(maxConnectionsPerNode + 1, nextLevel.Count + 1));
                 List<int> connectedIndices = new List<int>();
 
                 for (int i = 0; i < connections; i++)
@@ -229,6 +249,53 @@ public class MapGenerator : MonoBehaviour
             }
         }
         
+        // Sprawdź czy wszystkie węzły mają przynajmniej jedno połączenie
+        EnsureAllNodesConnected();
+        
+        // Połączenia poziome (horizontal connections)
+        if (horizontalConnectionChance > 0f)
+        {
+            CreateHorizontalConnections();
+        }
+    }
+    
+    void EnsureAllNodesConnected()
+    {
+        for (int level = 1; level < mapLevels.Count; level++)
+        {
+            List<MapNode> currentLevel = mapLevels[level];
+            List<MapNode> previousLevel = mapLevels[level - 1];
+            
+            foreach (var node in currentLevel)
+            {
+                if (node.ConnectedNodes.Count == 0)
+                {
+                    // Znajdź najbliższy węzeł z poprzedniego poziomu
+                    MapNode closestNode = previousLevel[0];
+                    float closestDistance = Vector2.Distance(node.Position, closestNode.Position);
+                    
+                    foreach (var prevNode in previousLevel)
+                    {
+                        float distance = Vector2.Distance(node.Position, prevNode.Position);
+                        if (distance < closestDistance)
+                        {
+                            closestDistance = distance;
+                            closestNode = prevNode;
+                        }
+                    }
+                    
+                    // Połącz z najbliższym węzłem
+                    if (!node.ConnectedNodes.Contains(closestNode))
+                        node.ConnectedNodes.Add(closestNode);
+                    if (!closestNode.ConnectedNodes.Contains(node))
+                        closestNode.ConnectedNodes.Add(node);
+                }
+            }
+        }
+    }
+    
+    void CreateHorizontalConnections()
+    {
         for (int level = 0; level < mapLevels.Count; level++)
         {
             List<MapNode> currentLevel = mapLevels[level];
@@ -238,7 +305,7 @@ public class MapGenerator : MonoBehaviour
                 MapNode nodeA = currentLevel[i];
                 MapNode nodeB = currentLevel[i + 1];
                 
-                if (Random.value < 0.5f)
+                if (Random.value < horizontalConnectionChance)
                 {
                     if (!nodeA.ConnectedNodes.Contains(nodeB))
                         nodeA.ConnectedNodes.Add(nodeB);
@@ -364,6 +431,16 @@ public class MapGenerator : MonoBehaviour
             {
                 Debug.LogWarning($"{setting.type}: Missing prefab reference");
             }
+        }
+        
+        if (minConnectionsPerNode > maxConnectionsPerNode)
+        {
+            Debug.LogWarning($"minConnectionsPerNode ({minConnectionsPerNode}) > maxConnectionsPerNode ({maxConnectionsPerNode})");
+        }
+        
+        if (minConnectionsPerNode < 1)
+        {
+            Debug.LogWarning("minConnectionsPerNode should be at least 1 to ensure connectivity");
         }
         
         float totalChance = nodeTypes.Sum(t => t.spawnChance);

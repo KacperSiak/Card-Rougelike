@@ -54,16 +54,29 @@ public class NodeClickHandler : MonoBehaviour
         Destroy(playerMarker.GetComponent<Collider>());
     }
 
+    private Vector3 mouseDownPosition;
+    private float dragThreshold = 10f;
+
     void OnMouseDown()
     {
-        if (CanMoveToThisNode())
+        mouseDownPosition = Input.mousePosition;
+    }
+    
+    void OnMouseUp()
+    {
+        float dragDistance = Vector3.Distance(Input.mousePosition, mouseDownPosition);
+        
+        if (dragDistance < dragThreshold)
         {
-            MovePlayerHere();
-            LoadScene();
-        }
-        else
-        {
-            Debug.Log("Cannot move to this node - not connected");
+            if (CanMoveToThisNode())
+            {
+                MovePlayerHere();
+                LoadScene();
+            }
+            else
+            {
+                Debug.Log("Cannot move to this node - not connected");
+            }
         }
     }
 
