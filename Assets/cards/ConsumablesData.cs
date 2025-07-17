@@ -12,17 +12,22 @@ public class ConsumablesData : ScriptableObject
     [SerializeReference] public List<CardEffect> cardEffects;
 }
 
+public class ConsumableContext
+{
+    public PlayerOverlay player;
+}
+
 
 [Serializable]
 public abstract class CardEffect
 {
-    public abstract void ApplyEffect(PlayerOverlay player);
+    public abstract void ApplyEffect(ConsumableContext ctx);
 }
 
 [Serializable]
 public class Sacrifice : CardEffect
 {
-    public override void ApplyEffect(PlayerOverlay player)
+    public override void ApplyEffect(ConsumableContext ctx)
     {
         //player.currentHP *= 0.75f;
         //player.addDamage = 5;
@@ -33,7 +38,7 @@ public class Sacrifice : CardEffect
 [Serializable]
 public class RollForPack : CardEffect
 {
-    public override void ApplyEffect(PlayerOverlay player)
+    public override void ApplyEffect(ConsumableContext ctx)
     {
         // remove rolls
         // gives pack
@@ -44,7 +49,7 @@ public class RollForPack : CardEffect
 [Serializable]
 public class RelicBlood : CardEffect
 {
-    public override void ApplyEffect(PlayerOverlay player)
+    public override void ApplyEffect(ConsumableContext ctx)
     {
         //player.maxHP *= 0.8f;
         // relic slots +1
@@ -55,7 +60,7 @@ public class RelicBlood : CardEffect
 [Serializable]
 public class BetterConsumable : CardEffect
 {
-    public override void ApplyEffect(PlayerOverlay player)
+    public override void ApplyEffect(ConsumableContext ctx)
     {
         // destroy card get new
     }
@@ -64,10 +69,10 @@ public class BetterConsumable : CardEffect
 [Serializable]
 public class OnTheEdge : CardEffect
 {
-    public override void ApplyEffect(PlayerOverlay player)
+    public override void ApplyEffect(ConsumableContext ctx)
     {
-        player.maxHP = 5;
-        player.currentHP = 5;
+        ctx.player.maxHP = 5;
+        ctx.player.currentHP = 5;
         // after 2 turn going back to previous hp
         // immune to debuffs
     }
@@ -76,7 +81,7 @@ public class OnTheEdge : CardEffect
 [Serializable]
 public class ShopBlock : CardEffect
 {
-    public override void ApplyEffect(PlayerOverlay player)
+    public override void ApplyEffect(ConsumableContext ctx)
     {
         // blocks the shop
         // get two random relics
@@ -86,7 +91,7 @@ public class ShopBlock : CardEffect
 [Serializable]
 public class TimeCheat : CardEffect
 {
-    public override void ApplyEffect(PlayerOverlay player)
+    public override void ApplyEffect(ConsumableContext ctx)
     {
         // immune to damage
         // next turn double damage
@@ -96,7 +101,7 @@ public class TimeCheat : CardEffect
 [Serializable]
 public class DoubleButLess : CardEffect
 {
-    public override void ApplyEffect(PlayerOverlay player)
+    public override void ApplyEffect(ConsumableContext ctx)
     {
         // you cannopt draw cards
         // double damage turn
@@ -106,7 +111,7 @@ public class DoubleButLess : CardEffect
 [Serializable]
 public class HugeReroll : CardEffect
 {
-    public override void ApplyEffect(PlayerOverlay player)
+    public override void ApplyEffect(ConsumableContext ctx)
     {
         // Remove all consumables
         // Add new radnom rerolls
@@ -116,7 +121,7 @@ public class HugeReroll : CardEffect
 [Serializable]
 public class InstaWin : CardEffect
 {
-    public override void ApplyEffect(PlayerOverlay player)
+    public override void ApplyEffect(ConsumableContext ctx)
     {
         // lose all relics
         // win fight
@@ -126,7 +131,7 @@ public class InstaWin : CardEffect
 [Serializable]
 public class RelicRoll : CardEffect
 {
-    public override void ApplyEffect(PlayerOverlay player)
+    public override void ApplyEffect(ConsumableContext ctx)
     {
         // lose relic
         // get one new after fight
@@ -136,7 +141,7 @@ public class RelicRoll : CardEffect
 [Serializable]
 public class LegendaryReroll : CardEffect
 {
-    public override void ApplyEffect(PlayerOverlay player)
+    public override void ApplyEffect(ConsumableContext ctx)
     {
         // lose all relics
         // add 2 legendary
@@ -146,7 +151,7 @@ public class LegendaryReroll : CardEffect
 [Serializable]
 public class NoMoreHeals : CardEffect
 {
-    public override void ApplyEffect(PlayerOverlay player)
+    public override void ApplyEffect(ConsumableContext ctx)
     {
         // block fountains
         // max hp +++
@@ -156,7 +161,7 @@ public class NoMoreHeals : CardEffect
 [Serializable]
 public class Modifier : CardEffect
 {
-    public override void ApplyEffect(PlayerOverlay player)
+    public override void ApplyEffect(ConsumableContext ctx)
     {
         // block modifications
         // after boss more more more modifications
@@ -166,7 +171,7 @@ public class Modifier : CardEffect
 [Serializable]
 public class TwoForOne : CardEffect
 {
-    public override void ApplyEffect(PlayerOverlay player)
+    public override void ApplyEffect(ConsumableContext ctx)
     {
         // remove 2 relics of same rarity
         // add one better rarity
@@ -176,7 +181,7 @@ public class TwoForOne : CardEffect
 [Serializable]
 public class BetterCardsNoRelics : CardEffect
 {
-    public override void ApplyEffect(PlayerOverlay player)
+    public override void ApplyEffect(ConsumableContext ctx)
     {
         // boost hand
         // switch off relics
@@ -186,7 +191,7 @@ public class BetterCardsNoRelics : CardEffect
 [Serializable]
 public class OMGReroll : CardEffect //kinda op or useless (no idea why you want to clear whole map XD)
 {
-    public override void ApplyEffect(PlayerOverlay player)
+    public override void ApplyEffect(ConsumableContext ctx)
     {
         // remove deck
         // roll new one
@@ -196,7 +201,7 @@ public class OMGReroll : CardEffect //kinda op or useless (no idea why you want 
 [Serializable]
 public class InstaKill : CardEffect
 {
-    public override void ApplyEffect(PlayerOverlay player)
+    public override void ApplyEffect(ConsumableContext ctx)
     {
         // insta kill
     }
@@ -205,7 +210,7 @@ public class InstaKill : CardEffect
 [Serializable]
 public class BuffRemover : CardEffect
 {
-    public override void ApplyEffect(PlayerOverlay player)
+    public override void ApplyEffect(ConsumableContext ctx)
     {
         //remove buff from enemy minion
     }
@@ -215,7 +220,7 @@ public class BuffRemover : CardEffect
 [Serializable]
 public class CardBuff : CardEffect
 {
-    public override void ApplyEffect(PlayerOverlay player)
+    public override void ApplyEffect(ConsumableContext ctx)
     {
         // card damage x2/x3 (no idea if it works like 2 can be 4 in sequence after buff x2 or just damage i buffed)
     }
@@ -224,7 +229,7 @@ public class CardBuff : CardEffect
 [Serializable]
 public class PassiveOff : CardEffect
 {
-    public override void ApplyEffect(PlayerOverlay player)
+    public override void ApplyEffect(ConsumableContext ctx)
     {
         // switch off boss passive
     }
@@ -233,7 +238,7 @@ public class PassiveOff : CardEffect
 [Serializable]
 public class QuickDraw : CardEffect
 {
-    public override void ApplyEffect(PlayerOverlay player)
+    public override void ApplyEffect(ConsumableContext ctx)
     {
         // draw a card;
     }
@@ -242,7 +247,7 @@ public class QuickDraw : CardEffect
 [Serializable]
 public class OneMoreReroll : CardEffect
 {
-    public override void ApplyEffect(PlayerOverlay player)
+    public override void ApplyEffect(ConsumableContext ctx)
     {
         // adds reroll ticket
     }
@@ -251,7 +256,7 @@ public class OneMoreReroll : CardEffect
 [Serializable]
 public class Jackpot : CardEffect
 {
-    public override void ApplyEffect(PlayerOverlay player)
+    public override void ApplyEffect(ConsumableContext ctx)
     {
         // get 100 gold
     }
@@ -260,7 +265,7 @@ public class Jackpot : CardEffect
 [Serializable]
 public class AssetSwitch : CardEffect
 {
-    public override void ApplyEffect(PlayerOverlay player)
+    public override void ApplyEffect(ConsumableContext ctx)
     {
         // Switch AssetCard
     }
@@ -269,7 +274,7 @@ public class AssetSwitch : CardEffect
 [Serializable]
 public class FreeTurn : CardEffect
 {
-    public override void ApplyEffect(PlayerOverlay player)
+    public override void ApplyEffect(ConsumableContext ctx)
     {
         // Additional turn
     }
@@ -278,7 +283,7 @@ public class FreeTurn : CardEffect
 [Serializable]
 public class DamageAbsorb : CardEffect
 {
-    public override void ApplyEffect(PlayerOverlay player)
+    public override void ApplyEffect(ConsumableContext ctx)
     {
         // absord next damage
     }
@@ -287,7 +292,7 @@ public class DamageAbsorb : CardEffect
 [Serializable]
 public class ItemDropBoost : CardEffect
 {
-    public override void ApplyEffect(PlayerOverlay player)
+    public override void ApplyEffect(ConsumableContext ctx)
     {
         // drop boost
     }
@@ -295,8 +300,8 @@ public class ItemDropBoost : CardEffect
 
 [Serializable]
 public class Retire : CardEffect
-{ 
-    public override void ApplyEffect(PlayerOverlay player)
+{
+    public override void ApplyEffect(ConsumableContext ctx)
     {
         // escape from fight
     }
@@ -305,7 +310,7 @@ public class Retire : CardEffect
 [Serializable]
 public class BoosterPack : CardEffect
 {
-    public override void ApplyEffect(PlayerOverlay player)
+    public override void ApplyEffect(ConsumableContext ctx)
     {
         // get booster pack
     }
@@ -314,7 +319,7 @@ public class BoosterPack : CardEffect
 [Serializable]
 public class DoubleGold : CardEffect
 {
-    public override void ApplyEffect(PlayerOverlay player)
+    public override void ApplyEffect(ConsumableContext ctx)
     {
         // double your gold
     }
@@ -323,7 +328,7 @@ public class DoubleGold : CardEffect
 [Serializable]
 public class GhostRelic : CardEffect
 {
-    public override void ApplyEffect(PlayerOverlay player)
+    public override void ApplyEffect(ConsumableContext ctx)
     {
         // ghet one temporary relic
     }
@@ -332,7 +337,7 @@ public class GhostRelic : CardEffect
 [Serializable]
 public class CallForHelp : CardEffect
 {
-    public override void ApplyEffect(PlayerOverlay player)
+    public override void ApplyEffect(ConsumableContext ctx)
     {
         // get 3 ranodm temporary card
     }
@@ -341,7 +346,7 @@ public class CallForHelp : CardEffect
 [Serializable]
 public class CoinFlip : CardEffect
 {
-    public override void ApplyEffect(PlayerOverlay player)
+    public override void ApplyEffect(ConsumableContext ctx)
     {
         // 50/50 for 30 gold
     }
@@ -349,8 +354,8 @@ public class CoinFlip : CardEffect
 
 [Serializable]
 public class FreeBuy : CardEffect
-{ 
-    public override void ApplyEffect(PlayerOverlay player)
+{
+    public override void ApplyEffect(ConsumableContext ctx)
     {
         // free buy
     }
@@ -359,7 +364,7 @@ public class FreeBuy : CardEffect
 [Serializable]
 public class HPBoost : CardEffect
 {
-    public override void ApplyEffect(PlayerOverlay player)
+    public override void ApplyEffect(ConsumableContext ctx)
     {
         // heal 10 hp
     }
@@ -368,7 +373,7 @@ public class HPBoost : CardEffect
 [Serializable]
 public class UltraRelic : CardEffect
 {
-    public override void ApplyEffect(PlayerOverlay player)
+    public override void ApplyEffect(ConsumableContext ctx)
     {
         // next relic drop boost
     }
@@ -377,7 +382,7 @@ public class UltraRelic : CardEffect
 [Serializable]
 public class UnderDesk : CardEffect
 {
-    public override void ApplyEffect(PlayerOverlay player)
+    public override void ApplyEffect(ConsumableContext ctx)
     {
         // better stuff in shop
     }
@@ -386,7 +391,7 @@ public class UnderDesk : CardEffect
 [Serializable]
 public class Mulligan : CardEffect
 {
-    public override void ApplyEffect(PlayerOverlay player)
+    public override void ApplyEffect(ConsumableContext ctx)
     {
         // rewshuffle hand
     }
@@ -395,7 +400,7 @@ public class Mulligan : CardEffect
 [Serializable]
 public class MoiraeVisit : CardEffect
 {
-    public override void ApplyEffect(PlayerOverlay player)
+    public override void ApplyEffect(ConsumableContext ctx)
     {
         // random morriare card
     }
@@ -404,7 +409,7 @@ public class MoiraeVisit : CardEffect
 [Serializable]
 public class HugeJackpot : CardEffect
 {
-    public override void ApplyEffect(PlayerOverlay player)
+    public override void ApplyEffect(ConsumableContext ctx)
     {
         // giga op
         // get jackpot
@@ -414,7 +419,7 @@ public class HugeJackpot : CardEffect
 [Serializable]
 public class GodRelic : CardEffect
 {
-    public override void ApplyEffect(PlayerOverlay player)
+    public override void ApplyEffect(ConsumableContext ctx)
     {
         // + god relic
     }
@@ -423,7 +428,7 @@ public class GodRelic : CardEffect
 [Serializable]
 public class Reset : CardEffect
 {
-    public override void ApplyEffect(PlayerOverlay player)
+    public override void ApplyEffect(ConsumableContext ctx)
     {
         // fight reset
     }
@@ -432,7 +437,7 @@ public class Reset : CardEffect
 [Serializable]
 public class GoldForBonus : CardEffect
 {
-    public override void ApplyEffect(PlayerOverlay player)
+    public override void ApplyEffect(ConsumableContext ctx)
     {
         // add gold
     }
@@ -441,7 +446,7 @@ public class GoldForBonus : CardEffect
 [Serializable]
 public class CopyPaste : CardEffect
 {
-    public override void ApplyEffect(PlayerOverlay player)
+    public override void ApplyEffect(ConsumableContext ctx)
     {
         // copy consumapble card
     }
@@ -450,7 +455,7 @@ public class CopyPaste : CardEffect
 [Serializable]
 public class LookIntoTheFuture : CardEffect
 {
-    public override void ApplyEffect(PlayerOverlay player)
+    public override void ApplyEffect(ConsumableContext ctx)
     {
         // look for cards
     }

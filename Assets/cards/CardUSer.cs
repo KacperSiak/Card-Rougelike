@@ -21,9 +21,13 @@ public class CardUSer : MonoBehaviour
 
     void OnButtonClicked()
     {
+        var ctx = new ConsumableContext
+        {
+            player = player
+        };
         foreach (var effect in card.cardEffects)
         {
-            effect.ApplyEffect(player);
+            effect.ApplyEffect(ctx);
         }
     }
 }

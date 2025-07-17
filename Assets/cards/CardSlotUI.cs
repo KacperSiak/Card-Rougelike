@@ -25,9 +25,13 @@ public class CardSlotUI : MonoBehaviour
 
     public void UseCard()
     {
+        var ctx = new ConsumableContext
+        {
+            player = player
+        };
         foreach (var effect in cardData.cardEffects)
         {
-            effect.ApplyEffect(player);
+            effect.ApplyEffect(ctx);
         }
 
         Destroy(gameObject);
