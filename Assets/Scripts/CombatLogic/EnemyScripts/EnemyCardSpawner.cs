@@ -1,9 +1,13 @@
 using System.Collections.Generic;
+using System.Xml;
 using UnityEngine;
 
 public class EnemyCardSpawner : MonoBehaviour
 {
     [SerializeField] EnemyAttackManager _enemyAttackManager;
+    [SerializeField] private ValidateClean _clean;
+    [SerializeField] private ValidateDirty _dirty;
+    [SerializeField] private ValidateSingle _single;
     private int _cardsInCombo = 3;
     private int _cardsBuffer = 2;
 
@@ -35,7 +39,7 @@ public class EnemyCardSpawner : MonoBehaviour
             {
                 case 1:
                 case 2:
-                    SpawnSingle(indexObject, indexCardHolder, cardsBySuit);
+                    SpawnSingle(indexObject + 1, indexCardHolder, cardsBySuit);
                     return;
             }
 
@@ -53,7 +57,7 @@ public class EnemyCardSpawner : MonoBehaviour
 
                 Debug.Log($"Card {cardsBySuit[randomCleanSuit][randomCleanCard].power} is clean");
 
-                GameObject cardObject = EnemyCardManager.Instance.CardObjects[indexObject++];
+                GameObject cardObject = EnemyCardManager.Instance.cardObjects[indexObject + i];
                 CardsSOTest card = cardsBySuit[randomCleanSuit][randomCleanCard];
                 cardsBySuit[randomCleanSuit].RemoveAt(randomCleanCard);
 
@@ -68,7 +72,7 @@ public class EnemyCardSpawner : MonoBehaviour
             if (cardsBySuit[randomCleanSuit].Count == 0)
                 cardsBySuit.Remove(randomCleanSuit);
 
-            EnemyCardManager.Instance.SetupCardHolder(key, type: ComboTypes.Clean);
+            EnemyCardManager.Instance.SetupCardHolder(key, validationType: _clean);
             EnemyCardManager.Instance.CardsInGamePower.Add(key, power);
             _enemyAttackManager.SetRoundAttack(key);
 
@@ -110,7 +114,7 @@ public class EnemyCardSpawner : MonoBehaviour
 
             for (int i = 0; i < _cardsInCombo; i++)
             {
-                GameObject cardObject = EnemyCardManager.Instance.CardObjects[indexObject++];
+                GameObject cardObject = EnemyCardManager.Instance.cardObjects[indexObject + i];
                 CardsSOTest card = cardsBySuit[randomDirtySuit][index[i]];
                 cardsBySuit[randomDirtySuit].Remove(card);
 
@@ -127,7 +131,7 @@ public class EnemyCardSpawner : MonoBehaviour
                 EnemyCardManager.Instance.UpdateCardsInGame(key, cardObject);
             }
 
-            EnemyCardManager.Instance.SetupCardHolder(key, type: ComboTypes.Dirty);
+            EnemyCardManager.Instance.SetupCardHolder(key, validationType: _dirty);
             EnemyCardManager.Instance.CardsInGamePower.Add(key, power);
             _enemyAttackManager.SetRoundAttack(key);
 
@@ -143,7 +147,7 @@ public class EnemyCardSpawner : MonoBehaviour
 
         Debug.Log($"Random suit: {randomSuit}, Random card: {randomCard}");
 
-        GameObject cardObject = EnemyCardManager.Instance.CardObjects[cardObjectIndex];
+        GameObject cardObject = EnemyCardManager.Instance.cardObjects[cardObjectIndex];
         CardsSOTest card = cardsBySuit[randomSuit][randomCard];
         cardsBySuit[randomSuit].RemoveAt(randomCard);
 
@@ -156,9 +160,11 @@ public class EnemyCardSpawner : MonoBehaviour
         cardObject.SetActive(true);
             
         int keySingle = indexCardHolder;
-        EnemyCardManager.Instance.SetupCardsInGame(keySingle);
+        if (!EnemyCardManager.Instance.CardsInGame.ContainsKey(keySingle))
+            EnemyCardManager.Instance.SetupCardsInGame(keySingle);
+
         EnemyCardManager.Instance.UpdateCardsInGame(keySingle, cardObject);
-        EnemyCardManager.Instance.SetupCardHolder(keySingle, type: ComboTypes.Single);
+        EnemyCardManager.Instance.SetupCardHolder(keySingle, validationType: _single);
         EnemyCardManager.Instance.CardsInGamePower.Add(keySingle, power);
         _enemyAttackManager.SetRoundAttack(keySingle);
     }

@@ -8,8 +8,10 @@ public class EnemyCardManager : MonoBehaviour
     [SerializeField] private EnemyCardSpawner _spawner;
     [SerializeField] private List<GameObject> _cardHolders;
 
-    public List<GameObject> CardObjects;
+    public List<GameObject> cardObjects;
+
     private Dictionary<int, List<CardsSOTest>> _cardsBySuit = new Dictionary<int, List<CardsSOTest>>();
+
     public Dictionary<int, List<GameObject>> CardsInGame { get; private set;}
     public Dictionary<int, int> CardsInGamePower { get; private set; }
 
@@ -68,9 +70,9 @@ public class EnemyCardManager : MonoBehaviour
         }
     }
 
-    public void SetupCardHolder(int index, ComboTypes type)
+    public void SetupCardHolder(int index, IValidate validationType)
     {
-        _cardHolders[index].GetComponent<CardHolderManager>().SetProperties(type, index);
+        _cardHolders[index].GetComponent<CardHolderManager>().SetProperties(validationType, index);
     }
 
     public void SetupCardsInGame(int key)

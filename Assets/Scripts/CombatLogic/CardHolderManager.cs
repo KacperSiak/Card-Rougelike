@@ -7,8 +7,8 @@ public class CardHolderManager : MonoBehaviour
     [SerializeField] private Material _defaultMaterial;
     [SerializeField] private Validator _validator;
     private bool _isOccupied = false;
+    public IValidate ValidatorType { get; private set; }
 
-    public ComboTypes ComboType { get; private set; }
     public int EnemyCombo { get; private set; }
     public  List<PlayerCardLogic> PCardScript { get; private set; }
 
@@ -17,9 +17,9 @@ public class CardHolderManager : MonoBehaviour
     //Maybe I will removw this list, not sure if I need it fpr future logic
     public List<GameObject> PlayerCards { get; private set; }
 
-    public void SetProperties(ComboTypes comboType, int enemyIndex)
+    public void SetProperties(IValidate validationType, int enemyIndex)
     {
-        this.ComboType = comboType;
+        ValidatorType = validationType;
         EnemyCombo = enemyIndex;
         PCardScript = new List<PlayerCardLogic>();
         PlayerCards = new List<GameObject>();
