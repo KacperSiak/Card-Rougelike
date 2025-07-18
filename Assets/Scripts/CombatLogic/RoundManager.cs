@@ -7,6 +7,7 @@ public class RoundManager : MonoBehaviour
     [SerializeField] private EnemyAttackManager _enemyAttackManager;
     [SerializeField] private List<CardsSOTest> _enemyCards;
     [SerializeField] private List<CardsSOTest> _playerCards;
+    [SerializeField] private List<CardHolderManager> _cardHolders;
 
     void Start()
     {
@@ -15,5 +16,15 @@ public class RoundManager : MonoBehaviour
         _enemyAttackManager.StartCombatSetup();
         PlayerCardManager.Instance.StartCombat(_playerCards);
         EnemyCardManager.Instance.StartCombat(_enemyCards);
+    }
+
+    public void EndRound()
+    {
+        foreach (var ch in _cardHolders)
+        { 
+            if(ch.ValidatedPlayerCardsPower == 0) break;
+
+            //need to rething damage counting logic
+        }
     }
 }

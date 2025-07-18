@@ -12,7 +12,7 @@ public class CardHolderManager : MonoBehaviour
     public int EnemyCombo { get; private set; }
     public  List<PlayerCardLogic> PCardScript { get; private set; }
 
-    public int ValidatedPlayerCardsPower { get; private set; }
+    public int ValidatedPlayerCardsPower { get; private set; } = 0;
 
     //Maybe I will removw this list, not sure if I need it fpr future logic
     public List<GameObject> PlayerCards { get; private set; }
