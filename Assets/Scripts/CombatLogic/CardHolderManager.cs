@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -12,6 +11,10 @@ public class CardHolderManager : MonoBehaviour
     public ComboTypes ComboType { get; private set; }
     public int EnemyCombo { get; private set; }
     public  List<PlayerCardLogic> PCardScript { get; private set; }
+
+    public int ValidatedPlayerCardsPower { get; private set; }
+
+    //Maybe I will removw this list, not sure if I need it fpr future logic
     public List<GameObject> PlayerCards { get; private set; }
 
     public void SetProperties(ComboTypes comboType, int enemyIndex)
@@ -63,6 +66,7 @@ public class CardHolderManager : MonoBehaviour
             card.GetComponent<PlayerCardLogic>().IsUsed = true;
         }
 
+        ValidatedPlayerCardsPower = PlayerCardManager.Instance.SelectedCardsPower;
         PlayerCardManager.Instance.ClearSelectedCards();
 
     }

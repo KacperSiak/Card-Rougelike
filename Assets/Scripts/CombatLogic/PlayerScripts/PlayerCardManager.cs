@@ -8,6 +8,7 @@ public class PlayerCardManager : MonoBehaviour
     [SerializeField] private PlayerCardSpawner _spawner;
     public List<GameObject> CardObjects;
     public List<GameObject> SelectedCards { get; private set; }
+    public int SelectedCardsPower { get; private set; }
 
     private List<CardsSOTest> _playerCardsInGame;
     private int _cardsInHand = 6;
@@ -34,18 +35,21 @@ public class PlayerCardManager : MonoBehaviour
     public void AddSelectedCards(GameObject card)
     {
         SelectedCards.Add(card);
+        SelectedCardsPower += card.GetComponent<PlayerCardLogic>().Card.power;
         Debug.Log("Cards added" + SelectedCards.Count);
     }
 
     public void RemoveSelectedCards(GameObject card)
     {
         SelectedCards.Remove(card);
+        SelectedCardsPower -= card.GetComponent<PlayerCardLogic>().Card.power;
         Debug.Log("Cards removed" + SelectedCards.Count);
     }
 
     public void ClearSelectedCards()
     {
         SelectedCards.Clear();
+        SelectedCardsPower = 0;
         Debug.Log("Cards cleared" + SelectedCards.Count);
     }
 

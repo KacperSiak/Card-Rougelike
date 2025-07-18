@@ -2421,8 +2421,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a38c75192c4d93242b41c62aee494af5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _playerCardManager: {fileID: 1338215137}
-  _enemyCardManager: {fileID: 1934713100}
+  _playerAttackManager: {fileID: 143718492}
+  _enemyAttackManager: {fileID: 1312136505}
   _enemyCards:
   - {fileID: 11400000, guid: bd7fe8880e6fee14bbe7114d73dcdfef, type: 2}
   - {fileID: 11400000, guid: 2945b418c27b0c2418ca65413aa38c12, type: 2}
@@ -3145,6 +3145,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b96cd1dc851825b4e994c27c9fad84ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _enemyAttackManager: {fileID: 1312136505}
 --- !u!4 &1326876041
 Transform:
   m_ObjectHideFlags: 0

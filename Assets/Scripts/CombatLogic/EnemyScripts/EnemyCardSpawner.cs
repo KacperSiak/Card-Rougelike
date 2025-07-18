@@ -20,8 +20,14 @@ public class EnemyCardSpawner : MonoBehaviour
         int randomDirtySuit = Random.Range(0, cardsBySuit.Count - _cardsBuffer);
         int randomDirtyCard = cardsBySuit[randomDirtySuit][Random.Range(0, cardsBySuit[randomDirtySuit].Count)].power;
 
-        int key = EnemyCardManager.Instance.CardsInGame.Count == 0 ? 0 : EnemyCardManager.Instance.CardsInGame.Count;
-        EnemyCardManager.Instance.SetupCardsInGame(key);
+        if (!EnemyCardManager.Instance.CardsInGame.ContainsKey(indexCardHolder))
+        {
+            EnemyCardManager.Instance.SetupCardsInGame(indexCardHolder);
+        }
+
+        int key = indexCardHolder;
+
+        int power = 0;
 
         if (isClean)
         {
@@ -53,6 +59,7 @@ public class EnemyCardSpawner : MonoBehaviour
 
                 cardObject.GetComponent<SpriteRenderer>().sprite = card.graphics;
                 cardObject.GetComponent<EnemyCardLogic>().SetCardProperties(card);
+                power += card.power;
                 cardObject.SetActive(true);
 
                 EnemyCardManager.Instance.UpdateCardsInGame(key, cardObject);
@@ -61,7 +68,8 @@ public class EnemyCardSpawner : MonoBehaviour
             if (cardsBySuit[randomCleanSuit].Count == 0)
                 cardsBySuit.Remove(randomCleanSuit);
 
-            EnemyCardManager.Instance.SetupCardHolder(indexCardHolder, type: ComboTypes.Clean);
+            EnemyCardManager.Instance.SetupCardHolder(key, type: ComboTypes.Clean);
+            EnemyCardManager.Instance.CardsInGamePower.Add(key, power);
             _enemyAttackManager.SetRoundAttack(key);
 
         }
@@ -113,22 +121,25 @@ public class EnemyCardSpawner : MonoBehaviour
 
                 cardObject.GetComponent<SpriteRenderer>().sprite = card.graphics;
                 cardObject.GetComponent<EnemyCardLogic>().SetCardProperties(card);
+                power += card.power;
                 cardObject.SetActive(true);
 
                 EnemyCardManager.Instance.UpdateCardsInGame(key, cardObject);
             }
 
-            EnemyCardManager.Instance.SetupCardHolder(indexCardHolder, type: ComboTypes.Dirty);
+            EnemyCardManager.Instance.SetupCardHolder(key, type: ComboTypes.Dirty);
+            EnemyCardManager.Instance.CardsInGamePower.Add(key, power);
             _enemyAttackManager.SetRoundAttack(key);
 
         }
 
     }
 
-    public void SpawnSingle(int cardObjectIndex, int activationIndex, Dictionary<int, List<CardsSOTest>> cardsBySuit)
+    public void SpawnSingle(int cardObjectIndex, int indexCardHolder, Dictionary<int, List<CardsSOTest>> cardsBySuit)
     {
         int randomSuit = Random.Range(0, cardsBySuit.Count);
         int randomCard = Random.Range(0, cardsBySuit[randomSuit].Count);
+        int power = 0;
 
         Debug.Log($"Random suit: {randomSuit}, Random card: {randomCard}");
 
@@ -141,12 +152,14 @@ public class EnemyCardSpawner : MonoBehaviour
 
         cardObject.GetComponent<SpriteRenderer>().sprite = card.graphics;
         cardObject.GetComponent<EnemyCardLogic>().SetCardProperties(card);
+        power += card.power;
         cardObject.SetActive(true);
             
-        int keySingle = EnemyCardManager.Instance.CardsInGame.Count;
+        int keySingle = indexCardHolder;
         EnemyCardManager.Instance.SetupCardsInGame(keySingle);
         EnemyCardManager.Instance.UpdateCardsInGame(keySingle, cardObject);
-        EnemyCardManager.Instance.SetupCardHolder(activationIndex, type: ComboTypes.Single);
+        EnemyCardManager.Instance.SetupCardHolder(keySingle, type: ComboTypes.Single);
+        EnemyCardManager.Instance.CardsInGamePower.Add(keySingle, power);
         _enemyAttackManager.SetRoundAttack(keySingle);
     }
 }

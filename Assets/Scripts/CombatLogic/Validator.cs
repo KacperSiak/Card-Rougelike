@@ -2,8 +2,10 @@ using UnityEngine;
 
 public class Validator : MonoBehaviour
 {
-    // Add method ContinueValidation, if type has been validated and we need to validate power and rounds
-   
+    //Refactor to Interface, remove switch, separate logic for each type of combo 
+
+    [SerializeField] private EnemyAttackManager _enemyAttackManager;
+
     public void ValidateCards(CardHolderManager cardHolder)
     {
         switch (cardHolder.ComboType)
@@ -110,18 +112,32 @@ public class Validator : MonoBehaviour
         ContinueValidation(isValid, cardHolder);
     }
 
+    // Limits for player, can't use cards to get rig of them, if they can't attack enemy
     private void ContinueValidation(bool valid, CardHolderManager cardHolder)
     {
-        //for now no extra logic 
-        if (valid)
-        {
-            cardHolder.OnValidated();
-            Debug.Log("Validation succeeded");
-        }
-        else
+        if (!valid)
         {
             cardHolder.OnValidationFailed();
             Debug.Log("Validation failed");
+            return;
         }
+
+        if(PlayerCardManager.Instance.SelectedCardsPower >= EnemyCardManager.Instance.CardsInGamePower[cardHolder.EnemyCombo])
+        {
+            cardHolder.OnValidated();
+            Debug.Log("Validation succeeded");
+            return;
+        }
+
+        if (_enemyAttackManager.RoundsForCards[cardHolder.EnemyCombo] > 1)
+        {
+            cardHolder.OnValidationFailed();
+            Debug.Log("Validation failed");
+            return;
+        }
+
+        cardHolder.OnValidated();
+        Debug.Log("Validation succeeded");
+ 
     }
 }

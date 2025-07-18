@@ -11,6 +11,7 @@ public class EnemyCardManager : MonoBehaviour
     public List<GameObject> CardObjects;
     private Dictionary<int, List<CardsSOTest>> _cardsBySuit = new Dictionary<int, List<CardsSOTest>>();
     public Dictionary<int, List<GameObject>> CardsInGame { get; private set;}
+    public Dictionary<int, int> CardsInGamePower { get; private set; }
 
     private int _suitsAmount = 4;
     private int _cardsSameSuit = 5;
@@ -42,6 +43,7 @@ public class EnemyCardManager : MonoBehaviour
         }
 
         CardsInGame = new Dictionary<int, List<GameObject>>();
+        CardsInGamePower = new Dictionary<int, int>();
 
         for (int i = 0, j = 0; i < 3; i++)
         {
@@ -79,6 +81,11 @@ public class EnemyCardManager : MonoBehaviour
     public void UpdateCardsInGame(int key, GameObject cardObject)
     { 
         CardsInGame[key].Add(cardObject);
+    }
+
+    public void SetupPower(int keyCardsIndex, int power)
+    {
+        CardsInGamePower.Add(keyCardsIndex, power);
     }
 
     public void RefillCards()

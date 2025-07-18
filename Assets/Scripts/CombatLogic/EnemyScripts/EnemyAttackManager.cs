@@ -5,28 +5,23 @@ using UnityEngine;
 public class EnemyAttackManager : MonoBehaviour
 {
     [SerializeField] private List<TextMeshProUGUI> _rounds;
-    [SerializeField] public Dictionary<int, int> roundsForCards { get; private set; }
+    [SerializeField] public Dictionary<int, int> RoundsForCards { get; private set; }
     private int _round;
 
-    void Start()
+    public void StartCombatSetup()
     {
-        roundsForCards = new Dictionary<int, int>();
+        RoundsForCards = new Dictionary<int, int>();
     }
 
     public void SetRoundAttack(int key)
     {
-        int _cardsPower = 0;
-
-        foreach (var card in EnemyCardManager.Instance.CardsInGame[key])
-        {
-            _cardsPower += card.GetComponent<EnemyCardLogic>().Card.power;
-        }
+        int _cardsPower = EnemyCardManager.Instance.CardsInGamePower[key];
 
         _round = CalculateRound(_cardsPower);
 
         _rounds[key].text = $"{_round}";
 
-        roundsForCards.Add(key, _round);
+        RoundsForCards.Add(key, _round);
     }
 
     private int CalculateRound(int totalPower)
