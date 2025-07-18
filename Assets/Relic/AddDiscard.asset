@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   relicName: AddDiscard
   description: +1 discard every fight
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 9c259d6389c91c4458e6129b81699224, type: 3}
   rarity: 0
   relicEffets:
   - rid: 5888606440673771652
