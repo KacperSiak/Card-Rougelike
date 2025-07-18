@@ -36,7 +36,10 @@ public class Validator : MonoBehaviour
                 if (!isValid) break;
 
                 isValid = cardHolder.PCardScript[i].Card.suit == cardHolder.PCardScript[i + 1].Card.suit;
-                isValid = cardHolder.PCardScript[i].Card.power + 1 == cardHolder.PCardScript[i + 1].Card.power;
+
+                if (!isValid) break;
+
+                isValid = cardHolder.PCardScript[i].Card.power + (i + 1) == cardHolder.PCardScript[i + 1].Card.power;
                 Debug.Log("valid or not: " + isValid);
             }
         }
@@ -58,23 +61,26 @@ public class Validator : MonoBehaviour
         }
 
         isValid = cardHolder.PCardScript[0].Card.suit == cardHolder.PCardScript[cardHolder.PCardScript.Count - 1].Card.suit;
-        Debug.Log("valid or not: " + isValid);
+        Debug.Log("valid or not clean first check: " + isValid);
 
         for (int i = 0; i < cardHolder.PCardScript.Count - 2; i++)
         {
             if (!isValid) break;
 
             isValid = cardHolder.PCardScript[i].Card.suit == cardHolder.PCardScript[i + 1].Card.suit;
-            isValid = cardHolder.PCardScript[i].Card.power + 1 == cardHolder.PCardScript[i + 1].Card.power;
+
+            if (!isValid) break;
+
+            isValid = cardHolder.PCardScript[i].Card.power + (i + 1) == cardHolder.PCardScript[i + 1].Card.power;
             Debug.Log("valid or not: " + isValid);
         }
 
-        Debug.Log("valid or not: " + isValid);
+        Debug.Log("valid or not after clean check: " + isValid);
 
         if (!isValid)
         {
             isValid = cardHolder.PCardScript[0].Card.suit != cardHolder.PCardScript[cardHolder.PCardScript.Count - 1].Card.suit;
-            Debug.Log("valid or not: " + isValid);
+            Debug.Log("valid or not dirty first check: " + isValid);
 
             for (int i = 0; i < cardHolder.PCardScript.Count - 2; i++)
             {
