@@ -13,6 +13,15 @@ public class PlayerOverlay : MonoBehaviour
     public List<NormalCard> deckList;
     [SerializeField] private TextMeshProUGUI text;
 
+    public static PlayerOverlay instance;
+
+    private void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+        }
+    }
     void Start()
     {
         
