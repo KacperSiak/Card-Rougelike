@@ -36,10 +36,8 @@ public class HoverHighlighter : MonoBehaviour
             return;
         }
         
-        // Inicjalizacja
         propertyBlock = new MaterialPropertyBlock();
         
-        // Ustaw podstawowy kolor na starcie
         SetColor(false);
     }
 
