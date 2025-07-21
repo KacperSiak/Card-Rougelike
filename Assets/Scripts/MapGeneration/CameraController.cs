@@ -5,8 +5,8 @@ public class CameraController : MonoBehaviour
     [Header("Movement Limits")]
     public bool useBounds = true;
     [Tooltip("Min/Max Z position for camera movement (X values are ignored)")]
-    public Vector2 minBounds = new Vector2(0f, -50f);  // X not used, Y = min Z position
-    public Vector2 maxBounds = new Vector2(0f, 10f);   // X not used, Y = max Z position
+    public Vector2 minBounds = new Vector2(0f, -50f);
+    public Vector2 maxBounds = new Vector2(0f, 10f); 
     
     [Space(10)]
     [Header("Debug Info")]
@@ -41,7 +41,6 @@ public class CameraController : MonoBehaviour
             HandleZoom();
         }
         
-        // Update debug info
         currentZPosition = transform.position.z;
     }
     
@@ -112,14 +111,12 @@ public class CameraController : MonoBehaviour
             {
                 foreach (var node in level)
                 {
-                    // node.Position.y to pozycja Z w świecie (mapa w 2D)
                     if (node.Position.y < minZ) minZ = node.Position.y;
                     if (node.Position.y > maxZ) maxZ = node.Position.y;
                 }
             }
             
             float padding = 10f;
-            // Vector2: x nie używany, y = pozycja Z kamery
             minBounds = new Vector2(0, minZ - padding);
             maxBounds = new Vector2(0, maxZ + padding);
             
