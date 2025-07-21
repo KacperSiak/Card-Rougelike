@@ -98,6 +98,18 @@ public class EnemyCardManager : MonoBehaviour
 
     public void RefillCards()
     {
+        int startIndex = 0;
 
+        foreach (var cardHolder in cardHolders)
+        {
+            if (cardHolder.GetComponent<CardHolderManager>().EnemyComboIndex != -1)
+            {
+                startIndex += 3;
+                continue;
+            } 
+
+            SetupSpawner(startObjectIndex: startIndex, cardHolderIndex: cardHolders.IndexOf(cardHolder));
+            startIndex += 3;
+        }
     }
 }

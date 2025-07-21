@@ -14,15 +14,11 @@ public class CardHolderManager : MonoBehaviour
 
     public int ValidatedPlayerCardsPower { get; private set; } = 0;
 
-    //Maybe I will removw this list, not sure if I need it fpr future logic
-    public List<GameObject> PlayerCards { get; private set; }
-
     public void SetProperties(IValidate validationType, int enemyIndex)
     {
         ValidatorType = validationType;
         EnemyComboIndex = enemyIndex;
         PCardScript = new List<PlayerCardLogic>();
-        PlayerCards = new List<GameObject>();
     }
 
     private void OnMouseEnter()
@@ -45,9 +41,7 @@ public class CardHolderManager : MonoBehaviour
 
         foreach (GameObject card in PlayerCardManager.Instance.SelectedCards)
         {
-            PlayerCards.Add(card);
             PCardScript.Add(card.GetComponent<PlayerCardLogic>());
-            Debug.Log("playerCards count: " + PlayerCards.Count);
             Debug.Log("playerCardsScript count: " + PCardScript.Count);
         }
 
@@ -73,9 +67,7 @@ public class CardHolderManager : MonoBehaviour
 
     public void OnValidationFailed()
     {
-        PlayerCards.Clear();
         PCardScript.Clear();
-        Debug.Log("playerCards count: " + PlayerCards.Count);
         Debug.Log("pCards count: " + PCardScript.Count);
     }
 

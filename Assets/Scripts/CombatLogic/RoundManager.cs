@@ -44,5 +44,6 @@ public class RoundManager : MonoBehaviour
     public void PrepareNewRound()
     { 
         PlayerCardManager.Instance.RefillCards();
+        EnemyCardManager.Instance.RefillCards();
     }
 }

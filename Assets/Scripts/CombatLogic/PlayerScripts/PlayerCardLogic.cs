@@ -55,5 +55,8 @@ public class PlayerCardLogic : MonoBehaviour
     public void ResetCardPosition()
     {
         transform.position = defaultPosition;
+        isSelected = false;
+        IsUsed = false;
+        Card = null; 
     }
 }
