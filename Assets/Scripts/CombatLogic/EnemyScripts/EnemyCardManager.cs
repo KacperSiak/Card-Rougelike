@@ -6,28 +6,23 @@ public class EnemyCardManager : MonoBehaviour
     public static EnemyCardManager Instance { get; private set; }
 
     [SerializeField] private EnemyCardSpawner _spawner;
-    [SerializeField] private List<GameObject> _cardHolders;
-
+    
+    public List<GameObject> cardHolders;
     public List<GameObject> cardObjects;
 
     private Dictionary<int, List<CardsSOTest>> _cardsBySuit = new Dictionary<int, List<CardsSOTest>>();
 
-    public Dictionary<int, List<GameObject>> CardsInGame { get; private set;}
-    public Dictionary<int, int> CardsInGamePower { get; private set; }
+    public Dictionary<int, List<GameObject>> CardsInGame { get; private set;} //update
+    public Dictionary<int, int> CardsInGamePower { get; private set; } //update
 
     private int _suitsAmount = 4;
     private int _cardsSameSuit = 5;
 
     void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+        if (Instance == null) Instance = this;
+
+        else Destroy(gameObject);
     }
 
     public void StartCombat(List<CardsSOTest> enemyCards)
@@ -72,7 +67,7 @@ public class EnemyCardManager : MonoBehaviour
 
     public void SetupCardHolder(int index, IValidate validationType)
     {
-        _cardHolders[index].GetComponent<CardHolderManager>().SetProperties(validationType, index);
+        cardHolders[index].GetComponent<CardHolderManager>().SetProperties(validationType, index);
     }
 
     public void SetupCardsInGame(int key)
@@ -85,9 +80,20 @@ public class EnemyCardManager : MonoBehaviour
         CardsInGame[key].Add(cardObject);
     }
 
+    public void RemoveCardFromGame(int key)
+    {
+        CardsInGame.Remove(key);
+        CardsInGamePower.Remove(key);
+    }
+
     public void SetupPower(int keyCardsIndex, int power)
     {
         CardsInGamePower.Add(keyCardsIndex, power);
+    }
+
+    public void UpdatePower(int keyCardsIndex, int power)
+    {
+        CardsInGamePower[keyCardsIndex] -= power;
     }
 
     public void RefillCards()

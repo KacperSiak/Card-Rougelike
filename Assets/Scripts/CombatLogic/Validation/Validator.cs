@@ -21,14 +21,14 @@ public class Validator : MonoBehaviour
             return;
         }
 
-        if(PlayerCardManager.Instance.SelectedCardsPower >= EnemyCardManager.Instance.CardsInGamePower[cardHolder.EnemyCombo])
+        if(PlayerCardManager.Instance.SelectedCardsPower >= EnemyCardManager.Instance.CardsInGamePower[cardHolder.EnemyComboIndex])
         {
             cardHolder.OnValidated();
             Debug.Log("Validation succeeded");
             return;
         }
 
-        if (_enemyAttackManager.RoundsForCards[cardHolder.EnemyCombo] > 1)
+        if (_enemyAttackManager.RoundsForCards[cardHolder.EnemyComboIndex] > 1)
         {
             cardHolder.OnValidationFailed();
             Debug.Log("Validation failed");

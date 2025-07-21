@@ -14,6 +14,7 @@ public class PlayerCardSpawner : MonoBehaviour
             cardObject.GetComponent<SpriteRenderer>().sprite = card.graphics;
             cardObject.GetComponent<PlayerCardLogic>().SetCardProperties(card);
             cardObject.SetActive(true);
+            PlayerCardManager.Instance.IncreaseCardsInHandAmount();
         }
 
     }

@@ -19,7 +19,7 @@ public class ValidateClean : MonoBehaviour, IValidate
 
                 if (!isValid) break;
 
-                isValid = cardHolder.PCardScript[i].Card.power + (i + 1) == cardHolder.PCardScript[i + 1].Card.power;
+                isValid = cardHolder.PCardScript[i].Card.power + 1 == cardHolder.PCardScript[i + 1].Card.power;
                 Debug.Log("valid or not: " + isValid);
             }
         }

@@ -11,7 +11,8 @@ public class PlayerCardManager : MonoBehaviour
     public int SelectedCardsPower { get; private set; }
 
     private List<CardsSOTest> _playerCardsInGame;
-    private int _cardsInHand = 6;
+    private int _cardsInHandStart = 6;
+    private int _currentCardsInHand = 0;
 
     void Awake()
     {
@@ -29,7 +30,7 @@ public class PlayerCardManager : MonoBehaviour
     {
         _playerCardsInGame = new List<CardsSOTest>(playerCards);
         SelectedCards = new List<GameObject>();
-        _spawner.SpawnCards(_playerCardsInGame, _cardsInHand);
+        _spawner.SpawnCards(_playerCardsInGame, _cardsInHandStart);
     }
 
     public void AddSelectedCards(GameObject card)
@@ -48,9 +49,15 @@ public class PlayerCardManager : MonoBehaviour
 
     public void ClearSelectedCards()
     {
+        _currentCardsInHand -= SelectedCards.Count;
         SelectedCards.Clear();
         SelectedCardsPower = 0;
         Debug.Log("Cards cleared" + SelectedCards.Count);
+    }
+
+    public void IncreaseCardsInHandAmount()
+    {
+        _currentCardsInHand++;
     }
 
     public void RefillCards()

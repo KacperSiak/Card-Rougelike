@@ -51,4 +51,9 @@ public class PlayerCardLogic : MonoBehaviour
         }
 
     }
+
+    public void ResetCardPosition()
+    {
+        transform.position = defaultPosition;
+    }
 }

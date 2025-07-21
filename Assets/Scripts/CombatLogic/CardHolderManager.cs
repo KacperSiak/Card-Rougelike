@@ -7,9 +7,9 @@ public class CardHolderManager : MonoBehaviour
     [SerializeField] private Material _defaultMaterial;
     [SerializeField] private Validator _validator;
     private bool _isOccupied = false;
-    public IValidate ValidatorType { get; private set; }
+    public IValidate ValidatorType { get; private set; } = null;
 
-    public int EnemyCombo { get; private set; }
+    public int EnemyComboIndex { get; private set; } = -1;
     public  List<PlayerCardLogic> PCardScript { get; private set; }
 
     public int ValidatedPlayerCardsPower { get; private set; } = 0;
@@ -20,7 +20,7 @@ public class CardHolderManager : MonoBehaviour
     public void SetProperties(IValidate validationType, int enemyIndex)
     {
         ValidatorType = validationType;
-        EnemyCombo = enemyIndex;
+        EnemyComboIndex = enemyIndex;
         PCardScript = new List<PlayerCardLogic>();
         PlayerCards = new List<GameObject>();
     }
@@ -77,6 +77,26 @@ public class CardHolderManager : MonoBehaviour
         PCardScript.Clear();
         Debug.Log("playerCards count: " + PlayerCards.Count);
         Debug.Log("pCards count: " + PCardScript.Count);
+    }
+
+    public void ResetCardHolderPlayerCards()
+    { 
+        _isOccupied = false;
+        ValidatedPlayerCardsPower = 0;
+
+        foreach(var card in PCardScript)
+        {
+            card.gameObject.SetActive(false);
+            card.ResetCardPosition();
+        }
+
+        PCardScript.Clear();
+    }
+
+    public void ResetCardHolderEnemyCards()
+    {
+        ValidatorType = null;
+        EnemyComboIndex = -1;
     }
 
 }

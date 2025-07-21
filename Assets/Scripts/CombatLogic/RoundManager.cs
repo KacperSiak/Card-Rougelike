@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class RoundManager : MonoBehaviour
@@ -7,24 +8,43 @@ public class RoundManager : MonoBehaviour
     [SerializeField] private EnemyAttackManager _enemyAttackManager;
     [SerializeField] private List<CardsSOTest> _enemyCards;
     [SerializeField] private List<CardsSOTest> _playerCards;
-    [SerializeField] private List<CardHolderManager> _cardHolders;
+    [SerializeField] private TextMeshProUGUI _playerHPText;
+    [SerializeField] private TextMeshProUGUI _enemyHPText;
+
+    public int PlayerHP { get; private set; } = 50; // temp default value
+    public int EnemyHP { get; private set; } = 50; // temp default values
 
     void Start()
     {
         Cursor.visible = true;
+        HealthUI();
         _playerAttackManager.StartCombatSetup();
         _enemyAttackManager.StartCombatSetup();
         PlayerCardManager.Instance.StartCombat(_playerCards);
         EnemyCardManager.Instance.StartCombat(_enemyCards);
     }
 
+    public void HealthUI()
+    { 
+        _playerHPText.text = $"Player HP: {PlayerHP}";
+        _enemyHPText.text = $"Enemy HP: {EnemyHP}";
+    }
+
+    public void HealthUpdate(int forPlayer, int forEnemy)
+    {
+        PlayerHP -= forPlayer;
+        EnemyHP += forEnemy;
+
+        HealthUI();
+    }
+
     public void EndRound()
     {
-        foreach (var ch in _cardHolders)
-        { 
-            if(ch.ValidatedPlayerCardsPower == 0) break;
+        DamageManager.Instance.CalculatePlayerImpact();
+    }
 
-            //need to rething damage counting logic
-        }
+    public void PrepareNewRound()
+    { 
+    
     }
 }

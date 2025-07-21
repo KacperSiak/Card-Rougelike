@@ -1,11 +1,14 @@
+using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class EnemyAttackManager : MonoBehaviour
 {
     [SerializeField] private List<TextMeshProUGUI> _rounds;
-    [SerializeField] public Dictionary<int, int> RoundsForCards { get; private set; }
+    [SerializeField] private RoundManager _roundManager;
+    [SerializeField] public Dictionary<int, int> RoundsForCards { get; private set; } //update
     private int _round;
 
     public void StartCombatSetup()
@@ -29,5 +32,44 @@ public class EnemyAttackManager : MonoBehaviour
         int amount = Mathf.CeilToInt(5f * (totalPower - 2f) / (42f - 2f));
 
         return Mathf.Clamp(amount, 1, 5);
+    }
+
+    public void UpdateRounds()
+    {
+        int limit = _rounds.Count;
+
+        for (int i = 0; i < limit; i++)
+        {
+            if (!RoundsForCards.ContainsKey(i)) continue;
+
+            RoundsForCards[i]--;
+            if (RoundsForCards[i] > 0)
+            {
+                UpdateUI(key: i);
+                continue;
+            } 
+
+            _roundManager.HealthUpdate(forPlayer: EnemyCardManager.Instance.CardsInGamePower[i], forEnemy: 0);
+            RemoveKey(i);
+            foreach (var card in EnemyCardManager.Instance.CardsInGame[i])
+            {
+                card.SetActive(false);
+            }
+            EnemyCardManager.Instance.RemoveCardFromGame(i);
+            EnemyCardManager.Instance.cardHolders[i].GetComponent<CardHolderManager>().ResetCardHolderEnemyCards();
+        }
+
+        _roundManager.PrepareNewRound();
+    }
+
+    private void UpdateUI(int key)
+    {
+        _rounds[key].text = $"{RoundsForCards[key]}";
+    }
+
+    public void RemoveKey(int key)
+    { 
+        RoundsForCards.Remove(key);
+        _rounds[key].text = string.Empty;
     }
 }
