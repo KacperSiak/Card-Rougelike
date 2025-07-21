@@ -9,7 +9,6 @@ public class NodeTypeSettings
     public NodeType type;
     public int minCount;
     public int maxCount;
-    public float spawnChance;
     public GameObject prefab;
 }
 
@@ -30,7 +29,6 @@ public class MapGenerator : MonoBehaviour
     public float verticalSpacing = 6f;
     
     [Header("Position Randomization")]
-    public bool randomizePositions = true;
     public float horizontalRandomRange = 2f;
     public float verticalRandomRange = 1f;
 
@@ -42,14 +40,10 @@ public class MapGenerator : MonoBehaviour
     [Header("Node Connections")]
     public int minConnectionsPerNode = 1;
     public int maxConnectionsPerNode = 2;
-    [Range(0f, 1f)]
-    public float horizontalConnectionChance = 0.3f;
     
     [Header("Camera")]
     public CameraController cameraController;
     
-    private Material cachedLineMaterial;
-
     public List<List<MapNode>> mapLevels = new List<List<MapNode>>();
     
     private Dictionary<NodeType, int> currentCounts = new Dictionary<NodeType, int>();
@@ -64,17 +58,6 @@ public class MapGenerator : MonoBehaviour
 
     void InitializeSettings()
     {
-        if (nodeTypes == null || nodeTypes.Length == 0)
-        {
-            nodeTypes = new NodeTypeSettings[]
-            {
-                new NodeTypeSettings { type = NodeType.Enemy, minCount = 8, maxCount = 20, spawnChance = 0.6f },
-                new NodeTypeSettings { type = NodeType.Elite, minCount = 2, maxCount = 5, spawnChance = 0.15f },
-                new NodeTypeSettings { type = NodeType.Shop, minCount = 1, maxCount = 3, spawnChance = 0.05f },
-                new NodeTypeSettings { type = NodeType.Treasure, minCount = 3, maxCount = 6, spawnChance = 0.15f }
-            };
-        }
-        
         settingsLookup.Clear();
         currentCounts.Clear();
         
@@ -141,11 +124,8 @@ public class MapGenerator : MonoBehaviour
                 float baseX = i * horizontalSpacing;
                 float baseY = -level * verticalSpacing;
 
-                if (randomizePositions)
-                {
-                    baseX += Random.Range(-horizontalRandomRange, horizontalRandomRange);
-                    baseY += Random.Range(-verticalRandomRange, verticalRandomRange);
-                }
+                baseX += Random.Range(-horizontalRandomRange, horizontalRandomRange);
+                baseY += Random.Range(-verticalRandomRange, verticalRandomRange);
                 
                 float totalWidth = (nodesCount - 1) * horizontalSpacing;
                 float offsetX = -totalWidth / 2f;
@@ -191,23 +171,9 @@ public class MapGenerator : MonoBehaviour
             return NodeType.Enemy;
         }
 
-        float totalWeight = availableTypes.Sum(t => settingsLookup[t].spawnChance);
-        float randomValue = Random.value * totalWeight;
-        float currentWeight = 0f;
-
-        foreach (var type in availableTypes)
-        {
-            currentWeight += settingsLookup[type].spawnChance;
-            if (randomValue <= currentWeight)
-            {
-                currentCounts[type]++;
-                return type;
-            }
-        }
-
-        var fallbackType = availableTypes.First();
-        currentCounts[fallbackType]++;
-        return fallbackType;
+        var selectedType = availableTypes[Random.Range(0, availableTypes.Count)];
+        currentCounts[selectedType]++;
+        return selectedType;
     }
 
     List<NodeType> GetAvailableNodeTypes()
@@ -248,16 +214,6 @@ public class MapGenerator : MonoBehaviour
             }
         }
         
-        EnsureAllNodesConnected();
-        
-        if (horizontalConnectionChance > 0f)
-        {
-            CreateHorizontalConnections();
-        }
-    }
-    
-    void EnsureAllNodesConnected()
-    {
         for (int level = 1; level < mapLevels.Count; level++)
         {
             List<MapNode> currentLevel = mapLevels[level];
@@ -265,28 +221,19 @@ public class MapGenerator : MonoBehaviour
             
             foreach (var node in currentLevel)
             {
-                if (node.ConnectedNodes.Count == 0)
+                while (node.ConnectedNodes.Count < minConnectionsPerNode && previousLevel.Count > 0)
                 {
-                    MapNode closestNode = previousLevel[0];
-                    float closestDistance = Vector2.Distance(node.Position, closestNode.Position);
+                    var unconnectedPrevNodes = previousLevel.Where(prevNode => !node.ConnectedNodes.Contains(prevNode)).ToList();
+                    if (unconnectedPrevNodes.Count == 0) break;
                     
-                    foreach (var prevNode in previousLevel)
-                    {
-                        float distance = Vector2.Distance(node.Position, prevNode.Position);
-                        if (distance < closestDistance)
-                        {
-                            closestDistance = distance;
-                            closestNode = prevNode;
-                        }
-                    }
-                    
-                    if (!node.ConnectedNodes.Contains(closestNode))
-                        node.ConnectedNodes.Add(closestNode);
-                    if (!closestNode.ConnectedNodes.Contains(node))
-                        closestNode.ConnectedNodes.Add(node);
+                    var randomPrevNode = unconnectedPrevNodes[Random.Range(0, unconnectedPrevNodes.Count)];
+                    node.ConnectedNodes.Add(randomPrevNode);
+                    randomPrevNode.ConnectedNodes.Add(node);
                 }
             }
         }
+        
+        CreateHorizontalConnections();
     }
     
     void CreateHorizontalConnections()
@@ -300,7 +247,7 @@ public class MapGenerator : MonoBehaviour
                 MapNode nodeA = currentLevel[i];
                 MapNode nodeB = currentLevel[i + 1];
                 
-                if (Random.value < horizontalConnectionChance)
+                if (Random.Range(0, 2) == 0)
                 {
                     if (!nodeA.ConnectedNodes.Contains(nodeB))
                         nodeA.ConnectedNodes.Add(nodeB);
@@ -343,7 +290,7 @@ public class MapGenerator : MonoBehaviour
         lineObj.transform.SetParent(transform);
         
         LineRenderer line = lineObj.AddComponent<LineRenderer>();
-        line.material = GetLineMaterial();
+        line.material = connectionMaterial;
         line.startWidth = connectionWidth;
         line.endWidth = connectionWidth;
         line.positionCount = 2;
@@ -352,30 +299,6 @@ public class MapGenerator : MonoBehaviour
         
         line.SetPosition(0, startPos);
         line.SetPosition(1, endPos);
-    }
-
-    Material GetLineMaterial()
-    {
-        if (connectionMaterial != null)
-            return connectionMaterial;
-            
-        if (cachedLineMaterial == null)
-        {
-            cachedLineMaterial = CreateDefaultLineMaterial();
-        }
-        
-        return cachedLineMaterial;
-    }
-
-    Material CreateDefaultLineMaterial()
-    {
-        Material mat = new Material(Shader.Find("Unlit/Color"));
-        if (mat.shader == null)
-        {
-            mat = new Material(Shader.Find("Standard"));
-        }
-        mat.color = new Color(0.8f, 0.8f, 0.8f, 0.7f);
-        return mat;
     }
 
     GameObject GetPrefabForNodeType(NodeType type)
@@ -404,44 +327,6 @@ public class MapGenerator : MonoBehaviour
                 else
                     DestroyImmediate(child);
             }
-        }
-    }
-
-    [ContextMenu("Regenerate Map")]
-    public void RegenerateMap()
-    {
-        GenerateMap();
-    }
-
-    [ContextMenu("Validate Settings")]
-    public void ValidateSettings()
-    {
-        foreach (var setting in nodeTypes)
-        {
-            if (setting.minCount > setting.maxCount)
-            {
-                Debug.LogWarning($"{setting.type}: minCount ({setting.minCount}) > maxCount ({setting.maxCount})");
-            }
-            if (setting.prefab == null)
-            {
-                Debug.LogWarning($"{setting.type}: Missing prefab reference");
-            }
-        }
-        
-        if (minConnectionsPerNode > maxConnectionsPerNode)
-        {
-            Debug.LogWarning($"minConnectionsPerNode ({minConnectionsPerNode}) > maxConnectionsPerNode ({maxConnectionsPerNode})");
-        }
-        
-        if (minConnectionsPerNode < 1)
-        {
-            Debug.LogWarning("minConnectionsPerNode should be at least 1 to ensure connectivity");
-        }
-        
-        float totalChance = nodeTypes.Sum(t => t.spawnChance);
-        if (Mathf.Abs(totalChance - 1f) > 0.01f)
-        {
-            Debug.LogWarning($"Total spawn chances = {totalChance:F2}, should be close to 1.0");
         }
     }
 }
