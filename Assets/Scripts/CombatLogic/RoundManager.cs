@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class RoundManager : MonoBehaviour
 {
-    [SerializeField] private PlayerAttackManager _playerAttackManager;
     [SerializeField] private EnemyAttackManager _enemyAttackManager;
     [SerializeField] private List<CardsSOTest> _enemyCards;
     [SerializeField] private List<CardsSOTest> _playerCards;
@@ -18,7 +17,6 @@ public class RoundManager : MonoBehaviour
     {
         Cursor.visible = true;
         HealthUI();
-        _playerAttackManager.StartCombatSetup();
         _enemyAttackManager.StartCombatSetup();
         PlayerCardManager.Instance.StartCombat(_playerCards);
         EnemyCardManager.Instance.StartCombat(_enemyCards);
@@ -45,6 +43,6 @@ public class RoundManager : MonoBehaviour
 
     public void PrepareNewRound()
     { 
-    
+        PlayerCardManager.Instance.RefillCards();
     }
 }

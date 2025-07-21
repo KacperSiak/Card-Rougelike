@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerCardManager : MonoBehaviour
 {
@@ -11,8 +13,8 @@ public class PlayerCardManager : MonoBehaviour
     public int SelectedCardsPower { get; private set; }
 
     private List<CardsSOTest> _playerCardsInGame;
-    private int _cardsInHandStart = 6;
-    private int _currentCardsInHand = 0;
+    private int _cardsInHandDefault = 6;
+    private int _currentCardsInHand = 0; // if we need more than 6 cards in hand use it to build logic
 
     void Awake()
     {
@@ -30,7 +32,7 @@ public class PlayerCardManager : MonoBehaviour
     {
         _playerCardsInGame = new List<CardsSOTest>(playerCards);
         SelectedCards = new List<GameObject>();
-        _spawner.SpawnCards(_playerCardsInGame, _cardsInHandStart);
+        _spawner.SpawnCards(_playerCardsInGame, _cardsInHandDefault, startKey: 0);
     }
 
     public void AddSelectedCards(GameObject card)
@@ -60,8 +62,13 @@ public class PlayerCardManager : MonoBehaviour
         _currentCardsInHand++;
     }
 
+    //for now only 6 cards in hand are generally possible, but for more need to negotiate with the team how they see that 
     public void RefillCards()
     {
-
+        for (int i = 0; i < CardObjects.Count; i++)
+        {
+            if (CardObjects[i].activeSelf) continue;
+            _spawner.SpawnCards(_playerCardsInGame, cardsAmount: 1, startKey: i);
+        }
     }
 }

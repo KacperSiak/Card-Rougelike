@@ -3,11 +3,11 @@ using UnityEngine;
 
 public class PlayerCardSpawner : MonoBehaviour
 {
-    public void SpawnCards(List<CardsSOTest> playerCards, int cardsAmount)
+    public void SpawnCards(List<CardsSOTest> playerCards, int cardsAmount, int startKey)
     {
-        for (int i = 0; i < cardsAmount; i++)
+        for (int i = 0, key = startKey; i < cardsAmount; i++, key++)
         {
-            GameObject cardObject = PlayerCardManager.Instance.CardObjects[i];
+            GameObject cardObject = PlayerCardManager.Instance.CardObjects[key];
             CardsSOTest card = playerCards[Random.Range(0, playerCards.Count)];
             playerCards.Remove(card);
 
