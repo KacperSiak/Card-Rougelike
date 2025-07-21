@@ -3,21 +3,16 @@ using UnityEngine;
 public class CameraController : MonoBehaviour
 {
     [Header("Movement Limits")]
-    public bool useBounds = true;
-    [Tooltip("Min/Max Z position for camera movement (X values are ignored)")]
     public Vector2 minBounds = new Vector2(0f, -50f);
     public Vector2 maxBounds = new Vector2(0f, 10f); 
     
-    [Space(10)]
-    [Header("Debug Info")]
-    [SerializeField, Tooltip("Current camera Z position")]
-    private float currentZPosition;
-    
     [Header("Zoom Settings")]
-    public bool enableZoom = true;
     public float minZoom = 5f;
     public float maxZoom = 20f;
     
+    [Header("References")]
+    public MapGenerator mapGenerator;
+
     private Vector3 lastMousePosition;
     private bool isDragging = false;
     private Camera cam;
@@ -35,13 +30,7 @@ public class CameraController : MonoBehaviour
     void Update()
     {
         HandleDragging();
-        
-        if (enableZoom)
-        {
-            HandleZoom();
-        }
-        
-        currentZPosition = transform.position.z;
+        HandleZoom();
     }
     
     void HandleDragging()
@@ -61,10 +50,7 @@ public class CameraController : MonoBehaviour
             Vector3 newPosition = transform.position;
             newPosition.z += deltaWorld.z;
             
-            if (useBounds)
-            {
-                newPosition.z = Mathf.Clamp(newPosition.z, minBounds.y, maxBounds.y);
-            }
+            newPosition.z = Mathf.Clamp(newPosition.z, minBounds.y, maxBounds.y);
             
             transform.position = newPosition;
         }
@@ -102,12 +88,11 @@ public class CameraController : MonoBehaviour
     [ContextMenu("Set Bounds From Map")]
     public void SetBoundsFromMap()
     {
-        MapGenerator mapGen = FindObjectOfType<MapGenerator>();
-        if (mapGen != null && mapGen.mapLevels != null && mapGen.mapLevels.Count > 0)
+        if (mapGenerator != null && mapGenerator.mapLevels != null && mapGenerator.mapLevels.Count > 0)
         {
             float minZ = float.MaxValue, maxZ = float.MinValue;
             
-            foreach (var level in mapGen.mapLevels)
+            foreach (var level in mapGenerator.mapLevels)
             {
                 foreach (var node in level)
                 {
@@ -124,7 +109,7 @@ public class CameraController : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("No MapGenerator found or map not generated");
+            Debug.LogWarning("No MapGenerator assigned or map not generated");
         }
     }
 }

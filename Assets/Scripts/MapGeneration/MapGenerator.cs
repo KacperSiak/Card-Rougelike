@@ -14,7 +14,6 @@ public class NodeTypeSettings
 
 public class MapGenerator : MonoBehaviour
 {
-    [ExecuteInEditMode]
     [Header("Node Type Configuration")]
     public NodeTypeSettings[] nodeTypes;
     
@@ -80,9 +79,6 @@ public class MapGenerator : MonoBehaviour
         {
             DrawConnections();
         }
-        
-        NodeClickHandler.ResetCache();
-        NodeClickHandler.LoadPlayerPosition();
         
         SetupCameraBounds();
     }
