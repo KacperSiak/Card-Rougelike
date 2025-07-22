@@ -1,7 +1,5 @@
-using NUnit.Framework;
 using UnityEngine;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using System.Linq;
 
 public class ConsumblesMenager : MonoBehaviour
@@ -30,16 +28,12 @@ public class ConsumblesMenager : MonoBehaviour
 
     private void HandleRelicAcquired(RelicData relic)
     {
-        
-
-        if (!currentRelics.Any(r => r.relicName == relic.relicName))
+        if (!currentRelics.Any(r => r.relicID == relic.relicID))
         {
             currentRelics.Add(relic);
             foreach (var effect in relic.relicEffets) effect.Register(ctx);
             relicUI.AddIcon(relic);
         }
-        
-
     }
 
     private void HandleRelicRemoved(RelicData relic)

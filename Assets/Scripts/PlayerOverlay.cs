@@ -1,5 +1,3 @@
-using NUnit.Framework;
-using Unity.VisualScripting.Antlr3.Runtime.Tree;
 using UnityEngine;
 using System.Collections.Generic;
 using TMPro;
@@ -10,8 +8,9 @@ public class PlayerOverlay : MonoBehaviour
     public float maxHP;
     public float currentHP;
     public float addDamage;
+    public int rollTickets;
     public List<NormalCard> deckList;
-    [SerializeField] private TextMeshProUGUI text;
+    [SerializeField] private TextMeshProUGUI _text;
 
     public static PlayerOverlay instance;
 
@@ -22,18 +21,6 @@ public class PlayerOverlay : MonoBehaviour
             instance = this;
         }
     }
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-
     public void AddNormalCard(NormalCard card)
     {
         deckList.Add(card);

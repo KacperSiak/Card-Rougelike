@@ -9,15 +9,14 @@ public class Shop : MonoBehaviour
     public List<ShopItem> allItems;
     public List<GameObject> slots;
 
-    [SerializeField] private Button rerollButton;
+    [SerializeField] private Button _rerollButton;
     
-    private int numberOfItems = 3;
-    private int price;
+    private int _numberOfItems = 3;
+    private int _price;
 
     private void Start()
     {
-        Debug.Log("Shop Start");
-        rerollButton.onClick.AddListener(RerollShop);
+        _rerollButton.onClick.AddListener(TicketRerollShop);
         RerollShop();
     }
 
@@ -26,7 +25,7 @@ public class Shop : MonoBehaviour
         List<ShopItem> currentItems;
         do
         {
-            currentItems = GetRandomItems(allItems, numberOfItems);
+            currentItems = GetRandomItems(allItems, _numberOfItems);
         }
         while (currentItems.TrueForAll(i => i is RelicData) || currentItems.TrueForAll(i => i is ConsumablesData) || currentItems.TrueForAll(i => i is NormalCard));
 
@@ -40,17 +39,26 @@ public class Shop : MonoBehaviour
             {
                 switch (relic.rarity)
                 {
-                    case Rarity.Common: price = Random.Range(5, 10); break;
-                    case Rarity.Rare: price = Random.Range(15, 20); break;
-                    case Rarity.Epic: price = Random.Range(25, 30); break;
-                    case Rarity.Legendary: price = Random.Range(40, 50); break;
+                    case Rarity.Common: _price = Random.Range(5, 10); break;
+                    case Rarity.Rare: _price = Random.Range(15, 20); break;
+                    case Rarity.Epic: _price = Random.Range(25, 30); break;
+                    case Rarity.Legendary: _price = Random.Range(40, 50); break;
                 }
             }
-            else if (item is NormalCard normal) price = Random.Range(5, 10);
-            else price = Random.Range(10, 20);
+            else if (item is NormalCard normal) _price = Random.Range(5, 10);
+            else _price = Random.Range(10, 20);
 
-            shopSlot.Setup(item, price);
+            shopSlot.Setup(item, _price);
         } 
+    }
+
+    private void TicketRerollShop()
+    {
+        if (PlayerOverlay.instance.rollTickets >= 1)
+        {
+            RerollShop();
+            PlayerOverlay.instance.rollTickets--;
+        }
     }
 
     private List<T> GetRandomItems<T>(List<T> list, int count)
@@ -67,6 +75,4 @@ public class Shop : MonoBehaviour
 
         return result;
     }
-
-
 }

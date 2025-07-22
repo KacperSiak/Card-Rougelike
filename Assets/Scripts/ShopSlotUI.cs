@@ -4,42 +4,42 @@ using UnityEngine.UI;
 
 public class ShopSlotUI : MonoBehaviour
 {
-    [SerializeField] private Button buyButton;
-    [SerializeField] private Image icon;
-    [SerializeField] private TextMeshProUGUI priceText;
+    [SerializeField] private Button _buyButton;
+    [SerializeField] private Image _icon;
+    [SerializeField] private TextMeshProUGUI _priceText;
 
-    private ScriptableObject currentItem;
-    private int currentPrice;
+    private ScriptableObject _currentItem;
+    private int _currentPrice;
     void Start()
     {
-        buyButton.onClick.AddListener(Buy);
+        _buyButton.onClick.AddListener(Buy);
     }
 
     public void Setup(ScriptableObject item, int price)
     {
-        currentItem = item;
-        currentPrice = price;
+        _currentItem = item;
+        _currentPrice = price;
 
         if (item is RelicData relic)
         {
-            icon.sprite = relic.icon;
+            _icon.sprite = relic.icon;
         }
         else if (item is ConsumablesData consumable)
         {
-            icon.sprite = consumable.icon;
+            _icon.sprite = consumable.icon;
         }
         else if (item is NormalCard normal)
         {
-            icon.sprite = normal.face;
+            _icon.sprite = normal.face;
         }
-        priceText.text = $"{price}";
+        _priceText.text = $"{price}";
     }
 
     public void Buy()
     {
-        if (PlayerOverlay.instance.gold >= currentPrice)
+        if (PlayerOverlay.instance.gold >= _currentPrice)
         {
-            PlayerOverlay.instance.SpendGold(currentPrice);
+            PlayerOverlay.instance.SpendGold(_currentPrice);
         }
     }
 }
