@@ -22,7 +22,6 @@ public class CameraController : MonoBehaviour
         cam = GetComponent<Camera>();
         if (cam == null)
         {
-            Debug.LogError("CameraController requires a Camera component");
             enabled = false;
         }
     }
@@ -50,7 +49,7 @@ public class CameraController : MonoBehaviour
             Vector3 newPosition = transform.position;
             newPosition.z += deltaWorld.z;
             
-            newPosition.z = Mathf.Clamp(newPosition.z, minBounds.y, maxBounds.y);
+            newPosition.z = Mathf.Clamp(newPosition.z, minBounds.y, maxBounds.y); // ograniczenie do granic
             
             transform.position = newPosition;
         }
@@ -85,7 +84,6 @@ public class CameraController : MonoBehaviour
         }
     }
     
-    [ContextMenu("Set Bounds From Map")]
     public void SetBoundsFromMap()
     {
         if (mapGenerator != null && mapGenerator.mapLevels != null && mapGenerator.mapLevels.Count > 0)
@@ -104,12 +102,6 @@ public class CameraController : MonoBehaviour
             float padding = 10f;
             minBounds = new Vector2(0, minZ - padding);
             maxBounds = new Vector2(0, maxZ + padding);
-            
-            Debug.Log($"Camera Z bounds set to: Min({minBounds.y:F1}) Max({maxBounds.y:F1}) | Map range: {minZ:F1} to {maxZ:F1}");
-        }
-        else
-        {
-            Debug.LogWarning("No MapGenerator assigned or map not generated");
         }
     }
 }

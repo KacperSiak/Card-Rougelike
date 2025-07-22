@@ -73,13 +73,8 @@ public class MapGenerator : MonoBehaviour
         ResetMapState();
         GenerateMapStructure();
         ConnectNodes();
-        InstantiateMapVisuals();
-
-        if (showConnections)
-        {
-            DrawConnections();
-        }
-        
+        InstantiateNodes();
+        DrawConnections();
         SetupCameraBounds();
     }
     
@@ -137,7 +132,7 @@ public class MapGenerator : MonoBehaviour
         }
     }
 
-    void InstantiateMapVisuals()
+    void InstantiateNodes()
     {
         foreach (var level in mapLevels)
         {
@@ -201,7 +196,7 @@ public class MapGenerator : MonoBehaviour
 
                     connectedIndices.Add(index);
                     MapNode targetNode = nextLevel[index];
-                    
+
                     if (!node.ConnectedNodes.Contains(targetNode))
                         node.ConnectedNodes.Add(targetNode);
                     if (!targetNode.ConnectedNodes.Contains(node))
@@ -209,27 +204,28 @@ public class MapGenerator : MonoBehaviour
                 }
             }
         }
-        
+
         for (int level = 1; level < mapLevels.Count; level++)
         {
             List<MapNode> currentLevel = mapLevels[level];
             List<MapNode> previousLevel = mapLevels[level - 1];
-            
+
             foreach (var node in currentLevel)
             {
                 while (node.ConnectedNodes.Count < minConnectionsPerNode && previousLevel.Count > 0)
                 {
                     var unconnectedPrevNodes = previousLevel.Where(prevNode => !node.ConnectedNodes.Contains(prevNode)).ToList();
                     if (unconnectedPrevNodes.Count == 0) break;
-                    
+
                     var randomPrevNode = unconnectedPrevNodes[Random.Range(0, unconnectedPrevNodes.Count)];
                     node.ConnectedNodes.Add(randomPrevNode);
                     randomPrevNode.ConnectedNodes.Add(node);
                 }
             }
         }
-        
+
         CreateHorizontalConnections();
+        
     }
     
     void CreateHorizontalConnections()

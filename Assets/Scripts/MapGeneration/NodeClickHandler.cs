@@ -17,10 +17,10 @@ public class NodeClickHandler : MonoBehaviour
 
     void Start()
     {
-        // Tymczasowy fallback
+        // tymczasowy fallback
         if (mapGenerator == null)
         {
-            mapGenerator = FindObjectOfType<MapGenerator>();
+            mapGenerator = FindFirstObjectByType<MapGenerator>();
         }
         
         if (GetComponent<Collider>() == null)

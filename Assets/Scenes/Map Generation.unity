@@ -291,7 +291,7 @@ MonoBehaviour:
     prefab: {fileID: 8174134825137076215, guid: 78ea7ab5ff7d80e4a91f1b760d2c1274, type: 3}
   bossPrefab: {fileID: 2933860668956614407, guid: dc8b3ac756e3dcd4eb46b6ad12fb2515, type: 3}
   numberOfLevels: 7
-  minNodesPerLevel: 2
+  minNodesPerLevel: 1
   maxNodesPerLevel: 3
   horizontalSpacing: 5
   verticalSpacing: 5
@@ -301,7 +301,7 @@ MonoBehaviour:
   connectionMaterial: {fileID: 2100000, guid: 48a306c2c149cec4ba5543902c74ce82, type: 2}
   connectionWidth: 0.2
   minConnectionsPerNode: 1
-  maxConnectionsPerNode: 3
+  maxConnectionsPerNode: 2
   cameraController: {fileID: 1665362199}
 --- !u!1 &1301801508
 GameObject:

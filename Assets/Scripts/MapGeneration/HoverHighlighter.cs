@@ -21,17 +21,14 @@ public class HoverHighlighter : MonoBehaviour
         objectRenderer = GetComponent<Renderer>();
         objectCollider = GetComponent<Collider>();
         
-        // Sprawdź komponenty
         if (objectRenderer == null)
         {
-            Debug.LogError($"HoverHighlighter: Missing Renderer component on object {gameObject.name}");
             enabled = false;
             return;
         }
         
         if (objectCollider == null)
         {
-            Debug.LogError($"HoverHighlighter: Missing Collider component on object {gameObject.name}");
             enabled = false;
             return;
         }
@@ -45,7 +42,6 @@ public class HoverHighlighter : MonoBehaviour
     {
         if (Camera.main == null)
         {
-            Debug.LogError("HoverHighlighter: Missing main camera");
             return;
         }
 
@@ -81,24 +77,21 @@ public class HoverHighlighter : MonoBehaviour
     {
         if (objectRenderer == null) return;
         
-        if (highlight == isHighlighted) return; // Nie zmieniaj jeśli stan jest już właściwy
+        if (highlight == isHighlighted) return;
         
         SetColor(highlight);
         
         isHighlighted = highlight;
-        Debug.Log($"{(highlight ? "Highlighted" : "Removed highlight from")} object: {gameObject.name}");
     }
     
     private void SetColor(bool highlight)
     {
         if (propertyBlock == null) return;
         
-        // Wybierz kolor w zależności od stanu
         Color targetColor = highlight ? highlightColor : baseColor;
         
         objectRenderer.GetPropertyBlock(propertyBlock);
         
-        // Ustaw kolor podstawowy (wspiera URP i Built-in)
         propertyBlock.SetColor(BaseColorProperty, targetColor);
         propertyBlock.SetColor(ColorProperty, targetColor);
         
@@ -113,14 +106,12 @@ public class HoverHighlighter : MonoBehaviour
         }
     }
     
-    // Metoda do ręcznego przełączania podświetlenia (dla debugowania)
     [ContextMenu("Toggle Highlight")]
     public void ToggleHighlight()
     {
         SetHighlight(!isHighlighted);
     }
     
-    // Metoda do wymuszenia podświetlenia (dla innych skryptów)
     public void ForceHighlight(bool highlight)
     {
         SetHighlight(highlight);
