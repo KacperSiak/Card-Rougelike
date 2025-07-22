@@ -1,5 +1,3 @@
-using NUnit.Framework;
-using Unity.VisualScripting.Antlr3.Runtime.Tree;
 using UnityEngine;
 using System.Collections.Generic;
 using TMPro;
@@ -21,18 +19,11 @@ public class PlayerOverlay : MonoBehaviour
         {
             instance = this;
         }
+        else
+        {
+            Debug.LogWarning("Found another PlayerOverlay");
+        }
     }
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
 
     public void AddNormalCard(NormalCard card)
     {

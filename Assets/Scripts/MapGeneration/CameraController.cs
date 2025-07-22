@@ -10,6 +10,7 @@ public class CameraController : MonoBehaviour
     public float minZoom = 5f;
     public float maxZoom = 20f;
     
+    //delete
     [Header("References")]
     public MapGenerator mapGenerator;
 
@@ -42,6 +43,7 @@ public class CameraController : MonoBehaviour
             isDragging = true;
         }
         
+        //if (Input.GetMouseButton(0)) check this
         if (Input.GetMouseButton(0) && isDragging)
         {
             Vector3 currentMouseWorld = GetMouseWorldPosition();
@@ -76,7 +78,7 @@ public class CameraController : MonoBehaviour
         {
             if (cam.orthographic)
             {
-                cam.orthographicSize = Mathf.Clamp(cam.orthographicSize - scroll * 2f, minZoom, maxZoom);
+                cam.orthographicSize = Mathf.Clamp(cam.orthographicSize - scroll * 2f, minZoom, maxZoom); //magic numbers!
             }
             else
             {
@@ -86,7 +88,8 @@ public class CameraController : MonoBehaviour
     }
     
     [ContextMenu("Set Bounds From Map")]
-    public void SetBoundsFromMap()
+	//public void SetBoundsFromMap(MapGenerator mapGenerator)
+	public void SetBoundsFromMap()
     {
         if (mapGenerator != null && mapGenerator.mapLevels != null && mapGenerator.mapLevels.Count > 0)
         {

@@ -8,13 +8,16 @@ public class EnemyAttackManager : MonoBehaviour
 {
     [SerializeField] private List<TextMeshProUGUI> _rounds;
     [SerializeField] private RoundManager _roundManager;
-    [SerializeField] public Dictionary<int, int> RoundsForCards { get; private set; } //update
+    [SerializeField] public Dictionary<int, int> RoundsForCards { get; private set; } //update = new();
     private int _round;
+
+    //private const float k_rate = 8f;
 
     public void StartCombatSetup()
     {
         RoundsForCards = new Dictionary<int, int>();
-    }
+        //RoundsForCards.Clear();
+	}
 
     public void SetRoundAttack(int key)
     {
@@ -30,8 +33,9 @@ public class EnemyAttackManager : MonoBehaviour
     private int CalculateRound(int totalPower)
     { 
         int amount = Mathf.CeilToInt(5f * (totalPower - 2f) / (42f - 2f));
+		//int amount = Mathf.CeilToInt((totalPower - 2f) / k_rate);
 
-        return Mathf.Clamp(amount, 1, 5);
+		return Mathf.Clamp(amount, 1, 5); //magic numbers
     }
 
     public void UpdateRounds()
@@ -50,7 +54,9 @@ public class EnemyAttackManager : MonoBehaviour
             } 
 
             _roundManager.HealthUpdate(forPlayer: EnemyCardManager.Instance.CardsInGamePower[i], forEnemy: 0);
-            RemoveKey(i);
+            //_roundManager.PlayerHP -= EnemyCardManager.Instance.CardsInGamePower[i];
+
+			RemoveKey(i);
             foreach (var card in EnemyCardManager.Instance.CardsInGame[i])
             {
                 card.SetActive(false);
@@ -59,8 +65,8 @@ public class EnemyAttackManager : MonoBehaviour
             EnemyCardManager.Instance.cardHolders[i].GetComponent<CardHolderManager>().ResetCardHolderEnemyCards();
         }
 
-        _roundManager.PrepareNewRound();
-    }
+		_roundManager.PrepareNewRound(); //move to round manager
+	}
 
     private void UpdateUI(int key)
     {

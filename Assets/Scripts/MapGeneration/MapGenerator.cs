@@ -4,6 +4,7 @@ using System.Linq;
 using MapSystem;
 
 [System.Serializable]
+//public struct NodeTypeSettings
 public class NodeTypeSettings
 {
     public NodeType type;
@@ -22,7 +23,9 @@ public class MapGenerator : MonoBehaviour
 
     [Header("Map Settings")]
     public int numberOfLevels = 8;
-    public int minNodesPerLevel = 2;
+	//[field: SerializeField] public int NumberOfLevels { get; private set; } = 8;
+
+	public int minNodesPerLevel = 2;
     public int maxNodesPerLevel = 4;
     public float horizontalSpacing = 5f;
     public float verticalSpacing = 6f;
@@ -88,6 +91,7 @@ public class MapGenerator : MonoBehaviour
         if (cameraController != null)
         {
             cameraController.SetBoundsFromMap();
+            //cameraController.SetBoundsFromMap(this);
         }
     }
 

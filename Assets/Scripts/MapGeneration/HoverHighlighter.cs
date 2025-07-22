@@ -19,7 +19,7 @@ public class HoverHighlighter : MonoBehaviour
     void Start()
     {
         objectRenderer = GetComponent<Renderer>();
-        objectCollider = GetComponent<Collider>();
+        objectCollider = GetComponent<Collider>(); //do not look for references in runtime
         
         // Sprawdź komponenty
         if (objectRenderer == null)
@@ -67,8 +67,10 @@ public class HoverHighlighter : MonoBehaviour
                     SetHighlight(false);
                 }
             }
-        }
-        else
+
+			//SetHighlight(hit.transform == transform);
+		}
+		else
         {
             if (isHighlighted)
             {

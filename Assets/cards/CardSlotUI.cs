@@ -2,19 +2,20 @@ using UnityEngine;
 using UnityEngine.UI;
 public class CardSlotUI : MonoBehaviour
 {
-    public Image icon;
+    [SerializeField] private Image _icon;
     public Button useButton;
     public Button discardButton;
 
-    private ConsumablesData cardData;
-    private PlayerOverlay player;
+    //prywatne zmienne _nazwa
+    private ConsumablesData _cardData;
+    private PlayerOverlay _player;
 
     public void Setup(ConsumablesData data, PlayerOverlay p)
     {
-        cardData = data;
-        player = p;
+        _cardData = data;
+        _player = p;
 
-        icon.sprite = cardData.icon;
+        _icon.sprite = _cardData.icon;
 
         useButton.onClick.RemoveAllListeners();
         useButton.onClick.AddListener(UseCard);
@@ -27,9 +28,9 @@ public class CardSlotUI : MonoBehaviour
     {
         var ctx = new ConsumableContext
         {
-            player = player
+            player = _player
         };
-        foreach (var effect in cardData.cardEffects)
+        foreach (var effect in _cardData.cardEffects)
         {
             effect.ApplyEffect(ctx);
         }

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//public class CardHolder : MonoBehaviour
 public class CardHolderManager : MonoBehaviour
 {
     [SerializeField] private Material _highlightMaterial;
@@ -10,7 +11,8 @@ public class CardHolderManager : MonoBehaviour
     public IValidate ValidatorType { get; private set; } = null;
 
     public int EnemyComboIndex { get; private set; } = -1;
-    public  List<PlayerCardLogic> PCardScript { get; private set; }
+    public List<PlayerCardLogic> PCardScript { get; private set; }
+    //public List<PlayerCardLogic> PCardScripts { get; private set; }
 
     public int ValidatedPlayerCardsPower { get; private set; } = 0;
 

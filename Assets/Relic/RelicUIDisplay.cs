@@ -26,6 +26,7 @@ public class RelicUIDisplay : MonoBehaviour
     {
         GameObject icon = Instantiate(iconPrefab, iconDisplay);
         Image img = icon.GetComponent<Image>();
+        //warnings
         if (img != null)
             img.sprite = relic.icon;
 

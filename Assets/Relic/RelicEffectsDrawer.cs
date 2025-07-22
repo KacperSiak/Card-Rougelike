@@ -3,8 +3,6 @@ using UnityEditor;
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using Unity.VisualScripting;
-using static RelicData;
 
 [CustomPropertyDrawer(typeof(RelicEffects), true)]
 

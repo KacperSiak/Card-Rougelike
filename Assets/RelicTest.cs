@@ -5,10 +5,6 @@ public class RelicTest : MonoBehaviour
     [SerializeField] private RelicData relic1;
     [SerializeField] private RelicData relic2;
     [SerializeField] private RelicData relic3;
-    void Start()
-    {
-        
-    }
 
     // Update is called once per frame
     void Update()

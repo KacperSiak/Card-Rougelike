@@ -11,7 +11,9 @@ public class EnemyCardSpawner : MonoBehaviour
     private int _cardsInCombo = 3;
     private int _cardsBuffer = 2;
 
-    public void SpawnCombo(int indexObject, int indexCardHolder, Dictionary<int, List<CardsSOTest>> cardsBySuit)
+    List<int> _index = new();
+
+	public void SpawnCombo(int indexObject, int indexCardHolder, Dictionary<int, List<CardsSOTest>> cardsBySuit)
     {
         int cleanOrDirty = Random.Range(0, 2); // randomly from 0-1, 0 is clean, 1 is dirty
         bool isClean = cleanOrDirty == 0;
@@ -89,8 +91,9 @@ public class EnemyCardSpawner : MonoBehaviour
             }
 
             List<int> index = new List<int>();
+            //_index.Clear();
 
-            Debug.Log("I'm here under count");
+			Debug.Log("I'm here under count");
 
             for (int i = randomDirtySuit, count = 1; i < randomDirtySuit + 3; i++, count++) //here is a problem
             {

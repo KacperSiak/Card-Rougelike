@@ -18,6 +18,7 @@ public class DamageManager : MonoBehaviour
         else
         {
             Destroy(gameObject);
+            //Debug.LogWarning("Another DamageManger found");
         }
     }
 
