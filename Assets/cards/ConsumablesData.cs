@@ -3,8 +3,8 @@ using System;
 using UnityEngine;
 using System.Collections.Generic;
 
-[CreateAssetMenu(fileName = "ConsumablesData", menuName = "Scriptable Objects/ConsumablesData")]
-public class ConsumablesData : ScriptableObject
+[CreateAssetMenu(fileName = "ConsumablesData", menuName = "Shop/Consumable")]
+public class ConsumablesData : ShopItem
 {
     public string cardName;
     [TextArea] public string cardDescription;

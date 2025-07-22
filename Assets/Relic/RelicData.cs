@@ -12,9 +12,10 @@ public enum Rarity
     Legendary
 }
 
-[CreateAssetMenu(fileName = "RelicData", menuName = "Scriptable Objects/RelicData")]
-public class RelicData : ScriptableObject
+[CreateAssetMenu(fileName = "RelicData", menuName = "Shop/Relic")]
+public class RelicData : ShopItem
 {
+    public string relicID;
     public string relicName;
     [TextArea] public string description;
     public Sprite icon;

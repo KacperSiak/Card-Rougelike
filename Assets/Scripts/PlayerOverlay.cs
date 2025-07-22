@@ -6,7 +6,7 @@ using TMPro;
 
 public class PlayerOverlay : MonoBehaviour
 {
-    public float Gold;
+    public float gold;
     public float maxHP;
     public float currentHP;
     public float addDamage;
@@ -42,5 +42,11 @@ public class PlayerOverlay : MonoBehaviour
     public void RemoveNormalCard(NormalCard card)
     {
         deckList.Remove(card);
+    }
+
+    public void SpendGold(int gold)
+    {
+        this.gold -= gold;
+        // wyœwietl nowe siano :)
     }
 }
