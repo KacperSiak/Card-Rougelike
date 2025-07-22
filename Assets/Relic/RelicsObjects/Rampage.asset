@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ac408ffee77df04da26ff85eae270b0, type: 3}
   m_Name: Rampage
   m_EditorClassIdentifier: 
+  relicID: Rampage
   relicName: Rampage
   description: For every 10 missing health, you gain +1 damage
   icon: {fileID: 0}

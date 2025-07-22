@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ac408ffee77df04da26ff85eae270b0, type: 3}
   m_Name: DoubleDamage
   m_EditorClassIdentifier: 
+  relicID: DoubleDamage
   relicName: DoubleDamage
   description: If you beat clear sequence with single card you deal double damage
   icon: {fileID: 0}

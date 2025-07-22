@@ -144,7 +144,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 639151788}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fd04c91a230ed6e42a7f1239251156e5, type: 3}
   m_Name: 
@@ -173,7 +173,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 639151788}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cddf5768cf0e2cf42985172edcc3ab62, type: 3}
   m_Name: 
@@ -190,6 +190,7 @@ GameObject:
   m_Component:
   - component: {fileID: 780094083}
   - component: {fileID: 780094082}
+  - component: {fileID: 780094084}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -213,8 +214,9 @@ MonoBehaviour:
   maxHP: 0
   currentHP: 0
   addDamage: 0
+  rollTickets: 0
   deckList: []
-  text: {fileID: 0}
+  _text: {fileID: 0}
 --- !u!4 &780094083
 Transform:
   m_ObjectHideFlags: 0
@@ -230,6 +232,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &780094084
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 780094081}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75b496c1b9aad17478f76e257b4b7d58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  allItems: []
+  slots: []
+  _rerollButton: {fileID: 0}
 --- !u!1 &973536414
 GameObject:
   m_ObjectHideFlags: 0
@@ -407,7 +424,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1258569279}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 103117ca7af5fa64aac3f04f7b33e1a8, type: 3}
   m_Name: 
@@ -561,7 +578,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1679897984}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f5d4cb6bed8a72b41bee887a704fc843, type: 3}
   m_Name: 

@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ac408ffee77df04da26ff85eae270b0, type: 3}
   m_Name: DeathSave
   m_EditorClassIdentifier: 
+  relicID: DeathSave
   relicName: DeathSave
   description: Prevents death, give 25% health and dissapear
   icon: {fileID: 0}

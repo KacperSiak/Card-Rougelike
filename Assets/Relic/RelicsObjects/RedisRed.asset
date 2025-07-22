@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ac408ffee77df04da26ff85eae270b0, type: 3}
   m_Name: RedisRed
   m_EditorClassIdentifier: 
+  relicID: RedisRed
   relicName: RedisRed
   description: Hearths and Diamnonds are count as the same suit
   icon: {fileID: 0}

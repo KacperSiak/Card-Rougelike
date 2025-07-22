@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ac408ffee77df04da26ff85eae270b0, type: 3}
   m_Name: Interest
   m_EditorClassIdentifier: 
+  relicID: Interest
   relicName: Interest
   description: Rise your interest up to 10
   icon: {fileID: 0}

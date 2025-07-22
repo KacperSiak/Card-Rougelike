@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ac408ffee77df04da26ff85eae270b0, type: 3}
   m_Name: InterestDamage
   m_EditorClassIdentifier: 
+  relicID: InterestDamage
   relicName: InterestDamage
   description: You deal additional damage for each interest
   icon: {fileID: 0}

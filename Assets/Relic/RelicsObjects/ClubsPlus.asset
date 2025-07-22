@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ac408ffee77df04da26ff85eae270b0, type: 3}
   m_Name: ClubsPlus
   m_EditorClassIdentifier: 
+  relicID: ClubsPlus
   relicName: ClubsPlus
   description: Your clubs cards deal +2 damage
   icon: {fileID: 0}

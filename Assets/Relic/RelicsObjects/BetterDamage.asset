@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ac408ffee77df04da26ff85eae270b0, type: 3}
   m_Name: BetterDamage
   m_EditorClassIdentifier: 
+  relicID: BetterDamage
   relicName: BetterDamage
   description: if you block single card with power over 3 you deal +3 damage
   icon: {fileID: 0}

@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ac408ffee77df04da26ff85eae270b0, type: 3}
   m_Name: BlackGoldFever
   m_EditorClassIdentifier: 
+  relicID: BlackGoldFever
   relicName: BlackGoldFever
   description: For every black card player you get 5 gold
   icon: {fileID: 0}

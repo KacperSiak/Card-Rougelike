@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ac408ffee77df04da26ff85eae270b0, type: 3}
   m_Name: DrawWin
   m_EditorClassIdentifier: 
+  relicID: DrawWin
   relicName: DrawWin
   description: You can win with draws dealing 1 damage
   icon: {fileID: 0}

@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ac408ffee77df04da26ff85eae270b0, type: 3}
   m_Name: DiscardOrGold
   m_EditorClassIdentifier: 
+  relicID: DiscardOrGold
   relicName: DiscardOrGold
   description: Gain one gold for every unused discard
   icon: {fileID: 0}

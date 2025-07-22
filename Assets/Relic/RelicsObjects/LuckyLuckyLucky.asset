@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ac408ffee77df04da26ff85eae270b0, type: 3}
   m_Name: LuckyLuckyLucky
   m_EditorClassIdentifier: 
+  relicID: LuckyLuckyLucky
   relicName: LuckyLuckyLucky
   description: You get better rng for gambling, treasures and drops
   icon: {fileID: 0}
