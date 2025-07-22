@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class Validator : MonoBehaviour
 {
-    //Refactor to Interface, remove switch, separate logic for each type of combo 
+    //Refactor to abstract class T_T
 
     [SerializeField] private EnemyAttackManager _enemyAttackManager;
 

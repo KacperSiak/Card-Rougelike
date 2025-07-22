@@ -6,14 +6,18 @@ using UnityEngine.InputSystem;
 
 public class EnemyAttackManager : MonoBehaviour
 {
-    [SerializeField] private List<TextMeshProUGUI> _rounds;
-    [SerializeField] private RoundManager _roundManager;
-    [SerializeField] public Dictionary<int, int> RoundsForCards { get; private set; } //update
+    [SerializeField] public Dictionary<int, int> RoundsForCards { get; private set; } = new();
     private int _round;
+    private const int minTotalPower = 2;
+    private const int maxTotalPower = 42;
+    private const int maxRoundsToAttack = 5;
+    private const int minRound = 1;
+    private const int maxRound = 5;
+    private const int limit = 3;
 
     public void StartCombatSetup()
     {
-        RoundsForCards = new Dictionary<int, int>();
+        RoundsForCards.Clear();
     }
 
     public void SetRoundAttack(int key)
@@ -22,22 +26,20 @@ public class EnemyAttackManager : MonoBehaviour
 
         _round = CalculateRound(_cardsPower);
 
-        _rounds[key].text = $"{_round}";
-
         RoundsForCards.Add(key, _round);
+
+        UIManager.Instance.SetRoundForEnemyUI(key);
     }
 
     private int CalculateRound(int totalPower)
     { 
-        int amount = Mathf.CeilToInt(5f * (totalPower - 2f) / (42f - 2f));
+        int amount = Mathf.CeilToInt(maxRoundsToAttack * (totalPower - minTotalPower) / (maxTotalPower - minTotalPower));
 
-        return Mathf.Clamp(amount, 1, 5);
+        return Mathf.Clamp(amount, minRound, maxRound);
     }
 
     public void UpdateRounds()
     {
-        int limit = _rounds.Count;
-
         for (int i = 0; i < limit; i++)
         {
             if (!RoundsForCards.ContainsKey(i)) continue;
@@ -45,11 +47,11 @@ public class EnemyAttackManager : MonoBehaviour
             RoundsForCards[i]--;
             if (RoundsForCards[i] > 0)
             {
-                UpdateUI(key: i);
+                UIManager.Instance.SetRoundForEnemyUI(key: i);
                 continue;
             } 
 
-            _roundManager.HealthUpdate(forPlayer: EnemyCardManager.Instance.CardsInGamePower[i], forEnemy: 0);
+            RoundManager.Instance.PlayerHP -= EnemyCardManager.Instance.CardsInGamePower[i];
             RemoveKey(i);
             foreach (var card in EnemyCardManager.Instance.CardsInGame[i])
             {
@@ -59,17 +61,12 @@ public class EnemyAttackManager : MonoBehaviour
             EnemyCardManager.Instance.cardHolders[i].GetComponent<CardHolderManager>().ResetCardHolderEnemyCards();
         }
 
-        _roundManager.PrepareNewRound();
-    }
-
-    private void UpdateUI(int key)
-    {
-        _rounds[key].text = $"{RoundsForCards[key]}";
+        RoundManager.Instance.PrepareNewRound();
     }
 
     public void RemoveKey(int key)
     { 
+        UIManager.Instance.SetRoundForEnemyUI(key);
         RoundsForCards.Remove(key);
-        _rounds[key].text = string.Empty;
     }
 }

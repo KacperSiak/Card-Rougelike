@@ -5,7 +5,6 @@ using UnityEngine.UI;
 public class FinishRoundBtn : MonoBehaviour
 {
     private Button _button;
-    [SerializeField] RoundManager _roundManager;
 
     void Start()
     {
@@ -15,7 +14,7 @@ public class FinishRoundBtn : MonoBehaviour
 
     private void OnFinishRoundClicked()
     {
-        _roundManager.EndRound();
+        RoundManager.Instance.EndRound();
     }
 
 }

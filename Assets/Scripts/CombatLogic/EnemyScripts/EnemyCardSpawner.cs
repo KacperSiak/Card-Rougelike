@@ -75,12 +75,8 @@ public class EnemyCardSpawner : MonoBehaviour
             EnemyCardManager.Instance.SetupCardHolder(key, validationType: _clean);
             EnemyCardManager.Instance.CardsInGamePower.Add(key, power);
             _enemyAttackManager.SetRoundAttack(key);
-
+            return;
         }
-
-        else
-        {
-            Debug.Log("I'm here");
 
             if (cardsBySuit.Count < 3)
             {
@@ -90,9 +86,7 @@ public class EnemyCardSpawner : MonoBehaviour
 
             List<int> index = new List<int>();
 
-            Debug.Log("I'm here under count");
-
-            for (int i = randomDirtySuit, count = 1; i < randomDirtySuit + 3; i++, count++) //here is a problem
+            for (int i = randomDirtySuit, count = 1; i < randomDirtySuit + 3; i++, count++) 
             {
                 foreach (var card in cardsBySuit[i])
                 {
@@ -109,8 +103,6 @@ public class EnemyCardSpawner : MonoBehaviour
                     return;
                 }
             }
-
-            Debug.Log("I'm here under for check");
 
             for (int i = 0; i < _cardsInCombo; i++)
             {
@@ -134,8 +126,6 @@ public class EnemyCardSpawner : MonoBehaviour
             EnemyCardManager.Instance.SetupCardHolder(key, validationType: _dirty);
             EnemyCardManager.Instance.CardsInGamePower.Add(key, power);
             _enemyAttackManager.SetRoundAttack(key);
-
-        }
 
     }
 

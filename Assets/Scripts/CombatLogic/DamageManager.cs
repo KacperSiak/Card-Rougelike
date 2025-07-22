@@ -4,7 +4,6 @@ using UnityEngine;
 public class DamageManager : MonoBehaviour
 {
    public static DamageManager Instance { get; private set; }
-   [SerializeField] private RoundManager _roundManager;
    [SerializeField] private EnemyAttackManager _enemyAttackManager;
 
    [SerializeField] private List<CardHolderManager> _cardHolders;
@@ -40,7 +39,7 @@ public class DamageManager : MonoBehaviour
         {
             if (EnemyCardManager.Instance.CardsInGamePower[i] > 0) continue;
 
-            _roundManager.HealthUpdate(forPlayer: 0, forEnemy: EnemyCardManager.Instance.CardsInGamePower[i]);
+            RoundManager.Instance.EnemyHP -= -EnemyCardManager.Instance.CardsInGamePower[i]; // cuz number in the list will be negative after we will implement player impact
             _cardHolders[i].ResetCardHolderEnemyCards();
 
             foreach (var card in EnemyCardManager.Instance.CardsInGame[i])

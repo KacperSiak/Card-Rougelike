@@ -12,8 +12,8 @@ public class EnemyCardManager : MonoBehaviour
 
     private Dictionary<int, List<CardsSOTest>> _cardsBySuit = new Dictionary<int, List<CardsSOTest>>();
 
-    public Dictionary<int, List<GameObject>> CardsInGame { get; private set;} //update
-    public Dictionary<int, int> CardsInGamePower { get; private set; } //update
+    public Dictionary<int, List<GameObject>> CardsInGame { get; private set;} 
+    public Dictionary<int, int> CardsInGamePower { get; private set; } 
 
     private int _suitsAmount = 4;
     private int _cardsSameSuit = 5;
