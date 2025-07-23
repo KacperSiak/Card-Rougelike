@@ -6,8 +6,8 @@ using UnityEngine.Rendering;
 
 public class Shop : MonoBehaviour
 {
-    public List<ShopItem> allItems;
-    public List<GameObject> slots;
+    [SerializeField] private List<ShopItem> _allItems;
+    [SerializeField] private List<GameObject> _slots;
 
     [SerializeField] private Button _rerollButton;
     
@@ -16,6 +16,7 @@ public class Shop : MonoBehaviour
 
     private void Start()
     {
+        Debug.Log("Shop Start");
         _rerollButton.onClick.AddListener(TicketRerollShop);
         RerollShop();
     }
@@ -25,14 +26,14 @@ public class Shop : MonoBehaviour
         List<ShopItem> currentItems;
         do
         {
-            currentItems = GetRandomItems(allItems, _numberOfItems);
+            currentItems = GetRandomItems(_allItems, _numberOfItems);
         }
         while (currentItems.TrueForAll(i => i is RelicData) || currentItems.TrueForAll(i => i is ConsumablesData) || currentItems.TrueForAll(i => i is NormalCard));
 
         for (int i = 0; i < currentItems.Count; i++)
         {
             var item = currentItems[i];
-            var slotObject = slots[i];
+            var slotObject = _slots[i];
             var shopSlot = slotObject.GetComponent<ShopSlotUI>();
 
             if (item is RelicData relic)

@@ -2,13 +2,12 @@ using UnityEngine;
 
 public class CardInventoryUI : MonoBehaviour
 {
-	public GameObject slotPrefab;
-	public Transform slotParent;
-	public PlayerOverlay player;
+	[SerializeField] private GameObject _slotPrefab;
+	[SerializeField] private Transform _slotParent;
 	
 	public void AddCard(ConsumablesData card)
 	{
-		var slot = Instantiate(slotPrefab, slotParent);
-		slot.GetComponent<CardSlotUI>().Setup(card, player);
+		var slot = Instantiate(_slotPrefab, _slotParent);
+		slot.GetComponent<CardSlotUI>().Setup(card);
 	}
 }

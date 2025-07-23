@@ -70,9 +70,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b03ef75983f2c20488197ade037f47d5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  buyButton: {fileID: 597653816894010989}
-  icon: {fileID: 3184010829154771905}
-  priceText: {fileID: 3929433126942215028}
+  _buyButton: {fileID: 597653816894010989}
+  _icon: {fileID: 3184010829154771905}
+  _priceText: {fileID: 3929433126942215028}
 --- !u!1 &6070931772091923697
 GameObject:
   m_ObjectHideFlags: 0

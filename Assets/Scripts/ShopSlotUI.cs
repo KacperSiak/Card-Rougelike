@@ -20,6 +20,7 @@ public class ShopSlotUI : MonoBehaviour
         _currentItem = item;
         _currentPrice = price;
 
+        Debug.Log($"Setup wywo³any dla: {_currentItem.name} | Cena: {_currentPrice}");
         if (item is RelicData relic)
         {
             _icon.sprite = relic.icon;
@@ -33,6 +34,7 @@ public class ShopSlotUI : MonoBehaviour
             _icon.sprite = normal.face;
         }
         _priceText.text = $"{price}";
+
     }
 
     public void Buy()
@@ -40,6 +42,12 @@ public class ShopSlotUI : MonoBehaviour
         if (PlayerOverlay.instance.gold >= _currentPrice)
         {
             PlayerOverlay.instance.SpendGold(_currentPrice);
+            Debug.Log("Brawo. Kupi³eœ item");
         }
+        else
+        {
+            Debug.Log("Sorry. Nie staæ cie");
+        }
+        
     }
 }

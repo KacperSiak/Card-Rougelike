@@ -3,10 +3,8 @@ using UnityEngine.UI;
 
 public class RelicUIDisplay : MonoBehaviour
 {
-    public GameObject iconPrefab;
-    public Transform iconDisplay;
-
-    public ConsumblesMenager menager;
+    [SerializeField] private GameObject _iconPrefab;
+    [SerializeField] private Transform _iconDisplay;
 
     private void Start()
     {
@@ -15,16 +13,15 @@ public class RelicUIDisplay : MonoBehaviour
 
     private void RefreshDisplay()
     {
-        foreach (var relic in menager.currentRelics)
+        foreach (var relic in ConsumablesMenager.instance.currentRelics)
         {
             AddIcon(relic);
         }
-
     }
 
     public void AddIcon(RelicData relic)
     {
-        GameObject icon = Instantiate(iconPrefab, iconDisplay);
+        GameObject icon = Instantiate(_iconPrefab, _iconDisplay);
         Image img = icon.GetComponent<Image>();
         if (img != null)
             img.sprite = relic.icon;

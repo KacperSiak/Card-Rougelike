@@ -2,21 +2,15 @@ using UnityEngine;
 using UnityEngine.UI;
 
 
-public class CardUSer : MonoBehaviour
+public class CardUser : MonoBehaviour
 {
-    public ConsumablesData card;
-    public Button button;
+    [SerializeField] private ConsumablesData _card;
+    [SerializeField] private Button _useButton;
     public PlayerOverlay player;
 
     void Start()
     {
-        button.onClick.AddListener(OnButtonClicked);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        _useButton.onClick.AddListener(OnButtonClicked);
     }
 
     void OnButtonClicked()
@@ -25,7 +19,7 @@ public class CardUSer : MonoBehaviour
         {
             player = player
         };
-        foreach (var effect in card.cardEffects)
+        foreach (var effect in _card.cardEffects)
         {
             effect.ApplyEffect(ctx);
         }
