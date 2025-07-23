@@ -15,10 +15,10 @@ public class ToolTipManager : MonoBehaviour
         tooltipPanel.SetActive(false);
 
     }
-    public void ShowToolTip(string description, Vector2 position)
+    public void ShowToolTip(string name, string description, Vector2 position)
     {
         tooltipPanel.SetActive(true);
-        tooltipText.text = description;
+        tooltipText.text = name + "\n\n" + description;
 
         panelRect.position = position;
     }

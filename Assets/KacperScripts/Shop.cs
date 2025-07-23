@@ -13,6 +13,7 @@ public class Shop : MonoBehaviour
     
     private int _numberOfItems = 3;
     private int _price;
+    private float _priceMultiplier = 1f;
 
     private void Start()
     {
@@ -20,6 +21,19 @@ public class Shop : MonoBehaviour
         _rerollButton.onClick.AddListener(TicketRerollShop);
         RerollShop();
     }
+
+    private void OnEnable()
+    {
+        Discount.OnDiscountActivated.AddListener(ApplyDiscount);
+        Discount.OnDiscountDeactivated.AddListener(RemoveDiscount);
+    }
+
+    private void OnDisable()
+    {
+        Discount.OnDiscountActivated.RemoveListener(ApplyDiscount);
+        Discount.OnDiscountDeactivated.RemoveListener(RemoveDiscount);
+    }
+
 
     public void RerollShop()
     {
@@ -49,7 +63,7 @@ public class Shop : MonoBehaviour
             else if (item is NormalCard normal) _price = Random.Range(5, 10);
             else _price = Random.Range(10, 20);
 
-            shopSlot.Setup(item, _price);
+            shopSlot.Setup(item, Mathf.RoundToInt(_price * _priceMultiplier));
         } 
     }
 
@@ -75,5 +89,17 @@ public class Shop : MonoBehaviour
         }
 
         return result;
+    }
+
+    private void ApplyDiscount(float discount)
+    {
+        _priceMultiplier = discount;
+        RerollShop();
+    }
+
+    private void RemoveDiscount()
+    {
+        _priceMultiplier = 1f;
+        RerollShop();
     }
 }

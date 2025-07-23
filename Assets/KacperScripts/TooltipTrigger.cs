@@ -7,7 +7,7 @@ public class TooltipTrigger : MonoBehaviour, IPointerEnterHandler, IPointerExitH
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        ToolTipManager.Instance.ShowToolTip(relicData.description, Input.mousePosition);
+        ToolTipManager.Instance.ShowToolTip(relicData.name, relicData.description, Input.mousePosition);
     }
 
     public void OnPointerExit(PointerEventData eventData)
