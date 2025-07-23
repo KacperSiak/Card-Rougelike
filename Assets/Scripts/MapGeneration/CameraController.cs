@@ -9,9 +9,6 @@ public class CameraController : MonoBehaviour
     [Header("Zoom Settings")]
     public float minZoom = 5f;
     public float maxZoom = 20f;
-    
-    [Header("References")]
-    public MapGenerator mapGenerator;
 
     private Vector3 lastMousePosition;
     private bool isDragging = false;
@@ -38,10 +35,9 @@ public class CameraController : MonoBehaviour
         {
             Vector3 mouseWorldPos = GetMouseWorldPosition();
             lastMousePosition = mouseWorldPos;
-            isDragging = true;
         }
         
-        if (Input.GetMouseButton(0) && isDragging)
+        if (Input.GetMouseButton(0))
         {
             Vector3 currentMouseWorld = GetMouseWorldPosition();
             Vector3 deltaWorld = lastMousePosition - currentMouseWorld;
@@ -52,11 +48,6 @@ public class CameraController : MonoBehaviour
             newPosition.z = Mathf.Clamp(newPosition.z, minBounds.y, maxBounds.y); // ograniczenie do granic
             
             transform.position = newPosition;
-        }
-        
-        if (Input.GetMouseButtonUp(0))
-        {
-            isDragging = false;
         }
     }
     
@@ -84,7 +75,7 @@ public class CameraController : MonoBehaviour
         }
     }
     
-    public void SetBoundsFromMap()
+    public void SetBoundsFromMap(MapGenerator mapGenerator)
     {
         if (mapGenerator != null && mapGenerator.mapLevels != null && mapGenerator.mapLevels.Count > 0)
         {

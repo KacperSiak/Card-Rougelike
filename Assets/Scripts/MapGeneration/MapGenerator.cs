@@ -87,7 +87,7 @@ public class MapGenerator : MonoBehaviour
     {
         if (cameraController != null)
         {
-            cameraController.SetBoundsFromMap();
+            cameraController.SetBoundsFromMap(this);
         }
     }
 
