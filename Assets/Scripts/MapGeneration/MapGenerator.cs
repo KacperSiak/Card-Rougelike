@@ -4,7 +4,7 @@ using System.Linq;
 using MapSystem;
 
 [System.Serializable]
-public class NodeTypeSettings
+public struct NodeTypeSettings
 {
     public NodeType type;
     public int minCount;
@@ -22,6 +22,7 @@ public class MapGenerator : MonoBehaviour
 
     [Header("Map Settings")]
     public int numberOfLevels = 8;
+    //[field: SerializeField] public int NumberOfLevels { get; private set; } = 8;
     public int minNodesPerLevel = 2;
     public int maxNodesPerLevel = 4;
     public float horizontalSpacing = 5f;
