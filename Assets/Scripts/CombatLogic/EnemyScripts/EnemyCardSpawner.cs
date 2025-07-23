@@ -11,18 +11,14 @@ public class EnemyCardSpawner : MonoBehaviour
     private int _cardsInCombo = 3;
     private int _cardsBuffer = 2;
 
+    //problems with keys, fix spawn 
+
     public void SpawnCombo(int indexObject, int indexCardHolder, Dictionary<int, List<CardsSOTest>> cardsBySuit)
-    {
+    {  
         int cleanOrDirty = Random.Range(0, 2); // randomly from 0-1, 0 is clean, 1 is dirty
         bool isClean = cleanOrDirty == 0;
 
         Debug.Log($"Is clean: {isClean}");
-
-        int randomCleanSuit = Random.Range(0, cardsBySuit.Count);
-        int randomCleanCard = Random.Range(0, cardsBySuit[randomCleanSuit].Count - _cardsBuffer);
-
-        int randomDirtySuit = Random.Range(0, cardsBySuit.Count - _cardsBuffer);
-        int randomDirtyCard = cardsBySuit[randomDirtySuit][Random.Range(0, cardsBySuit[randomDirtySuit].Count)].power;
 
         if (!EnemyCardManager.Instance.CardsInGame.ContainsKey(indexCardHolder))
         {
@@ -35,13 +31,15 @@ public class EnemyCardSpawner : MonoBehaviour
 
         if (isClean)
         {
-            switch (cardsBySuit[randomCleanSuit].Count)
+            int randomCleanSuit = Random.Range(0, cardsBySuit.Count);
+
+            if (cardsBySuit[randomCleanSuit].Count <= _cardsBuffer)
             {
-                case 1:
-                case 2:
-                    SpawnSingle(indexObject + 1, indexCardHolder, cardsBySuit);
-                    return;
+                SpawnSingle(indexObject + 1, indexCardHolder, cardsBySuit);
+                return;
             }
+
+            int randomCleanCard = Random.Range(0, cardsBySuit[randomCleanSuit].Count - _cardsBuffer);
 
             for (int i = 0, j = 1; i < _cardsInCombo; i++)
             {
@@ -78,59 +76,61 @@ public class EnemyCardSpawner : MonoBehaviour
             return;
         }
 
-            if (cardsBySuit.Count < 3)
-            {
-                EnemyCardManager.Instance.SetupSpawner(indexObject, indexCardHolder);
-                return;
-            }
+        if (cardsBySuit.Count <= _cardsBuffer)
+        {
+             EnemyCardManager.Instance.SetupSpawner(indexObject, indexCardHolder);
+             return;
+        }
 
-            List<int> index = new List<int>();
+        int randomDirtySuit = Random.Range(0, cardsBySuit.Count - _cardsBuffer);
+        int randomDirtyCard = cardsBySuit[randomDirtySuit][Random.Range(0, cardsBySuit[randomDirtySuit].Count)].power;
 
-            for (int i = randomDirtySuit, count = 1; i < randomDirtySuit + 3; i++, count++) 
-            {
-                foreach (var card in cardsBySuit[i])
-                {
-                    if (card.power == randomDirtyCard)
-                    {
+        List<int> index = new List<int>();
+
+        for (int i = randomDirtySuit, count = 1; i < randomDirtySuit + 3; i++, count++) 
+        {
+             foreach (var card in cardsBySuit[i])
+             {
+                  if (card.power == randomDirtyCard)
+                  {
                         index.Add(cardsBySuit[i].IndexOf(card));
                         break;
-                    }
-                }
+                  }
+             }
 
-                if (index.Count != count)
-                {
+              if (index.Count != count)
+              {
                     EnemyCardManager.Instance.SetupSpawner(indexObject, indexCardHolder);
                     return;
-                }
-            }
+              }
+        }
 
-            for (int i = 0; i < _cardsInCombo; i++)
-            {
-                GameObject cardObject = EnemyCardManager.Instance.cardObjects[indexObject + i];
-                CardsSOTest card = cardsBySuit[randomDirtySuit][index[i]];
-                cardsBySuit[randomDirtySuit].Remove(card);
+        for (int i = 0; i < _cardsInCombo; i++)
+        {
+             GameObject cardObject = EnemyCardManager.Instance.cardObjects[indexObject + i];
+             CardsSOTest card = cardsBySuit[randomDirtySuit][index[i]];
+             cardsBySuit[randomDirtySuit].Remove(card);
 
-                if (cardsBySuit[randomDirtySuit].Count == 0)
-                    cardsBySuit.Remove(randomDirtySuit);
+             if (cardsBySuit[randomDirtySuit].Count == 0)
+                 cardsBySuit.Remove(randomDirtySuit);
 
-                randomDirtySuit++;
+             randomDirtySuit++;
 
-                cardObject.GetComponent<SpriteRenderer>().sprite = card.graphics;
-                cardObject.GetComponent<EnemyCardLogic>().SetCardProperties(card);
-                power += card.power;
-                cardObject.SetActive(true);
+             cardObject.GetComponent<SpriteRenderer>().sprite = card.graphics;
+             cardObject.GetComponent<EnemyCardLogic>().SetCardProperties(card);
+             power += card.power;
+             cardObject.SetActive(true);
 
-                EnemyCardManager.Instance.UpdateCardsInGame(key, cardObject);
-            }
+             EnemyCardManager.Instance.UpdateCardsInGame(key, cardObject);
+        }
 
-            EnemyCardManager.Instance.SetupCardHolder(key, validationType: _dirty);
-            EnemyCardManager.Instance.CardsInGamePower.Add(key, power);
-            _enemyAttackManager.SetRoundAttack(key);
-
+         EnemyCardManager.Instance.SetupCardHolder(key, validationType: _dirty);
+         EnemyCardManager.Instance.CardsInGamePower.Add(key, power);
+         _enemyAttackManager.SetRoundAttack(key);
     }
 
     public void SpawnSingle(int cardObjectIndex, int indexCardHolder, Dictionary<int, List<CardsSOTest>> cardsBySuit)
-    {
+    { 
         int randomSuit = Random.Range(0, cardsBySuit.Count);
         int randomCard = Random.Range(0, cardsBySuit[randomSuit].Count);
         int power = 0;

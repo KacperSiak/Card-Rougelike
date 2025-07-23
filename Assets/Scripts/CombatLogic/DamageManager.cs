@@ -40,6 +40,9 @@ public class DamageManager : MonoBehaviour
             if (EnemyCardManager.Instance.CardsInGamePower[i] > 0) continue;
 
             RoundManager.Instance.EnemyHP -= -EnemyCardManager.Instance.CardsInGamePower[i]; // cuz number in the list will be negative after we will implement player impact
+
+            if (RoundManager.Instance.EnemyHP <= 0) return;
+
             _cardHolders[i].ResetCardHolderEnemyCards();
 
             foreach (var card in EnemyCardManager.Instance.CardsInGame[i])

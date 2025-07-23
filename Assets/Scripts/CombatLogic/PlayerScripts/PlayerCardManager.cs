@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -12,7 +13,7 @@ public class PlayerCardManager : MonoBehaviour
     public List<GameObject> SelectedCards { get; private set; }
     public int SelectedCardsPower { get; private set; }
 
-    private List<CardsSOTest> _playerCardsInGame;
+    private List<CardsSOTest> _playerDeckInGame;
     private int _cardsInHandDefault = 6;
     private int _currentCardsInHand = 0; // if we need more than 6 cards in hand use it to build logic
 
@@ -28,11 +29,24 @@ public class PlayerCardManager : MonoBehaviour
         }
     }
 
+    private void OnEnable()
+    {
+        RoundManager.OnCombatEnd += OnCombatEnd;
+        RoundManager.OnRoundEnd += RefillCards;
+    }
+
+
+    private void OnDisable()
+    {
+        RoundManager.OnCombatEnd -= OnCombatEnd;
+        RoundManager.OnRoundEnd -= RefillCards;
+    }
+
     public void StartCombat(List<CardsSOTest> playerCards)
     {
-        _playerCardsInGame = new List<CardsSOTest>(playerCards);
+        _playerDeckInGame = new List<CardsSOTest>(playerCards);
         SelectedCards = new List<GameObject>();
-        _spawner.SpawnCards(_playerCardsInGame, _cardsInHandDefault, startKey: 0);
+        _spawner.SpawnCards(_playerDeckInGame, _cardsInHandDefault, startKey: 0);
     }
 
     public void AddSelectedCards(GameObject card)
@@ -62,13 +76,34 @@ public class PlayerCardManager : MonoBehaviour
         _currentCardsInHand++;
     }
 
-    //for now only 6 cards in hand are generally possible, but for more need to negotiate with the team how they see that 
-    public void RefillCards()
+    public bool CheckRoundReadiness()
     {
+        if(_playerDeckInGame.Count == 0 && _currentCardsInHand == 0) return false;
+        
+        return true;
+    }
+
+    //for now only 6 cards in hand are generally possible, but for more need to negotiate with the team how they see that 
+    private void RefillCards()
+    {
+        if(_playerDeckInGame.Count == 0) return;
+
         for (int i = 0; i < CardObjects.Count; i++)
         {
             if (CardObjects[i].activeSelf) continue;
-            _spawner.SpawnCards(_playerCardsInGame, cardsAmount: 1, startKey: i);
+            _spawner.SpawnCards(_playerDeckInGame, cardsAmount: 1, startKey: i);
         }
     }
+
+    private void OnCombatEnd()
+    {
+        foreach (var card in CardObjects)
+        {
+            card.GetComponent<PlayerCardLogic>().ResetCard();
+            card.SetActive(false);
+        }
+        SelectedCards.Clear();
+        SelectedCardsPower = 0;
+    }
+
 }

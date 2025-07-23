@@ -12,9 +12,11 @@ public class RoundManager : MonoBehaviour
     [SerializeField] private EnemyAttackManager _enemyAttackManager;
     [SerializeField] private List<CardsSOTest> _enemyCards;
     [SerializeField] private List<CardsSOTest> _playerCards;
+    private bool _alreadyFinished = false; // to prevent double calls of the end of combat
 
-    public static event Action OnCombatEnd;
-    //public static event Action OnRoundEnd;
+    public static event Action OnHPChanged;
+    public static event Action OnCombatEnd; // logic is mostly temporary, to mark the end of combat and enable any interactions, but later it will be modified to be built in the whole game logic
+    public static event Action OnRoundEnd;
 
     // For the end of the combat there can be an event and many components will have methods to react on this event
     // Maybe for more stages I can create events, like OnCombatStart, OnCombatEnd, OnRoundStart, OnRoundEnd, etc.
@@ -26,6 +28,17 @@ public class RoundManager : MonoBehaviour
         else Destroy(gameObject);
     }
 
+    private void OnEnable()
+    {
+        OnHPChanged += CheckHPState;
+    } 
+    
+    
+    private void OnDisable()
+    {
+        OnHPChanged -= CheckHPState;
+    }
+
     private int _playerHP = 50; // temp default value
 
     public int PlayerHP
@@ -34,7 +47,7 @@ public class RoundManager : MonoBehaviour
         set
         {
             _playerHP = value;
-            UIManager.Instance.SetHealthUI();
+            OnHPChanged?.Invoke();
         }
     }
 
@@ -46,37 +59,57 @@ public class RoundManager : MonoBehaviour
         set
         {
             _enemyHP = value;
-            UIManager.Instance.SetHealthUI();
+            OnHPChanged?.Invoke();
         }
     }
 
     void Start()
     {
         Cursor.visible = true; 
-        UIManager.Instance.SetHealthUI();
         _enemyAttackManager.StartCombatSetup();
         PlayerCardManager.Instance.StartCombat(_playerCards);
         EnemyCardManager.Instance.StartCombat(_enemyCards);
+        UIManager.Instance.StartCombat();
     }
 
     public void EndRound()
     {
         DamageManager.Instance.CalculatePlayerImpact();
+
+        if(!_alreadyFinished)
+        CheckRoundReadiness();
     }
 
-    public void CheckCurrentCombatState()
-    { 
-    
+    private void CheckRoundReadiness()
+    {
+        if (!PlayerCardManager.Instance.CheckRoundReadiness())
+        {
+            UIManager.Instance.Winner = "Enemy";
+            OnCombatEnd?.Invoke();
+            return;
+        }
+        else if (!EnemyCardManager.Instance.CheckRoundReadiness())
+        {
+            UIManager.Instance.Winner = "Player";
+            OnCombatEnd?.Invoke();
+            return;
+        }
+
+        MoveToNextRound();
+
     }
 
-    public void PrepareNewRound()
+    private void MoveToNextRound()
     { 
-        PlayerCardManager.Instance.RefillCards();
-        EnemyCardManager.Instance.RefillCards();
+        OnRoundEnd?.Invoke();
     }
 
-    private void EndCombat()
-    { 
-    
+    private void CheckHPState()
+    {
+        if(_playerHP > 0 && _enemyHP > 0) return;
+
+        UIManager.Instance.Winner = _playerHP > 0 ? "Player" : "Enemy";
+        _alreadyFinished = true; 
+        OnCombatEnd?.Invoke();
     }
 }

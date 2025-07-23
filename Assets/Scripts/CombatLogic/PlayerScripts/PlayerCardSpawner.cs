@@ -7,6 +7,8 @@ public class PlayerCardSpawner : MonoBehaviour
     {
         for (int i = 0, key = startKey; i < cardsAmount; i++, key++)
         {
+            if(playerCards.Count == 0) return;
+
             GameObject cardObject = PlayerCardManager.Instance.CardObjects[key];
             CardsSOTest card = playerCards[Random.Range(0, playerCards.Count)];
             playerCards.Remove(card);

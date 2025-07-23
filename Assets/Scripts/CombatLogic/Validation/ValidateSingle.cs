@@ -8,18 +8,18 @@ public class ValidateSingle : MonoBehaviour, IValidate
 
         if (PlayerCardManager.Instance.SelectedCards.Count > 1)
         {
-            isValid = cardHolder.PCardScript[0].Card.suit != cardHolder.PCardScript[cardHolder.PCardScript.Count - 1].Card.suit;
+            isValid = cardHolder.PCardScripts[0].Card.suit != cardHolder.PCardScripts[cardHolder.PCardScripts.Count - 1].Card.suit;
             Debug.Log("valid or not: " + isValid);
 
-            for (int i = 0; i < cardHolder.PCardScript.Count - 1; i++)
+            for (int i = 0; i < cardHolder.PCardScripts.Count - 1; i++)
             {
                 if (!isValid) break;
 
-                isValid = cardHolder.PCardScript[i].Card.suit != cardHolder.PCardScript[i + 1].Card.suit;
+                isValid = cardHolder.PCardScripts[i].Card.suit != cardHolder.PCardScripts[i + 1].Card.suit;
 
                 if (!isValid) break;
 
-                isValid = cardHolder.PCardScript[i].Card.power == cardHolder.PCardScript[i + 1].Card.power;
+                isValid = cardHolder.PCardScripts[i].Card.power == cardHolder.PCardScripts[i + 1].Card.power;
             }
         }
 

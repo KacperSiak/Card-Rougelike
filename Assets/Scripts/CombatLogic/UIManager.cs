@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using TMPro;
+using Unity.Properties;
 using UnityEngine;
 
 public class UIManager : MonoBehaviour
@@ -8,9 +9,18 @@ public class UIManager : MonoBehaviour
 
     [SerializeField] private TextMeshProUGUI _playerHPText; 
     [SerializeField] private TextMeshProUGUI _enemyHPText; 
-    [SerializeField] private TextMeshProUGUI _finalResultText;
+    [SerializeField] private TextMeshProUGUI _finalResultText; // temp to mark the end of combat
     [SerializeField] private List<TextMeshProUGUI> _roundsText;
     [SerializeField] private EnemyAttackManager _enemyAttackManager;
+
+    private string _winner;
+
+    public string Winner
+    {
+        get { return _winner; }
+        set { _winner = value; }
+    }
+
 
     void Awake()
     {
@@ -19,12 +29,25 @@ public class UIManager : MonoBehaviour
         else Destroy(gameObject);
     }
 
-    void Start()
+    private void OnEnable()
     {
+        RoundManager.OnHPChanged += SetHealthUI;
         RoundManager.OnCombatEnd += SetupCombatEndUI;
     }
 
-    public void SetHealthUI()
+
+    private void OnDisable()
+    {
+        RoundManager.OnHPChanged -= SetHealthUI;
+        RoundManager.OnCombatEnd -= SetupCombatEndUI;
+    }
+
+    public void StartCombat()
+    {
+        SetHealthUI();
+    }
+
+    private void SetHealthUI()
     {
         _playerHPText.text = $"Player HP: {RoundManager.Instance.PlayerHP}";
         _enemyHPText.text = $"Enemy HP: {RoundManager.Instance.EnemyHP}";
@@ -50,8 +73,7 @@ public class UIManager : MonoBehaviour
         }
         _playerHPText.text = string.Empty;
         _enemyHPText.text = string.Empty;
-
+        _finalResultText.text = $"Winner: {_winner}";
+        _finalResultText.gameObject.SetActive(true);
     }
-
-   
 }

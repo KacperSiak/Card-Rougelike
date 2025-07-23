@@ -15,6 +15,17 @@ public class EnemyAttackManager : MonoBehaviour
     private const int maxRound = 5;
     private const int limit = 3;
 
+    private void OnEnable()
+    {
+        RoundManager.OnCombatEnd += OnCombatEnd;
+    }
+
+
+    private void OnDisable()
+    {
+        RoundManager.OnCombatEnd -= OnCombatEnd;
+    }
+
     public void StartCombatSetup()
     {
         RoundsForCards.Clear();
@@ -52,6 +63,9 @@ public class EnemyAttackManager : MonoBehaviour
             } 
 
             RoundManager.Instance.PlayerHP -= EnemyCardManager.Instance.CardsInGamePower[i];
+
+            if (RoundManager.Instance.PlayerHP <= 0) return;
+
             RemoveKey(i);
             foreach (var card in EnemyCardManager.Instance.CardsInGame[i])
             {
@@ -60,13 +74,16 @@ public class EnemyAttackManager : MonoBehaviour
             EnemyCardManager.Instance.RemoveCardFromGame(i);
             EnemyCardManager.Instance.cardHolders[i].GetComponent<CardHolderManager>().ResetCardHolderEnemyCards();
         }
-
-        RoundManager.Instance.PrepareNewRound();
     }
 
     public void RemoveKey(int key)
     { 
         UIManager.Instance.SetRoundForEnemyUI(key);
         RoundsForCards.Remove(key);
+    }
+
+    private void OnCombatEnd()
+    { 
+        RoundsForCards.Clear();
     }
 }
