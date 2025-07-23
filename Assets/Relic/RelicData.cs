@@ -1,8 +1,9 @@
-using NUnit.Framework;
 using System;
 using UnityEngine;
 using System.Collections.Generic;
-
+using UnityEngine.Events;
+using JetBrains.Annotations;
+using System.Runtime.CompilerServices;
 
 public enum Rarity
 {
@@ -28,7 +29,6 @@ public class RelicContext
     public PlayerOverlay player;
 }
 
-
 [Serializable]
 public abstract class RelicEffects
 {
@@ -37,7 +37,7 @@ public abstract class RelicEffects
 }
 
 [Serializable]
-public class BlackIsBlack : RelicEffects
+public class EqualBlackSuits : RelicEffects
 {
     public override void Register(RelicContext ctx)
     {
@@ -51,7 +51,7 @@ public class BlackIsBlack : RelicEffects
 }
 
 [Serializable]
-public class RedIsRed : RelicEffects
+public class EqualRedSuits : RelicEffects
 {
     public override void Register(RelicContext ctx)
     {
@@ -65,7 +65,7 @@ public class RedIsRed : RelicEffects
 }
 
 [Serializable]
-public class Gaps : RelicEffects
+public class GapsInSequences : RelicEffects
 {
     public override void Register(RelicContext ctx)
     {
@@ -79,120 +79,54 @@ public class Gaps : RelicEffects
 }
 
 [Serializable]
-public class HealingSequence : RelicEffects
+public class SingleCardDoubleDamage : RelicEffects
 {
     public override void Register(RelicContext ctx)
     {
-    // healing 
+        // beating a sequence with a single card deasls Double damage
     }
 
     public override void Unregister(RelicContext ctx)
     {
-    // no more healing 
+        // no more double damage
     }
 }
 
 [Serializable]
-public class Interest : RelicEffects
+public class CleanSequenceBeatsEverything : RelicEffects
 {
     public override void Register(RelicContext ctx)
     {
-        // interest++
+        // Clean sequence can beat every minion
     }
 
     public override void Unregister(RelicContext ctx)
     {
-        // interest come back to 5
+        // no more ultrasequence
     }
 }
 
 [Serializable]
-public class HearthPlus : RelicEffects
+public class Discount : RelicEffects
 {
+    public float discount;
+
+    public static UnityEvent<float> OnDiscountActivated = new();
+    public static UnityEvent OnDiscountDeactivated = new();
     public override void Register(RelicContext ctx)
     {
-        // hearths damage
+        OnDiscountActivated?.Invoke(discount);
     }
-
     public override void Unregister(RelicContext ctx)
     {
-        // hearths damage no more
+        OnDiscountDeactivated?.Invoke();
     }
 }
 
 [Serializable]
-public class DiamnodPlus : RelicEffects
+public class FasterTravel : RelicEffects
 {
-    public override void Register(RelicContext ctx)
-    {
-        // Diamonds damage
-    }
-
-    public override void Unregister(RelicContext ctx)
-    {
-        // diamonds damage no more
-    }
-}
-
-[Serializable]
-public class ClubsPlus : RelicEffects
-{
-    public override void Register(RelicContext ctx)
-    {
-        // clubs damage
-    }
-
-    public override void Unregister(RelicContext ctx)
-    {
-        // clubs damage no more
-    }
-}
-
-[Serializable]
-public class SpadesPlus : RelicEffects
-{
-    public override void Register(RelicContext ctx)
-    {
-        // spades damage
-    }
-
-    public override void Unregister(RelicContext ctx)
-    {
-        // spades damage no more
-    }
-}
-
-[Serializable]
-public class DeathSave : RelicEffects
-{
-    public override void Register(RelicContext ctx)
-    {
-        // death protection self destruct on activation
-    }
-
-    public override void Unregister(RelicContext ctx)
-    {
-        // you will die :)
-    }
-}
-
-[Serializable]
-public class PowerStrike : RelicEffects
-{
-    public override void Register(RelicContext ctx)
-    {
-        // additional damage
-    }
-
-    public override void Unregister(RelicContext ctx)
-    {
-        // no more additional damage
-    }
-}
-
-[Serializable]
-public class FasterThenLight : RelicEffects
-{
+    public float _speedModifier;
     public override void Register(RelicContext ctx)
     {
         // faster travel
@@ -205,111 +139,69 @@ public class FasterThenLight : RelicEffects
 }
 
 [Serializable]
-public class BetterStart : RelicEffects
+public class StartWithAdditionalDamage : RelicEffects
 {
+    public int damage;
     public override void Register(RelicContext ctx)
     {
-        // prevent damage irst two turns
+        // +damage for first hit 
     }
-
     public override void Unregister(RelicContext ctx)
     {
-        // do not work XD
+        // no more additional damage at the start of the combat
     }
 }
 
 [Serializable]
-public class UnclearDraw : RelicEffects
+public class LessHpMoreDamage : RelicEffects
 {
     public override void Register(RelicContext ctx)
     {
-        // unclear sequence -> draw
+        // +1 damage for every 2 missing health
     }
-
     public override void Unregister(RelicContext ctx)
     {
-            
+        // no more additional damage
     }
 }
 
 [Serializable]
-public class BetterDamage : RelicEffects
+public class RedBonusDamage : RelicEffects
 {
     public override void Register(RelicContext ctx)
     {
-        // block over 3 ----> +3
+        // plus damage for every played red card (no clue how to programm it XD)
     }
     public override void Unregister(RelicContext ctx)
     {
-            
+        // no more damage
     }
 }
 
 [Serializable]
-public class AddDiscard : RelicEffects
+public class BlackBonusDamage : RelicEffects
 {
     public override void Register(RelicContext ctx)
     {
-        // +1 discard
+        // plus damage for every played black card (no clue how to programm it XD)
     }
     public override void Unregister(RelicContext ctx)
     {
-        // normal amount of discards
+        // no more damage
     }
 }
 
 [Serializable]
-public class SameSuit : RelicEffects
+public class PassiveHeal : RelicEffects
 {
+    public float healAmount;
     public override void Register(RelicContext ctx)
     {
-  
-        // additional damage ifg suit is the same
+        // heal healAmount at the end of the fight
     }
     public override void Unregister(RelicContext ctx)
     {
-        // nothing
-    }
-}
-
-[Serializable]
-public class AllForAll : RelicEffects
-{
-    public override void Register(RelicContext ctx)
-    {
-        // every sequence can beat every sequence
-    }
-
-    public override void Unregister(RelicContext ctx)
-    {
-            
-    }
-}
-
-[Serializable]
-public class DiscardOrGold : RelicEffects
-{
-    public override void Register(RelicContext ctx)
-    {
-        // +gold for discard
-    }
-
-    public override void Unregister(RelicContext ctx)
-    {
-        // no more gold for discard
-    }
-}
-
-[Serializable]
-public class DoubleDamage : RelicEffects
-{
-    public override void Register(RelicContext ctx)
-    {
-        // double damage
-    }
-    public override void Unregister(RelicContext ctx)
-    {
-        // normal damage
+        // no heals
     }
 }
 
@@ -327,54 +219,42 @@ public class Handsize : RelicEffects
 }
 
 [Serializable]
-public class ZeroDiscardBoost : RelicEffects
+public class AddDiscard : RelicEffects
 {
     public override void Register(RelicContext ctx)
     {
-        // +1 damage if 0 discards
+        // +1 discard
     }
     public override void Unregister(RelicContext ctx)
     {
-        // normal dmg
+        // normal amount of discards
     }
 }
 
 [Serializable]
-public class PassiveHeal : RelicEffects
+public class BonusLuck : RelicEffects
 {
     public override void Register(RelicContext ctx)
     {
-        // heal +5 after fight
+        // better rng
     }
     public override void Unregister(RelicContext ctx)
     {
-        // no heals
+        // Normal rng
     }
 }
 
 [Serializable]
-public class InterestDamage : RelicEffects
+public class PassiveBlock : RelicEffects
 {
     public override void Register(RelicContext ctx)
     {
-        // +damage for each interest
+        // block passive for 2 turns
     }
-    public override void Unregister(RelicContext ctx)
-    {
-        // no damage
-    }
-}
 
-[Serializable]
-public class Discount : RelicEffects
-{
-    public override void Register(RelicContext ctx)
-    {
-        // discount
-    }
     public override void Unregister(RelicContext ctx)
     {
-        // normal prices
+        // no more blocks
     }
 }
 
@@ -392,145 +272,342 @@ public class SlowerMinions : RelicEffects
 }
 
 [Serializable]
-public class AssetBonus : RelicEffects
+public class BlockAtTheStart : RelicEffects
 {
     public override void Register(RelicContext ctx)
     {
-        // asset + damage
+        // prevent damage for first two turns
     }
+
     public override void Unregister(RelicContext ctx)
     {
-        // asset normal damage
+        // do not work XD
     }
 }
 
 [Serializable]
-public class Rampage : RelicEffects
+public class DeathSave : RelicEffects
 {
     public override void Register(RelicContext ctx)
     {
-        // +1 damage for every 10 missing health (maybe for every 5 idk. Depends on maximum health at the startr of the run)
+        // death protection self destruct on activation
     }
+
     public override void Unregister(RelicContext ctx)
     {
-        // no more damage
+        // you will die :)
     }
 }
 
-[Serializable]
-public class PowerBlock : RelicEffects
-{
-    public override void Register(RelicContext ctx)
-    {
-        // block passive
-    }
-    public override void Unregister(RelicContext ctx)
-    {
-        // passive works
-    }
-}
+////////////////////////////////////////////////// After Demo Relics //////////////////////////////////////////
 
-[Serializable]
-public class ConsumableCheat : RelicEffects
-{
-    public override void Register(RelicContext ctx)
-    {
-        // 5 consumables = +1
-    }
-    public override void Unregister(RelicContext ctx)
-    {
-        // 5no more additional consumables
-    }
-}
+//[Serializable]
+//public class Interest : RelicEffects
+//{
+//    public override void Register(RelicContext ctx)
+//    {
+//        // interest++
+//    }
 
-[Serializable]
-public class HigherReward : RelicEffects
-{
-    public override void Register(RelicContext ctx)
-    {
-        // after fight +1 consumable
-    }
-    public override void Unregister(RelicContext ctx)
-    {
-        // no more
-    }
-}
+//    public override void Unregister(RelicContext ctx)
+//    {
+//        // interest come back to 5
+//    }
+//}
 
-[Serializable]
-public class LuckyLuckyLucky : RelicEffects
-{
-    public override void Register(RelicContext ctx)
-    {
-        // better rng
-    }
-    public override void Unregister(RelicContext ctx)
-    {
-        // Normal rng
-    }
-}
+//[Serializable]
+//public class HearthPlus : RelicEffects
+//{
+//    public override void Register(RelicContext ctx)
+//    {
+//        // hearths damage
+//    }
 
-[Serializable]
-public class RedGoldFever : RelicEffects
-{
-    public override void Register(RelicContext ctx)
-    {
-        // +5 gold for every red card
-    }
-    public override void Unregister(RelicContext ctx)
-    {
-        // no more additional gold
-    }
-}
+//    public override void Unregister(RelicContext ctx)
+//    {
+//        // hearths damage no more
+//    }
+//}
 
-[Serializable]
-public class BlackGoldFever : RelicEffects
-{
-    public override void Register(RelicContext ctx)
-    {
-        // +5 gold for every black card
-    }
-    public override void Unregister(RelicContext ctx)
-    {
-        // no more additional gold
-    }
-}
+//[Serializable]
+//public class DiamnodPlus : RelicEffects
+//{
+//    public override void Register(RelicContext ctx)
+//    {
+//        // Diamonds damage
+//    }
 
-[Serializable]
-public class FasterStart : RelicEffects
-{
-    public override void Register(RelicContext ctx)
-    {
-        // +2 damage for first two played cards
-    }
-    public override void Unregister(RelicContext ctx)
-    {
-        // normal dmg
-    }
-}
+//    public override void Unregister(RelicContext ctx)
+//    {
+//        // diamonds damage no more
+//    }
+//}
 
-[Serializable]
-public class DrawWin : RelicEffects
-{
-    public override void Register(RelicContext ctx)
-    {
-        // draw --> win and 1 damage
-    }
-    public override void Unregister(RelicContext ctx)
-    {
-        // draws do not deal damage
-    }
-}
+//[Serializable]
+//public class ClubsPlus : RelicEffects
+//{
+//    public override void Register(RelicContext ctx)
+//    {
+//        // clubs damage
+//    }
 
-[Serializable]
-public class SequenceBoost : RelicEffects
-{
-    public override void Register(RelicContext ctx)
-    {
-        // sequences +2 damage
-    }
-    public override void Unregister(RelicContext ctx)
-    {
-    // sequences normal dmg
-    }
-}
+//    public override void Unregister(RelicContext ctx)
+//    {
+//        // clubs damage no more
+//    }
+//}
+
+//[Serializable]
+//public class SpadesPlus : RelicEffects
+//{
+//    public override void Register(RelicContext ctx)
+//    {
+//        // spades damage
+//    }
+
+//    public override void Unregister(RelicContext ctx)
+//    {
+//        // spades damage no more
+//    }
+//}
+
+//[Serializable]
+//public class PowerStrike : RelicEffects
+//{
+//    public override void Register(RelicContext ctx)
+//    {
+//        // additional damage
+//    }
+
+//    public override void Unregister(RelicContext ctx)
+//    {
+//        // no more additional damage
+//    }
+//}
+
+//[Serializable]
+//public class UnclearDraw : RelicEffects
+//{
+//    public override void Register(RelicContext ctx)
+//    {
+//        // unclear sequence -> draw
+//    }
+
+//    public override void Unregister(RelicContext ctx)
+//    {
+            
+//    }
+//}
+
+//[Serializable]
+//public class BetterDamage : RelicEffects
+//{
+//    public override void Register(RelicContext ctx)
+//    {
+//        // block over 3 ----> +3
+//    }
+//    public override void Unregister(RelicContext ctx)
+//    {
+            
+//    }
+//}
+
+//[Serializable]
+//public class SameSuit : RelicEffects
+//{
+//    public override void Register(RelicContext ctx)
+//    {
+  
+//        // additional damage ifg suit is the same
+//    }
+//    public override void Unregister(RelicContext ctx)
+//    {
+//        // nothing
+//    }
+//}
+
+//[Serializable]
+//public class AllForAll : RelicEffects
+//{
+//    public override void Register(RelicContext ctx)
+//    {
+//        // every sequence can beat every sequence
+//    }
+
+//    public override void Unregister(RelicContext ctx)
+//    {
+            
+//    }
+//}
+
+//[Serializable]
+//public class DiscardOrGold : RelicEffects
+//{
+//    public override void Register(RelicContext ctx)
+//    {
+//        // +gold for discard
+//    }
+
+//    public override void Unregister(RelicContext ctx)
+//    {
+//        // no more gold for discard
+//    }
+//}
+
+//[Serializable]
+//public class DoubleDamage : RelicEffects
+//{
+//    public override void Register(RelicContext ctx)
+//    {
+//        // double damage
+//    }
+//    public override void Unregister(RelicContext ctx)
+//    {
+//        // normal damage
+//    }
+//}
+
+//[Serializable]
+//public class ZeroDiscardBoost : RelicEffects
+//{
+//    public override void Register(RelicContext ctx)
+//    {
+//        // +1 damage if 0 discards
+//    }
+//    public override void Unregister(RelicContext ctx)
+//    {
+//        // normal dmg
+//    }
+//}
+
+//[Serializable]
+//public class InterestDamage : RelicEffects
+//{
+//    public override void Register(RelicContext ctx)
+//    {
+//        // +damage for each interest
+//    }
+//    public override void Unregister(RelicContext ctx)
+//    {
+//        // no damage
+//    }
+//}
+
+//[Serializable]
+//public class AssetBonus : RelicEffects
+//{
+//    public override void Register(RelicContext ctx)
+//    {
+//        // asset + damage
+//    }
+//    public override void Unregister(RelicContext ctx)
+//    {
+//        // asset normal damage
+//    }
+//}
+
+//[Serializable]
+//public class PowerBlock : RelicEffects
+//{
+//    public override void Register(RelicContext ctx)
+//    {
+//        // block passive
+//    }
+//    public override void Unregister(RelicContext ctx)
+//    {
+//        // passive works
+//    }
+//}
+
+//[Serializable]
+//public class ConsumableCheat : RelicEffects
+//{
+//    public override void Register(RelicContext ctx)
+//    {
+//        // 5 consumables = +1
+//    }
+//    public override void Unregister(RelicContext ctx)
+//    {
+//        // 5no more additional consumables
+//    }
+//}
+
+//[Serializable]
+//public class HigherReward : RelicEffects
+//{
+//    public override void Register(RelicContext ctx)
+//    {
+//        // after fight +1 consumable
+//    }
+//    public override void Unregister(RelicContext ctx)
+//    {
+//        // no more
+//    }
+//}
+
+//[Serializable]
+//public class RedGoldFever : RelicEffects
+//{
+//    public override void Register(RelicContext ctx)
+//    {
+//        // +5 gold for every red card
+//    }
+//    public override void Unregister(RelicContext ctx)
+//    {
+//        // no more additional gold
+//    }
+//}
+
+//[Serializable]
+//public class BlackGoldFever : RelicEffects
+//{
+//    public override void Register(RelicContext ctx)
+//    {
+//        // +5 gold for every black card
+//    }
+//    public override void Unregister(RelicContext ctx)
+//    {
+//        // no more additional gold
+//    }
+//}
+
+//[Serializable]
+//public class DrawWin : RelicEffects
+//{
+//    public override void Register(RelicContext ctx)
+//    {
+//        // draw --> win and 1 damage
+//    }
+//    public override void Unregister(RelicContext ctx)
+//    {
+//        // draws do not deal damage
+//    }
+//}
+
+//[Serializable]
+//public class SequenceBoost : RelicEffects
+//{
+//    public override void Register(RelicContext ctx)
+//    {
+//        // sequences +2 damage
+//    }
+//    public override void Unregister(RelicContext ctx)
+//    {
+//    // sequences normal dmg
+//    }
+//}
+
+//[Serializable]
+//public class HealingSequence : RelicEffects
+//{
+//    public override void Register(RelicContext ctx)
+//    {
+//        // healing 
+//    }
+
+//    public override void Unregister(RelicContext ctx)
+//    {
+//        // no more healing 
+//    }
+//}
 
