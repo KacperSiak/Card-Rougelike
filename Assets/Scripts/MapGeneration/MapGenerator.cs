@@ -16,7 +16,7 @@ public class MapGenerator : MonoBehaviour
 {
     [Header("Node Type Configuration")]
     public NodeTypeSettings[] nodeTypes;
-    
+
     [Header("Boss Configuration")]
     public GameObject bossPrefab;
 
@@ -26,7 +26,7 @@ public class MapGenerator : MonoBehaviour
     public int maxNodesPerLevel = 4;
     public float horizontalSpacing = 5f;
     public float verticalSpacing = 6f;
-    
+
     [Header("Position Randomization")]
     public float horizontalRandomRange = 2f;
     public float verticalRandomRange = 1f;
@@ -35,16 +35,16 @@ public class MapGenerator : MonoBehaviour
     public bool showConnections = true;
     public Material connectionMaterial;
     public float connectionWidth = 0.1f;
-    
+
     [Header("Node Connections")]
     public int minConnectionsPerNode = 1;
     public int maxConnectionsPerNode = 2;
-    
+
     [Header("Camera")]
     public CameraController cameraController;
-    
+
     public List<List<MapNode>> mapLevels = new List<List<MapNode>>();
-    
+
     private Dictionary<NodeType, int> currentCounts = new Dictionary<NodeType, int>();
     private Dictionary<NodeType, NodeTypeSettings> settingsLookup = new Dictionary<NodeType, NodeTypeSettings>();
     private bool bossAssigned = false;
@@ -59,7 +59,7 @@ public class MapGenerator : MonoBehaviour
     {
         settingsLookup.Clear();
         currentCounts.Clear();
-        
+
         foreach (var setting in nodeTypes)
         {
             settingsLookup[setting.type] = setting;
@@ -73,11 +73,16 @@ public class MapGenerator : MonoBehaviour
         ResetMapState();
         GenerateMapStructure();
         ConnectNodes();
-        InstantiateNodes();
-        DrawConnections();
+        InstantiateMapVisuals();
+
+        if (showConnections)
+        {
+            DrawConnections();
+        }
+
         SetupCameraBounds();
     }
-    
+
     void SetupCameraBounds()
     {
         if (cameraController != null)
@@ -90,7 +95,7 @@ public class MapGenerator : MonoBehaviour
     {
         bossAssigned = false;
         mapLevels.Clear();
-        
+
         foreach (var type in currentCounts.Keys.ToList())
         {
             currentCounts[type] = 0;
@@ -117,7 +122,7 @@ public class MapGenerator : MonoBehaviour
 
                 baseX += Random.Range(-horizontalRandomRange, horizontalRandomRange);
                 baseY += Random.Range(-verticalRandomRange, verticalRandomRange);
-                
+
                 float totalWidth = (nodesCount - 1) * horizontalSpacing;
                 float offsetX = -totalWidth / 2f;
 
@@ -132,7 +137,7 @@ public class MapGenerator : MonoBehaviour
         }
     }
 
-    void InstantiateNodes()
+    void InstantiateMapVisuals()
     {
         foreach (var level in mapLevels)
         {
@@ -225,20 +230,19 @@ public class MapGenerator : MonoBehaviour
         }
 
         CreateHorizontalConnections();
-        
     }
-    
+
     void CreateHorizontalConnections()
     {
         for (int level = 0; level < mapLevels.Count; level++)
         {
             List<MapNode> currentLevel = mapLevels[level];
-            
+
             for (int i = 0; i < currentLevel.Count - 1; i++)
             {
                 MapNode nodeA = currentLevel[i];
                 MapNode nodeB = currentLevel[i + 1];
-                
+
                 if (Random.Range(0, 2) == 0)
                 {
                     if (!nodeA.ConnectedNodes.Contains(nodeB))
@@ -253,7 +257,7 @@ public class MapGenerator : MonoBehaviour
     void DrawConnections()
     {
         HashSet<string> drawnConnections = new HashSet<string>();
-        
+
         foreach (var level in mapLevels)
         {
             foreach (var node in level)
@@ -263,9 +267,9 @@ public class MapGenerator : MonoBehaviour
                 foreach (var connectedNode in node.ConnectedNodes)
                 {
                     Vector3 endPos = new Vector3(connectedNode.Position.x, 0.1f, connectedNode.Position.y);
-                    
+
                     string connectionKey = $"{Mathf.Min(startPos.x, endPos.x)}_{Mathf.Min(startPos.z, endPos.z)}_{Mathf.Max(startPos.x, endPos.x)}_{Mathf.Max(startPos.z, endPos.z)}";
-                    
+
                     if (!drawnConnections.Contains(connectionKey))
                     {
                         CreateConnectionLine(startPos, endPos, $"Connection_{connectionKey}");
@@ -280,7 +284,7 @@ public class MapGenerator : MonoBehaviour
     {
         GameObject lineObj = new GameObject(name);
         lineObj.transform.SetParent(transform);
-        
+
         LineRenderer line = lineObj.AddComponent<LineRenderer>();
         line.material = connectionMaterial;
         line.startWidth = connectionWidth;
@@ -288,7 +292,7 @@ public class MapGenerator : MonoBehaviour
         line.positionCount = 2;
         line.useWorldSpace = true;
         line.sortingOrder = -1;
-        
+
         line.SetPosition(0, startPos);
         line.SetPosition(1, endPos);
     }
@@ -297,19 +301,19 @@ public class MapGenerator : MonoBehaviour
     {
         if (type == NodeType.Boss)
             return bossPrefab;
-            
+
         return settingsLookup.ContainsKey(type) ? settingsLookup[type].prefab : null;
     }
-    
+
     void ClearOldNodes()
     {
         var childrenToDestroy = new List<GameObject>();
-        
+
         foreach (Transform child in transform)
         {
             childrenToDestroy.Add(child.gameObject);
         }
-        
+
         foreach (var child in childrenToDestroy)
         {
             if (child != null)
