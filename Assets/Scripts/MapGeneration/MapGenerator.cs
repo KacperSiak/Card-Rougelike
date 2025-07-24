@@ -50,6 +50,7 @@ public class MapGenerator : MonoBehaviour
     [Header("Node Connections")]
     public int minConnectionsPerNode = 1;
     public int maxConnectionsPerNode = 2;
+    public float maxConnectionDistance = 8f;
 
     [Header("Camera")]
     public CameraController cameraController;
@@ -116,7 +117,6 @@ public class MapGenerator : MonoBehaviour
             List<MapNode> currentLevelNodes = new List<MapNode>();
             int nodesCount = Random.Range(minNodesPerLevel, maxNodesPerLevel + 1);
 
-            // Poziom 0: zawsze jeden startowy node
             if (level == 0)
             {
                 MapNode startNode = new MapNode
@@ -185,13 +185,11 @@ public class MapGenerator : MonoBehaviour
     {
         if (playerMarkerPrefab == null || mapLevels.Count == 0) return;
 
-        // Znajdź start node (poziom 0)
         if (mapLevels[0].Count > 0)
         {
             MapNode startNode = mapLevels[0][0];
             Vector3 playerPos = new Vector3(startNode.Position.x, 0.2f, startNode.Position.y);
             
-            // Utwórz marker gracza jeśli nie istnieje
             if (currentPlayerMarker == null)
             {
                 currentPlayerMarker = Instantiate(playerMarkerPrefab, playerPos, Quaternion.identity, transform);
@@ -199,11 +197,9 @@ public class MapGenerator : MonoBehaviour
             }
             else
             {
-                // Przenieś istniejący marker na start
                 currentPlayerMarker.transform.position = playerPos;
             }
             
-            // Ustaw referencję dla systemu klikania węzłów
             NodeClickHandler.playerMarker = currentPlayerMarker;
             NodeClickHandler.currentPlayerNode = GetStartNodeTransform();
         }
@@ -211,7 +207,6 @@ public class MapGenerator : MonoBehaviour
 
     Transform GetStartNodeTransform()
     {
-        // Znajdź Transform start node w dzieciach
         foreach (Transform child in transform)
         {
             if (child.name.Contains("Start") || 
@@ -238,7 +233,7 @@ public class MapGenerator : MonoBehaviour
             return NodeType.Enemy;
         }
 
-        var selectedType = availableTypes[Random.Range(0, availableTypes.Count)];
+var selectedType = availableTypes[Random.Range(0, availableTypes.Count)];
         currentCounts[selectedType]++;
         return selectedType;
     }
@@ -259,19 +254,28 @@ public class MapGenerator : MonoBehaviour
 
             foreach (var node in currentLevel)
             {
-                int connections = Random.Range(minConnectionsPerNode, Mathf.Min(maxConnectionsPerNode + 1, nextLevel.Count + 1));
-                List<int> connectedIndices = new List<int>();
+                var sortedNextNodes = nextLevel
+                    .Select((n, index) => new { Node = n, Index = index, Distance = Vector2.Distance(node.Position, n.Position) })
+                    .Where(x => x.Distance <= maxConnectionDistance)
+                    .OrderBy(x => x.Distance)
+                    .ToList();
 
-                for (int i = 0; i < connections; i++)
+                if (sortedNextNodes.Count == 0)
                 {
-                    int index;
-                    do
-                    {
-                        index = Random.Range(0, nextLevel.Count);
-                    } while (connectedIndices.Contains(index));
+                    sortedNextNodes = nextLevel
+                        .Select((n, index) => new { Node = n, Index = index, Distance = Vector2.Distance(node.Position, n.Position) })
+                        .OrderBy(x => x.Distance)
+                        .Take(1)
+                        .ToList();
+                }
 
-                    connectedIndices.Add(index);
-                    MapNode targetNode = nextLevel[index];
+                bool isNextLevelBoss = (level + 1) == numberOfLevels - 1;
+                int connectionsToMake = isNextLevelBoss ? 1 : Mathf.Min(2, sortedNextNodes.Count);
+
+                for (int i = 0; i < connectionsToMake; i++)
+                {
+                    var targetInfo = sortedNextNodes[i];
+                    MapNode targetNode = targetInfo.Node;
 
                     if (!node.ConnectedNodes.Contains(targetNode))
                         node.ConnectedNodes.Add(targetNode);
@@ -281,6 +285,44 @@ public class MapGenerator : MonoBehaviour
             }
         }
 
+        if (mapLevels.Count >= 2)
+        {
+            EnsureBossSingleConnection();
+        }
+
+        EnsureAllNodesConnected();
+    }
+
+    void EnsureBossSingleConnection()
+    {
+        int bossLevel = numberOfLevels - 1;
+        if (bossLevel >= mapLevels.Count) return;
+
+        List<MapNode> bossNodes = mapLevels[bossLevel];
+        List<MapNode> preBossLevel = mapLevels[bossLevel - 1];
+
+        foreach (var bossNode in bossNodes)
+        {
+            if (bossNode.Type == NodeType.Boss)
+            {
+                foreach (var preBossNode in preBossLevel)
+                {
+                    preBossNode.ConnectedNodes.RemoveAll(n => n == bossNode);
+                }
+                bossNode.ConnectedNodes.Clear();
+
+                var closestPreBossNode = preBossLevel
+                    .OrderBy(n => Vector2.Distance(n.Position, bossNode.Position))
+                    .First();
+
+                closestPreBossNode.ConnectedNodes.Add(bossNode);
+                bossNode.ConnectedNodes.Add(closestPreBossNode);
+            }
+        }
+    }
+
+    void EnsureAllNodesConnected()
+    {
         for (int level = 1; level < mapLevels.Count; level++)
         {
             List<MapNode> currentLevel = mapLevels[level];
@@ -288,38 +330,31 @@ public class MapGenerator : MonoBehaviour
 
             foreach (var node in currentLevel)
             {
-                while (node.ConnectedNodes.Count < minConnectionsPerNode && previousLevel.Count > 0)
+                if (node.Type == NodeType.Boss) continue;
+
+                if (node.ConnectedNodes.Count == 0)
                 {
-                    var unconnectedPrevNodes = previousLevel.Where(prevNode => !node.ConnectedNodes.Contains(prevNode)).ToList();
-                    if (unconnectedPrevNodes.Count == 0) break;
-
-                    var randomPrevNode = unconnectedPrevNodes[Random.Range(0, unconnectedPrevNodes.Count)];
-                    node.ConnectedNodes.Add(randomPrevNode);
-                    randomPrevNode.ConnectedNodes.Add(node);
-                }
-            }
-        }
-
-        CreateHorizontalConnections();
-    }
-
-    void CreateHorizontalConnections()
-    {
-        for (int level = 0; level < mapLevels.Count; level++)
-        {
-            List<MapNode> currentLevel = mapLevels[level];
-
-            for (int i = 0; i < currentLevel.Count - 1; i++)
-            {
-                MapNode nodeA = currentLevel[i];
-                MapNode nodeB = currentLevel[i + 1];
-
-                if (Random.Range(0, 2) == 0)
-                {
-                    if (!nodeA.ConnectedNodes.Contains(nodeB))
-                        nodeA.ConnectedNodes.Add(nodeB);
-                    if (!nodeB.ConnectedNodes.Contains(nodeA))
-                        nodeB.ConnectedNodes.Add(nodeA);
+                    var unconnectedPrevNodes = previousLevel
+                        .Where(prevNode => !node.ConnectedNodes.Contains(prevNode))
+                        .Where(prevNode => Vector2.Distance(node.Position, prevNode.Position) <= maxConnectionDistance)
+                        .ToList();
+                    
+                    if (unconnectedPrevNodes.Count == 0)
+                    {
+                        unconnectedPrevNodes = previousLevel
+                            .Where(prevNode => !node.ConnectedNodes.Contains(prevNode))
+                            .ToList();
+                    }
+                    
+                    if (unconnectedPrevNodes.Count > 0)
+                    {
+                        var closestNode = unconnectedPrevNodes
+                            .OrderBy(n => Vector2.Distance(node.Position, n.Position))
+                            .First();
+                        
+                        node.ConnectedNodes.Add(closestNode);
+                        closestNode.ConnectedNodes.Add(node);
+                    }
                 }
             }
         }
@@ -382,7 +417,6 @@ public class MapGenerator : MonoBehaviour
 
         foreach (Transform child in transform)
         {
-            // Nie usuwaj markera gracza
             if (child.gameObject != currentPlayerMarker)
             {
                 childrenToDestroy.Add(child.gameObject);

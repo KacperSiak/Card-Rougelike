@@ -290,6 +290,8 @@ MonoBehaviour:
     maxCount: 3
     prefab: {fileID: 8174134825137076215, guid: 78ea7ab5ff7d80e4a91f1b760d2c1274, type: 3}
   startNodePrefab: {fileID: 6232041481457399150, guid: 54149da3998ed4b4da4129eeb4a5e95f, type: 3}
+  playerMarkerPrefab: {fileID: 2953499796673057148, guid: 3a5a5f682334fbd4283dcb16d646bf80, type: 3}
+  currentPlayerMarker: {fileID: 0}
   bossPrefab: {fileID: 2933860668956614407, guid: dc8b3ac756e3dcd4eb46b6ad12fb2515, type: 3}
   numberOfLevels: 7
   minNodesPerLevel: 2

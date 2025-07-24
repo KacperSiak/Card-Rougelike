@@ -19,7 +19,7 @@ public class HoverHighlighter : MonoBehaviour
     void Start()
     {
         objectRenderer = GetComponent<Renderer>();
-        objectCollider = GetComponent<Collider>(); //do not look for references in runtime
+        objectCollider = GetComponent<Collider>(); // do not look for references in runtime
         
         if (objectRenderer == null)
         {
