@@ -17,6 +17,7 @@ namespace Systems.SceneManagement
             return Scenes.FirstOrDefault(scene => scene.SceneType == sceneType)?.Reference.Name;
         }
     }
+
     [Serializable]
     public class SceneData
     {
@@ -25,5 +26,5 @@ namespace Systems.SceneManagement
         public SceneType SceneType;
     }
 
-    public enum SceneType{ActiveScene, MainMenu, UI, HUD}
+    public enum SceneType{ActiveScene, MainMenu, UI, HUD, Map, Enemy, Shop}
 }
