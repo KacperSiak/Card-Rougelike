@@ -45,7 +45,7 @@ public class CameraController : MonoBehaviour
             Vector3 newPosition = transform.position;
             newPosition.z += deltaWorld.z;
             
-            newPosition.z = Mathf.Clamp(newPosition.z, minBounds.y, maxBounds.y); // ograniczenie do granic
+            newPosition.z = Mathf.Clamp(newPosition.z, minBounds.y, maxBounds.y); // limiting to bounds
             
             transform.position = newPosition;
         }
