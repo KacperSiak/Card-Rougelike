@@ -4,6 +4,7 @@ namespace MapSystem
 {
     public enum NodeType
     {
+        Start,
         Enemy,
         Elite,
         Treasure,

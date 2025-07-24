@@ -12,10 +12,20 @@ public struct NodeTypeSettings
     public GameObject prefab;
 }
 
+
 public class MapGenerator : MonoBehaviour
 {
     [Header("Node Type Configuration")]
     public NodeTypeSettings[] nodeTypes;
+
+    [Header("Start Node Configuration")]
+    public GameObject startNodePrefab;
+
+    [Header("Player Configuration")]
+    public GameObject playerMarkerPrefab;
+    
+    [HideInInspector]
+    public GameObject currentPlayerMarker;
 
     [Header("Boss Configuration")]
     public GameObject bossPrefab;
@@ -75,12 +85,8 @@ public class MapGenerator : MonoBehaviour
         GenerateMapStructure();
         ConnectNodes();
         InstantiateMapVisuals();
-
-        if (showConnections)
-        {
-            DrawConnections();
-        }
-
+        SpawnPlayerMarker();
+        DrawConnections();
         SetupCameraBounds();
     }
 
@@ -107,8 +113,21 @@ public class MapGenerator : MonoBehaviour
     {
         for (int level = 0; level < numberOfLevels; level++)
         {
-            int nodesCount = Random.Range(minNodesPerLevel, maxNodesPerLevel + 1);
             List<MapNode> currentLevelNodes = new List<MapNode>();
+            int nodesCount = Random.Range(minNodesPerLevel, maxNodesPerLevel + 1);
+
+            // Poziom 0: zawsze jeden startowy node
+            if (level == 0)
+            {
+                MapNode startNode = new MapNode
+                {
+                    Type = NodeType.Start,
+                    Position = new Vector2(0, 0)
+                };
+                currentLevelNodes.Add(startNode);
+                mapLevels.Add(currentLevelNodes);
+                continue;
+            }
 
             for (int i = 0; i < nodesCount; i++)
             {
@@ -140,11 +159,19 @@ public class MapGenerator : MonoBehaviour
 
     void InstantiateMapVisuals()
     {
-        foreach (var level in mapLevels)
+        for (int level = 0; level < mapLevels.Count; level++)
         {
-            foreach (var node in level)
+            foreach (var node in mapLevels[level])
             {
-                GameObject prefab = GetPrefabForNodeType(node.Type);
+                GameObject prefab = null;
+                if (level == 0 && startNodePrefab != null && node.Type == NodeType.Start)
+                {
+                    prefab = startNodePrefab;
+                }
+                else
+                {
+                    prefab = GetPrefabForNodeType(node.Type);
+                }
                 if (prefab != null)
                 {
                     Vector3 pos3D = new Vector3(node.Position.x, 0, node.Position.y);
@@ -152,6 +179,49 @@ public class MapGenerator : MonoBehaviour
                 }
             }
         }
+    }
+
+    void SpawnPlayerMarker()
+    {
+        if (playerMarkerPrefab == null || mapLevels.Count == 0) return;
+
+        // Znajdź start node (poziom 0)
+        if (mapLevels[0].Count > 0)
+        {
+            MapNode startNode = mapLevels[0][0];
+            Vector3 playerPos = new Vector3(startNode.Position.x, 0.2f, startNode.Position.y);
+            
+            // Utwórz marker gracza jeśli nie istnieje
+            if (currentPlayerMarker == null)
+            {
+                currentPlayerMarker = Instantiate(playerMarkerPrefab, playerPos, Quaternion.identity, transform);
+                currentPlayerMarker.name = "PlayerMarker";
+            }
+            else
+            {
+                // Przenieś istniejący marker na start
+                currentPlayerMarker.transform.position = playerPos;
+            }
+            
+            // Ustaw referencję dla systemu klikania węzłów
+            NodeClickHandler.playerMarker = currentPlayerMarker;
+            NodeClickHandler.currentPlayerNode = GetStartNodeTransform();
+        }
+    }
+
+    Transform GetStartNodeTransform()
+    {
+        // Znajdź Transform start node w dzieciach
+        foreach (Transform child in transform)
+        {
+            if (child.name.Contains("Start") || 
+                (mapLevels.Count > 0 && Vector3.Distance(child.position, 
+                    new Vector3(mapLevels[0][0].Position.x, 0, mapLevels[0][0].Position.y)) < 0.1f))
+            {
+                return child;
+            }
+        }
+        return null;
     }
 
     NodeType GetRandomNodeType(int level)
@@ -312,7 +382,11 @@ public class MapGenerator : MonoBehaviour
 
         foreach (Transform child in transform)
         {
-            childrenToDestroy.Add(child.gameObject);
+            // Nie usuwaj markera gracza
+            if (child.gameObject != currentPlayerMarker)
+            {
+                childrenToDestroy.Add(child.gameObject);
+            }
         }
 
         foreach (var child in childrenToDestroy)

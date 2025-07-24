@@ -119,14 +119,12 @@ public class NodeClickHandler : MonoBehaviour
     {
         currentPlayerNode = transform;
         
-        if (playerMarker == null)
-        {
-            InitializePlayerMarker();
-        }
-        
+        // Użyj markera z MapGenerator
         if (playerMarker != null)
         {
-            playerMarker.transform.position = transform.position;
+            Vector3 newPos = transform.position;
+            newPos.y = 0.2f; // Ustaw wysokość
+            playerMarker.transform.position = newPos;
             playerMarker.SetActive(true);
         }
     }

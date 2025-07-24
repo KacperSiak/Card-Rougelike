@@ -289,9 +289,10 @@ MonoBehaviour:
     minCount: 1
     maxCount: 3
     prefab: {fileID: 8174134825137076215, guid: 78ea7ab5ff7d80e4a91f1b760d2c1274, type: 3}
+  startNodePrefab: {fileID: 6232041481457399150, guid: 54149da3998ed4b4da4129eeb4a5e95f, type: 3}
   bossPrefab: {fileID: 2933860668956614407, guid: dc8b3ac756e3dcd4eb46b6ad12fb2515, type: 3}
   numberOfLevels: 7
-  minNodesPerLevel: 1
+  minNodesPerLevel: 2
   maxNodesPerLevel: 3
   horizontalSpacing: 5
   verticalSpacing: 5
@@ -578,7 +579,6 @@ MonoBehaviour:
   maxBounds: {x: -25, y: -25}
   minZoom: 5
   maxZoom: 60
-  mapGenerator: {fileID: 594651636}
 --- !u!1 &1681245142
 GameObject:
   m_ObjectHideFlags: 0
