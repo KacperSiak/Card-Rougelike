@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 
 public class RoundManager : MonoBehaviour
@@ -9,17 +8,14 @@ public class RoundManager : MonoBehaviour
 
     public static RoundManager Instance { get; private set; }
 
-    [SerializeField] private EnemyAttackManager _enemyAttackManager;
-    [SerializeField] private List<CardsSOTest> _enemyCards;
-    [SerializeField] private List<CardsSOTest> _playerCards;
+    [field: SerializeField] public List<CardsSOTest> EnemyCards { get; private set; }
+    [field: SerializeField] public List<CardsSOTest> PlayerCards { get; private set; }
     private bool _alreadyFinished = false; // to prevent double calls of the end of combat
 
     public static event Action OnHPChanged;
     public static event Action OnCombatEnd; // logic is mostly temporary, to mark the end of combat and enable any interactions, but later it will be modified to be built in the whole game logic
+    public static event Action OnRoundStart;
     public static event Action OnRoundEnd;
-
-    // For the end of the combat there can be an event and many components will have methods to react on this event
-    // Maybe for more stages I can create events, like OnCombatStart, OnCombatEnd, OnRoundStart, OnRoundEnd, etc.
 
     void Awake()
     {
@@ -66,10 +62,7 @@ public class RoundManager : MonoBehaviour
     void Start()
     {
         Cursor.visible = true; 
-        _enemyAttackManager.StartCombatSetup();
-        PlayerCardManager.Instance.StartCombat(_playerCards);
-        EnemyCardManager.Instance.StartCombat(_enemyCards);
-        UIManager.Instance.StartCombat();
+        OnRoundStart?.Invoke();
     }
 
     public void EndRound()

@@ -2596,8 +2596,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a38c75192c4d93242b41c62aee494af5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _enemyAttackManager: {fileID: 1312136505}
-  _enemyCards:
+  <EnemyCards>k__BackingField:
   - {fileID: 11400000, guid: bd7fe8880e6fee14bbe7114d73dcdfef, type: 2}
   - {fileID: 11400000, guid: 2945b418c27b0c2418ca65413aa38c12, type: 2}
   - {fileID: 11400000, guid: a51ddbb753ddb5a40acf4f3923f50415, type: 2}
@@ -2618,7 +2617,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: c50f25b1bc11b764a83cc16224353d08, type: 2}
   - {fileID: 11400000, guid: 771b89e4658671743a328049cdf8f44f, type: 2}
   - {fileID: 11400000, guid: af0845787331cf74e97657be945ed9a5, type: 2}
-  _playerCards:
+  <PlayerCards>k__BackingField:
   - {fileID: 11400000, guid: bd7fe8880e6fee14bbe7114d73dcdfef, type: 2}
   - {fileID: 11400000, guid: 2945b418c27b0c2418ca65413aa38c12, type: 2}
   - {fileID: 11400000, guid: a51ddbb753ddb5a40acf4f3923f50415, type: 2}
@@ -2639,9 +2638,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: c50f25b1bc11b764a83cc16224353d08, type: 2}
   - {fileID: 11400000, guid: 771b89e4658671743a328049cdf8f44f, type: 2}
   - {fileID: 11400000, guid: af0845787331cf74e97657be945ed9a5, type: 2}
-  _playerHPText: {fileID: 230911701}
-  _enemyHPText: {fileID: 326232543}
-  _finalText: {fileID: 0}
 --- !u!4 &937618206
 Transform:
   m_ObjectHideFlags: 0

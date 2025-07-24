@@ -29,6 +29,7 @@ public class EnemyCardManager : MonoBehaviour
     {
         RoundManager.OnCombatEnd += OnCombatEnd;
         RoundManager.OnRoundEnd += RefillCards;
+        RoundManager.OnRoundStart += StartCombat;
     }
 
 
@@ -36,9 +37,10 @@ public class EnemyCardManager : MonoBehaviour
     {
         RoundManager.OnCombatEnd -= OnCombatEnd;
         RoundManager.OnRoundEnd -= RefillCards;
+        RoundManager.OnRoundStart -= StartCombat;
     }
 
-    public void StartCombat(List<CardsSOTest> enemyCards)
+    public void StartCombat()
     {
         for (int i = 0, j = 0; i < _suitsAmount; i++)
         {
@@ -47,7 +49,7 @@ public class EnemyCardManager : MonoBehaviour
 
             for (; j < cardsInSuit; j++)
             {
-                _cardsBySuitDeck[i].Add(enemyCards[j]);
+                _cardsBySuitDeck[i].Add(RoundManager.Instance.EnemyCards[j]);
             }
 
         }

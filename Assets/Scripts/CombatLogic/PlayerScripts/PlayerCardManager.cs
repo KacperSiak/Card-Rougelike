@@ -1,8 +1,5 @@
-using System;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class PlayerCardManager : MonoBehaviour
 {
@@ -19,20 +16,17 @@ public class PlayerCardManager : MonoBehaviour
 
     void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+        if (Instance == null) Instance = this;
+
+        else Destroy(gameObject);
+
     }
 
     private void OnEnable()
     {
         RoundManager.OnCombatEnd += OnCombatEnd;
         RoundManager.OnRoundEnd += RefillCards;
+        RoundManager.OnRoundStart += StartCombat;
     }
 
 
@@ -40,11 +34,12 @@ public class PlayerCardManager : MonoBehaviour
     {
         RoundManager.OnCombatEnd -= OnCombatEnd;
         RoundManager.OnRoundEnd -= RefillCards;
+        RoundManager.OnRoundStart -= StartCombat;
     }
 
-    public void StartCombat(List<CardsSOTest> playerCards)
+    public void StartCombat()
     {
-        _playerDeckInGame = new List<CardsSOTest>(playerCards);
+        _playerDeckInGame = new List<CardsSOTest>(RoundManager.Instance.PlayerCards);
         SelectedCards = new List<GameObject>();
         _spawner.SpawnCards(_playerDeckInGame, _cardsInHandDefault, startKey: 0);
     }
@@ -53,14 +48,12 @@ public class PlayerCardManager : MonoBehaviour
     {
         SelectedCards.Add(card);
         SelectedCardsPower += card.GetComponent<PlayerCardLogic>().Card.power;
-        Debug.Log("Cards added" + SelectedCards.Count);
     }
 
     public void RemoveSelectedCards(GameObject card)
     {
         SelectedCards.Remove(card);
         SelectedCardsPower -= card.GetComponent<PlayerCardLogic>().Card.power;
-        Debug.Log("Cards removed" + SelectedCards.Count);
     }
 
     public void ClearSelectedCards()
@@ -68,7 +61,6 @@ public class PlayerCardManager : MonoBehaviour
         _currentCardsInHand -= SelectedCards.Count;
         SelectedCards.Clear();
         SelectedCardsPower = 0;
-        Debug.Log("Cards cleared" + SelectedCards.Count);
     }
 
     public void IncreaseCardsInHandAmount()

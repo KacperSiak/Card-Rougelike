@@ -53,7 +53,6 @@ public class CardHolderManager : MonoBehaviour
         foreach (GameObject card in PlayerCardManager.Instance.SelectedCards)
         {
             PCardScripts.Add(card.GetComponent<PlayerCardLogic>());
-            Debug.Log("playerCardsScript count: " + PCardScripts.Count);
         }
 
         _validator.ValidateCards(this);
@@ -79,7 +78,6 @@ public class CardHolderManager : MonoBehaviour
     public void OnValidationFailed()
     {
         PCardScripts.Clear();
-        Debug.Log("pCards count: " + PCardScripts.Count);
     }
 
     public void ResetCardHolderPlayerCards()

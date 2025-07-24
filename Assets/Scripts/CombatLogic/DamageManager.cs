@@ -9,15 +9,11 @@ public class DamageManager : MonoBehaviour
    [SerializeField] private List<CardHolderManager> _cardHolders;
 
     void Awake()
-    {
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+    { 
+        if (Instance == null) Instance = this;
+
+        else Destroy(gameObject);
+
     }
 
     public void CalculatePlayerImpact()
@@ -36,8 +32,8 @@ public class DamageManager : MonoBehaviour
     private void ImplementPlayerImpact()
     {
         for (int i = 0; i < _cardHolders.Count; i++)
-        {
-            if (EnemyCardManager.Instance.CardsInGamePower[i] > 0) continue;
+        { 
+            if (!EnemyCardManager.Instance.CardsInGamePower.ContainsKey(i) || EnemyCardManager.Instance.CardsInGamePower[i] > 0) continue; 
 
             RoundManager.Instance.EnemyHP -= -EnemyCardManager.Instance.CardsInGamePower[i]; // cuz number in the list will be negative after we will implement player impact
 
@@ -54,7 +50,5 @@ public class DamageManager : MonoBehaviour
         }
 
         _enemyAttackManager.UpdateRounds();
-
     }
-
 }

@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using TMPro;
-using Unity.Properties;
 using UnityEngine;
 
 public class UIManager : MonoBehaviour
@@ -33,6 +32,7 @@ public class UIManager : MonoBehaviour
     {
         RoundManager.OnHPChanged += SetHealthUI;
         RoundManager.OnCombatEnd += SetupCombatEndUI;
+        RoundManager.OnRoundStart += StartCombat;
     }
 
 
@@ -40,6 +40,7 @@ public class UIManager : MonoBehaviour
     {
         RoundManager.OnHPChanged -= SetHealthUI;
         RoundManager.OnCombatEnd -= SetupCombatEndUI;
+        RoundManager.OnRoundStart -= StartCombat;
     }
 
     public void StartCombat()
@@ -55,7 +56,7 @@ public class UIManager : MonoBehaviour
 
     public void SetRoundForEnemyUI(int key)
     {
-        if (_enemyAttackManager.RoundsForCards[key] == 0)
+        if (!_enemyAttackManager.RoundsForCards.ContainsKey(key) || _enemyAttackManager.RoundsForCards[key] == 0)
         {
             _roundsText[key].text = string.Empty;
             return;

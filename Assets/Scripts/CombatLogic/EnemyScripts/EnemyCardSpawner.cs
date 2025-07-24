@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Xml;
 using UnityEngine;
 
 public class EnemyCardSpawner : MonoBehaviour
@@ -11,14 +10,10 @@ public class EnemyCardSpawner : MonoBehaviour
     private int _cardsInCombo = 3;
     private int _cardsBuffer = 2;
 
-    //problems with keys, fix spawn 
-
     public void SpawnCombo(int indexObject, int indexCardHolder, Dictionary<int, List<CardsSOTest>> cardsBySuit)
     {  
         int cleanOrDirty = Random.Range(0, 2); // randomly from 0-1, 0 is clean, 1 is dirty
         bool isClean = cleanOrDirty == 0;
-
-        Debug.Log($"Is clean: {isClean}");
 
         if (!EnemyCardManager.Instance.CardsInGame.ContainsKey(indexCardHolder))
         {
@@ -44,16 +39,13 @@ public class EnemyCardSpawner : MonoBehaviour
             for (int i = 0, j = 1; i < _cardsInCombo; i++)
             {
                 for (; j < _cardsInCombo; j++)
-                {
-                    Debug.Log($"Card {cardsBySuit[randomCleanSuit][randomCleanCard].power + j} and {cardsBySuit[randomCleanSuit][randomCleanCard + j].power} are in sequence");
+                { 
                     if (cardsBySuit[randomCleanSuit][randomCleanCard].power + j != cardsBySuit[randomCleanSuit][randomCleanCard + j].power)
                     {
                         EnemyCardManager.Instance.SetupSpawner(indexObject, indexCardHolder);
                         return;
                     }
                 }
-
-                Debug.Log($"Card {cardsBySuit[randomCleanSuit][randomCleanCard].power} is clean");
 
                 GameObject cardObject = EnemyCardManager.Instance.cardObjects[indexObject + i];
                 CardsSOTest card = cardsBySuit[randomCleanSuit][randomCleanCard];
@@ -67,11 +59,10 @@ public class EnemyCardSpawner : MonoBehaviour
                 EnemyCardManager.Instance.UpdateCardsInGame(key, cardObject);
             }
 
-            if (cardsBySuit[randomCleanSuit].Count == 0)
-                cardsBySuit.Remove(randomCleanSuit);
+            CheckCardsInDeckAmount(cardsBySuit, randomCleanSuit);
 
             EnemyCardManager.Instance.SetupCardHolder(key, validationType: _clean);
-            EnemyCardManager.Instance.CardsInGamePower.Add(key, power);
+            EnemyCardManager.Instance.SetupPower(key, power);
             _enemyAttackManager.SetRoundAttack(key);
             return;
         }
@@ -111,10 +102,13 @@ public class EnemyCardSpawner : MonoBehaviour
              CardsSOTest card = cardsBySuit[randomDirtySuit][index[i]];
              cardsBySuit[randomDirtySuit].Remove(card);
 
-             if (cardsBySuit[randomDirtySuit].Count == 0)
-                 cardsBySuit.Remove(randomDirtySuit);
+            if (cardsBySuit[randomDirtySuit].Count == 0)
+            {
+                CheckCardsInDeckAmount(cardsBySuit, randomDirtySuit);
+                randomDirtySuit--;
+            }
 
-             randomDirtySuit++;
+            randomDirtySuit++;
 
              cardObject.GetComponent<SpriteRenderer>().sprite = card.graphics;
              cardObject.GetComponent<EnemyCardLogic>().SetCardProperties(card);
@@ -124,25 +118,22 @@ public class EnemyCardSpawner : MonoBehaviour
              EnemyCardManager.Instance.UpdateCardsInGame(key, cardObject);
         }
 
-         EnemyCardManager.Instance.SetupCardHolder(key, validationType: _dirty);
-         EnemyCardManager.Instance.CardsInGamePower.Add(key, power);
-         _enemyAttackManager.SetRoundAttack(key);
+        EnemyCardManager.Instance.SetupCardHolder(key, validationType: _dirty);
+        EnemyCardManager.Instance.SetupPower(key, power);
+        _enemyAttackManager.SetRoundAttack(key);
     }
 
     public void SpawnSingle(int cardObjectIndex, int indexCardHolder, Dictionary<int, List<CardsSOTest>> cardsBySuit)
     { 
         int randomSuit = Random.Range(0, cardsBySuit.Count);
-        int randomCard = Random.Range(0, cardsBySuit[randomSuit].Count);
+        int randomCard = Random.Range(0, cardsBySuit[randomSuit].Count); 
         int power = 0;
 
-        Debug.Log($"Random suit: {randomSuit}, Random card: {randomCard}");
-
         GameObject cardObject = EnemyCardManager.Instance.cardObjects[cardObjectIndex];
-        CardsSOTest card = cardsBySuit[randomSuit][randomCard];
+        CardsSOTest card = cardsBySuit[randomSuit][randomCard]; 
         cardsBySuit[randomSuit].RemoveAt(randomCard);
 
-        if (cardsBySuit[randomSuit].Count == 0)
-            cardsBySuit.Remove(randomSuit);
+        CheckCardsInDeckAmount(cardsBySuit, randomSuit);
 
         cardObject.GetComponent<SpriteRenderer>().sprite = card.graphics;
         cardObject.GetComponent<EnemyCardLogic>().SetCardProperties(card);
@@ -155,7 +146,29 @@ public class EnemyCardSpawner : MonoBehaviour
 
         EnemyCardManager.Instance.UpdateCardsInGame(keySingle, cardObject);
         EnemyCardManager.Instance.SetupCardHolder(keySingle, validationType: _single);
-        EnemyCardManager.Instance.CardsInGamePower.Add(keySingle, power);
+        EnemyCardManager.Instance.SetupPower(keySingle, power);
         _enemyAttackManager.SetRoundAttack(keySingle);
+    }
+
+    private void CheckCardsInDeckAmount(Dictionary<int, List<CardsSOTest>> deck, int key)
+    {
+        if (deck[key].Count == 0)
+        {
+            if (!deck.ContainsKey(key + 1))
+                deck.Remove(key);
+
+            else
+            {
+                int emptyKey = 0;
+
+                for (int i = key + 1; i < deck.Count; i++)
+                {
+                    deck[i - 1] = deck[i];
+                    emptyKey = i;
+                }
+
+                deck.Remove(emptyKey);
+            }
+        }
     }
 }

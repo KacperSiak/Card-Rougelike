@@ -1,8 +1,5 @@
-using System;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class EnemyAttackManager : MonoBehaviour
 {
@@ -18,12 +15,14 @@ public class EnemyAttackManager : MonoBehaviour
     private void OnEnable()
     {
         RoundManager.OnCombatEnd += OnCombatEnd;
+        RoundManager.OnRoundStart += StartCombatSetup;
     }
 
 
     private void OnDisable()
     {
         RoundManager.OnCombatEnd -= OnCombatEnd;
+        RoundManager.OnRoundStart -= StartCombatSetup;
     }
 
     public void StartCombatSetup()
@@ -53,14 +52,16 @@ public class EnemyAttackManager : MonoBehaviour
     {
         for (int i = 0; i < limit; i++)
         {
-            if (!RoundsForCards.ContainsKey(i)) continue;
-
-            RoundsForCards[i]--;
-            if (RoundsForCards[i] > 0)
+            if (!RoundsForCards.ContainsKey(i))
             {
                 UIManager.Instance.SetRoundForEnemyUI(key: i);
                 continue;
             } 
+
+            RoundsForCards[i]--;
+            UIManager.Instance.SetRoundForEnemyUI(key: i);
+
+            if (RoundsForCards[i] > 0) continue;
 
             RoundManager.Instance.PlayerHP -= EnemyCardManager.Instance.CardsInGamePower[i];
 
@@ -78,7 +79,6 @@ public class EnemyAttackManager : MonoBehaviour
 
     public void RemoveKey(int key)
     { 
-        UIManager.Instance.SetRoundForEnemyUI(key);
         RoundsForCards.Remove(key);
     }
 
