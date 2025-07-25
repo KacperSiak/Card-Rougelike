@@ -3,14 +3,52 @@ using UnityEngine;
 
 public class DamageManager : MonoBehaviour
 {
-   public int enemyPower; // Example enemy power
-   public int playerPower; // Example player power
-   public List<GameObject> eCards; 
-   public List<GameObject> pCards; 
+   public static DamageManager Instance { get; private set; }
+   [SerializeField] private EnemyAttackManager _enemyAttackManager;
 
-    public void CalculateDamage()
-    {
-        
+   [SerializeField] private List<CardHolderManager> _cardHolders;
+
+    void Awake()
+    { 
+        if (Instance == null) Instance = this;
+
+        else Destroy(gameObject);
+
     }
 
+    public void CalculatePlayerImpact()
+    {
+        foreach (var ch in _cardHolders)
+        {
+            if (ch.ValidatedPlayerCardsPower == 0) continue;
+
+            EnemyCardManager.Instance.UpdatePower(ch.EnemyComboIndex, ch.ValidatedPlayerCardsPower);
+            ch.ResetCardHolderPlayerCards();
+        }
+
+        ImplementPlayerImpact();
+    }
+
+    private void ImplementPlayerImpact()
+    {
+        for (int i = 0; i < _cardHolders.Count; i++)
+        { 
+            if (!EnemyCardManager.Instance.CardsInGamePower.ContainsKey(i) || EnemyCardManager.Instance.CardsInGamePower[i] > 0) continue; 
+
+            RoundManager.Instance.EnemyHP -= -EnemyCardManager.Instance.CardsInGamePower[i]; // cuz number in the list will be negative after we will implement player impact
+
+            if (RoundManager.Instance.EnemyHP <= 0) return;
+
+            _cardHolders[i].ResetCardHolderEnemyCards();
+
+            foreach (var card in EnemyCardManager.Instance.CardsInGame[i])
+            {
+                card.SetActive(false);
+            }
+            EnemyCardManager.Instance.RemoveCardFromGame(key: i);
+            _enemyAttackManager.RemoveKey(key: i);
+        }
+
+        _enemyAttackManager.UpdateRounds();
+    }
 }

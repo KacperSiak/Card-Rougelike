@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72c2484d7d1b2b841ae9649c17f11009, type: 3}
   m_Name: Card 3
   m_EditorClassIdentifier: 
-  power: 10
-  graphics: {fileID: 0}
-  cardMaterial: {fileID: 2100000, guid: 8e0974b9844c91f47a85b05f794e1b1f, type: 2}
+  power: 5
+  graphics: {fileID: -1060441185, guid: 28a5df7ffde1bb5408169991d42c3ab0, type: 3}
+  suit: 0
