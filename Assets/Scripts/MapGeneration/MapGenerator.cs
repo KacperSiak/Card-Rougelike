@@ -10,8 +10,8 @@ public struct NodeTypeSettings
     public int minCount;
     public int maxCount;
     public GameObject prefab;
+    public int minLevel;
 }
-
 
 public class MapGenerator : MonoBehaviour
 {
@@ -38,8 +38,10 @@ public class MapGenerator : MonoBehaviour
     public float horizontalSpacing = 5f;
     public float verticalSpacing = 6f;
 
-    [Header("Position Randomization")]
+    [Header("Node Position Randomization")]
+    [Tooltip("Max random offset for node X position")]
     public float horizontalRandomRange = 2f;
+    [Tooltip("Max random offset for node Y position")]
     public float verticalRandomRange = 1f;
 
     [Header("Connection Visualization")]
@@ -60,6 +62,9 @@ public class MapGenerator : MonoBehaviour
     private Dictionary<NodeType, int> currentCounts = new Dictionary<NodeType, int>();
     private Dictionary<NodeType, NodeTypeSettings> settingsLookup = new Dictionary<NodeType, NodeTypeSettings>();
     private bool bossAssigned = false;
+
+    [Header("References")]
+    public MapManager mapManager;
 
     void Start()
     {
@@ -89,6 +94,8 @@ public class MapGenerator : MonoBehaviour
         SpawnPlayerMarker();
         DrawConnections();
         SetupCameraBounds();
+        if (mapManager != null)
+            mapManager.CalculateMaxMapTime();
     }
 
     void SetupCameraBounds()
@@ -131,7 +138,40 @@ public class MapGenerator : MonoBehaviour
 
             for (int i = 0; i < nodesCount; i++)
             {
-                var availableTypes = GetAvailableNodeTypes();
+                var availableTypes = new List<NodeType>();
+                foreach (var kvp in settingsLookup)
+                {
+                    NodeType type = kvp.Key;
+                    NodeTypeSettings settings = kvp.Value;
+                    if (level < settings.minLevel)
+                        continue;
+                    if (currentCounts[type] < settings.maxCount)
+                    {
+                        availableTypes.Add(type);
+                    }
+                }
+
+                if (i > 0)
+                {
+                    NodeType prevType = currentLevelNodes[i - 1].Type;
+                    availableTypes.Remove(prevType);
+                }
+
+                if (availableTypes.Count == 0)
+                {
+                    foreach (var kvp in settingsLookup)
+                    {
+                        NodeType type = kvp.Key;
+                        NodeTypeSettings settings = kvp.Value;
+                        if (level < settings.minLevel)
+                            continue;
+                        if (currentCounts[type] < settings.maxCount)
+                        {
+                            availableTypes.Add(type);
+                        }
+                    }
+                }
+
                 if (availableTypes.Count == 0 && level != numberOfLevels - 1)
                 {
                     break;
@@ -140,6 +180,7 @@ public class MapGenerator : MonoBehaviour
                 float baseX = i * horizontalSpacing;
                 float baseY = -level * verticalSpacing;
 
+                // Use dedicated randomization ranges
                 baseX += Random.Range(-horizontalRandomRange, horizontalRandomRange);
                 baseY += Random.Range(-verticalRandomRange, verticalRandomRange);
 
@@ -148,7 +189,7 @@ public class MapGenerator : MonoBehaviour
 
                 MapNode node = new MapNode
                 {
-                    Type = GetRandomNodeType(level),
+                    Type = GetRandomNodeType(level, availableTypes),
                     Position = new Vector2(baseX + offsetX, baseY)
                 };
                 currentLevelNodes.Add(node);
@@ -219,7 +260,7 @@ public class MapGenerator : MonoBehaviour
         return null;
     }
 
-    NodeType GetRandomNodeType(int level)
+    NodeType GetRandomNodeType(int level, List<NodeType> availableTypes)
     {
         if (level == numberOfLevels - 1 && !bossAssigned)
         {
@@ -227,22 +268,12 @@ public class MapGenerator : MonoBehaviour
             return NodeType.Boss;
         }
 
-        var availableTypes = GetAvailableNodeTypes();
-        if (availableTypes.Count == 0)
-        {
+        if (availableTypes == null || availableTypes.Count == 0)
             return NodeType.Enemy;
-        }
 
-var selectedType = availableTypes[Random.Range(0, availableTypes.Count)];
+        var selectedType = availableTypes[Random.Range(0, availableTypes.Count)];
         currentCounts[selectedType]++;
         return selectedType;
-    }
-
-    List<NodeType> GetAvailableNodeTypes()
-    {
-        return settingsLookup.Keys
-            .Where(type => currentCounts[type] < settingsLookup[type].maxCount)
-            .ToList();
     }
 
     void ConnectNodes()
