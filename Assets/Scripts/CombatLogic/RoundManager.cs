@@ -14,7 +14,7 @@ public class RoundManager : MonoBehaviour
 
     public static event Action OnHPChanged;
     public static event Action OnCombatEnd; // logic is mostly temporary, to mark the end of combat and enable any interactions, but later it will be modified to be built in the whole game logic
-    public static event Action OnRoundStart;
+    public static event Action OnCombatStart;
     public static event Action OnRoundEnd;
 
     void Awake()
@@ -27,15 +27,17 @@ public class RoundManager : MonoBehaviour
     private void OnEnable()
     {
         OnHPChanged += CheckHPState;
+        OnCombatEnd += ReturnHealthValueAfterCombat;
     } 
     
     
     private void OnDisable()
     {
         OnHPChanged -= CheckHPState;
+        OnCombatEnd -= ReturnHealthValueAfterCombat;
     }
 
-    private int _playerHP = 50; // temp default value
+    private int _playerHP;
 
     public int PlayerHP
     { 
@@ -61,8 +63,14 @@ public class RoundManager : MonoBehaviour
 
     void Start()
     {
-        Cursor.visible = true; 
-        OnRoundStart?.Invoke();
+        Cursor.visible = true;
+        _playerHP = PlayerManager.Instance.PlayerHP;
+        OnCombatStart?.Invoke();
+    }
+
+    private void ReturnHealthValueAfterCombat()
+    { 
+        PlayerManager.Instance.PlayerHP = _playerHP;
     }
 
     public void EndRound()

@@ -15,14 +15,14 @@ public class EnemyAttackManager : MonoBehaviour
     private void OnEnable()
     {
         RoundManager.OnCombatEnd += OnCombatEnd;
-        RoundManager.OnRoundStart += StartCombatSetup;
+        RoundManager.OnCombatStart += StartCombatSetup;
     }
 
 
     private void OnDisable()
     {
         RoundManager.OnCombatEnd -= OnCombatEnd;
-        RoundManager.OnRoundStart -= StartCombatSetup;
+        RoundManager.OnCombatStart -= StartCombatSetup;
     }
 
     public void StartCombatSetup()

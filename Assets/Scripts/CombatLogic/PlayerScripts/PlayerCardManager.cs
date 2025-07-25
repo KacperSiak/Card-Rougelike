@@ -26,7 +26,7 @@ public class PlayerCardManager : MonoBehaviour
     {
         RoundManager.OnCombatEnd += OnCombatEnd;
         RoundManager.OnRoundEnd += RefillCards;
-        RoundManager.OnRoundStart += StartCombat;
+        RoundManager.OnCombatStart += StartCombat;
     }
 
 
@@ -34,7 +34,7 @@ public class PlayerCardManager : MonoBehaviour
     {
         RoundManager.OnCombatEnd -= OnCombatEnd;
         RoundManager.OnRoundEnd -= RefillCards;
-        RoundManager.OnRoundStart -= StartCombat;
+        RoundManager.OnCombatStart -= StartCombat;
     }
 
     public void StartCombat()

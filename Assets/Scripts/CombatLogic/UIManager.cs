@@ -32,7 +32,7 @@ public class UIManager : MonoBehaviour
     {
         RoundManager.OnHPChanged += SetHealthUI;
         RoundManager.OnCombatEnd += SetupCombatEndUI;
-        RoundManager.OnRoundStart += StartCombat;
+        RoundManager.OnCombatStart += StartCombat;
     }
 
 
@@ -40,7 +40,7 @@ public class UIManager : MonoBehaviour
     {
         RoundManager.OnHPChanged -= SetHealthUI;
         RoundManager.OnCombatEnd -= SetupCombatEndUI;
-        RoundManager.OnRoundStart -= StartCombat;
+        RoundManager.OnCombatStart -= StartCombat;
     }
 
     public void StartCombat()
