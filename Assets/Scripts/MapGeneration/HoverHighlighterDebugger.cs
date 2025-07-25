@@ -1,8 +1,5 @@
 using UnityEngine;
 
-/// <summary>
-/// Skrypt diagnostyczny do sprawdzania problemów z HoverHighlighter
-/// </summary>
 public class HoverHighlighterDebugger : MonoBehaviour
 {
     [Header("Debug Settings")]
@@ -11,7 +8,7 @@ public class HoverHighlighterDebugger : MonoBehaviour
     public LayerMask debugRaycastLayer = -1;
     
     private Camera debugCamera;
-    private GameObject lastHoveredObject = null; // Ostatnio najechany obiekt
+    private GameObject lastHoveredObject = null;
     
     void Start()
     {
@@ -28,7 +25,6 @@ public class HoverHighlighterDebugger : MonoBehaviour
         
         Ray ray = debugCamera.ScreenPointToRay(Input.mousePosition);
         
-        // Sprawdź czy trafiliśmy w obiekt z HoverHighlighter
         GameObject currentHoveredObject = null;
         bool hitHighlightableObject = false;
         
@@ -42,20 +38,17 @@ public class HoverHighlighterDebugger : MonoBehaviour
             }
         }
         
-        // Pokaż promień TYLKO gdy najeżdżasz na obiekt z HoverHighlighter
         if (showDebugRays && hitHighlightableObject)
         {
             Debug.DrawRay(ray.origin, ray.direction * 100f, Color.green, 0.1f);
         }
         
-        // Loguj TYLKO gdy zmienia się najechany obiekt
         if (logRaycastHits && currentHoveredObject != lastHoveredObject)
         {
             if (currentHoveredObject != null)
             {
                 Debug.Log($"HOVER: Najechano na {currentHoveredObject.name}");
                 
-                // Szczegółowe info tylko gdy zmienia się obiekt
                 RaycastHit[] hits = Physics.RaycastAll(ray, Mathf.Infinity, debugRaycastLayer);
                 if (hits.Length > 0)
                 {
@@ -81,7 +74,6 @@ public class HoverHighlighterDebugger : MonoBehaviour
             lastHoveredObject = currentHoveredObject;
         }
         
-        // Sprawdź obiekt bezpośrednio pod myszą
         if (Input.GetMouseButtonDown(0))
         {
             if (Physics.Raycast(ray, out RaycastHit clickHit, Mathf.Infinity, debugRaycastLayer))

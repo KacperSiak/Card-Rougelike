@@ -298,8 +298,8 @@ MonoBehaviour:
   maxNodesPerLevel: 3
   horizontalSpacing: 5
   verticalSpacing: 5
-  horizontalRandomRange: 1
-  verticalRandomRange: 1
+  horizontalRandomRange: 0
+  verticalRandomRange: 0
   showConnections: 1
   connectionMaterial: {fileID: 2100000, guid: 48a306c2c149cec4ba5543902c74ce82, type: 2}
   connectionWidth: 0.2
