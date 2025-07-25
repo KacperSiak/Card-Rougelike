@@ -13,7 +13,6 @@ public struct NodeTypeSettings
     public int minLevel;
 }
 
-
 public class MapGenerator : MonoBehaviour
 {
     [Header("Node Type Configuration")]
@@ -39,6 +38,11 @@ public class MapGenerator : MonoBehaviour
     public float horizontalSpacing = 5f;
     public float verticalSpacing = 6f;
 
+    [Header("Node Position Randomization")]
+    [Tooltip("Max random offset for node X position")]
+    public float horizontalRandomRange = 2f;
+    [Tooltip("Max random offset for node Y position")]
+    public float verticalRandomRange = 1f;
 
     [Header("Connection Visualization")]
     public bool showConnections = true;
@@ -58,6 +62,9 @@ public class MapGenerator : MonoBehaviour
     private Dictionary<NodeType, int> currentCounts = new Dictionary<NodeType, int>();
     private Dictionary<NodeType, NodeTypeSettings> settingsLookup = new Dictionary<NodeType, NodeTypeSettings>();
     private bool bossAssigned = false;
+
+    [Header("References")]
+    public MapManager mapManager;
 
     void Start()
     {
@@ -87,6 +94,8 @@ public class MapGenerator : MonoBehaviour
         SpawnPlayerMarker();
         DrawConnections();
         SetupCameraBounds();
+        if (mapManager != null)
+            mapManager.CalculateMaxMapTime();
     }
 
     void SetupCameraBounds()
@@ -170,6 +179,10 @@ public class MapGenerator : MonoBehaviour
 
                 float baseX = i * horizontalSpacing;
                 float baseY = -level * verticalSpacing;
+
+                // Use dedicated randomization ranges
+                baseX += Random.Range(-horizontalRandomRange, horizontalRandomRange);
+                baseY += Random.Range(-verticalRandomRange, verticalRandomRange);
 
                 float totalWidth = (nodesCount - 1) * horizontalSpacing;
                 float offsetX = -totalWidth / 2f;
