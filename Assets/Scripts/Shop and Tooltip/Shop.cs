@@ -13,11 +13,14 @@ public class Shop : MonoBehaviour
     private int _price;
     private float _priceMultiplier = 1f;
     private bool _freeBuyEffect = false;
+    private int goldForRerol;
 
     private void Start()
     {
         _rerollButton.onClick.AddListener(TicketRerollShop);
+        // _rerollButton.onClick.AddListener(RerollForGold);
         RerollShop();
+        goldForRerol = 5;
     }
 
     private void OnEnable()
@@ -71,6 +74,16 @@ public class Shop : MonoBehaviour
         {
             RerollShop();
             PlayerOverlay.instance.rollTickets--;
+        }
+    }
+
+    private void RerollForGold()
+    {
+        if (PlayerOverlay.instance.gold >= goldForRerol)
+        {
+            RerollShop();
+            PlayerOverlay.instance.SpendGold(goldForRerol);
+            goldForRerol += 1;
         }
     }
 
