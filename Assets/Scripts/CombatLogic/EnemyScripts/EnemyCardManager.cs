@@ -81,9 +81,9 @@ public class EnemyCardManager : MonoBehaviour
         }
     }
 
-    public void SetupCardHolder(int index, IValidate validationType)
+    public void SetupCardHolder(int index, Validator validator)
     {
-        cardHolders[index].GetComponent<CardHolderManager>().SetProperties(validationType, index);
+        cardHolders[index].GetComponent<CardHolderManager>().SetProperties(validator, index);
     }
 
     public void SetupCardsInGame(int key)

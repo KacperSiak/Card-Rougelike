@@ -1,31 +1,28 @@
 using UnityEngine;
 
-public class ValidateClean : MonoBehaviour, IValidate
+public class ValidateClean : Validator
 {
-    public void ValidateCards(CardHolderManager cardHolder, Validator validator)
+    protected override void ValidateCards()
     {
-        bool isValid = true;
-
         if (PlayerCardManager.Instance.SelectedCards.Count > 1)
         {
-            isValid = cardHolder.PCardScripts[0].Card.suit == cardHolder.PCardScripts[cardHolder.PCardScripts.Count - 1].Card.suit;
-            Debug.Log("valid or not: " + isValid);
+            _isValid = _cardHolder.PCardScripts[0].Card.suit == _cardHolder.PCardScripts[_cardHolder.PCardScripts.Count - 1].Card.suit;
+            Debug.Log("valid or not: " + _isValid);
 
-            for (int i = 0; i < cardHolder.PCardScripts.Count - 1; i++)
+            for (int i = 0; i < _cardHolder.PCardScripts.Count - 1; i++)
             {
-                if (!isValid) break;
+                if (!_isValid) break;
 
-                isValid = cardHolder.PCardScripts[i].Card.suit == cardHolder.PCardScripts[i + 1].Card.suit;
+                _isValid = _cardHolder.PCardScripts[i].Card.suit == _cardHolder.PCardScripts[i + 1].Card.suit;
 
-                if (!isValid) break;
+                if (!_isValid) break;
 
-                isValid = cardHolder.PCardScripts[i].Card.power + 1 == cardHolder.PCardScripts[i + 1].Card.power;
-                Debug.Log("valid or not: " + isValid);
+                _isValid = _cardHolder.PCardScripts[i].Card.power + 1 == _cardHolder.PCardScripts[i + 1].Card.power;
+                Debug.Log("valid or not: " + _isValid);
             }
         }
 
-        Debug.Log("valid or not: " + isValid);
-        validator.ContinueValidation(isValid, cardHolder);
+        Debug.Log("valid or not: " + _isValid);
     }
 
 }

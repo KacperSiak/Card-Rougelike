@@ -564,7 +564,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _highlightMaterial: {fileID: 2100000, guid: 446f6a4d26d8ca946ae7bcdfe856d1d2, type: 2}
   _defaultMaterial: {fileID: -876546973899608171, guid: 6f75183e23fd43d4b8efa18f2611253b, type: 3}
-  _validator: {fileID: 1326876040}
 --- !u!1 &199826868
 GameObject:
   m_ObjectHideFlags: 0
@@ -1098,7 +1097,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _highlightMaterial: {fileID: 2100000, guid: 446f6a4d26d8ca946ae7bcdfe856d1d2, type: 2}
   _defaultMaterial: {fileID: -876546973899608171, guid: 6f75183e23fd43d4b8efa18f2611253b, type: 3}
-  _validator: {fileID: 1326876040}
 --- !u!1 &326232541
 GameObject:
   m_ObjectHideFlags: 0
@@ -3002,6 +3000,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c83f7ebc36d68d49bbb410f75a05489, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _enemyAttackManager: {fileID: 1312136505}
 --- !u!4 &1181143059
 Transform:
   m_ObjectHideFlags: 0
@@ -3477,7 +3476,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1326876041}
-  - component: {fileID: 1326876040}
+  - component: {fileID: 1326876042}
   m_Layer: 0
   m_Name: Validator
   m_TagString: Untagged
@@ -3485,19 +3484,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1326876040
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1326876039}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b96cd1dc851825b4e994c27c9fad84ec, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _enemyAttackManager: {fileID: 1312136505}
 --- !u!4 &1326876041
 Transform:
   m_ObjectHideFlags: 0
@@ -3516,6 +3502,19 @@ Transform:
   - {fileID: 1181143059}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1326876042
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1326876039}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b96cd1dc851825b4e994c27c9fad84ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _enemyAttackManager: {fileID: 1312136505}
 --- !u!1 &1338215135
 GameObject:
   m_ObjectHideFlags: 0
@@ -3747,6 +3746,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf4fcfaf7559a964b9d49ef6935f145c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _enemyAttackManager: {fileID: 1312136505}
 --- !u!1 &1543296709
 GameObject:
   m_ObjectHideFlags: 0
@@ -4010,7 +4010,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _highlightMaterial: {fileID: 2100000, guid: 446f6a4d26d8ca946ae7bcdfe856d1d2, type: 2}
   _defaultMaterial: {fileID: -876546973899608171, guid: 6f75183e23fd43d4b8efa18f2611253b, type: 3}
-  _validator: {fileID: 1326876040}
 --- !u!1 &1668391433
 GameObject:
   m_ObjectHideFlags: 0
@@ -4708,6 +4707,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c6d75f13a5c2ff4fad2e300504eb65c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _enemyAttackManager: {fileID: 1312136505}
 --- !u!1 &1966959780
 GameObject:
   m_ObjectHideFlags: 0

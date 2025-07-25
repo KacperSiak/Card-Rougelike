@@ -5,9 +5,9 @@ public class CardHolderManager : MonoBehaviour
 {
     [SerializeField] private Material _highlightMaterial;
     [SerializeField] private Material _defaultMaterial;
-    [SerializeField] private Validator _validator;
     private bool _isOccupied = false;
-    public IValidate ValidatorType { get; private set; } = null;
+
+    public Validator ValidatorType { get; private set; } = null;
 
     public int EnemyComboIndex { get; private set; } = -1;
     public  List<PlayerCardLogic> PCardScripts { get; private set; }
@@ -25,9 +25,9 @@ public class CardHolderManager : MonoBehaviour
         RoundManager.OnCombatEnd -= OnCombatEnd;
     }
 
-    public void SetProperties(IValidate validationType, int enemyIndex)
+    public void SetProperties(Validator validator, int enemyIndex)
     {
-        ValidatorType = validationType;
+        ValidatorType = validator;
         EnemyComboIndex = enemyIndex;
         PCardScripts = new List<PlayerCardLogic>();
     }
@@ -55,7 +55,7 @@ public class CardHolderManager : MonoBehaviour
             PCardScripts.Add(card.GetComponent<PlayerCardLogic>());
         }
 
-        _validator.ValidateCards(this);
+        ValidatorType.Validate(this);
     }
 
     public void OnValidated()

@@ -61,7 +61,7 @@ public class EnemyCardSpawner : MonoBehaviour
 
             CheckCardsInDeckAmount(cardsBySuit, randomCleanSuit);
 
-            EnemyCardManager.Instance.SetupCardHolder(key, validationType: _clean);
+            EnemyCardManager.Instance.SetupCardHolder(key, validator: _clean);
             EnemyCardManager.Instance.SetupPower(key, power);
             _enemyAttackManager.SetRoundAttack(key);
             return;
@@ -118,7 +118,7 @@ public class EnemyCardSpawner : MonoBehaviour
              EnemyCardManager.Instance.UpdateCardsInGame(key, cardObject);
         }
 
-        EnemyCardManager.Instance.SetupCardHolder(key, validationType: _dirty);
+        EnemyCardManager.Instance.SetupCardHolder(key, validator: _dirty);
         EnemyCardManager.Instance.SetupPower(key, power);
         _enemyAttackManager.SetRoundAttack(key);
     }
@@ -145,7 +145,7 @@ public class EnemyCardSpawner : MonoBehaviour
             EnemyCardManager.Instance.SetupCardsInGame(keySingle);
 
         EnemyCardManager.Instance.UpdateCardsInGame(keySingle, cardObject);
-        EnemyCardManager.Instance.SetupCardHolder(keySingle, validationType: _single);
+        EnemyCardManager.Instance.SetupCardHolder(keySingle, validator: _single);
         EnemyCardManager.Instance.SetupPower(keySingle, power);
         _enemyAttackManager.SetRoundAttack(keySingle);
     }
