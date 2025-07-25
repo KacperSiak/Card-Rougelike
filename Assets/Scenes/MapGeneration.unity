@@ -273,21 +273,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nodeTypes:
-  - type: 0
+  - type: 1
     minCount: 5
     maxCount: 9
     prefab: {fileID: 4527156008284702512, guid: 8991796a0af4b0e4a8bd6539f4e1cf27, type: 3}
-  - type: 1
+  - type: 2
     minCount: 1
     maxCount: 2
     prefab: {fileID: 346377116009525048, guid: 921430aa2203c3540b93ffc762a5674d, type: 3}
-  - type: 3
+  - type: 4
     minCount: 1
     maxCount: 1
     prefab: {fileID: 948401478593499982, guid: 128dff5752786114e998e9457460cea3, type: 3}
-  - type: 2
+  - type: 3
     minCount: 1
-    maxCount: 3
+    maxCount: 2
     prefab: {fileID: 8174134825137076215, guid: 78ea7ab5ff7d80e4a91f1b760d2c1274, type: 3}
   startNodePrefab: {fileID: 6232041481457399150, guid: 54149da3998ed4b4da4129eeb4a5e95f, type: 3}
   playerMarkerPrefab: {fileID: 2953499796673057148, guid: 3a5a5f682334fbd4283dcb16d646bf80, type: 3}
@@ -305,6 +305,7 @@ MonoBehaviour:
   connectionWidth: 0.2
   minConnectionsPerNode: 1
   maxConnectionsPerNode: 2
+  maxConnectionDistance: 8
   cameraController: {fileID: 1665362199}
 --- !u!1 &1301801508
 GameObject:
