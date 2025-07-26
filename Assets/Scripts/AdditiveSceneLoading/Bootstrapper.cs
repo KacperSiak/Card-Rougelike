@@ -7,7 +7,7 @@ public class Bootstrapper : PersistentSingleton<Bootstrapper>
     static async void Init()
     {
         Debug.Log("Bootstrapper...");
-        await SceneManager.LoadSceneAsync("Bootstrapper", LoadSceneMode.Single);
+       await SceneManager.LoadSceneAsync("Bootstrapper", LoadSceneMode.Single);
     }
 }
 
