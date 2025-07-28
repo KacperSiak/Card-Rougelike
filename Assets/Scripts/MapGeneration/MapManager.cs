@@ -13,7 +13,7 @@ public class MapManager : MonoBehaviour
     void Start()
     {
         if (mapGenerator == null)
-            mapGenerator = FindObjectOfType<MapGenerator>(); // tymczasowe
+            mapGenerator = FindFirstObjectByType<MapGenerator>(); //tymczasowe
     }
 
     public void CalculateMaxMapTime()
