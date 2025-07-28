@@ -14,6 +14,7 @@ public class NodeClickHandler : MonoBehaviour
     
     [Header("References")]
     public MapGenerator mapGenerator;
+    public MapManager mapManager;
 
     void Start()
     {
@@ -21,6 +22,11 @@ public class NodeClickHandler : MonoBehaviour
         if (mapGenerator == null)
         {
             mapGenerator = FindFirstObjectByType<MapGenerator>();
+        }
+        
+        if (mapManager == null)
+        {
+            mapManager = FindFirstObjectByType<MapManager>();
         }
         
         if (GetComponent<Collider>() == null)
@@ -75,6 +81,12 @@ public class NodeClickHandler : MonoBehaviour
             return false;
         }
         
+        if (mapManager != null && !mapManager.HasTimeLeft())
+        {
+            Debug.Log("[NodeClickHandler] No more time left");
+            return false;
+        }
+        
         Vector2 currentPos = new Vector2(currentPlayerNode.position.x, currentPlayerNode.position.z);
         Vector2 targetPos = new Vector2(transform.position.x, transform.position.z);
         
@@ -117,6 +129,13 @@ public class NodeClickHandler : MonoBehaviour
     
     void MovePlayerHere()
     {
+        if (currentPlayerNode != null && mapManager != null)
+        {
+            Vector2 fromPos = new Vector2(currentPlayerNode.position.x, currentPlayerNode.position.z);
+            Vector2 toPos = new Vector2(transform.position.x, transform.position.z);
+            mapManager.TravelToNode(fromPos, toPos);
+        }
+        
         currentPlayerNode = transform;
         
         if (playerMarker != null)
