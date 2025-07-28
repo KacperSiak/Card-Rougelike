@@ -11,8 +11,8 @@ public class PlayerCardManager : MonoBehaviour
     public int SelectedCardsPower { get; private set; }
 
     private List<CardsSOTest> _playerDeckInGame;
-    private int _cardsInHandDefault = 6;
-    private int _currentCardsInHand = 0; // if we need more than 6 cards in hand use it to build logic
+    private int _cardsInHandDefault = 8;
+    private int _currentCardsInHand = 0; // if we need more than 8 cards in hand use it to build logic
 
     void Awake()
     {
@@ -63,6 +63,12 @@ public class PlayerCardManager : MonoBehaviour
         SelectedCardsPower = 0;
     }
 
+    public void UpdateAfterDiscard()
+    { 
+        ClearSelectedCards();
+        RefillCards();
+    }
+
     public void IncreaseCardsInHandAmount()
     {
         _currentCardsInHand++;
@@ -75,7 +81,7 @@ public class PlayerCardManager : MonoBehaviour
         return true;
     }
 
-    //for now only 6 cards in hand are generally possible, but for more need to negotiate with the team how they see that 
+    //for now only 8 cards in hand are generally possible, but later will extend it 
     private void RefillCards()
     {
         if(_playerDeckInGame.Count == 0) return;
