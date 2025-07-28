@@ -180,7 +180,6 @@ public class MapGenerator : MonoBehaviour
                 float baseX = i * horizontalSpacing;
                 float baseY = -level * verticalSpacing;
 
-                // Use dedicated randomization ranges
                 baseX += Random.Range(-horizontalRandomRange, horizontalRandomRange);
                 baseY += Random.Range(-verticalRandomRange, verticalRandomRange);
 

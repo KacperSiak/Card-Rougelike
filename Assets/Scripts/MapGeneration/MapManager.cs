@@ -8,11 +8,12 @@ public class MapManager : MonoBehaviour
 
     [Header("Map Time Settings")]
     public float maxMapTime = 0f;
+    public float currentMapTime = 0f;
 
     void Start()
     {
         if (mapGenerator == null)
-            mapGenerator = FindObjectOfType<MapGenerator>(); // tymczasowe
+            mapGenerator = FindFirstObjectByType<MapGenerator>(); //tymczasowe
     }
 
     public void CalculateMaxMapTime()
@@ -40,6 +41,23 @@ public class MapManager : MonoBehaviour
             }
         }
         maxMapTime = totalDistance;
+        currentMapTime = maxMapTime;
         Debug.Log($"[MapManager] Max map time: {maxMapTime:F2}");
+    }
+
+    public void TravelToNode(Vector2 fromPos, Vector2 toPos)
+    {
+        float travelTime = Vector2.Distance(fromPos, toPos);
+        currentMapTime -= travelTime;
+        
+        if (currentMapTime < 0f)
+            currentMapTime = 0f;
+            
+        Debug.Log($"[MapManager] Traveled distance: {travelTime:F2}, remaining time: {currentMapTime:F2}");
+    }
+
+    public bool HasTimeLeft()
+    {
+        return currentMapTime > 0f;
     }
 }
