@@ -1,27 +1,81 @@
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using TMPro;
+using Unity.VisualScripting;
+using UnityEngine.Events;
+using UnityEngine.Rendering.Universal;
 
-public class Shop : MonoBehaviour
+public class ShopMenager : MonoBehaviour
 {
-    [SerializeField] private List<ShopItem> _allItems;
+    public  List<ShopItem> allItems;
     [SerializeField] private List<GameObject> _slots;
 
     [SerializeField] private Button _rerollButton;
+    [SerializeField] private TextMeshProUGUI _rerollText;
+    [SerializeField] private Button _closeShop;
     
     private int _numberOfItems = 3;
     private int _price;
     private float _priceMultiplier = 1f;
     private bool _freeBuyEffect = false;
-    private int goldForRerol;
+    private int _goldForRerol;
+
+    public static ShopMenager instance;
+    public bool inShop { get; private set; } = false;
+
+    public static UnityEvent OnShopOpen = new UnityEvent();
+    public static UnityEvent OnShopClose = new UnityEvent();
+    private void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            Debug.Log("Found Another ShopMenager");
+        }
+    }
+
+    public void OpenShop()
+    {
+        inShop = true;
+        OnShopOpen.Invoke();
+    }
+
+    private void CloseShop()
+    {
+        inShop = false;
+        OnShopClose.Invoke();
+    }
+
 
     private void Start()
     {
-        _rerollButton.onClick.AddListener(TicketRerollShop);
-        // _rerollButton.onClick.AddListener(RerollForGold);
+        _rerollButton.onClick.AddListener(RerollForGold);
+        _closeShop.onClick.AddListener(CloseShop);
         RerollShop();
-        goldForRerol = 5;
+        _goldForRerol = 5;
+        _rerollText.text = "" + _goldForRerol;
     }
+
+    //private void Update()
+    //{
+    //    if (Input.GetKeyUp(KeyCode.L))
+    //    {
+    //        if (inShop)
+    //        {
+    //            CloseShop();
+    //            Debug.Log("Shop Closed");
+    //        }
+    //        else
+    //        {
+    //            OpenShop();
+    //            Debug.Log("Shop opened");
+    //        }
+    //    }
+    //}
 
     private void OnEnable()
     {
@@ -41,16 +95,16 @@ public class Shop : MonoBehaviour
         List<ShopItem> currentItems;
         do
         {
-            currentItems = GetRandomItems(_allItems, _numberOfItems);
+            currentItems = GetRandomItems(allItems, _numberOfItems);
         }
-        while (currentItems.TrueForAll(i => i is RelicData) || currentItems.TrueForAll(i => i is ConsumablesData) || currentItems.TrueForAll(i => i is NormalCard));
+        while (currentItems.TrueForAll(i => i is RelicData) || currentItems.TrueForAll(i => i is ConsumablesData) || currentItems.TrueForAll(i => i is NormalCard)); 
 
         for (int i = 0; i < currentItems.Count; i++)
         {
             var item = currentItems[i];
             var slotObject = _slots[i];
+            slotObject.SetActive(true);
             var shopSlot = slotObject.GetComponent<ShopSlotUI>();
-
             if (item is RelicData relic)
             {
                 switch (relic.rarity)
@@ -68,22 +122,14 @@ public class Shop : MonoBehaviour
         } 
     }
 
-    private void TicketRerollShop()
-    {
-        if (PlayerOverlay.instance.rollTickets >= 1)
-        {
-            RerollShop();
-            PlayerOverlay.instance.rollTickets--;
-        }
-    }
-
     private void RerollForGold()
     {
-        if (PlayerOverlay.instance.gold >= goldForRerol)
+        if (PlayerOverlay.instance.gold >= _goldForRerol)
         {
             RerollShop();
-            PlayerOverlay.instance.SpendGold(goldForRerol);
-            goldForRerol += 1;
+            PlayerOverlay.instance.SpendGold(_goldForRerol);
+            _goldForRerol += 1;
+            _rerollText.text = "" + _goldForRerol;
         }
     }
 

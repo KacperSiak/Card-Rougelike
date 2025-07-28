@@ -21,6 +21,7 @@ public class RelicData : ShopItem
     [TextArea] public string description;
     public Sprite icon;
     public Rarity rarity;
+    public int sellPrice;
     [SerializeReference] public List<RelicEffects> relicEffets;
 }
 

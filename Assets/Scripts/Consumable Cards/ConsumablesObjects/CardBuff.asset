@@ -15,8 +15,9 @@ MonoBehaviour:
   cardID: CardBuff
   cardName: CardBuff
   cardDescription: Boost one card of your choice. It deals double damage
-  icon: {fileID: 0}
+  icon: {fileID: -1463789882, guid: 28a5df7ffde1bb5408169991d42c3ab0, type: 3}
   rarity: 1
+  sellPrice: 5
   cardEffects:
   - rid: 5888606620320792664
   references:

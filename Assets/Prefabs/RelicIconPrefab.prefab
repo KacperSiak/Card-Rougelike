@@ -349,6 +349,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   relicData: {fileID: 0}
+  consumable: {fileID: 0}
 --- !u!114 &8736995237701899385
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -361,8 +362,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5358b44cc98ea04d83b7831a3bb81eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  relic: {fileID: 0}
-  removeButton: {fileID: 7016546221776761158}
+  _relic: {fileID: 0}
+  _removeButton: {fileID: 7016546221776761158}
+  _buttonText: {fileID: 8122618028686498769}
 --- !u!114 &6200487814363493285
 MonoBehaviour:
   m_ObjectHideFlags: 0
