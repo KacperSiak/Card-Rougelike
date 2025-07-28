@@ -13,7 +13,7 @@ public class RelicUIDisplay : MonoBehaviour
 
     private void RefreshDisplay()
     {
-        foreach (var relic in ConsumablesMenager.instance.currentRelics)
+        foreach (var relic in ConsumablesAndRelicMenager.instance.currentRelics)
         {
             AddIcon(relic);
         }
@@ -38,7 +38,7 @@ public class RelicUIDisplay : MonoBehaviour
 
             icon.GetComponent<Button>().onClick.AddListener(()=>
             {
-                iconUI.ShowRemoveButton(true);
+                iconUI.ToggleRemoveButton();
             });
         }
     }

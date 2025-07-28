@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 6183236472015425064}
   - component: {fileID: 8051578673864055932}
   - component: {fileID: 7145116413496216808}
-  - component: {fileID: 7813336661497978351}
   m_Layer: 0
   m_Name: CardUI
   m_TagString: Untagged
@@ -55,6 +54,7 @@ MonoBehaviour:
   _showButton: {fileID: 3206415898619093501}
   _useButton: {fileID: 597653816894010989}
   _discardButton: {fileID: 980684657276905757}
+  _discardButtonText: {fileID: 5905536743070918711}
 --- !u!114 &7145116413496216808
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -75,20 +75,6 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
---- !u!114 &7813336661497978351
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 319535854679441184}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0a5f754d1e73350409c7e559aa9227df, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  relicData: {fileID: 0}
-  consumable: {fileID: 0}
 --- !u!1 &4584492434761521140
 GameObject:
   m_ObjectHideFlags: 0

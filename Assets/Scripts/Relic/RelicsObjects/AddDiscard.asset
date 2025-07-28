@@ -15,8 +15,9 @@ MonoBehaviour:
   relicID: AddDiscard
   relicName: Second Chance
   description: Get +1 discard each fight
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 9c259d6389c91c4458e6129b81699224, type: 3}
   rarity: 0
+  sellPrice: 6
   relicEffets:
   - rid: 5888606579394871302
   references:

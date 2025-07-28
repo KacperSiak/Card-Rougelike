@@ -1,6 +1,7 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEditor.Progress;
 
 public class ShopSlotUI : MonoBehaviour
 {
@@ -10,6 +11,7 @@ public class ShopSlotUI : MonoBehaviour
 
     private ScriptableObject _currentItem;
     private int _currentPrice;
+
     void Start()
     {
         _buyButton.onClick.AddListener(Buy);
@@ -20,7 +22,6 @@ public class ShopSlotUI : MonoBehaviour
         _currentItem = item;
         _currentPrice = price;
 
-        Debug.Log($"Setup wywo³any dla: {_currentItem.name} | Cena: {_currentPrice}");
         if (item is RelicData relic)
         {
             _icon.sprite = relic.icon;
@@ -34,19 +35,39 @@ public class ShopSlotUI : MonoBehaviour
             _icon.sprite = normal.face;
         }
         _priceText.text = $"{price}";
-
     }
+
+
 
     public void Buy()
     {
         if (PlayerOverlay.instance.gold >= _currentPrice)
         {
-            PlayerOverlay.instance.SpendGold(_currentPrice);
-            Debug.Log("Brawo. Kupi³eœ item");
+            if (_currentItem is RelicData relic)
+            {
+                RelicEventsSystem.RelicAcquired(relic);
+                PlayerOverlay.instance.SpendGold(_currentPrice);
+                
+            }
+            else if (_currentItem is ConsumablesData consumable)
+            {
+                if(ConsumablesAndRelicMenager.instance.SlotChecker())
+                {
+                    ConsumablesAndRelicMenager.instance.AddCard(consumable);
+                    PlayerOverlay.instance.SpendGold(_currentPrice);
+                }
+            }
+            else if (_currentItem is NormalCard normal)
+            {
+                // deckMenager.instance.Add(normal);
+                PlayerOverlay.instance.SpendGold(_currentPrice);
+            }
+            Debug.Log("Item bought");
+            gameObject.SetActive(false);
         }
         else
         {
-            Debug.Log("Sorry. Nie staæ cie");
+            Debug.Log("You cant affrod it");
         }
         
     }

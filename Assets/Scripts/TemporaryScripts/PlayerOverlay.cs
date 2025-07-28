@@ -36,4 +36,9 @@ public class PlayerOverlay : MonoBehaviour
         this.gold -= gold;
         // wyœwietl nowe siano :)
     }
+    public void AddGold(int gold)
+    {
+        this.gold += gold;
+        // wyœwietl nowe siano :)
+    }
 }
