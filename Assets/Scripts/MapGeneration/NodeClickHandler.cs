@@ -151,6 +151,13 @@ public class NodeClickHandler : MonoBehaviour
     {
         if (!string.IsNullOrEmpty(sceneToLoad))
         {
+            var mapSaveManager = FindFirstObjectByType<MapSaveManager>();
+            if (mapSaveManager != null)
+            {
+                mapSaveManager.SaveBeforeSceneChange();
+                Debug.Log("[NodeClickHandler] Mapa zapisana przez MapSaveManager");
+            }
+            
             SceneManager.LoadScene(sceneToLoad);
         }
     }

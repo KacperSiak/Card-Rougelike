@@ -65,11 +65,30 @@ public class MapGenerator : MonoBehaviour
 
     [Header("References")]
     public MapManager mapManager;
+    
+    [Header("Random Seed")]
+    [Tooltip("Jeśli 0, użyje losowego seed'a. Inaczej użyje tego seed'a dla deterministic generation")]
+    public int fixedSeed = 0;
+    [HideInInspector]
+    public int lastUsedSeed;
 
     void Start()
     {
         InitializeSettings();
-        GenerateMap();
+        
+        var mapSaveManager = FindFirstObjectByType<MapSaveManager>();
+        bool willLoadFromSave = mapSaveManager != null && mapSaveManager.HasSavedMap();
+        
+        if (willLoadFromSave)
+        {
+            Debug.Log("[MapGenerator] MapSaveManager wczyta zapisaną mapę");
+            mapSaveManager.LoadSavedMap();
+        }
+        else
+        {
+            Debug.Log("[MapGenerator] Generowanie nowej mapy");
+            GenerateMap();
+        }
     }
 
     void InitializeSettings()
@@ -86,6 +105,19 @@ public class MapGenerator : MonoBehaviour
 
     public void GenerateMap()
     {
+        if (fixedSeed != 0)
+        {
+            Random.InitState(fixedSeed);
+            lastUsedSeed = fixedSeed;
+        }
+        else
+        {
+            lastUsedSeed = (int)System.DateTime.Now.Ticks;
+            Random.InitState(lastUsedSeed);
+        }
+        
+        Debug.Log($"[MapGenerator] Generating map with seed: {lastUsedSeed}");
+        
         ClearOldNodes();
         ResetMapState();
         GenerateMapStructure();
@@ -98,7 +130,7 @@ public class MapGenerator : MonoBehaviour
             mapManager.CalculateMaxMapTime();
     }
 
-    void SetupCameraBounds()
+    public void SetupCameraBounds()
     {
         if (cameraController != null)
         {
@@ -106,7 +138,7 @@ public class MapGenerator : MonoBehaviour
         }
     }
 
-    void ResetMapState()
+    public void ResetMapState()
     {
         bossAssigned = false;
         mapLevels.Clear();
@@ -197,7 +229,7 @@ public class MapGenerator : MonoBehaviour
         }
     }
 
-    void InstantiateMapVisuals()
+    public void InstantiateMapVisuals()
     {
         for (int level = 0; level < mapLevels.Count; level++)
         {
@@ -390,7 +422,7 @@ public class MapGenerator : MonoBehaviour
         }
     }
 
-    void DrawConnections()
+    public void DrawConnections()
     {
         HashSet<string> drawnConnections = new HashSet<string>();
 
