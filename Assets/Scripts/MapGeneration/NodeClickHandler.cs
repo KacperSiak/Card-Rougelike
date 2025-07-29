@@ -155,7 +155,7 @@ public class NodeClickHandler : MonoBehaviour
             if (mapSaveManager != null)
             {
                 mapSaveManager.SaveBeforeSceneChange();
-                Debug.Log("[NodeClickHandler] Mapa zapisana przez MapSaveManager");
+                Debug.Log("[NodeClickHandler] Map saved by MapSaveManager");
             }
             
             SceneManager.LoadScene(sceneToLoad);

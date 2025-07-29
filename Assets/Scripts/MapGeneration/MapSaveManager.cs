@@ -36,13 +36,13 @@ public class MapSaveManager : MonoBehaviour
     {
         if (mapSaveData == null)
         {
-            Debug.LogWarning("[MapSaveManager] No MapSaveDataSO assigned!");
+            Debug.LogWarning("[MapSaveManager] No MapSaveDataSO assigned");
             return;
         }
         
         if (mapGenerator == null || mapManager == null)
         {
-            Debug.LogWarning("[MapSaveManager] Missing reference to MapGenerator or MapManager!");
+            Debug.LogWarning("[MapSaveManager] Missing reference to MapGenerator or MapManager");
             return;
         }
         
@@ -54,13 +54,13 @@ public class MapSaveManager : MonoBehaviour
     {
         if (mapSaveData == null || !mapSaveData.CanLoadMap())
         {
-            Debug.LogWarning("[MapSaveManager] No valid save to load!");
+            Debug.LogWarning("[MapSaveManager] No valid save to load");
             return;
         }
         
         if (mapGenerator == null)
         {
-            Debug.LogWarning("[MapSaveManager] No MapGenerator reference!");
+            Debug.LogWarning("[MapSaveManager] No MapGenerator reference");
             return;
         }
         
