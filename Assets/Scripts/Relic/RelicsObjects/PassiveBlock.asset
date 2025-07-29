@@ -17,6 +17,8 @@ MonoBehaviour:
   description: Block bosses passive skill for 2 rounds
   icon: {fileID: 0}
   rarity: 2
+  buyPrice: 0
+  sellPrice: 150
   relicEffets:
   - rid: 5888606579394871304
   references:

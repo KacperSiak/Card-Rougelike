@@ -17,6 +17,8 @@ MonoBehaviour:
   cardDescription: 'For 2 turn your max health is 5 but you cannot get any debuff. '
   icon: {fileID: 0}
   rarity: 0
+  buyPrice: 80
+  sellPrice: 40
   cardEffects:
   - rid: 5888606620320792694
   references:

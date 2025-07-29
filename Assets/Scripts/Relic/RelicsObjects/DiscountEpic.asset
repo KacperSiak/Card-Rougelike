@@ -17,6 +17,8 @@ MonoBehaviour:
   description: Items in the shop are 40% cheaper
   icon: {fileID: 0}
   rarity: 2
+  buyPrice: 0
+  sellPrice: 150
   relicEffets:
   - rid: 5888606574037696646
   references:

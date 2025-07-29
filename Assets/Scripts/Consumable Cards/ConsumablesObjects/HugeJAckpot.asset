@@ -17,6 +17,8 @@ MonoBehaviour:
   cardDescription: +1 random relic, 50 coins, a regular card pack, one moirae card
   icon: {fileID: 0}
   rarity: 1
+  buyPrice: 80
+  sellPrice: 40
   cardEffects:
   - rid: 5888606620320792667
   references:

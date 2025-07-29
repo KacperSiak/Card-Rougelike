@@ -17,6 +17,8 @@ MonoBehaviour:
   cardDescription: You lose one chosen card and get new one of the same rarity
   icon: {fileID: 0}
   rarity: 0
+  buyPrice: 80
+  sellPrice: 40
   cardEffects:
   - rid: 5888606620320792708
   references:

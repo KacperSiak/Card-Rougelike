@@ -17,6 +17,8 @@ MonoBehaviour:
   description: Clean Sequence can beat anything but not giving a damage
   icon: {fileID: 0}
   rarity: 2
+  buyPrice: 0
+  sellPrice: 150
   relicEffets:
   - rid: 5888606574037696645
   references:

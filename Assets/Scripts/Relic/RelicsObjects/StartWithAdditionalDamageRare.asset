@@ -17,6 +17,8 @@ MonoBehaviour:
   description: The first hit deals +6 damage
   icon: {fileID: 0}
   rarity: 1
+  buyPrice: 150
+  sellPrice: 100
   relicEffets:
   - rid: 5888606579394871296
   references:

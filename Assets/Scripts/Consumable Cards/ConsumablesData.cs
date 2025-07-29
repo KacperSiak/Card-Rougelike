@@ -1,7 +1,6 @@
 using System;
 using UnityEngine;
 using System.Collections.Generic;
-using System.Globalization;
 
 public enum CardRarity
 {
@@ -16,6 +15,7 @@ public class ConsumablesData : ShopItem
     [TextArea] public string cardDescription;
     public Sprite icon;
     public CardRarity rarity;
+    public int buyPrice;
     public int sellPrice;
     [SerializeReference] public List<CardEffect> cardEffects;
 }

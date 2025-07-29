@@ -17,6 +17,8 @@ MonoBehaviour:
   description: For every -- missing health deal +! damage
   icon: {fileID: 0}
   rarity: 2
+  buyPrice: 0
+  sellPrice: 150
   relicEffets:
   - rid: 5888606579394871297
   references:

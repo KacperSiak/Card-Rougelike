@@ -2,8 +2,6 @@ using System;
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.Events;
-using JetBrains.Annotations;
-using System.Runtime.CompilerServices;
 
 public enum Rarity
 {
@@ -21,6 +19,7 @@ public class RelicData : ShopItem
     [TextArea] public string description;
     public Sprite icon;
     public Rarity rarity;
+    public int buyPrice;
     public int sellPrice;
     [SerializeReference] public List<RelicEffects> relicEffets;
 }

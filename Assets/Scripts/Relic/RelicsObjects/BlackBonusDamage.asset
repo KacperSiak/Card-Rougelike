@@ -14,9 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   relicID: BlackBonusDamage
   relicName: Red Riptide
-  description: Deal +1 additional damage for every played black card
+  description: Deal +1 additional damage for every played red card
   icon: {fileID: 0}
   rarity: 3
+  buyPrice: 0
+  sellPrice: 250
   relicEffets:
   - rid: 5888606579394871299
   references:

@@ -17,6 +17,8 @@ MonoBehaviour:
   cardDescription: You deal double damage but 10% of them is dealt to you
   icon: {fileID: 0}
   rarity: 0
+  buyPrice: 80
+  sellPrice: 40
   cardEffects:
   - rid: 5888606620320792698
   references:

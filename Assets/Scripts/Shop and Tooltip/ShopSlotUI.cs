@@ -64,10 +64,10 @@ public class ShopSlotUI : MonoBehaviour
                     PlayerOverlay.instance.SpendGold(_currentPrice);
                 }
             }
-            else if (_currentItem is NormalCard normal)
+            else if (_currentItem is CardPack cardPack)
             {
-                // deckMenager.instance.Add(normal);
                 PlayerOverlay.instance.SpendGold(_currentPrice);
+                cardPack.OpePack();
             }
             Debug.Log("Item bought");
             gameObject.SetActive(false);

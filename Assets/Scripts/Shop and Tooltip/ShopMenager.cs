@@ -109,14 +109,12 @@ public class ShopMenager : MonoBehaviour
             {
                 switch (relic.rarity)
                 {
-                    case Rarity.Common: _price = Random.Range(5, 10); break;
-                    case Rarity.Rare: _price = Random.Range(15, 20); break;
-                    case Rarity.Epic: _price = Random.Range(25, 30); break;
-                    case Rarity.Legendary: _price = Random.Range(40, 50); break;
+                    case Rarity.Common: _price = relic.buyPrice; break;
+                    case Rarity.Rare: _price = relic.buyPrice; break;
                 }
             }
-            else if (item is NormalCard normal) _price = Random.Range(5, 10);
-            else _price = Random.Range(10, 20);
+            else if (item is CardPack cardPack) _price = cardPack.buyPrice;
+            else if (item is ConsumablesData consumable) _price = consumable.buyPrice;
             shopSlot.Setup(item, Mathf.RoundToInt(_price * _priceMultiplier));
         } 
     }

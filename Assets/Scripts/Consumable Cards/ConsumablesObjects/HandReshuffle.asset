@@ -17,6 +17,8 @@ MonoBehaviour:
   cardDescription: Reshuffle your entire hand
   icon: {fileID: 0}
   rarity: 0
+  buyPrice: 80
+  sellPrice: 40
   cardEffects: []
   references:
     version: 2

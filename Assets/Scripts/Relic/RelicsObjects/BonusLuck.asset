@@ -17,6 +17,8 @@ MonoBehaviour:
   description: Inscrease luck for gambling
   icon: {fileID: 0}
   rarity: 1
+  buyPrice: 150
+  sellPrice: 100
   relicEffets:
   - rid: 5888606579394871303
   references:

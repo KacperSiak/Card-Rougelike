@@ -17,6 +17,8 @@ MonoBehaviour:
   description: Increase the number of turns of each oponnent's card by one
   icon: {fileID: 0}
   rarity: 2
+  buyPrice: 0
+  sellPrice: 150
   relicEffets:
   - rid: 5888606579394871305
   references:

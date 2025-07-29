@@ -17,6 +17,8 @@ MonoBehaviour:
   description: Beating a sequence with a single card deals double damage
   icon: {fileID: 0}
   rarity: 1
+  buyPrice: 150
+  sellPrice: 100
   relicEffets:
   - rid: 5888606574037696644
   references:

@@ -17,6 +17,8 @@ MonoBehaviour:
   cardDescription: +100 gold
   icon: {fileID: 0}
   rarity: 1
+  buyPrice: 80
+  sellPrice: 40
   cardEffects:
   - rid: 5888606620320792666
   references:
