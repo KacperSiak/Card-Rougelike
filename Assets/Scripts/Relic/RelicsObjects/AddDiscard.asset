@@ -19,10 +19,10 @@ MonoBehaviour:
   rarity: 0
   sellPrice: 6
   relicEffets:
-  - rid: 5888606579394871302
+  - rid: 5888606709509259328
   references:
     version: 2
     RefIds:
-    - rid: 5888606579394871302
+    - rid: 5888606709509259328
       type: {class: AddDiscard, ns: , asm: Assembly-CSharp}
       data: 

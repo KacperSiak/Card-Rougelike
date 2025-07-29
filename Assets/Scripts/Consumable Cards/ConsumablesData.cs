@@ -24,6 +24,12 @@ public class ConsumableContext
 {
     public PlayerOverlay player;
     public ShopMenager shop;
+
+    public ConsumableContext()
+    {
+        player = PlayerOverlay.instance;
+        shop = ShopMenager.instance;
+    }
 }
 
 
@@ -110,7 +116,7 @@ public class FreeBuy : CardEffect
 {
     public override void ApplyEffect(ConsumableContext ctx)
     {
-        // next purchase is for free
+        ctx.shop.ActiveFreBuy();
     }
 }
 

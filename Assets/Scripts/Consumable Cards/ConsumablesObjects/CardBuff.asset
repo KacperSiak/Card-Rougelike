@@ -19,10 +19,10 @@ MonoBehaviour:
   rarity: 1
   sellPrice: 5
   cardEffects:
-  - rid: 5888606620320792664
+  - rid: 5888606709509259327
   references:
     version: 2
     RefIds:
-    - rid: 5888606620320792664
+    - rid: 5888606709509259327
       type: {class: CardBuff, ns: , asm: Assembly-CSharp}
       data: 

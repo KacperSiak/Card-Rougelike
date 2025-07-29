@@ -117,7 +117,6 @@ public class ShopMenager : MonoBehaviour
             }
             else if (item is NormalCard normal) _price = Random.Range(5, 10);
             else _price = Random.Range(10, 20);
-            
             shopSlot.Setup(item, Mathf.RoundToInt(_price * _priceMultiplier));
         } 
     }
@@ -151,12 +150,49 @@ public class ShopMenager : MonoBehaviour
     private void ApplyDiscount(float discount)
     {
         _priceMultiplier = discount;
-        RerollShop();
+        UpdatePrices(_priceMultiplier, false);
     }
 
     private void RemoveDiscount()
     {
         _priceMultiplier = 1f;
-        RerollShop();
+        UpdatePrices(_priceMultiplier, true);
+    }
+
+    public void UpdatePrices(float multiplayer, bool basic)
+    {
+        foreach (var slotObj in _slots)
+        {
+            if (!slotObj.activeSelf) continue;
+
+            if (!basic)
+            {
+                var shopSlot = slotObj.GetComponent<ShopSlotUI>();
+                shopSlot.RecalculatePrice(multiplayer, false);
+            }
+            else
+            {
+                var shopSlot = slotObj.GetComponent<ShopSlotUI>();
+                shopSlot.RecalculatePrice(multiplayer, true);
+            }
+            
+        }
+    }
+
+    public void ActiveFreBuy()
+    {
+        _freeBuyEffect = true;
+        UpdatePrices(0, false);
+    }
+
+    public void ConsumeFreeBuy()
+    {
+        _freeBuyEffect = false;
+        UpdatePrices(_priceMultiplier, false);
+    }
+
+    public bool IsFreeBuyActive()
+    {
+        return _freeBuyEffect;
     }
 }

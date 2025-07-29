@@ -11,6 +11,7 @@ public class ShopSlotUI : MonoBehaviour
 
     private ScriptableObject _currentItem;
     private int _currentPrice;
+    private int _basePrice;
 
     void Start()
     {
@@ -21,6 +22,7 @@ public class ShopSlotUI : MonoBehaviour
     {
         _currentItem = item;
         _currentPrice = price;
+        _basePrice = price;
 
         if (item is RelicData relic)
         {
@@ -41,13 +43,18 @@ public class ShopSlotUI : MonoBehaviour
 
     public void Buy()
     {
+        if (ShopMenager.instance.IsFreeBuyActive())
+        {
+            _currentPrice = 0;
+            ShopMenager.instance.ConsumeFreeBuy();
+        }
         if (PlayerOverlay.instance.gold >= _currentPrice)
         {
             if (_currentItem is RelicData relic)
             {
-                RelicEventsSystem.RelicAcquired(relic);
                 PlayerOverlay.instance.SpendGold(_currentPrice);
-                
+                RelicEventsSystem.RelicAcquired(relic);
+
             }
             else if (_currentItem is ConsumablesData consumable)
             {
@@ -70,5 +77,13 @@ public class ShopSlotUI : MonoBehaviour
             Debug.Log("You cant affrod it");
         }
         
+    }
+
+    public void RecalculatePrice(float multiplayer, bool basic)
+    {
+        if (!basic) _currentPrice = Mathf.RoundToInt(_basePrice * multiplayer);
+        else _currentPrice = _basePrice;
+
+        _priceText.text = $"{_currentPrice}";
     }
 }
