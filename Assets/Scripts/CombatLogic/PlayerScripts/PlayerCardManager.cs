@@ -6,13 +6,13 @@ public class PlayerCardManager : MonoBehaviour
     public static PlayerCardManager Instance { get; private set; }
 
     [SerializeField] private PlayerCardSpawner _spawner;
-    public List<GameObject> CardObjects;
+    public List<GameObject> CardsInHand { get; private set; } 
     public List<GameObject> SelectedCards { get; private set; }
     public int SelectedCardsPower { get; private set; }
 
     private List<CardsSOTest> _playerDeckInGame;
     private int _cardsInHandDefault = 8;
-    private int _currentCardsInHand = 0; // if we need more than 8 cards in hand use it to build logic
+    private int _currentCardsInHand = 0; 
 
     void Awake()
     {
@@ -41,7 +41,8 @@ public class PlayerCardManager : MonoBehaviour
     {
         _playerDeckInGame = new List<CardsSOTest>(RoundManager.Instance.PlayerCards);
         SelectedCards = new List<GameObject>();
-        _spawner.SpawnCards(_playerDeckInGame, _cardsInHandDefault, startKey: 0);
+        CardsInHand = new List<GameObject>();
+        _spawner.SpawnCards(_playerDeckInGame, CardsInHand, _cardsInHandDefault);
     }
 
     public void AddSelectedCards(GameObject card)
@@ -81,21 +82,19 @@ public class PlayerCardManager : MonoBehaviour
         return true;
     }
 
-    //for now only 8 cards in hand are generally possible, but later will extend it 
     private void RefillCards()
     {
         if(_playerDeckInGame.Count == 0) return;
 
-        for (int i = 0; i < CardObjects.Count; i++)
-        {
-            if (CardObjects[i].activeSelf) continue;
-            _spawner.SpawnCards(_playerDeckInGame, cardsAmount: 1, startKey: i);
-        }
+        int amount = _currentCardsInHand >= _cardsInHandDefault? 1 : _cardsInHandDefault - _currentCardsInHand;
+
+        _spawner.SpawnCards(_playerDeckInGame, CardsInHand, cardsAmount: amount);
+
     }
 
     private void OnCombatEnd()
     {
-        foreach (var card in CardObjects)
+        foreach (var card in CardsInHand)
         {
             card.GetComponent<PlayerCardLogic>().ResetCard();
             card.SetActive(false);
