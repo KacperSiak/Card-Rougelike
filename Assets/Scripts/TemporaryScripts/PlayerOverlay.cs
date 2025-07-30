@@ -9,7 +9,6 @@ public class PlayerOverlay : MonoBehaviour
     public float currentHP;
     public float addDamage;
     public int rollTickets;
-    public List<NormalCard> deckList;
     [SerializeField] private TextMeshProUGUI _text;
 
     public static PlayerOverlay instance;
@@ -20,15 +19,6 @@ public class PlayerOverlay : MonoBehaviour
         {
             instance = this;
         }
-    }
-    public void AddNormalCard(NormalCard card)
-    {
-        deckList.Add(card);
-    }
-
-    public void RemoveNormalCard(NormalCard card)
-    {
-        deckList.Remove(card);
     }
 
     public void SpendGold(int gold)

@@ -24,7 +24,7 @@ public class CardPack : ShopItem
 
         foreach (var card in drawnCards)
         {
-            // DeckMenager.instance.AddCard(card);
+            DeckMenager.instance.AddCard(card);
         }
     }
 }

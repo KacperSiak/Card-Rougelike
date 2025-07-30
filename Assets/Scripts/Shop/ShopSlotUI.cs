@@ -39,8 +39,6 @@ public class ShopSlotUI : MonoBehaviour
         _priceText.text = $"{price}";
     }
 
-
-
     public void Buy()
     {
         if (ShopMenager.instance.IsFreeBuyActive())
@@ -81,7 +79,11 @@ public class ShopSlotUI : MonoBehaviour
 
     public void RecalculatePrice(float multiplayer, bool basic)
     {
-        if (!basic) _currentPrice = Mathf.RoundToInt(_basePrice * multiplayer);
+        if (!basic)
+        {
+            if (multiplayer == 9999) _currentPrice = 99999;
+            else _currentPrice = Mathf.RoundToInt(_basePrice * multiplayer);
+        }
         else _currentPrice = _basePrice;
 
         _priceText.text = $"{_currentPrice}";

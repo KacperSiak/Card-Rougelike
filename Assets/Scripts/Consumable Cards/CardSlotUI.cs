@@ -13,8 +13,8 @@ public class CardSlotUI : MonoBehaviour
 
     private void Awake()
     {
-        ShopMenager.OnShopOpen.AddListener(ChangeDiscardToSell);
-        ShopMenager.OnShopClose.AddListener(ChangeSellToDiscard);
+        ShopMenager.OnSellingMode.AddListener(ChangeDiscardToSell);
+        ShopMenager.OffSellingMode.AddListener(ChangeSellToDiscard);
     }
    
     public void Setup(ConsumablesData data)
@@ -32,7 +32,7 @@ public class CardSlotUI : MonoBehaviour
         _showButton.onClick.RemoveAllListeners();
         _showButton.onClick.AddListener(ShowButtons);
 
-        if (ShopMenager.instance.inShop)
+        if (ShopMenager.instance.inSellingMode)
         {
             _discardButtonText.text = $"Sell {_cardData.sellPrice}";
         }    
@@ -55,14 +55,14 @@ public class CardSlotUI : MonoBehaviour
 
     public void DiscardCard()
     {
-        if (ShopMenager.instance.inShop)
+        if (ShopMenager.instance.inSellingMode)
         {
             PlayerOverlay.instance.AddGold(_cardData.sellPrice);
         }
         ConsumablesAndRelicMenager.instance.slotCounter--;
         Destroy(gameObject);
     }
-    
+
     public void ShowButtons()
     {
         bool _areButtonsVisible = _useButton.gameObject.activeSelf;
