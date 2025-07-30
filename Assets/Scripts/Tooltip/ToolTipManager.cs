@@ -22,8 +22,6 @@ public class ToolTipManager : MonoBehaviour
         Instance = this;
         tooltipPanel.SetActive(false);
     }
-
-    }
     public void ShowToolTip(string name, string description, Vector2 position)
     {
         tooltipPanel.SetActive(true);
