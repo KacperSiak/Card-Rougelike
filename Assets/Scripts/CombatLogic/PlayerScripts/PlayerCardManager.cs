@@ -6,7 +6,7 @@ public class PlayerCardManager : MonoBehaviour
     public static PlayerCardManager Instance { get; private set; }
 
     [SerializeField] private PlayerCardSpawner _spawner;
-    public List<GameObject> CardsInHand { get; private set; } 
+    public List<GameObject> CardsInHand { get; private set; }
     public List<GameObject> SelectedCards { get; private set; }
     public int SelectedCardsPower { get; private set; }
 
@@ -57,9 +57,16 @@ public class PlayerCardManager : MonoBehaviour
         SelectedCardsPower -= card.GetComponent<PlayerCardLogic>().Card.power;
     }
 
-    public void ClearSelectedCards()
+    public void ClearSelectedCards() 
     {
         _currentCardsInHand -= SelectedCards.Count;
+
+        foreach (GameObject card in SelectedCards)
+        { 
+            CardsInHand.Remove(card);
+        }
+
+        _spawner.SetCardsPosition();
         SelectedCards.Clear();
         SelectedCardsPower = 0;
     }
@@ -81,7 +88,7 @@ public class PlayerCardManager : MonoBehaviour
         
         return true;
     }
-
+    
     private void RefillCards()
     {
         if(_playerDeckInGame.Count == 0) return;
@@ -98,6 +105,7 @@ public class PlayerCardManager : MonoBehaviour
         {
             card.GetComponent<PlayerCardLogic>().ResetCard();
             card.SetActive(false);
+            ObjPoolManager.Instance.ReturnCard(card);
         }
         SelectedCards.Clear();
         SelectedCardsPower = 0;

@@ -63,15 +63,17 @@ public class CardHolderManager : MonoBehaviour
         _isOccupied = true;
         int position = -1;
 
-        foreach (GameObject card in PlayerCardManager.Instance.SelectedCards)
+        foreach (GameObject card in PlayerCardManager.Instance.SelectedCards) 
         {
             card.transform.position = new Vector3(transform.position.x + position, transform.position.y, transform.position.z);
+            card.transform.rotation = Quaternion.identity;
+            card.transform.localScale *= 3f;
             position += 1;
             card.GetComponent<PlayerCardLogic>().IsUsed = true;
         }
 
         ValidatedPlayerCardsPower = PlayerCardManager.Instance.SelectedCardsPower;
-        PlayerCardManager.Instance.ClearSelectedCards();
+        PlayerCardManager.Instance.ClearSelectedCards(); 
 
     }
 
@@ -80,7 +82,7 @@ public class CardHolderManager : MonoBehaviour
         PCardScripts.Clear();
     }
 
-    public void ResetCardHolderPlayerCards()
+    public void ResetCardHolderPlayerCards() 
     { 
         _isOccupied = false;
         ValidatedPlayerCardsPower = 0;
@@ -89,6 +91,7 @@ public class CardHolderManager : MonoBehaviour
         {
             card.gameObject.SetActive(false);
             card.ResetCard();
+            ObjPoolManager.Instance.ReturnCard(card.gameObject);
         }
 
         PCardScripts.Clear();

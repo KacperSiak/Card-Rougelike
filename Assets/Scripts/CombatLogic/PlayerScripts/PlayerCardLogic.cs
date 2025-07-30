@@ -1,17 +1,20 @@
 using UnityEngine;
 
+//here
 public class PlayerCardLogic : MonoBehaviour
 {
     private Vector3 defaultPosition;
+    private Vector3 defaultSize;
     private bool isSelected = false;
 
     public bool IsUsed { get; set; } = false;
 
     public CardsSOTest Card { get; private set; }
 
-    void Start()
+    public void SaveProperties()
     {
-        defaultPosition = transform.position;
+        defaultPosition = transform.localPosition;
+        defaultSize = transform.localScale;
     }
 
     public void SetCardProperties(CardsSOTest card)
@@ -22,13 +25,13 @@ public class PlayerCardLogic : MonoBehaviour
     private void OnMouseEnter()
     {
         if(!isSelected)
-        transform.position += new Vector3(0, 0.1f, 0); // Move the card up slightly when hovered
+        transform.localPosition += new Vector3(0, 0.1f, -0.1f); // Move the card up slightly when hovered
     }
 
     private void OnMouseExit()
     {
         if(!isSelected)
-        transform.position = defaultPosition; // Reset position when not hovered
+        transform.localPosition = defaultPosition; // Reset position when not hovered
     }
 
     private void OnMouseDown()
@@ -38,14 +41,14 @@ public class PlayerCardLogic : MonoBehaviour
             if (PlayerCardManager.Instance.SelectedCards.Count == 3)
                 return; // Prevent selecting more than 3 cards
 
-            transform.position = defaultPosition + new Vector3(0, 0.2f, 0);
+            transform.localPosition = defaultPosition + new Vector3(0, 0.2f, -0.1f);
             PlayerCardManager.Instance.AddSelectedCards(gameObject);
             isSelected = true;
         }
 
         else if(!IsUsed)
         {
-            transform.position = defaultPosition;
+            transform.localPosition = defaultPosition;
             PlayerCardManager.Instance.RemoveSelectedCards(gameObject);
             isSelected = false;
         }
@@ -54,7 +57,9 @@ public class PlayerCardLogic : MonoBehaviour
 
     public void ResetCard()
     {
-        transform.position = defaultPosition;
+        transform.SetParent(null);
+        transform.position = Vector3.zero;
+        transform.localScale = defaultSize;
         isSelected = false;
         IsUsed = false;
         Card = null; 

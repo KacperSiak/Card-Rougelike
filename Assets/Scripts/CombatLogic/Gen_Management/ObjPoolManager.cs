@@ -8,7 +8,7 @@ public class ObjPoolManager : MonoBehaviour
     [SerializeField] private GameObject _prefab;
 
     private Queue<GameObject> _objPool = new();
-    private int _queueSize = 0;
+    public int QueueSize { get; private set; } = 0;
     
 
     private void Awake()
@@ -22,10 +22,10 @@ public class ObjPoolManager : MonoBehaviour
     }
 
     private void CreateObjPool()
-    { 
-        _queueSize = RoundManager.Instance.PlayerCards.Count;
+    {
+        QueueSize = RoundManager.Instance.PlayerCards.Count;
 
-        for (int i = 0; i < _queueSize; i++)
+        for (int i = 0; i < QueueSize; i++)
         {
             GameObject obj = Instantiate(_prefab);
             obj.SetActive(false);
