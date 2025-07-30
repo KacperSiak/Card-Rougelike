@@ -152,6 +152,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _color: {r: 1, g: 0, b: 0, a: 0}
+  _tex: {fileID: 2800000, guid: 727a75301c3d24613a3ebcec4a24c2c8, type: 3}
   _renderer: {fileID: 208996690}
 --- !u!65 &208996689
 BoxCollider:
@@ -275,6 +276,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _color: {r: 0.04464563, g: 0.6132076, b: 0, a: 0}
+  _tex: {fileID: 0}
   _renderer: {fileID: 284175785}
 --- !u!65 &284175784
 BoxCollider:
@@ -398,6 +400,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _color: {r: 0, g: 0, b: 0, a: 0}
+  _tex: {fileID: 2800000, guid: dffef66376be4fa480fb02b19edbe903, type: 3}
   _renderer: {fileID: 1451949230}
 --- !u!65 &1451949229
 BoxCollider:
