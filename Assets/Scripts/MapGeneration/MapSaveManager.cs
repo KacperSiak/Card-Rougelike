@@ -13,61 +13,23 @@ public class MapSaveManager : MonoBehaviour
     [Header("Settings")]
     public bool autoSaveBeforeSceneChange = true;
     public bool autoLoadOnStart = true;
-    public bool autoCreateAsset = true;
-    [Tooltip("W edytorze zawsze generuje nową mapę (czyści save). W grze używa zapisanego save'a.")]
-    public bool alwaysNewMapInEditor = true;
     
     void Start()
     {
         if (mapGenerator == null)
             mapGenerator = FindFirstObjectByType<MapGenerator>();
         if (mapManager == null)
-            mapManager = FindFirstObjectByType<MapManager>();
+            mapManager = FindFirstObjectByType<MapManager>(); //tymczasowe
             
-        // Auto-create asset if none assigned
-        if (mapSaveData == null && autoCreateAsset)
-        {
-            #if UNITY_EDITOR
-            CreateSaveDataAsset();
-            #endif
-        }
-        
-        #if UNITY_EDITOR
-        // W edytorze zawsze generuj nową mapę (nowy save) jeśli opcja włączona
-        if (alwaysNewMapInEditor)
-        {
-            Debug.Log("[MapSaveManager] EDITOR MODE: Clearing save and generating new map");
-            if (mapSaveData != null)
-            {
-                mapSaveData.ClearSave();
-            }
-            // Nie ładuj save'a w edytorze - zawsze nowa mapa
-        }
-        else
-        {
-            // W edytorze, ale z opcją testowania save'a
-            if (autoLoadOnStart && mapSaveData != null && mapSaveData.CanLoadMap())
-            {
-                Debug.Log("[MapSaveManager] EDITOR MODE (testing save): Loading saved map...");
-                LoadSavedMap();
-            }
-            else
-            {
-                Debug.Log("[MapSaveManager] EDITOR MODE (testing save): No save found - new map will be generated");
-            }
-        }
-        #else
-        // W zbudowanej grze używaj istniejącego save'a
         if (autoLoadOnStart && mapSaveData != null && mapSaveData.CanLoadMap())
         {
-            Debug.Log("[MapSaveManager] GAME MODE: Loading saved map...");
+            Debug.Log("[MapSaveManager] Loading saved map...");
             LoadSavedMap();
         }
         else
         {
-            Debug.Log("[MapSaveManager] GAME MODE: No save found - a new map will be generated");
+            Debug.Log("[MapSaveManager] No save found - a new map will be generated");
         }
-        #endif
     }
     
     public void SaveCurrentMap()
