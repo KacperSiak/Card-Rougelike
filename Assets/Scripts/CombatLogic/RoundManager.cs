@@ -1,70 +1,109 @@
+using System;
 using System.Collections.Generic;
-using TMPro;
-using UnityEditor.TextCore.Text;
 using UnityEngine;
 using UnityEngine.Events;
 
 public class RoundManager : MonoBehaviour
 {
-    [SerializeField] private EnemyAttackManager _enemyAttackManager;
-    [SerializeField] private List<CardsSOTest> _enemyCards;
-    [SerializeField] private List<CardsSOTest> _playerCards;
-    [SerializeField] private TextMeshProUGUI _playerHPText;
-    [SerializeField] private TextMeshProUGUI _enemyHPText;
+    // I think I need to do Global Combat Manager in the nearest future, to take care of some global logic, like cursor, unload the scene, end the combat, but for now I will keep it here
 
-    //obsenrever pattern
-	[SerializeField] private int _playerHP = 50;
-	public int PlayerHP 
+    public static RoundManager Instance { get; private set; }
+
+    [field: SerializeField] public List<CardsSOTest> EnemyCards { get; private set; }
+    [field: SerializeField] public List<CardsSOTest> PlayerCards { get; private set; }
+    private bool _alreadyFinished = false; // to prevent double calls of the end of combat
+
+    public static event Action OnHPChanged;
+    public static event Action OnCombatEnd; // logic is mostly temporary, to mark the end of combat and enable any interactions, but later it will be modified to be built in the whole game logic
+    public static event Action OnRoundStart;
+    public static event Action OnRoundEnd;
+
+    void Awake()
+    {
+        if (Instance == null) Instance = this;
+
+        else Destroy(gameObject);
+    }
+
+    private void OnEnable()
+    {
+        OnHPChanged += CheckHPState;
+    } 
+    
+    
+    private void OnDisable()
+    {
+        OnHPChanged -= CheckHPState;
+    }
+
+    private int _playerHP = 50; // temp default value
+
+    public int PlayerHP
     { 
         get => _playerHP;
         set
         {
             _playerHP = value;
-            OnPlayerHPChange.Invoke();
-		}
-    } // temp default value
-	//[field: SerializeField] public int PlayerHP { get; private set; } = 50; // temp default value
-    public int EnemyHP { get; private set; } = 50; // temp default values
+            OnHPChanged?.Invoke();
+        }
+    }
 
-    public UnityEvent OnPlayerHPChange { get; private set; } = new();
-    public UnityEvent OnRoundEnd { get; private set; } = new();
-    public UnityEvent OnRoundStart { get; private set; } = new();
-    public UnityEvent OnSomething { get; private set; } = new();
+    private int _enemyHP = 50; // temp default value
+
+    public int EnemyHP
+    {
+        get => _enemyHP;
+        set
+        {
+            _enemyHP = value;
+            OnHPChanged?.Invoke();
+        }
+    }
 
     void Start()
     {
-        Cursor.visible = true; //seperate manager
-        HealthUI();
-        _enemyAttackManager.StartCombatSetup();
-        PlayerCardManager.Instance.StartCombat(_playerCards);
-        EnemyCardManager.Instance.StartCombat(_enemyCards);
-    }
-
-    //public void UpdateHealthUI()
-    public void HealthUI()
-    { 
-        _playerHPText.text = $"Player HP: {PlayerHP}";
-        _enemyHPText.text = $"Enemy HP: {EnemyHP}";
-    }
-
-    public void HealthUpdate(int forPlayer, int forEnemy)
-    {
-        PlayerHP -= forPlayer;
-        EnemyHP += forEnemy;
-
-        HealthUI();
+        Cursor.visible = true; 
+        OnRoundStart?.Invoke();
     }
 
     public void EndRound()
     {
         DamageManager.Instance.CalculatePlayerImpact();
-		//PrepareNewRound();
-		//OnRoundEnd.Invoke();
-	}
 
-    public void PrepareNewRound()
+        if(!_alreadyFinished)
+        CheckRoundReadiness();
+    }
+
+    private void CheckRoundReadiness()
+    {
+        if (!PlayerCardManager.Instance.CheckRoundReadiness())
+        {
+            UIManager.Instance.Winner = "Enemy";
+            OnCombatEnd?.Invoke();
+            return;
+        }
+        else if (!EnemyCardManager.Instance.CheckRoundReadiness())
+        {
+            UIManager.Instance.Winner = "Player";
+            OnCombatEnd?.Invoke();
+            return;
+        }
+
+        MoveToNextRound();
+
+    }
+
+    private void MoveToNextRound()
     { 
-        PlayerCardManager.Instance.RefillCards();
-        EnemyCardManager.Instance.RefillCards();
+        OnRoundEnd?.Invoke();
+    }
+
+    private void CheckHPState()
+    {
+        if(_playerHP > 0 && _enemyHP > 0) return;
+
+        UIManager.Instance.Winner = _playerHP > 0 ? "Player" : "Enemy";
+        _alreadyFinished = true; 
+        OnCombatEnd?.Invoke();
     }
 }

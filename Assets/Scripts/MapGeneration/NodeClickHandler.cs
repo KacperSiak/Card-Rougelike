@@ -17,10 +17,10 @@ public class NodeClickHandler : MonoBehaviour
 
     void Start()
     {
-        // Tymczasowy fallback
+        // tymczasowy fallback
         if (mapGenerator == null)
         {
-            mapGenerator = FindObjectOfType<MapGenerator>();
+            mapGenerator = FindFirstObjectByType<MapGenerator>();
         }
         
         if (GetComponent<Collider>() == null)
@@ -119,14 +119,11 @@ public class NodeClickHandler : MonoBehaviour
     {
         currentPlayerNode = transform;
         
-        if (playerMarker == null)
-        {
-            InitializePlayerMarker();
-        }
-        
         if (playerMarker != null)
         {
-            playerMarker.transform.position = transform.position;
+            Vector3 newPos = transform.position;
+            newPos.y = 0.2f;
+            playerMarker.transform.position = newPos;
             playerMarker.SetActive(true);
         }
     }

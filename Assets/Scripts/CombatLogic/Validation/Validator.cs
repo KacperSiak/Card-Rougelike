@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class Validator : MonoBehaviour
 {
-    //Refactor to Interface, remove switch, separate logic for each type of combo 
+    //Refactor to abstract class T_T
 
     [SerializeField] private EnemyAttackManager _enemyAttackManager;
 
@@ -17,26 +17,22 @@ public class Validator : MonoBehaviour
         if (!valid)
         {
             cardHolder.OnValidationFailed();
-            Debug.Log("Validation failed");
             return;
         }
 
         if(PlayerCardManager.Instance.SelectedCardsPower >= EnemyCardManager.Instance.CardsInGamePower[cardHolder.EnemyComboIndex])
         {
             cardHolder.OnValidated();
-            Debug.Log("Validation succeeded");
             return;
         }
 
         if (_enemyAttackManager.RoundsForCards[cardHolder.EnemyComboIndex] > 1)
         {
             cardHolder.OnValidationFailed();
-            Debug.Log("Validation failed");
             return;
         }
 
         cardHolder.OnValidated();
-        Debug.Log("Validation succeeded");
  
     }
 }

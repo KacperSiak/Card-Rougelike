@@ -9,10 +9,6 @@ public class CameraController : MonoBehaviour
     [Header("Zoom Settings")]
     public float minZoom = 5f;
     public float maxZoom = 20f;
-    
-    //delete
-    [Header("References")]
-    public MapGenerator mapGenerator;
 
     private Vector3 lastMousePosition;
     private bool isDragging = false;
@@ -23,7 +19,6 @@ public class CameraController : MonoBehaviour
         cam = GetComponent<Camera>();
         if (cam == null)
         {
-            Debug.LogError("CameraController requires a Camera component");
             enabled = false;
         }
     }
@@ -40,11 +35,9 @@ public class CameraController : MonoBehaviour
         {
             Vector3 mouseWorldPos = GetMouseWorldPosition();
             lastMousePosition = mouseWorldPos;
-            isDragging = true;
         }
         
-        //if (Input.GetMouseButton(0)) check this
-        if (Input.GetMouseButton(0) && isDragging)
+        if (Input.GetMouseButton(0))
         {
             Vector3 currentMouseWorld = GetMouseWorldPosition();
             Vector3 deltaWorld = lastMousePosition - currentMouseWorld;
@@ -52,14 +45,9 @@ public class CameraController : MonoBehaviour
             Vector3 newPosition = transform.position;
             newPosition.z += deltaWorld.z;
             
-            newPosition.z = Mathf.Clamp(newPosition.z, minBounds.y, maxBounds.y);
+            newPosition.z = Mathf.Clamp(newPosition.z, minBounds.y, maxBounds.y); // limiting to bounds
             
             transform.position = newPosition;
-        }
-        
-        if (Input.GetMouseButtonUp(0))
-        {
-            isDragging = false;
         }
     }
     
@@ -87,9 +75,7 @@ public class CameraController : MonoBehaviour
         }
     }
     
-    [ContextMenu("Set Bounds From Map")]
-	//public void SetBoundsFromMap(MapGenerator mapGenerator)
-	public void SetBoundsFromMap()
+    public void SetBoundsFromMap(MapGenerator mapGenerator)
     {
         if (mapGenerator != null && mapGenerator.mapLevels != null && mapGenerator.mapLevels.Count > 0)
         {
@@ -107,12 +93,6 @@ public class CameraController : MonoBehaviour
             float padding = 10f;
             minBounds = new Vector2(0, minZ - padding);
             maxBounds = new Vector2(0, maxZ + padding);
-            
-            Debug.Log($"Camera Z bounds set to: Min({minBounds.y:F1}) Max({maxBounds.y:F1}) | Map range: {minZ:F1} to {maxZ:F1}");
-        }
-        else
-        {
-            Debug.LogWarning("No MapGenerator assigned or map not generated");
         }
     }
 }

@@ -4,22 +4,16 @@ using UnityEngine;
 public class DamageManager : MonoBehaviour
 {
    public static DamageManager Instance { get; private set; }
-   [SerializeField] private RoundManager _roundManager;
    [SerializeField] private EnemyAttackManager _enemyAttackManager;
 
    [SerializeField] private List<CardHolderManager> _cardHolders;
 
     void Awake()
-    {
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-        else
-        {
-            Destroy(gameObject);
-            //Debug.LogWarning("Another DamageManger found");
-        }
+    { 
+        if (Instance == null) Instance = this;
+
+        else Destroy(gameObject);
+
     }
 
     public void CalculatePlayerImpact()
@@ -38,10 +32,13 @@ public class DamageManager : MonoBehaviour
     private void ImplementPlayerImpact()
     {
         for (int i = 0; i < _cardHolders.Count; i++)
-        {
-            if (EnemyCardManager.Instance.CardsInGamePower[i] > 0) continue;
+        { 
+            if (!EnemyCardManager.Instance.CardsInGamePower.ContainsKey(i) || EnemyCardManager.Instance.CardsInGamePower[i] > 0) continue; 
 
-            _roundManager.HealthUpdate(forPlayer: 0, forEnemy: EnemyCardManager.Instance.CardsInGamePower[i]);
+            RoundManager.Instance.EnemyHP -= -EnemyCardManager.Instance.CardsInGamePower[i]; // cuz number in the list will be negative after we will implement player impact
+
+            if (RoundManager.Instance.EnemyHP <= 0) return;
+
             _cardHolders[i].ResetCardHolderEnemyCards();
 
             foreach (var card in EnemyCardManager.Instance.CardsInGame[i])
@@ -53,7 +50,5 @@ public class DamageManager : MonoBehaviour
         }
 
         _enemyAttackManager.UpdateRounds();
-
     }
-
 }

@@ -11,16 +11,26 @@ public class CardHolderManager : MonoBehaviour
     public IValidate ValidatorType { get; private set; } = null;
 
     public int EnemyComboIndex { get; private set; } = -1;
-    public List<PlayerCardLogic> PCardScript { get; private set; }
-    //public List<PlayerCardLogic> PCardScripts { get; private set; }
+    public  List<PlayerCardLogic> PCardScripts { get; private set; }
 
     public int ValidatedPlayerCardsPower { get; private set; } = 0;
+
+    private void OnEnable()
+    {
+        RoundManager.OnCombatEnd += OnCombatEnd;
+    }
+
+
+    private void OnDisable()
+    {
+        RoundManager.OnCombatEnd -= OnCombatEnd;
+    }
 
     public void SetProperties(IValidate validationType, int enemyIndex)
     {
         ValidatorType = validationType;
         EnemyComboIndex = enemyIndex;
-        PCardScript = new List<PlayerCardLogic>();
+        PCardScripts = new List<PlayerCardLogic>();
     }
 
     private void OnMouseEnter()
@@ -43,8 +53,7 @@ public class CardHolderManager : MonoBehaviour
 
         foreach (GameObject card in PlayerCardManager.Instance.SelectedCards)
         {
-            PCardScript.Add(card.GetComponent<PlayerCardLogic>());
-            Debug.Log("playerCardsScript count: " + PCardScript.Count);
+            PCardScripts.Add(card.GetComponent<PlayerCardLogic>());
         }
 
         _validator.ValidateCards(this);
@@ -69,8 +78,7 @@ public class CardHolderManager : MonoBehaviour
 
     public void OnValidationFailed()
     {
-        PCardScript.Clear();
-        Debug.Log("pCards count: " + PCardScript.Count);
+        PCardScripts.Clear();
     }
 
     public void ResetCardHolderPlayerCards()
@@ -78,19 +86,25 @@ public class CardHolderManager : MonoBehaviour
         _isOccupied = false;
         ValidatedPlayerCardsPower = 0;
 
-        foreach(var card in PCardScript)
+        foreach(var card in PCardScripts)
         {
             card.gameObject.SetActive(false);
-            card.ResetCardPosition();
+            card.ResetCard();
         }
 
-        PCardScript.Clear();
+        PCardScripts.Clear();
     }
 
     public void ResetCardHolderEnemyCards()
     {
         ValidatorType = null;
         EnemyComboIndex = -1;
+    }
+
+    private void OnCombatEnd()
+    { 
+        ResetCardHolderEnemyCards();
+        ResetCardHolderPlayerCards();
     }
 
 }

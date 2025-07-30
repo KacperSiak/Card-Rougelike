@@ -14,18 +14,18 @@ public class ValidateDirty : MonoBehaviour, IValidate
             return;
         }
 
-        isValid = cardHolder.PCardScript[0].Card.suit == cardHolder.PCardScript[cardHolder.PCardScript.Count - 1].Card.suit;
+        isValid = cardHolder.PCardScripts[0].Card.suit == cardHolder.PCardScripts[cardHolder.PCardScripts.Count - 1].Card.suit;
         Debug.Log("valid or not clean first check: " + isValid);
 
-        for (int i = 0; i < cardHolder.PCardScript.Count - 1; i++)
+        for (int i = 0; i < cardHolder.PCardScripts.Count - 1; i++)
         {
             if (!isValid) break;
 
-            isValid = cardHolder.PCardScript[i].Card.suit == cardHolder.PCardScript[i + 1].Card.suit;
+            isValid = cardHolder.PCardScripts[i].Card.suit == cardHolder.PCardScripts[i + 1].Card.suit;
 
             if (!isValid) break;
 
-            isValid = cardHolder.PCardScript[i].Card.power + 1 == cardHolder.PCardScript[i + 1].Card.power;
+            isValid = cardHolder.PCardScripts[i].Card.power + 1 == cardHolder.PCardScripts[i + 1].Card.power;
             Debug.Log("valid or not: " + isValid);
         }
 
@@ -33,20 +33,20 @@ public class ValidateDirty : MonoBehaviour, IValidate
 
         if (!isValid)
         {
-            isValid = cardHolder.PCardScript[0].Card.suit != cardHolder.PCardScript[cardHolder.PCardScript.Count - 1].Card.suit;
+            isValid = cardHolder.PCardScripts[0].Card.suit != cardHolder.PCardScripts[cardHolder.PCardScripts.Count - 1].Card.suit;
             Debug.Log("valid or not dirty first check: " + isValid);
 
-            for (int i = 0; i < cardHolder.PCardScript.Count - 1; i++)
+            for (int i = 0; i < cardHolder.PCardScripts.Count - 1; i++)
             {
                 if (!isValid) break;
 
-                isValid = cardHolder.PCardScript[i].Card.suit != cardHolder.PCardScript[i + 1].Card.suit;
-                Debug.Log($"one {cardHolder.PCardScript[i].Card.suit}, two {cardHolder.PCardScript[i + 1].Card.suit}");
+                isValid = cardHolder.PCardScripts[i].Card.suit != cardHolder.PCardScripts[i + 1].Card.suit;
+                Debug.Log($"one {cardHolder.PCardScripts[i].Card.suit}, two {cardHolder.PCardScripts[i + 1].Card.suit}");
 
                 if (!isValid) break;
 
-                isValid = cardHolder.PCardScript[i].Card.power == cardHolder.PCardScript[i + 1].Card.power;
-                Debug.Log($"one {cardHolder.PCardScript[i].Card.power}, two {cardHolder.PCardScript[i + 1].Card.power}");
+                isValid = cardHolder.PCardScripts[i].Card.power == cardHolder.PCardScripts[i + 1].Card.power;
+                Debug.Log($"one {cardHolder.PCardScripts[i].Card.power}, two {cardHolder.PCardScripts[i + 1].Card.power}");
                 Debug.Log("valid or not: " + isValid);
             }
         }
