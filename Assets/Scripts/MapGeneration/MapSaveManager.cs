@@ -19,7 +19,7 @@ public class MapSaveManager : MonoBehaviour
         if (mapGenerator == null)
             mapGenerator = FindFirstObjectByType<MapGenerator>();
         if (mapManager == null)
-            mapManager = FindFirstObjectByType<MapManager>();
+            mapManager = FindFirstObjectByType<MapManager>(); //tymczasowe
             
         if (autoLoadOnStart && mapSaveData != null && mapSaveData.CanLoadMap())
         {
