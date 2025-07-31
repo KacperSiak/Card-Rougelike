@@ -9,6 +9,7 @@ namespace MapSystem
         Elite,
         Treasure,
         Shop,
+        Heal,
         Boss
     }
 }

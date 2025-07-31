@@ -12,17 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2943e8972f40c54897c5ddfa072df4e, type: 3}
   m_Name: MapSaveData
   m_EditorClassIdentifier: 
-  mapSeed: 2143244525
-  numberOfLevels: 7
-  playerPosition: {x: -3.0995855, y: -29.578434}
-  hasPlayerPosition: 1
-  maxMapTime: 93.617874
-  currentMapTime: 62.984886
+  mapSeed: 0
+  numberOfLevels: 0
+  playerPosition: {x: 0, y: 0}
+  hasPlayerPosition: 0
+  maxMapTime: 0
+  currentMapTime: 0
   minNodesPerLevel: 2
-  maxNodesPerLevel: 3
-  horizontalSpacing: 4
-  verticalSpacing: 5
-  horizontalRandomRange: 1
+  maxNodesPerLevel: 4
+  horizontalSpacing: 5
+  verticalSpacing: 6
+  horizontalRandomRange: 2
   verticalRandomRange: 1
-  saveDate: 2025-07-29 10:27:24
-  isValid: 1
+  saveDate: 
+  isValid: 0
