@@ -755,6 +755,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _relicUI: {fileID: 1679897987}
   currentRelics: []
+  allRelics: []
+  maxRelics: 5
   _slotPrefab: {fileID: 319535854679441184, guid: 42561b341171c2f418363034a0f62d7b, type: 3}
   _slotParent: {fileID: 0}
   slotCounter: 0
@@ -802,7 +804,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 553e36bd34a4bda4e92083da743b0b05, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gold: 1000
+  gold: 0
   maxHP: 0
   currentHP: 0
   addDamage: 0

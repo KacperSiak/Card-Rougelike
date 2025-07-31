@@ -1,10 +1,10 @@
 using UnityEngine;
-using System.Collections.Generic;
+using System;
 using TMPro;
 
 public class PlayerOverlay : MonoBehaviour
 {
-    public float gold;
+    public int gold;
     public float maxHP;
     public float currentHP;
     public float addDamage;
@@ -30,5 +30,32 @@ public class PlayerOverlay : MonoBehaviour
     {
         this.gold += gold;
         // wyœwietl nowe siano :)
+    }
+
+    public void AddHealth(int health)
+    {
+        currentHP += health;
+        if (currentHP > maxHP)
+        {
+            // show maxhp/maxhp
+        }
+        else
+        {
+            // show currentHealth/maxhp
+        }
+    }
+
+    public void LoseHealth(int health)
+    {
+        currentHP -= health;
+        // show new hp 
+    }
+
+    public void SetMaxHP(float newHP)
+    {
+        float hpPercentege = newHP / maxHP;
+        maxHP = newHP;
+        currentHP = (float)Math.Round(hpPercentege * currentHP);
+        // show current and max hp
     }
 }

@@ -197,11 +197,16 @@ public class PassiveHeal : RelicEffects
     public float healAmount;
     public override void Register(RelicContext ctx)
     {
-        // heal healAmount at the end of the fight
+        RoundManager.OnCombatEnd += Heal;
     }
     public override void Unregister(RelicContext ctx)
     {
-        // no heals
+        RoundManager.OnCombatEnd -= Heal;
+    }
+
+    void Heal()
+    {
+        PlayerOverlay.instance.currentHP += healAmount;
     }
 }
 
