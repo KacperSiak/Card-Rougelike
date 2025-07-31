@@ -308,6 +308,9 @@ MonoBehaviour:
   tooltipBackground: {fileID: 0}
   tooltipOffset: {x: 10, y: 10}
   fadeSpeed: 5
+  isVisible: 0
+  canvasGroup: {fileID: 0}
+  tooltipRect: {fileID: 0}
 --- !u!1 &418985535
 GameObject:
   m_ObjectHideFlags: 0
