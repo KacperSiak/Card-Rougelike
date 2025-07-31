@@ -16,6 +16,10 @@ public class NodeClickHandler : MonoBehaviour
     public MapGenerator mapGenerator;
     public MapManager mapManager;
 
+    [Header("Node Info")]
+    public NodeType nodeType = NodeType.Enemy;
+    
+
     void Start()
     {
         // tymczasowy fallback
@@ -28,6 +32,7 @@ public class NodeClickHandler : MonoBehaviour
         {
             mapManager = FindFirstObjectByType<MapManager>();
         }
+        
         
         if (GetComponent<Collider>() == null)
         {
@@ -129,10 +134,16 @@ public class NodeClickHandler : MonoBehaviour
     
     void MovePlayerHere()
     {
+        Vector3 fromPos3D = Vector3.zero;
+        Vector3 toPos3D = transform.position;
+        bool hasFromPosition = false;
+        
         if (currentPlayerNode != null && mapManager != null)
         {
-            Vector2 fromPos = new Vector2(currentPlayerNode.position.x, currentPlayerNode.position.z);
-            Vector2 toPos = new Vector2(transform.position.x, transform.position.z);
+            fromPos3D = currentPlayerNode.position;
+            hasFromPosition = true;
+            Vector2 fromPos = new Vector2(fromPos3D.x, fromPos3D.z);
+            Vector2 toPos = new Vector2(toPos3D.x, toPos3D.z);
             mapManager.TravelToNode(fromPos, toPos);
         }
         
@@ -140,9 +151,20 @@ public class NodeClickHandler : MonoBehaviour
         
         if (playerMarker != null)
         {
-            Vector3 newPos = transform.position;
+            Vector3 newPos = toPos3D;
             newPos.y = 0.2f;
             playerMarker.transform.position = newPos;
+            
+            if (hasFromPosition)
+            {
+                Vector3 direction = (toPos3D - fromPos3D).normalized;
+                if (direction != Vector3.zero)
+                {
+                    float angle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
+                    playerMarker.transform.rotation = Quaternion.Euler(0, angle, 0);
+                }
+            }
+            
             playerMarker.SetActive(true);
         }
     }
@@ -151,7 +173,19 @@ public class NodeClickHandler : MonoBehaviour
     {
         if (!string.IsNullOrEmpty(sceneToLoad))
         {
+            var mapSaveManager = FindFirstObjectByType<MapSaveManager>();
+            if (mapSaveManager != null)
+            {
+                mapSaveManager.SaveBeforeSceneChange();
+                Debug.Log("[NodeClickHandler] Map saved by MapSaveManager");
+            }
+            
             SceneManager.LoadScene(sceneToLoad);
         }
+    }
+    
+    public void TriggerLoadScene()
+    {
+        LoadScene();
     }
 }
