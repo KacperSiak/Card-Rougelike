@@ -7,7 +7,7 @@ public class DiscardManager : MonoBehaviour
     
     public void Discard()
     {
-        if (PlayerCardManager.Instance.SelectedCards.Count > discardAvailableAmount || PlayerCardManager.Instance.SelectedCards.Count == 0) return;
+        if (PlayerCardManager.Instance.SelectedCards.Count > discardAvailableAmount || PlayerCardManager.Instance.SelectedCards.Count == 0 || PlayerCardManager.Instance._playerDeckInGame.Count == 0) return;
 
         discardAvailableAmount -= PlayerCardManager.Instance.SelectedCards.Count;
 
@@ -18,7 +18,7 @@ public class DiscardManager : MonoBehaviour
             ObjPoolManager.Instance.ReturnCard(card);
         }
 
-        PlayerCardManager.Instance.UpdateAfterDiscard();
+        PlayerCardManager.Instance.UpdateAfterDiscard(amount: PlayerCardManager.Instance.SelectedCards.Count);
 
     }
 

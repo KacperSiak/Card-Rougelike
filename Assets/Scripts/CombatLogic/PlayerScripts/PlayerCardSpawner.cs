@@ -4,9 +4,10 @@ using UnityEngine;
 public class PlayerCardSpawner : MonoBehaviour
 {
     [SerializeField] private Transform _hand;
-    private float _minOverlap = 0.1f;
-    private float _maxOverlap = 0.4f;
-    private int _cardsNumber = 0;
+    private readonly float _minOverlap = 0f;
+    private readonly float _maxOverlap = 0.25f;
+    private float _cardsNumber = 0;
+    private readonly float optimizer = 2.4f;
 
     public void SpawnCards(List<CardsSOTest> playerDeck, List<GameObject> playerCards,  int cardsAmount)
     {
@@ -30,42 +31,39 @@ public class PlayerCardSpawner : MonoBehaviour
 
     }
 
+   //Need to refactor and improve this part 
     public void SetCardsPosition()
     { 
         _cardsNumber = PlayerCardManager.Instance.CardsInHand.Count;
         if (_cardsNumber == 0) return;
 
-        float handSize = _hand.GetComponent<MeshRenderer>().bounds.size.x;
-
-        Vector3 leftEdge = _hand.position - _hand.right * (handSize / 2f);
+        float handSize = _hand.gameObject.GetComponent<BoxCollider>().bounds.size.x;
 
         float cardSize = PlayerCardManager.Instance.CardsInHand[0].GetComponent<SpriteRenderer>().bounds.size.x;
 
-        float indexOverlap = Mathf.Lerp(0, 1, _cardsNumber / ObjPoolManager.Instance.QueueSize);
-
-        float overlap = Mathf.Lerp(_minOverlap, _maxOverlap, indexOverlap);
+        float overlap = Mathf.Lerp(_minOverlap, _maxOverlap, _cardsNumber / (ObjPoolManager.Instance.QueueSize + 1f));
 
         float spacing = cardSize - overlap;
 
-        float totalSize = (_cardsNumber - 2.5f) * spacing + cardSize;
+        float totalSize = (_cardsNumber - optimizer) * spacing + cardSize;
 
         float emptySpace = handSize - totalSize;
 
-        Vector3 startPos = leftEdge + _hand.right * (emptySpace / 2f);
+        float startX = -handSize / 2f + emptySpace / 2f;
 
-        float startX = -spacing * (_cardsNumber - 1) / 2f;
 
-        for (int i = 0; i < _cardsNumber; i++)
+        for (int i = 0, renderPriority = 0; i < _cardsNumber; i++, renderPriority++)
         {
             GameObject card = PlayerCardManager.Instance.CardsInHand[i];
 
-            //card.transform.SetParent(_hand);
-            card.transform.position = startPos + _hand.right * (i * spacing);
-            card.transform.position += new Vector3(0f, 0f, 0.01f);
+            float x = startX + i * spacing;
+
+            card.transform.position = new Vector3(x, _hand.position.y, _hand.position.z);
+            card.GetComponent<SpriteRenderer>().sortingOrder = renderPriority;
 
             card.GetComponent<PlayerCardLogic>().SaveProperties();
             card.SetActive(true);
-            //card.transform.SetSiblingIndex(i);
+
         }
 
     }

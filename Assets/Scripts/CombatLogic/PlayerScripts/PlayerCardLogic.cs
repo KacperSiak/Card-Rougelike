@@ -1,6 +1,5 @@
 using UnityEngine;
 
-//here
 public class PlayerCardLogic : MonoBehaviour
 {
     private Vector3 defaultPosition;
@@ -11,9 +10,20 @@ public class PlayerCardLogic : MonoBehaviour
 
     public CardsSOTest Card { get; private set; }
 
+    private void OnEnable() 
+    {
+        RoundManager.OnRoundEnd += MakeReusable;
+    }
+
+
+    private void OnDisable()
+    { 
+        RoundManager.OnRoundEnd -= MakeReusable;
+    }
+
     public void SaveProperties()
     {
-        defaultPosition = transform.localPosition;
+        defaultPosition = transform.position;
         defaultSize = transform.localScale;
     }
 
@@ -25,13 +35,15 @@ public class PlayerCardLogic : MonoBehaviour
     private void OnMouseEnter()
     {
         if(!isSelected)
-        transform.localPosition += new Vector3(0, 0.1f, -0.1f); // Move the card up slightly when hovered
+        transform.position += new Vector3(0, 0.1f, -0.1f); // Move the card up slightly when hovered
+        GetComponent<SpriteRenderer>().sortingOrder++;
     }
 
     private void OnMouseExit()
     {
         if(!isSelected)
-        transform.localPosition = defaultPosition; // Reset position when not hovered
+        transform.position = defaultPosition; // Reset position when not hovered
+        GetComponent<SpriteRenderer>().sortingOrder--;
     }
 
     private void OnMouseDown()
@@ -41,27 +53,30 @@ public class PlayerCardLogic : MonoBehaviour
             if (PlayerCardManager.Instance.SelectedCards.Count == 3)
                 return; // Prevent selecting more than 3 cards
 
-            transform.localPosition = defaultPosition + new Vector3(0, 0.2f, -0.1f);
+            transform.position = defaultPosition + new Vector3(0, 0.15f, -0.1f);
             PlayerCardManager.Instance.AddSelectedCards(gameObject);
             isSelected = true;
         }
 
         else if(!IsUsed)
         {
-            transform.localPosition = defaultPosition;
+            transform.position = defaultPosition;
             PlayerCardManager.Instance.RemoveSelectedCards(gameObject);
             isSelected = false;
         }
 
     }
+    public void MakeReusable()
+    {
+        isSelected = false;
+        IsUsed = false;
+    }
 
     public void ResetCard()
     {
-        transform.SetParent(null);
         transform.position = Vector3.zero;
         transform.localScale = defaultSize;
-        isSelected = false;
-        IsUsed = false;
         Card = null; 
+        MakeReusable();
     }
 }

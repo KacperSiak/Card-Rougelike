@@ -9,8 +9,8 @@ public class PlayerCardManager : MonoBehaviour
     public List<GameObject> CardsInHand { get; private set; }
     public List<GameObject> SelectedCards { get; private set; }
     public int SelectedCardsPower { get; private set; }
+    public List<CardsSOTest> _playerDeckInGame { get; private set; }
 
-    private List<CardsSOTest> _playerDeckInGame;
     private int _cardsInHandDefault = 8;
     private int _currentCardsInHand = 0; 
 
@@ -25,7 +25,8 @@ public class PlayerCardManager : MonoBehaviour
     private void OnEnable()
     {
         RoundManager.OnCombatEnd += OnCombatEnd;
-        RoundManager.OnRoundEnd += RefillCards;
+        RoundManager.OnRoundEnd += RefillCards; 
+        RoundManager.OnRoundEnd += ClearSelectedStorage;
         RoundManager.OnCombatStart += StartCombat;
     }
 
@@ -34,6 +35,7 @@ public class PlayerCardManager : MonoBehaviour
     {
         RoundManager.OnCombatEnd -= OnCombatEnd;
         RoundManager.OnRoundEnd -= RefillCards;
+        RoundManager.OnRoundEnd -= ClearSelectedStorage;
         RoundManager.OnCombatStart -= StartCombat;
     }
 
@@ -57,6 +59,12 @@ public class PlayerCardManager : MonoBehaviour
         SelectedCardsPower -= card.GetComponent<PlayerCardLogic>().Card.power;
     }
 
+    private void ClearSelectedStorage()
+    {
+        SelectedCards.Clear();
+        SelectedCardsPower = 0;
+    }
+
     public void ClearSelectedCards() 
     {
         _currentCardsInHand -= SelectedCards.Count;
@@ -67,14 +75,13 @@ public class PlayerCardManager : MonoBehaviour
         }
 
         _spawner.SetCardsPosition();
-        SelectedCards.Clear();
-        SelectedCardsPower = 0;
+        ClearSelectedStorage();
     }
 
-    public void UpdateAfterDiscard()
+    public void UpdateAfterDiscard(int amount)
     { 
         ClearSelectedCards();
-        RefillCards();
+        _spawner.SpawnCards(_playerDeckInGame, CardsInHand, cardsAmount: amount);
     }
 
     public void IncreaseCardsInHandAmount()
@@ -107,8 +114,7 @@ public class PlayerCardManager : MonoBehaviour
             card.SetActive(false);
             ObjPoolManager.Instance.ReturnCard(card);
         }
-        SelectedCards.Clear();
-        SelectedCardsPower = 0;
+        ClearSelectedStorage();
     }
 
 }

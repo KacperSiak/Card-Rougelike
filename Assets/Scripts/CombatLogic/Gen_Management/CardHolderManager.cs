@@ -17,12 +17,14 @@ public class CardHolderManager : MonoBehaviour
     private void OnEnable()
     {
         RoundManager.OnCombatEnd += OnCombatEnd;
+        RoundManager.OnRoundEnd += OnValidationFailed;
     }
 
 
     private void OnDisable()
     {
         RoundManager.OnCombatEnd -= OnCombatEnd;
+        RoundManager.OnRoundEnd += OnValidationFailed;
     }
 
     public void SetProperties(Validator validator, int enemyIndex)

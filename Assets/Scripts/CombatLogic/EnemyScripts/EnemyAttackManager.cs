@@ -45,8 +45,7 @@ public class EnemyAttackManager : MonoBehaviour
     { 
         int amount = Mathf.CeilToInt(maxRoundsToAttack * (totalPower - minTotalPower) / (maxTotalPower - minTotalPower));
 
-        //return Mathf.Clamp(amount, minRound, maxRound);
-        return 100;
+        return Mathf.Clamp(amount, minRound, maxRound);
     }
 
     public void UpdateRounds()
