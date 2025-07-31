@@ -10,6 +10,7 @@ namespace MapSystem
         Treasure,
         Shop,
         Heal,
+        Gambling,
         Boss
     }
 }
