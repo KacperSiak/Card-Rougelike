@@ -17,12 +17,13 @@ MonoBehaviour:
   cardDescription: Boost one card of your choice. It deals double damage
   icon: {fileID: -1463789882, guid: 28a5df7ffde1bb5408169991d42c3ab0, type: 3}
   rarity: 1
-  sellPrice: 5
+  buyPrice: 80
+  sellPrice: 40
   cardEffects:
-  - rid: 5888606620320792664
+  - rid: 5888606709509259327
   references:
     version: 2
     RefIds:
-    - rid: 5888606620320792664
+    - rid: 5888606709509259327
       type: {class: CardBuff, ns: , asm: Assembly-CSharp}
       data: 

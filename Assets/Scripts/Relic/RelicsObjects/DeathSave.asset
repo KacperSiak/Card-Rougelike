@@ -17,6 +17,8 @@ MonoBehaviour:
   description: Save you from the Death
   icon: {fileID: 0}
   rarity: 3
+  buyPrice: 0
+  sellPrice: 250
   relicEffets:
   - rid: 5888606579394871307
   references:

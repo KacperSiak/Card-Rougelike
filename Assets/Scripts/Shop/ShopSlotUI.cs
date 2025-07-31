@@ -11,6 +11,7 @@ public class ShopSlotUI : MonoBehaviour
 
     private ScriptableObject _currentItem;
     private int _currentPrice;
+    private int _basePrice;
 
     void Start()
     {
@@ -21,6 +22,7 @@ public class ShopSlotUI : MonoBehaviour
     {
         _currentItem = item;
         _currentPrice = price;
+        _basePrice = price;
 
         if (item is RelicData relic)
         {
@@ -37,17 +39,20 @@ public class ShopSlotUI : MonoBehaviour
         _priceText.text = $"{price}";
     }
 
-
-
     public void Buy()
     {
+        if (ShopMenager.instance.IsFreeBuyActive())
+        {
+            _currentPrice = 0;
+            ShopMenager.instance.ConsumeFreeBuy();
+        }
         if (PlayerOverlay.instance.gold >= _currentPrice)
         {
             if (_currentItem is RelicData relic)
             {
-                RelicEventsSystem.RelicAcquired(relic);
                 PlayerOverlay.instance.SpendGold(_currentPrice);
-                
+                RelicEventsSystem.RelicAcquired(relic);
+
             }
             else if (_currentItem is ConsumablesData consumable)
             {
@@ -57,10 +62,10 @@ public class ShopSlotUI : MonoBehaviour
                     PlayerOverlay.instance.SpendGold(_currentPrice);
                 }
             }
-            else if (_currentItem is NormalCard normal)
+            else if (_currentItem is CardPack cardPack)
             {
-                // deckMenager.instance.Add(normal);
                 PlayerOverlay.instance.SpendGold(_currentPrice);
+                cardPack.OpePack();
             }
             Debug.Log("Item bought");
             gameObject.SetActive(false);
@@ -70,5 +75,17 @@ public class ShopSlotUI : MonoBehaviour
             Debug.Log("You cant affrod it");
         }
         
+    }
+
+    public void RecalculatePrice(float multiplayer, bool basic)
+    {
+        if (!basic)
+        {
+            if (multiplayer == 9999) _currentPrice = 99999;
+            else _currentPrice = Mathf.RoundToInt(_basePrice * multiplayer);
+        }
+        else _currentPrice = _basePrice;
+
+        _priceText.text = $"{_currentPrice}";
     }
 }

@@ -17,6 +17,8 @@ MonoBehaviour:
   description: +1 handsize
   icon: {fileID: 0}
   rarity: 0
+  buyPrice: 150
+  sellPrice: 100
   relicEffets:
   - rid: 5888606579394871301
   references:

@@ -17,6 +17,8 @@ MonoBehaviour:
   description: Deal +1 additional damage for every played red card
   icon: {fileID: 0}
   rarity: 3
+  buyPrice: 0
+  sellPrice: 250
   relicEffets:
   - rid: 5888606579394871298
   references:

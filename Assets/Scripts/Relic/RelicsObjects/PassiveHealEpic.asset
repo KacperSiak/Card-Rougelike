@@ -17,6 +17,8 @@ MonoBehaviour:
   description: Heal 20 hp at the end of the fight
   icon: {fileID: 0}
   rarity: 2
+  buyPrice: 0
+  sellPrice: 150
   relicEffets:
   - rid: 5888606579394871300
   references:

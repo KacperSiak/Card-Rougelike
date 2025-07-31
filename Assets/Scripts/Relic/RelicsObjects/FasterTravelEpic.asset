@@ -17,6 +17,8 @@ MonoBehaviour:
   description: Travel costs 55% less time
   icon: {fileID: 0}
   rarity: 2
+  buyPrice: 0
+  sellPrice: 150
   relicEffets:
   - rid: 5888606574037696648
   references:

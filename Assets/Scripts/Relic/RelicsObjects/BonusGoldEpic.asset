@@ -17,6 +17,8 @@ MonoBehaviour:
   description: After fight gives use +15% Drachmy from basic coast
   icon: {fileID: 0}
   rarity: 2
+  buyPrice: 0
+  sellPrice: 150
   relicEffets:
   - rid: 5888606618676363328
   references:

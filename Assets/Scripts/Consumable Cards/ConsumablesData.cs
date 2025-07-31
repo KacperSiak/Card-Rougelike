@@ -1,7 +1,8 @@
 using System;
 using UnityEngine;
 using System.Collections.Generic;
-using System.Globalization;
+using UnityEngine.Apple.ReplayKit;
+using System.Runtime.CompilerServices;
 
 public enum CardRarity
 {
@@ -16,6 +17,7 @@ public class ConsumablesData : ShopItem
     [TextArea] public string cardDescription;
     public Sprite icon;
     public CardRarity rarity;
+    public int buyPrice;
     public int sellPrice;
     [SerializeReference] public List<CardEffect> cardEffects;
 }
@@ -24,6 +26,14 @@ public class ConsumableContext
 {
     public PlayerOverlay player;
     public ShopMenager shop;
+    public ConsumablesAndRelicMenager consAndRel;
+
+    public ConsumableContext()
+    {
+        player = PlayerOverlay.instance;
+        shop = ShopMenager.instance;
+        consAndRel = ConsumablesAndRelicMenager.instance;
+    }
 }
 
 
@@ -72,9 +82,10 @@ public class HandReshuffle : CardEffect
 [Serializable]
 public class InstaHeal : CardEffect
 {
+    public int healh;
     public override void ApplyEffect(ConsumableContext ctx)
     {
-        // heal for 50 hp
+        ctx.player.AddHealth(healh); 
     }
 }
 
@@ -110,16 +121,17 @@ public class FreeBuy : CardEffect
 {
     public override void ApplyEffect(ConsumableContext ctx)
     {
-        // next purchase is for free
+        ctx.shop.ActiveFreBuy();
     }
 }
 
 [Serializable]
 public class GoldFever : CardEffect
 {
+    public int gold;
     public override void ApplyEffect(ConsumableContext ctx)
     {
-        ctx.player.gold += 100;
+        ctx.player.AddGold(gold);
     }
 }
 
@@ -136,12 +148,13 @@ public class HugeJackpot : CardEffect
 [Serializable]
 public class CoinFlip : CardEffect
 {
+    public int gold;
     public override void ApplyEffect(ConsumableContext ctx)
     {
         int coin = UnityEngine.Random.Range(0, 2);
         if (coin == 0)
         {
-            ctx.player.gold += 30;
+            ctx.player.AddGold(gold);
         }
     }
 }
@@ -168,9 +181,11 @@ public class DoubleDMGButLessDraw : CardEffect
 [Serializable]
 public class LoseHpGetDamage : CardEffect
 {
+    private int _hpLose = (int)Math.Round(PlayerOverlay.instance.currentHP * 0.25f);
+
     public override void ApplyEffect(ConsumableContext ctx)
     {
-        //player.currentHP *= 0.75f;
+        ctx.player.LoseHealth(_hpLose);
         //player.addDamage = 5;
     }
 }
@@ -178,10 +193,12 @@ public class LoseHpGetDamage : CardEffect
 [Serializable]
 public class NoMoreHealsMoreHP: CardEffect
 {
+    private int bonusHealth;
     public override void ApplyEffect(ConsumableContext ctx)
     {
         // block fountains
-        // max hp +++
+        ctx.player.maxHP += bonusHealth;
+        ctx.player.AddHealth(bonusHealth);
     }
 }
 
@@ -202,6 +219,7 @@ public class OnTheEdge : CardEffect
     {
         ctx.player.maxHP = 5;
         ctx.player.currentHP = 5;
+        // ctx.player.SetMaxHP(5)
         // after 2 turn going back to previous hp
         // immune to debuffs
     }
@@ -212,7 +230,11 @@ public class InstaWin : CardEffect
 {
     public override void ApplyEffect(ConsumableContext ctx)
     {
-        // lose all relics
+        
+        foreach (var relic in ctx.consAndRel.currentRelics)
+        {
+            RelicEventsSystem.RelicRemoved(relic);
+        }
         // win fight (boss prevented)
     }
 }
@@ -240,10 +262,11 @@ public class DoubleDamageSelfHit : CardEffect
 [Serializable]
 public class LowerHpRelicSlot : CardEffect
 {
+    private float newHP = (float)Math.Round(PlayerOverlay.instance.maxHP * 0.8f);
     public override void ApplyEffect(ConsumableContext ctx)
     {
-        // player.maxHP *= 0.8f;
-        // relic slots +1
+        ctx.player.SetMaxHP(newHP);
+        ctx.consAndRel.maxRelics += 1;
     }
 }
 
@@ -270,9 +293,10 @@ public class Modifier : CardEffect
 [Serializable]
 public class RelicRoll : CardEffect
 {
+    private int index = UnityEngine.Random.Range(0, ConsumablesAndRelicMenager.instance.currentRelics.Count);
     public override void ApplyEffect(ConsumableContext ctx)
     {
-        // lose relic
+        RelicEventsSystem.RelicRemoved(ctx.consAndRel.currentRelics[index]);
         // get one new after fight
     }
 }
@@ -283,7 +307,11 @@ public class ShopBlock : CardEffect
     public override void ApplyEffect(ConsumableContext ctx)
     {
         // blocks the shop
-        // get two random relics
+        for (int i = 0; i < 2; i++)
+        {
+            RelicData relic = ctx.consAndRel.RollRandomRelic();
+            RelicEventsSystem.RelicAcquired(relic);
+        }
     }
 }
 
@@ -292,8 +320,15 @@ public class LegendaryReroll : CardEffect
 {
     public override void ApplyEffect(ConsumableContext ctx)
     {
-        // lose all relics
-        // add 2 legendary
+        foreach (var relic in ctx.consAndRel.currentRelics)
+        {
+            RelicEventsSystem.RelicRemoved(relic);
+        }
+        for (int i = 0; i < 2; i++)
+        {
+            RelicData relic = ctx.consAndRel.RollLegendaryRelic();
+            RelicEventsSystem.RelicAcquired(relic);
+        }
     }
 }
 
@@ -302,8 +337,9 @@ public class HealForCoins : CardEffect
 {
     public override void ApplyEffect(ConsumableContext ctx)
     {
-        // lose all drahmas
-        // heal one hp for every drahma spend this way
+        int gold = ctx.player.gold;
+        ctx.player.SpendGold(gold);
+        ctx.player.AddHealth(gold);
     }
 }
 

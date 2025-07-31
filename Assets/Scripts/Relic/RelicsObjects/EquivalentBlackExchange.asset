@@ -17,6 +17,8 @@ MonoBehaviour:
   description: Spades and clubs counts as one suit
   icon: {fileID: 0}
   rarity: 1
+  buyPrice: 150
+  sellPrice: 100
   relicEffets:
   - rid: 5888606574037696640
   references:

@@ -17,6 +17,8 @@ MonoBehaviour:
   cardDescription: Next turn you get double damage but this turn you are imune
   icon: {fileID: 0}
   rarity: 0
+  buyPrice: 80
+  sellPrice: 40
   cardEffects:
   - rid: 5888606620320792697
   references:

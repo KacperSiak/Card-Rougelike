@@ -2,8 +2,6 @@ using System;
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.Events;
-using JetBrains.Annotations;
-using System.Runtime.CompilerServices;
 
 public enum Rarity
 {
@@ -21,6 +19,7 @@ public class RelicData : ShopItem
     [TextArea] public string description;
     public Sprite icon;
     public Rarity rarity;
+    public int buyPrice;
     public int sellPrice;
     [SerializeReference] public List<RelicEffects> relicEffets;
 }
@@ -198,11 +197,16 @@ public class PassiveHeal : RelicEffects
     public float healAmount;
     public override void Register(RelicContext ctx)
     {
-        // heal healAmount at the end of the fight
+        RoundManager.OnCombatEnd += Heal;
     }
     public override void Unregister(RelicContext ctx)
     {
-        // no heals
+        RoundManager.OnCombatEnd -= Heal;
+    }
+
+    void Heal()
+    {
+        PlayerOverlay.instance.currentHP += healAmount;
     }
 }
 

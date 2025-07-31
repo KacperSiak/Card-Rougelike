@@ -17,6 +17,8 @@ MonoBehaviour:
   cardDescription: Your next purchase in the stor is free
   icon: {fileID: 0}
   rarity: 1
+  buyPrice: 80
+  sellPrice: 40
   cardEffects:
   - rid: 5888606620320792665
   references:

@@ -17,6 +17,8 @@ MonoBehaviour:
   cardDescription: You lose all consumables and get new random one on their place
   icon: {fileID: 0}
   rarity: 0
+  buyPrice: 80
+  sellPrice: 40
   cardEffects:
   - rid: 5888606620320792707
   references:

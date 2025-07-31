@@ -12,8 +12,8 @@ public class IconButtonUI : MonoBehaviour
 
     private void Awake()
     {
-        ShopMenager.OnShopOpen.AddListener(ButtonDiscardToSell);
-        ShopMenager.OnShopClose.AddListener(ButtonSellToDiscard);
+        ShopMenager.OnSellingMode.AddListener(ButtonDiscardToSell);
+        ShopMenager.OffSellingMode.AddListener(ButtonSellToDiscard);
     }
     public void Init(RelicData relic)
     {
@@ -21,7 +21,7 @@ public class IconButtonUI : MonoBehaviour
         _removeButton.gameObject.SetActive(false);
         _removeButton.onClick.AddListener(RemoveRelic);
 
-        if(ShopMenager.instance.inShop)
+        if(ShopMenager.instance.inSellingMode)
         {
             _buttonText.text = $"Sell {relic.sellPrice}";
         }
@@ -35,7 +35,7 @@ public class IconButtonUI : MonoBehaviour
 
     public void RemoveRelic()
     {
-        if (ShopMenager.instance.inShop)
+        if (ShopMenager.instance.inSellingMode)
         {
             PlayerOverlay.instance.AddGold(_relic.sellPrice);
         }
