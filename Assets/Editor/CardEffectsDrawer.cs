@@ -3,7 +3,9 @@ using UnityEditor;
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using Unity.VisualScripting;
+using Unity.VisualScripting; //delete
+
+//#if UNITY_EDITOR
 
 [CustomPropertyDrawer(typeof(CardEffect), true)]
 public class CardEffectsDrawer : PropertyDrawer
@@ -82,3 +84,5 @@ public class CardEffectsDrawer : PropertyDrawer
 
 
 }
+
+//#endif

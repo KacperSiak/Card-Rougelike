@@ -65,7 +65,7 @@ public class CameraController : MonoBehaviour
         {
             if (cam.orthographic)
             {
-                cam.orthographicSize = Mathf.Clamp(cam.orthographicSize - scroll * 2f, minZoom, maxZoom);
+                cam.orthographicSize = Mathf.Clamp(cam.orthographicSize - scroll * 2f, minZoom, maxZoom); //magic numbers!
             }
             else
             {

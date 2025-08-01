@@ -19,17 +19,21 @@ public class PlayerOverlay : MonoBehaviour
         {
             instance = this;
         }
+        else
+        {
+            Debug.LogWarning("Found another PlayerOverlay");
+        }
     }
 
     public void SpendGold(int gold)
     {
         this.gold -= gold;
-        // wyœwietl nowe siano :)
+        // wyï¿½wietl nowe siano :)
     }
     public void AddGold(int gold)
     {
         this.gold += gold;
-        // wyœwietl nowe siano :)
+        // wyï¿½wietl nowe siano :)
     }
 
     public void AddHealth(int health)
