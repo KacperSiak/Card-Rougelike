@@ -145,7 +145,7 @@ MonoBehaviour:
   playerMarkerPrefab: {fileID: 2953499796673057148, guid: 3a5a5f682334fbd4283dcb16d646bf80, type: 3}
   mapGenerator: {fileID: 0}
   mapManager: {fileID: 0}
-  nodeType: 6
+  nodeType: 7
 --- !u!1001 &1111093149213977277
 PrefabInstance:
   m_ObjectHideFlags: 0
