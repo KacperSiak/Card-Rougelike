@@ -431,6 +431,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: b3c9bb6443d512645a6ad2f91d2a6fae, type: 2}
   - {fileID: 11400000, guid: acddaf0a3f8824d46a7bbecb9cc7d42f, type: 2}
   - {fileID: 11400000, guid: 4d70fc18e59011e4b89943ed0f2c0e32, type: 2}
+  - {fileID: 11400000, guid: f174573f468aaa94a877066bf57fc425, type: 2}
   _slots:
   - {fileID: 508320826}
   - {fileID: 1627660336}
@@ -755,10 +756,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _relicUI: {fileID: 1679897987}
   currentRelics: []
-  allRelics: []
+  allRelics:
+  - {fileID: 11400000, guid: acddaf0a3f8824d46a7bbecb9cc7d42f, type: 2}
+  - {fileID: 11400000, guid: d6e806cf72d2f974b89b7fc2fa21d36b, type: 2}
+  - {fileID: 11400000, guid: fa229b7be69c92240b0d916ecb9b2689, type: 2}
+  - {fileID: 11400000, guid: 6194f05b82f95bc4ea16a432141c5b96, type: 2}
+  - {fileID: 11400000, guid: 4860c16a219a6584d8f76c92cc262afc, type: 2}
+  - {fileID: 11400000, guid: bc04ae905f3d8374084802b136c38b19, type: 2}
+  - {fileID: 11400000, guid: 6e45d6b5b3d92114caad2dfd6ecdf461, type: 2}
+  - {fileID: 11400000, guid: 28a49dccde9f6624184ba0cf41bce271, type: 2}
+  - {fileID: 11400000, guid: 1707eb7ad8835bb4591d98163fe58026, type: 2}
   maxRelics: 5
   _slotPrefab: {fileID: 319535854679441184, guid: 42561b341171c2f418363034a0f62d7b, type: 3}
   _slotParent: {fileID: 0}
+  _vase: {fileID: 11400000, guid: f174573f468aaa94a877066bf57fc425, type: 2}
+  allConsums: []
+  currentConsums: []
   slotCounter: 0
 --- !u!114 &639151792
 MonoBehaviour:
@@ -804,7 +817,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 553e36bd34a4bda4e92083da743b0b05, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gold: 0
+  gold: 1000
   maxHP: 0
   currentHP: 0
   addDamage: 0
@@ -2225,6 +2238,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1679897986}
   - component: {fileID: 1679897987}
+  - component: {fileID: 1679897988}
   m_Layer: 0
   m_Name: InventoryGuy
   m_TagString: Untagged
@@ -2261,6 +2275,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _iconPrefab: {fileID: 8213496279872533003, guid: da0d1a8de2a4d1d418ddeaeae5f37d37, type: 3}
   _iconDisplay: {fileID: 2142463848}
+--- !u!114 &1679897988
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1679897984}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c49906940fa23df4988fc90974b2baeb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _testerRelic: {fileID: 11400000, guid: 6194f05b82f95bc4ea16a432141c5b96, type: 2}
 --- !u!1 &1680772759
 GameObject:
   m_ObjectHideFlags: 0
