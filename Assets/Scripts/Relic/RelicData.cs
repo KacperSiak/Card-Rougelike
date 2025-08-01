@@ -21,12 +21,20 @@ public class RelicData : ShopItem
     public Rarity rarity;
     public int buyPrice;
     public int sellPrice;
+    public bool Upgradeable;
     [SerializeReference] public List<RelicEffects> relicEffets;
 }
 
 public class RelicContext
 {
     public PlayerOverlay player;
+    public MapManager mapManager;
+
+    public RelicContext()
+    {
+        player = PlayerOverlay.instance;
+        mapManager = MapManager.instance;
+    }
 }
 
 [Serializable]
@@ -126,15 +134,15 @@ public class Discount : RelicEffects
 [Serializable]
 public class FasterTravel : RelicEffects
 {
-    public float _speedModifier;
+    public float speedModifier;
     public override void Register(RelicContext ctx)
     {
-        // faster travel
+        ctx.mapManager.SetNewModifier(speedModifier);
     }
 
     public override void Unregister(RelicContext ctx)
     {
-        // normal travel
+        ctx.mapManager.ResetModifier();
     }
 }
 
@@ -318,6 +326,7 @@ public class BonusGold : RelicEffects
         //no more bonus gold
     }
 }
+
 
 ////////////////////////////////////////////////// After Demo Relics //////////////////////////////////////////
 

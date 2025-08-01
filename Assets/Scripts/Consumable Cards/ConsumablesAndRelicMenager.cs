@@ -1,11 +1,10 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 
 public class ConsumablesAndRelicMenager : MonoBehaviour
 {
-    [Header ("Relics")]
+    [Header("Relics")]
     [SerializeField] private RelicUIDisplay _relicUI;
     public List<RelicData> currentRelics;
     public List<RelicData> allRelics;
@@ -16,7 +15,11 @@ public class ConsumablesAndRelicMenager : MonoBehaviour
     [Header("Consumables")]
     [SerializeField] private GameObject _slotPrefab;
     [SerializeField] private Transform _slotParent;
+    [SerializeField] private VaseRelicUpgrade _vase;
+    public List<ConsumablesData> allConsums;
+    public List<ConsumablesData> currentConsums;
     public int slotCounter = 0;
+
 
     public static ConsumablesAndRelicMenager instance;
 
@@ -24,6 +27,7 @@ public class ConsumablesAndRelicMenager : MonoBehaviour
     {
         RelicEventsSystem.OnRelicAcquired.AddListener(HandleRelicAcquired);
         RelicEventsSystem.OnRelicRemoved.AddListener(HandleRelicRemoved);
+        RelicIconButtonsUI.OnRelicUpgrade.AddListener(RelicUpgrade);
 
         if (instance == null)
         {
@@ -46,10 +50,10 @@ public class ConsumablesAndRelicMenager : MonoBehaviour
         RelicEventsSystem.OnRelicRemoved.RemoveListener(HandleRelicRemoved);
     }
 
-// Relics //    
+    // Relics //    
     private void HandleRelicAcquired(RelicData relic)
     {
-        if (RelicChecker(relic) && currentRelics.Count <maxRelics)
+        if (RelicChecker(relic) && currentRelics.Count < maxRelics)
         {
             currentRelics.Add(relic);
             foreach (var effect in relic.relicEffets) effect.Register(_ctx);
@@ -83,7 +87,7 @@ public class ConsumablesAndRelicMenager : MonoBehaviour
         {
             int index = Random.Range(0, allRelics.Count);
             _drawnRelic = allRelics[index];
-        }while (!RelicChecker(_drawnRelic));
+        } while (!RelicChecker(_drawnRelic));
 
         return _drawnRelic;
     }
@@ -108,6 +112,34 @@ public class ConsumablesAndRelicMenager : MonoBehaviour
         return _drawnRelic;
     }
 
+    public void RelicUpgrade(RelicData relic)
+    {
+        Rarity neededRarity = RelicRarityNeed(relic.rarity);
+
+        RelicData foundRelic = allRelics.Find(r => r.relicName == relic.relicName && r.rarity == neededRarity);
+        RelicEventsSystem.RelicAcquired(foundRelic);
+        RelicEventsSystem.RelicRemoved(relic);
+        currentRelics.Remove(relic);
+        ShopMenager.instance.allItems.Add(_vase);
+    }
+
+    public Rarity RelicRarityNeed(Rarity rarity)
+    {
+        switch (rarity)
+        {
+            case Rarity.Common:
+                return Rarity.Rare;
+
+            case Rarity.Rare:
+                return Rarity.Epic;
+
+            case Rarity.Epic:
+                return Rarity.Legendary;
+        }
+
+        return rarity;
+    }
+
 
     // Consumables cards // 
     public void AddCard(ConsumablesData card)
@@ -126,5 +158,29 @@ public class ConsumablesAndRelicMenager : MonoBehaviour
             return true;
 
         return false;
+    }
+
+    public ConsumablesData RollRandomCons()
+    {
+        int index = Random.Range(0, allConsums.Count);
+        return allConsums[index];
+    }
+
+    public void ReplaceAllConsumables()
+    {
+        int count = currentConsums.Count;
+
+        foreach (Transform child in _slotParent)
+        {
+            Destroy(child.gameObject);
+        }
+
+        currentConsums.Clear();
+        slotCounter = 0;
+
+        for (int i = 0; i < count; i++)
+        {
+            AddCard(RollRandomCons());
+        }
     }
 }

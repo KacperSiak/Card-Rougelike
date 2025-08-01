@@ -30,11 +30,10 @@ public class RelicUIDisplay : MonoBehaviour
         if (trigger != null)
             trigger.relicData = relic;
 
-        IconButtonUI iconUI = icon.GetComponent<IconButtonUI>();
+        RelicIconButtonsUI iconUI = icon.GetComponent<RelicIconButtonsUI>();
         if (iconUI != null)
         {
             iconUI.Init(relic);
-
 
             icon.GetComponent<Button>().onClick.AddListener(()=>
             {

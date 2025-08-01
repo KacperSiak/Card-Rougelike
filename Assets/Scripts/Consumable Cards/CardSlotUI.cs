@@ -48,7 +48,7 @@ public class CardSlotUI : MonoBehaviour
         {
             effect.ApplyEffect(ctx);
         }
-
+        ConsumablesAndRelicMenager.instance.currentConsums.Remove(_cardData);
         ConsumablesAndRelicMenager.instance.slotCounter--;
         Destroy(gameObject);
     }
@@ -59,6 +59,7 @@ public class CardSlotUI : MonoBehaviour
         {
             PlayerOverlay.instance.AddGold(_cardData.sellPrice);
         }
+        ConsumablesAndRelicMenager.instance.currentConsums.Remove(_cardData);
         ConsumablesAndRelicMenager.instance.slotCounter--;
         Destroy(gameObject);
     }

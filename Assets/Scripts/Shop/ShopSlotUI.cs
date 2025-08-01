@@ -36,6 +36,10 @@ public class ShopSlotUI : MonoBehaviour
         {
             _icon.sprite = normal.face;
         }
+        else if (item is VaseRelicUpgrade vase)
+        {
+            _icon.sprite = vase.icon;
+        }
         _priceText.text = $"{price}";
     }
 
@@ -66,6 +70,11 @@ public class ShopSlotUI : MonoBehaviour
             {
                 PlayerOverlay.instance.SpendGold(_currentPrice);
                 cardPack.OpePack();
+            }
+            else if (_currentItem is VaseRelicUpgrade vase)
+            {
+                PlayerOverlay.instance.SpendGold(_currentPrice);
+                vase.GotVase();
             }
             Debug.Log("Item bought");
             gameObject.SetActive(false);

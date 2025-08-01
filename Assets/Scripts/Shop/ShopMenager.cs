@@ -111,6 +111,7 @@ public class ShopMenager : MonoBehaviour
             }
             else if (item is CardPack cardPack) _price = cardPack.buyPrice;
             else if (item is ConsumablesData consumable) _price = consumable.buyPrice;
+            else if (item is VaseRelicUpgrade vase) _price = vase.price;
             shopSlot.Setup(item, Mathf.RoundToInt(_price * _priceMultiplier));
         }
     }
