@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0aef28edf93a334696b9f793c52e5ee, type: 3}
   m_Name: Vase
   m_EditorClassIdentifier: 
-  price: 0
-  icon: {fileID: 0}
+  price: 100
+  icon: {fileID: 21300000, guid: 20dcc85047f097d45855c4910c0a5dbb, type: 3}

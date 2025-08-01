@@ -15,10 +15,11 @@ MonoBehaviour:
   relicID: BonusGoldRare
   relicName: Haron's bag
   description: After fight gives use +10% Drachmy from basic coast
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 42abbe115d046c64d8deb561d72cbfab, type: 3}
   rarity: 1
   buyPrice: 150
   sellPrice: 100
+  Upgradeable: 0
   relicEffets:
   - rid: 5888606618676363328
   references:
