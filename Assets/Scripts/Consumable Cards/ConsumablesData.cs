@@ -348,8 +348,7 @@ public class HugeReroll : CardEffect
 {
     public override void ApplyEffect(ConsumableContext ctx)
     {
-        // Remove all consumables
-        // Get random new ones
+        ctx.consAndRel.ReplaceAllConsumables();
     }
 }
 
