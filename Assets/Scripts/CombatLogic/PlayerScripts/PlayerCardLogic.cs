@@ -34,14 +34,14 @@ public class PlayerCardLogic : MonoBehaviour
 
     private void OnMouseEnter()
     {
-        if(!isSelected)
+        if (isSelected) return;
         transform.position += new Vector3(0, 0.1f, -0.1f); // Move the card up slightly when hovered
         GetComponent<SpriteRenderer>().sortingOrder++;
     }
 
     private void OnMouseExit()
     {
-        if(!isSelected)
+        if (isSelected) return; 
         transform.position = defaultPosition; // Reset position when not hovered
         GetComponent<SpriteRenderer>().sortingOrder--;
     }
