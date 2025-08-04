@@ -2,33 +2,32 @@ using UnityEngine;
 
 public class CameraFly : MonoBehaviour
 {
-    public Transform target;
-    public float speed = 2f;
-    private int currentIndex = 0;
-    private bool isFlying = false;
-    private Vector3 defaultPosition;
+    //temp prototype
+    [SerializeField] private Transform _cameraTransform;
+    //[SerializeField] private Transform _target;
+    private Vector3 _tempPosition = new Vector3(-0.011f, 2.8f, -7.16f); 
+    private Quaternion _defaultRotation;
+    private Vector3 _defaultPosition;
 
     void Start()
     {
-        defaultPosition = Camera.main.transform.position;
+        _defaultRotation = _cameraTransform.rotation;
+        _defaultPosition = _cameraTransform.position;
     }
-    void OnMouseDown()
-    {
-        
-            if (!isFlying)
-        {
-            //Transform target = waypoints[currentIndex];
-            //transform.position = Vector3.MoveTowards(transform.position, target.position, speed * Time.deltaTime);
-            Camera.main.transform.LookAt(target);
-            isFlying = true;
-            return;
 
-           // if (Vector3.Distance(transform.position, target.position) < 0.1f)
-           //{
-           // currentIndex++;
-           //}
+    //temp
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.W))
+        {
+            _cameraTransform.Rotate(40f, 0f, 0f);
+            _cameraTransform.position = _tempPosition;
         }
-        Camera.main.transform.position = defaultPosition;
-        isFlying = false ;
+        else if (Input.GetKeyUp(KeyCode.W))
+        {
+            _cameraTransform.rotation = _defaultRotation;
+            _cameraTransform.position = _defaultPosition;
+        }
     }
+
 }
