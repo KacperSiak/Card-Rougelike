@@ -64,14 +64,17 @@ public class CardHolderManager : MonoBehaviour
     public void OnValidated()
     {
         _isOccupied = true;
-        int position = -1;
+        //maybe use card size here 
+        float position = -0.015f;
+        //float position = -1f;
 
         foreach (GameObject card in PlayerCardManager.Instance.SelectedCards) 
         {
             card.transform.position = new Vector3(transform.position.x + position, transform.position.y, transform.position.z);
-            card.transform.rotation = Quaternion.identity;
-            card.transform.localScale *= 3f;
-            position += 1;
+            card.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
+            card.transform.localScale *= 0.8f;
+            position += 0.015f;
+            //position++;
             card.GetComponent<PlayerCardLogic>().IsUsed = true;
         }
 

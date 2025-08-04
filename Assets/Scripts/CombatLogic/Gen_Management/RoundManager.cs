@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 
 public class RoundManager : MonoBehaviour
 {
@@ -29,6 +30,7 @@ public class RoundManager : MonoBehaviour
     {
         OnHPChanged += CheckHPState;
         OnCombatEnd += ReturnHealthValueAfterCombat;
+        OnCombatEnd += SwitchToMainScene;
     } 
     
     
@@ -36,6 +38,7 @@ public class RoundManager : MonoBehaviour
     {
         OnHPChanged -= CheckHPState;
         OnCombatEnd -= ReturnHealthValueAfterCombat;
+        OnCombatEnd -= SwitchToMainScene;
     }
 
     private int _playerHP;
@@ -72,6 +75,11 @@ public class RoundManager : MonoBehaviour
     private void ReturnHealthValueAfterCombat()
     { 
         PlayerManager.Instance.PlayerHP = _playerHP;
+    }
+
+    private void SwitchToMainScene()
+    {
+        SceneManager.LoadScene("MapGeneration"); // for now like that, for future improvement
     }
 
     public void EndRound()

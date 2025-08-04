@@ -35,7 +35,8 @@ public class PlayerCardLogic : MonoBehaviour
     private void OnMouseEnter()
     {
         if (isSelected) return;
-        transform.position += new Vector3(0, 0.1f, -0.1f); // Move the card up slightly when hovered
+        //transform.position += new Vector3(0, 0.1f, 0f); // Move the card up slightly when hovered
+        transform.position += new Vector3(0, 0.01f, 0f);
         GetComponent<SpriteRenderer>().sortingOrder++;
     }
 
@@ -53,7 +54,8 @@ public class PlayerCardLogic : MonoBehaviour
             if (PlayerCardManager.Instance.SelectedCards.Count == 3)
                 return; // Prevent selecting more than 3 cards
 
-            transform.position = defaultPosition + new Vector3(0, 0.15f, -0.1f);
+            //transform.position = defaultPosition + new Vector3(0, 0.15f, 0f);
+            transform.position = defaultPosition + new Vector3(0, 0.015f, 0f);
             PlayerCardManager.Instance.AddSelectedCards(gameObject);
             isSelected = true;
         }
@@ -76,6 +78,7 @@ public class PlayerCardLogic : MonoBehaviour
     {
         transform.position = Vector3.zero;
         transform.localScale = defaultSize;
+        transform.localRotation = Quaternion.identity;
         Card = null; 
         MakeReusable();
     }
