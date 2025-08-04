@@ -4,7 +4,6 @@ using UnityEngine.UI;
 using TMPro;
 using UnityEngine.Events;
 
-
 public class ShopMenager : MonoBehaviour
 {
     public List<ShopItem> allItems;
@@ -31,7 +30,7 @@ public class ShopMenager : MonoBehaviour
     private float _priceMultiplier = 1f;
     private bool _freeBuyEffect = false;
     private int _goldForRerol;
-    private List<NormalCard> _cardsForVisual;
+    private List<BaseCard> _cardsForVisual;
 
     public static ShopMenager instance;
     public bool inSellingMode { get; private set; } = false;

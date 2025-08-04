@@ -34,7 +34,7 @@ public class ShopSlotUI : MonoBehaviour
         }
         else if (item is NormalCard normal)
         {
-            _icon.sprite = normal.face;
+            _icon.sprite = normal.icon;
         }
         else if (item is VaseRelicUpgrade vase)
         {

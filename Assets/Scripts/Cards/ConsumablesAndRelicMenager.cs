@@ -20,7 +20,6 @@ public class ConsumablesAndRelicMenager : MonoBehaviour
     public List<ConsumablesData> currentConsums;
     public int slotCounter = 0;
 
-
     public static ConsumablesAndRelicMenager instance;
 
     private void Awake()
@@ -87,6 +86,26 @@ public class ConsumablesAndRelicMenager : MonoBehaviour
         {
             int index = Random.Range(0, allRelics.Count);
             _drawnRelic = allRelics[index];
+        } while (!RelicChecker(_drawnRelic));
+
+        return _drawnRelic;
+    }
+
+    public RelicData RollEpicRelic()
+    {
+        List<RelicData> epicRelics = new List<RelicData>();
+        for (int i = 0; i < allRelics.Count; i++)
+        {
+            if (allRelics[i].rarity == Rarity.Epic)
+            {
+                epicRelics.Add(allRelics[i]);
+            }
+        }
+
+        do
+        {
+            int index = Random.Range(0, epicRelics.Count);
+            _drawnRelic = epicRelics[index];
         } while (!RelicChecker(_drawnRelic));
 
         return _drawnRelic;

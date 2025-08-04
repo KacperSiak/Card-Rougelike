@@ -303,14 +303,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9278dc6bd5759ef44b9c12747465b390, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tooltipCanvas: {fileID: 967349712}
-  tooltipText: {fileID: 338963520}
-  tooltipBackground: {fileID: 0}
-  tooltipOffset: {x: 10, y: 10}
-  fadeSpeed: 5
-  isVisible: 0
-  canvasGroup: {fileID: 0}
-  tooltipRect: {fileID: 0}
 --- !u!1 &418985535
 GameObject:
   m_ObjectHideFlags: 0
@@ -709,7 +701,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0ee6308b37cc5f64d9d59107393bab85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mapSaveData: {fileID: 11400000, guid: 48ca783d96a91264e85c9eeddbbb238c, type: 2}
+  mapSaveData: {fileID: 11400000, guid: 00b83cb05e9f11a4faae4573932f27d7, type: 2}
   mapGenerator: {fileID: 594651636}
   mapManager: {fileID: 594651637}
   autoSaveBeforeSceneChange: 1

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 public class DeckMenager : MonoBehaviour
 {
-    public List<NormalCard> _deck;
+    public List<BaseCard> _deck;
     public static DeckMenager instance;
 
     private void Awake()
@@ -14,12 +14,12 @@ public class DeckMenager : MonoBehaviour
         }
         else Debug.Log("Found new Deck Menager");
     }
-    public void AddCard(NormalCard normal)
+    public void AddCard(BaseCard normal)
     {
         _deck.Add(normal);
     }
 
-    public void RemmoveCard(NormalCard normal)
+    public void RemmoveCard(BaseCard normal)
     {
        var cardToRemove = _deck.Find(card => card.cardName == normal.cardName);
 
@@ -29,10 +29,10 @@ public class DeckMenager : MonoBehaviour
         }
     }
 
-    public List<NormalCard> DrawACardForShop()
+    public List<BaseCard> DrawACardForShop()
     {
-        List<NormalCard> _reserveDeck = new List<NormalCard>(_deck);
-        List<NormalCard> _drawnCards = new List<NormalCard>();
+        List<BaseCard> _reserveDeck = new List<BaseCard>(_deck);
+        List<BaseCard> _drawnCards = new List<BaseCard>();
         for (int i = 0; i<5; i++)
         {
             int index = Random.Range(0, _reserveDeck.Count);

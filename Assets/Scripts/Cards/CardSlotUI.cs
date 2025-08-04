@@ -1,6 +1,7 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+
 public class CardSlotUI : MonoBehaviour
 {
     [SerializeField] private Image _icon;
