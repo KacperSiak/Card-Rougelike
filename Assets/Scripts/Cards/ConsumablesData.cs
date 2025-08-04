@@ -1,14 +1,13 @@
 using System;
 using UnityEngine;
 using System.Collections.Generic;
-using UnityEngine.Apple.ReplayKit;
-using System.Runtime.CompilerServices;
 
 public enum CardRarity
 {
     common,
     rare
 }
+
 [CreateAssetMenu(fileName = "ConsumablesData", menuName = "Shop/Consumable")]
 public class ConsumablesData : ShopItem
 {
@@ -35,7 +34,6 @@ public class ConsumableContext
         consAndRel = ConsumablesAndRelicMenager.instance;
     }
 }
-
 
 [Serializable]
 public abstract class CardEffect

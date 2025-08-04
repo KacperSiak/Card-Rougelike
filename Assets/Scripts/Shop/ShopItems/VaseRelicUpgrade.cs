@@ -9,7 +9,6 @@ public class VaseRelicUpgrade : ShopItem
 
     public static UnityEvent OnVaseAcquired = new UnityEvent();
 
-
     public void GotVase()
     {
         OnVaseAcquired.Invoke();
