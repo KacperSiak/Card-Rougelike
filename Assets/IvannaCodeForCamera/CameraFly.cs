@@ -22,11 +22,13 @@ public class CameraFly : MonoBehaviour
         {
             _cameraTransform.Rotate(40f, 0f, 0f);
             _cameraTransform.position = _tempPosition;
+            UIManager.Instance.TurnRoundOff();
         }
         else if (Input.GetKeyUp(KeyCode.W))
         {
             _cameraTransform.rotation = _defaultRotation;
             _cameraTransform.position = _defaultPosition;
+            UIManager.Instance.TurnRoundOn();
         }
     }
 

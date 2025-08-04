@@ -73,6 +73,7 @@ public class CardHolderManager : MonoBehaviour
             card.transform.position = new Vector3(transform.position.x + position, transform.position.y, transform.position.z);
             card.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
             card.transform.localScale *= 0.8f;
+            card.GetComponent<SpriteRenderer>().sortingOrder -= 2;
             position += 0.015f;
             //position++;
             card.GetComponent<PlayerCardLogic>().IsUsed = true;

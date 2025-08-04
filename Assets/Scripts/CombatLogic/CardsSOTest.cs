@@ -5,7 +5,8 @@ public enum Suits
     Hearts,
     Diamonds,
     Clubs,
-    Spades
+    Spades,
+    Joker
 }
 
 [CreateAssetMenu(fileName = "CardsSOTest", menuName = "Scriptable Objects/CardsSOTest")]

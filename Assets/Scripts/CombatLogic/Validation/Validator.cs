@@ -1,5 +1,6 @@
 using UnityEngine;
 
+//jocker validation to be improved 
 public class Validator : MonoBehaviour
 {
     [SerializeField] protected EnemyAttackManager _enemyAttackManager;

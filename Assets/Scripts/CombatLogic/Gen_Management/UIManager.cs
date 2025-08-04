@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using static UnityEditor.Progress;
 
 public class UIManager : MonoBehaviour
 {
@@ -76,5 +77,22 @@ public class UIManager : MonoBehaviour
         _enemyHPText.text = string.Empty;
         _finalResultText.text = $"Winner: {_winner}";
         _finalResultText.gameObject.SetActive(true);
+    }
+
+    //temp
+    public void TurnRoundOn()
+    {
+        foreach (var item in _roundsText)
+        {
+            item.gameObject.SetActive(true);
+        }
+    }
+
+    public void TurnRoundOff()
+    {
+        foreach (var item in _roundsText)
+        {
+            item.gameObject.SetActive(false);
+        }
     }
 }

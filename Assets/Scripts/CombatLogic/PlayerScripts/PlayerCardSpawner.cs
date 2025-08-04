@@ -4,7 +4,8 @@ using UnityEngine;
 public class PlayerCardSpawner : MonoBehaviour
 {
     [SerializeField] private Transform _hand;
-    private readonly float _minOverlap = 0f;
+    private readonly float _minOverlap = -0.01f;
+    //private readonly float _minOverlap = 0f;
     private readonly float _maxOverlap = 0.1f;
     //private readonly float _maxOverlap = 0.25f;
     private float _cardsNumber = 0;
