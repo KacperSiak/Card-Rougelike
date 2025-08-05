@@ -92,7 +92,7 @@ public class ShopMenager : MonoBehaviour
         {
             currentItems = GetRandomItems(allItems, _numberOfItems);
         }
-        while (currentItems.TrueForAll(i => i is RelicData) || currentItems.TrueForAll(i => i is ConsumablesData) || currentItems.TrueForAll(i => i is NormalCard));
+        while (currentItems.TrueForAll(i => i is RelicData) || currentItems.TrueForAll(i => i is ConsumablesData) || currentItems.TrueForAll(i => i is PotionData));
 
         for (int i = 0; i < currentItems.Count; i++)
         {
@@ -111,6 +111,7 @@ public class ShopMenager : MonoBehaviour
             else if (item is CardPack cardPack) _price = cardPack.buyPrice;
             else if (item is ConsumablesData consumable) _price = consumable.buyPrice;
             else if (item is VaseRelicUpgrade vase) _price = vase.price;
+            else if (item is PotionData potion) _price = potion.buyPrice;
             shopSlot.Setup(item, Mathf.RoundToInt(_price * _priceMultiplier));
         }
     }

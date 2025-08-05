@@ -24,22 +24,11 @@ public class ShopSlotUI : MonoBehaviour
         _currentPrice = price;
         _basePrice = price;
 
-        if (item is RelicData relic)
-        {
-            _icon.sprite = relic.icon;
-        }
-        else if (item is ConsumablesData consumable)
-        {
-            _icon.sprite = consumable.icon;
-        }
-        else if (item is NormalCard normal)
-        {
-            _icon.sprite = normal.icon;
-        }
-        else if (item is VaseRelicUpgrade vase)
-        {
-            _icon.sprite = vase.icon;
-        }
+        if (item is RelicData relic) _icon.sprite = relic.icon;
+        else if (item is ConsumablesData consumable) _icon.sprite = consumable.icon;
+        else if (item is NormalCard normal) _icon.sprite = normal.icon;
+        else if (item is VaseRelicUpgrade vase) _icon.sprite = vase.icon;
+        else if (item is PotionData potion) _icon.sprite = potion.potionIcon;
         _priceText.text = $"{price}";
     }
 
@@ -75,6 +64,11 @@ public class ShopSlotUI : MonoBehaviour
             {
                 PlayerOverlay.instance.SpendGold(_currentPrice);
                 vase.GotVase();
+            }
+            else if (_currentItem is PotionData potion)
+            {
+                PlayerOverlay.instance.SpendGold(_currentPrice);
+                BuffsAndDebuffsManager.instance.ApplyBuff(potion);
             }
             Debug.Log("Item bought");
             gameObject.SetActive(false);
