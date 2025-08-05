@@ -202,9 +202,11 @@ public class BlackBonusDamage : RelicEffects
 [Serializable]
 public class PassiveHeal : RelicEffects
 {
-    public float healAmount;
+    public int healAmount;
+    private RelicContext contex;
     public override void Register(RelicContext ctx)
     {
+        contex = ctx;
         RoundManager.OnCombatEnd += Heal;
     }
     public override void Unregister(RelicContext ctx)
@@ -214,7 +216,7 @@ public class PassiveHeal : RelicEffects
 
     void Heal()
     {
-        PlayerOverlay.instance.currentHP += healAmount;
+        contex.player.AddHealth(healAmount);
     }
 }
 

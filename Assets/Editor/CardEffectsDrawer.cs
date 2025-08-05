@@ -3,7 +3,6 @@ using UnityEditor;
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 
 [CustomPropertyDrawer(typeof(CardEffect), true)]
 public class CardEffectsDrawer : PropertyDrawer
