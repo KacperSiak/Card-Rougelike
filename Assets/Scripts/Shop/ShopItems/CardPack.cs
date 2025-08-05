@@ -33,7 +33,7 @@ public class CardPack : ShopItem
 
             foreach (var card in drawnCards)
             {
-                DeckMenager.instance.AddCard(card);
+                DeckManager.instance.AddCard(card);
             }
         }
         else
@@ -50,7 +50,7 @@ public class CardPack : ShopItem
 
             foreach (var card in drawnCards)
             {
-                DeckMenager.instance.AddCard(card);
+                DeckManager.instance.AddCard(card);
             }
         }
     }

@@ -61,7 +61,7 @@ public class ShopMenager : MonoBehaviour
         _goldForRerol = 5;
         _rerollText.text = "Reroll: " + _goldForRerol;
 
-        _cardsForVisual = DeckMenager.instance.DrawACardForShop();
+        _cardsForVisual = DeckManager.instance.DrawACardForShop();
         for (int i = 0; i < _cardsForVisual.Count; i++)
         {
             var card = _cardsForVisual[i];

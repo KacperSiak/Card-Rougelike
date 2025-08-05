@@ -1,10 +1,10 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class DeckMenager : MonoBehaviour
+public class DeckManager : MonoBehaviour
 {
     public List<BaseCard> _deck;
-    public static DeckMenager instance;
+    public static DeckManager instance;
 
     private void Awake()
     {

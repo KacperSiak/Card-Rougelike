@@ -17,11 +17,13 @@ public class PotionContext
 {
     public PlayerOverlay player;
     public ShopMenager shopManager;
+    public GamblingManager gambler;
 
     public PotionContext()
     {
         player = PlayerOverlay.instance;
         shopManager = ShopMenager.instance;
+        gambler = GamblingManager.instance;
     }
 }
 
@@ -196,18 +198,22 @@ public class MoreDamage : PotionEffects
 [Serializable]
 public class BetterGamblingLuck : PotionEffects
 {
+    public float modifier;
+
+    private float resetModifier = 1;
     public override void Register(PotionContext ctx, int fightLeft)
     {
-        // Better Gambling
+        ctx.gambler.SetModifier(modifier);
+        GamblingManager.OnGamblingExit.AddListener(ResetModifier);
     }
 
-    public override void Unregister(PotionContext ctx)
+    public override void Unregister(PotionContext ctx){}
+
+    public override void FightsLeft(){}
+
+    private void ResetModifier()
     {
-        // No more better luck
+        GamblingManager.instance.SetModifier(resetModifier);
     }
 
-    public override void FightsLeft()
-    {
-        return;
-    }
 }

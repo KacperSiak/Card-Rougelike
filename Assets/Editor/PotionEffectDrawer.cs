@@ -21,12 +21,12 @@ public class PotionEffectsDrawer : PropertyDrawer
         var typeName = property.managedReferenceFullTypename;
         var displayName = GetShortTypeName(typeName);
 
-        if (EditorGUI.DropdownButton(typeRect, new GUIContent(displayName ?? "Sellect Card Effect Type"), FocusType.Keyboard))
+        if (EditorGUI.DropdownButton(typeRect, new GUIContent(displayName ?? "Sellect Potion Effect Type"), FocusType.Keyboard))
         {
             var menu = new GenericMenu();
             if (typeMap == null || typeMap.Count == 0)
             {
-                menu.AddDisabledItem(new GUIContent("No Card Effect Available"));
+                menu.AddDisabledItem(new GUIContent("No Potion Effect Available"));
                 menu.ShowAsContext();
                 return;
             }
