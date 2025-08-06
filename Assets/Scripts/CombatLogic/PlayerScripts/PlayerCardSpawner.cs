@@ -14,6 +14,8 @@ public class PlayerCardSpawner : MonoBehaviour
     private readonly float optimizer = 2.4f;
     private const int k_maxHandSize = 7;
 
+    public AnimationCurve _curve;
+
     public void SpawnCards(List<CardsSOTest> playerDeck, List<GameObject> playerCards,  int cardsAmount)
     {
         for (int i = 0; i < cardsAmount; i++)
@@ -72,8 +74,9 @@ public class PlayerCardSpawner : MonoBehaviour
             card.SetActive(true);
 
         }
+        _curve.Evaluate(.5f);
 
-    }
+	}
 
 
 	public void SetCardsPosition2()
