@@ -3,13 +3,23 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 using UnityEngine.UI;
+using UnityEngine.Events;
 
-public class GamblingMenager : MonoBehaviour
+public class GamblingManager : MonoBehaviour
 {
     [SerializeField] private VaseRelicUpgrade _vase;
     [SerializeField] private CardPack _pack;
     [SerializeField] private CardPack _bonusPack;
     [SerializeField] private Button _rollButton;
+    [SerializeField] private int positiveWeight = 4;
+    [SerializeField] private int negativeWeight = 5;
+    [SerializeField] private int neutralWeight = 40;
+
+    public static GamblingManager instance;
+
+    public static UnityEvent OnGamblingExit = new UnityEvent();
+
+    private float modifier;
     private class RewardEntry
     {
         public string name;
@@ -28,20 +38,26 @@ public class GamblingMenager : MonoBehaviour
         
     private void Awake()
     {
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else Debug.Log("Found Another GamblingMenager");
+        positiveWeight = (int)Math.Round(modifier * positiveWeight);
         rewards = new List<RewardEntry>()
         {
-            new RewardEntry("Add Relic", 4, () => AddRelic()),
-            new RewardEntry("Add Time", 4, () => MapManager.instance.ModifieTime(60, true)),
-            new RewardEntry("Greek Vase", 4, () => _vase.GotVase()),
-            new RewardEntry("Nomal Card Pack", 4, () => _pack.OpePack()),
-            new RewardEntry("Bonus Card PAck", 4, () => _bonusPack.OpePack()),
+            new RewardEntry("Add Relic", positiveWeight, () => AddRelic()),
+            new RewardEntry("Add Time", positiveWeight, () => MapManager.instance.ModifieTime(60, true)),
+            new RewardEntry("Greek Vase", positiveWeight, () => _vase.GotVase()),
+            new RewardEntry("Nomal Card Pack", positiveWeight, () => _pack.OpePack()),
+            new RewardEntry("Bonus Card PAck", positiveWeight, () => _bonusPack.OpePack()),
 
-            new RewardEntry("Hermes Joke", 40, () => HermesJoke()),
+            new RewardEntry("Hermes Joke", neutralWeight, () => HermesJoke()),
 
-            new RewardEntry("Lose Health", 5, () => PlayerOverlay.instance.LoseHealth(30)),
-            new RewardEntry("Boss Teleport", 5, () => AutoTeleport()),
-            new RewardEntry("Time Lose", 5, () => MapManager.instance.ModifieTime(60, false)),
-            new RewardEntry("Lose Money", 5, () => PlayerOverlay.instance.SpendGold(50))
+            new RewardEntry("Lose Health", negativeWeight, () => PlayerOverlay.instance.LoseHealth(30)),
+            new RewardEntry("Boss Teleport", negativeWeight, () => AutoTeleport()),
+            new RewardEntry("Time Lose", negativeWeight, () => MapManager.instance.ModifieTime(60, false)),
+            new RewardEntry("Lose Money", negativeWeight, () => PlayerOverlay.instance.SpendGold(50))
         };
 
         _rollButton.onClick.AddListener(Roll);
@@ -75,13 +91,13 @@ public class GamblingMenager : MonoBehaviour
         RelicData epicRelic = ConsumablesAndRelicMenager.instance.RollEpicRelic();
         RelicData legendaryRelic = ConsumablesAndRelicMenager.instance.RollLegendaryRelic();
 
-        if (coin ==0 )
+        if (coin ==0)
         {
             RelicEventsSystem.RelicAcquired(epicRelic);
         }
         else
         {
-             RelicEventsSystem.RelicAcquired(legendaryRelic);
+            RelicEventsSystem.RelicAcquired(legendaryRelic);
         }
     }
 
@@ -93,6 +109,11 @@ public class GamblingMenager : MonoBehaviour
     private void AutoTeleport()
     {
         //teleport to boss field
+    }
+
+    public void SetModifier(float newModifier)
+    {
+        modifier = newModifier;
     }
 
 }

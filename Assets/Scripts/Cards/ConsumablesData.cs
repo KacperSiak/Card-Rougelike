@@ -179,10 +179,9 @@ public class DoubleDMGButLessDraw : CardEffect
 [Serializable]
 public class LoseHpGetDamage : CardEffect
 {
-    private int _hpLose = (int)Math.Round(PlayerOverlay.instance.currentHP * 0.25f);
-
     public override void ApplyEffect(ConsumableContext ctx)
     {
+        int _hpLose = (int)Math.Round(PlayerOverlay.instance.currentHP * 0.25f);
         ctx.player.LoseHealth(_hpLose);
         //player.addDamage = 5;
     }
@@ -260,9 +259,9 @@ public class DoubleDamageSelfHit : CardEffect
 [Serializable]
 public class LowerHpRelicSlot : CardEffect
 {
-    private float newHP = (float)Math.Round(PlayerOverlay.instance.maxHP * 0.8f);
     public override void ApplyEffect(ConsumableContext ctx)
     {
+        float newHP = (float)Math.Round(PlayerOverlay.instance.maxHP * 0.8f);
         ctx.player.SetMaxHP(newHP);
         ctx.consAndRel.maxRelics += 1;
     }
@@ -290,10 +289,10 @@ public class Modifier : CardEffect
 
 [Serializable]
 public class RelicRoll : CardEffect
-{
-    private int index = UnityEngine.Random.Range(0, ConsumablesAndRelicMenager.instance.currentRelics.Count);
+{ 
     public override void ApplyEffect(ConsumableContext ctx)
     {
+        int index = UnityEngine.Random.Range(0, ConsumablesAndRelicMenager.instance.currentRelics.Count);
         RelicEventsSystem.RelicRemoved(ctx.consAndRel.currentRelics[index]);
         // get one new after fight
     }

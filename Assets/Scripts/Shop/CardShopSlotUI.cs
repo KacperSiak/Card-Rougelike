@@ -25,7 +25,7 @@ public class CardShopSlotUI : MonoBehaviour
     {
         if (_cardToSell != null)
         {
-            DeckMenager.instance.RemmoveCard(_cardToSell);
+            DeckManager.instance.RemmoveCard(_cardToSell);
         }
 
         PlayerOverlay.instance.AddGold(price);
