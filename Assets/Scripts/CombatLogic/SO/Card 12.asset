@@ -14,4 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   power: 4
   graphics: {fileID: 1414024151, guid: 28a5df7ffde1bb5408169991d42c3ab0, type: 3}
+  column: 2
+  row: 3
   suit: 2

@@ -11,8 +11,7 @@ public class PlayerCardManager : MonoBehaviour
     public int SelectedCardsPower { get; private set; }
     public List<CardsSOTest> _playerDeckInGame { get; private set; }
 
-    //[SerializeField] private int _cardsInHandDefault = 1;
-    private int _cardsInHandDefault = 1;
+    [SerializeField] private int _cardsInHandDefault = 8;
     private int _currentCardsInHand = 0; 
 
     void Awake()
