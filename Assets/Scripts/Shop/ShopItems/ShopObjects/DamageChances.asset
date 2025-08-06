@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 827ef48bd1529174695e62104b965800, type: 3}
+  m_Name: DamageChances
+  m_EditorClassIdentifier: 
+  potionName: DamageCahcnes
+  potionDescription: You have X% chances to deal x% more damage
+  buyPrice: 0
+  fightsLeft: 0
+  potionIcon: {fileID: 0}
+  potionEffects:
+  - rid: 2307447344931274758
+  references:
+    version: 2
+    RefIds:
+    - rid: 2307447344931274758
+      type: {class: MoreDamage, ns: , asm: Assembly-CSharp}
+      data:
+        chances: 0
+        bonusDamage: 0
