@@ -8,6 +8,7 @@ public class ObjPoolManager : MonoBehaviour
     [SerializeField] private GameObject _prefab;
 
     private Queue<GameObject> _objPool = new();
+    //public int QueueSize { get; private set; } = 0;
     public float QueueSize { get; private set; } = 0;
     
 
