@@ -16,7 +16,7 @@ MonoBehaviour:
   potionDescription: You have 75% chances to deal 10% more damage
   buyPrice: 25
   fightsLeft: 4
-  potionIcon: {fileID: 0}
+  potionIcon: {fileID: 21300000, guid: 9c259d6389c91c4458e6129b81699224, type: 3}
   potionEffects:
   - rid: 2307447344931274758
   references:

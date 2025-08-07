@@ -16,7 +16,7 @@ MonoBehaviour:
   potionDescription: 'Cards with clubs suit deals less damage '
   buyPrice: 45
   fightsLeft: 3
-  potionIcon: {fileID: 0}
+  potionIcon: {fileID: 21300000, guid: 9c259d6389c91c4458e6129b81699224, type: 3}
   potionEffects:
   - rid: 2307447344931274754
   references:

@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: DamageChances2
   m_EditorClassIdentifier: 
   potionName: DamageCahcnes
-  potionDescription: You have 75% chances to deal 10% more damage
-  buyPrice: 25
-  fightsLeft: 4
+  potionDescription: You have 60% chances to deal 20% more damage
+  buyPrice: 35
+  fightsLeft: 3
   potionIcon: {fileID: 0}
   potionEffects:
   - rid: 2307447344931274758
@@ -25,5 +25,5 @@ MonoBehaviour:
     - rid: 2307447344931274758
       type: {class: MoreDamage, ns: , asm: Assembly-CSharp}
       data:
-        chances: 75
-        bonusDamage: 10
+        chances: 60
+        bonusDamage: 20

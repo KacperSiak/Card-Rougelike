@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: GamblingLuck
   m_EditorClassIdentifier: 
   potionName: BetterLuck
-  potionDescription: You have 50% for better prizes in gambling
-  buyPrice: 0
+  potionDescription: You have 50% for better prizes in gambling (disappear after
+    first roll)
+  buyPrice: 70
   fightsLeft: 0
   potionIcon: {fileID: 0}
   potionEffects:
@@ -25,4 +26,4 @@ MonoBehaviour:
     - rid: 2307447344931274759
       type: {class: BetterGamblingLuck, ns: , asm: Assembly-CSharp}
       data:
-        modifier: 0
+        modifier: 50
