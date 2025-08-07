@@ -18,12 +18,14 @@ public class PotionContext
     public PlayerOverlay player;
     public ShopMenager shopManager;
     public GamblingManager gambler;
+    public BuffsAndDebuffsManager buffsAndDebuffsManager;
 
     public PotionContext()
     {
         player = PlayerOverlay.instance;
         shopManager = ShopMenager.instance;
         gambler = GamblingManager.instance;
+        buffsAndDebuffsManager = BuffsAndDebuffsManager.instance;
     }
 }
 
@@ -94,7 +96,7 @@ public class RemoveDebuff : PotionEffects
 {
     public override void Register(PotionContext ctx, int fightLeft)
     {
-        // Remove debuff
+        ctx.buffsAndDebuffsManager.RemoveRandomDebuff();
     }
 
     public override void Unregister(PotionContext ctx)
@@ -119,13 +121,13 @@ public class DebuffProtection : PotionEffects
         localFightLeft = fightLeft;
         context = ctx;
         RoundManager.OnCombatEnd += FightsLeft;
-        // debuff protection
+        ctx.buffsAndDebuffsManager.DebuffProtectionEnable();
     }
 
     public override void Unregister(PotionContext ctx)
     {
         RoundManager.OnCombatEnd -= FightsLeft;
-        // debuff unprotection
+        ctx.buffsAndDebuffsManager.DebuffProtectionDisable();
     }
 
     public override void FightsLeft()

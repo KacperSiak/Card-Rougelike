@@ -7,6 +7,9 @@ public class BuffAndDebuffIconUI : MonoBehaviour
     private int _fightsLeftModifier;
     private int _turnsLeftModifier;
 
+    private DebuffData _debuff;
+    private PotionData _potion;
+
     private void Awake()
     {
         RoundManager.OnCombatEnd += ModifyBuffCounter;
@@ -15,6 +18,7 @@ public class BuffAndDebuffIconUI : MonoBehaviour
 
     public void BuffIconSetup(PotionData potion)
     {
+        _potion = potion;
         _fightsLeftModifier = potion.fightsLeft;
         _turnsleft.text = $"{_fightsLeftModifier}";
     }
@@ -26,11 +30,13 @@ public class BuffAndDebuffIconUI : MonoBehaviour
         if (_fightsLeftModifier <= 0)
         {
             Destroy(gameObject);
+            BuffsAndDebuffsManager.instance._currentPotionEffects.Remove(_potion);
         }
     }
     
     public void DebuffIconSetup(DebuffData debuff)
     {
+        _debuff = debuff;
         _turnsLeftModifier = debuff.debuffTurns;
         _turnsleft.text = $"{_turnsLeftModifier}";
     }
@@ -42,6 +48,7 @@ public class BuffAndDebuffIconUI : MonoBehaviour
         if (_turnsLeftModifier <= 0)
         {
             Destroy(gameObject);
+            BuffsAndDebuffsManager.instance._currentDebuffs.Remove(_debuff);
         }
     }
 }
