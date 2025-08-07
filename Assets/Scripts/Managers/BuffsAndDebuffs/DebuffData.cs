@@ -9,7 +9,7 @@ public class DebuffData : ScriptableObject
     [TextArea] public string debuffDesc;
     public Sprite debuffIcon;
     public int debuffTurns;
-    [SerializeReference] List<DebuffEffects> debuffs;
+    [SerializeReference] public List<DebuffEffects> debuffs;
 }
 
 public class DebuffContext

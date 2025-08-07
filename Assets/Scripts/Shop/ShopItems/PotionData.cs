@@ -72,12 +72,14 @@ public class LowerSuitMarkDamage : PotionEffects
         localFightsLeft = fightsLeft;
         context = ctx;
         RoundManager.OnCombatEnd += FightsLeft;
+        Debug.Log("Protection Started");
         // Add lower damage from chosen suitmark
     }
 
     public override void Unregister(PotionContext ctx)
     {
         RoundManager.OnCombatEnd -= FightsLeft;
+        Debug.Log("Protection Ended");
         // Remove protection form suitmark
     }
 

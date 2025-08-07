@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   potionName: ClubsProtection
   potionDescription: 'Cards with clubs suit deals less damage '
-  buyPrice: 0
-  fightsLeft: 0
+  buyPrice: 45
+  fightsLeft: 3
   potionIcon: {fileID: 0}
   potionEffects:
   - rid: 2307447344931274754
