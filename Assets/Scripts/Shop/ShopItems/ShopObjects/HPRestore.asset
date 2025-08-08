@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: HPRestore
   m_EditorClassIdentifier: 
   potionName: HPRestore
-  potionDescription: Restore hp after beating the room
-  buyPrice: 0
-  fightsLeft: 0
+  potionDescription: Restore 15 health after beating the room
+  buyPrice: 25
+  fightsLeft: 4
   potionIcon: {fileID: 0}
   potionEffects:
   - rid: 2307447344931274757
@@ -25,4 +25,4 @@ MonoBehaviour:
     - rid: 2307447344931274757
       type: {class: RestoreHPAfterRoom, ns: , asm: Assembly-CSharp}
       data:
-        healthToRestore: 0
+        healthToRestore: 15

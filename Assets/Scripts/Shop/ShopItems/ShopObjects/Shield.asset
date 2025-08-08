@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Shield
   m_EditorClassIdentifier: 
   potionName: Shield Potion
-  potionDescription: You have X% chances to protect x% of the damage
-  buyPrice: 0
-  fightsLeft: 0
+  potionDescription: You have 80% chances to protect 15% of the damage
+  buyPrice: 25
+  fightsLeft: 3
   potionIcon: {fileID: 0}
   potionEffects:
   - rid: 2307447344931274752
@@ -25,5 +25,5 @@ MonoBehaviour:
     - rid: 2307447344931274752
       type: {class: Shield, ns: , asm: Assembly-CSharp}
       data:
-        chances: 0
-        dmgReduction: 0
+        chances: 80
+        dmgReduction: 15

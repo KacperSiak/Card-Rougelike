@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   potionName: DebuffRemover
   potionDescription: Remove one random debuff
-  buyPrice: 0
+  buyPrice: 70
   fightsLeft: 0
   potionIcon: {fileID: 0}
   potionEffects:
