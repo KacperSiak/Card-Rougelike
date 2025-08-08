@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//here changes, needs to be improved 
 public class PlayerCardSpawner : MonoBehaviour
 {
     //[SerializeField] private BoxCollider _hand; // consider changing hand to this 
@@ -23,15 +24,16 @@ public class PlayerCardSpawner : MonoBehaviour
             CardsSOTest card = playerDeck[Random.Range(0, playerDeck.Count)];
             playerDeck.Remove(card);
 
-            cardObject.GetComponent<SpriteRenderer>().sprite = card.graphics;
+            //cardObject.GetComponent<SpriteRenderer>().sprite = card.graphics;
             cardObject.GetComponent<PlayerCardLogic>().SetCardProperties(card);
-
+            CardSetupManager.Instance.SetupCardVisual(cardObject.GetComponent<MeshRenderer>(), card.column, card.row);
         }
 
         SetCardsPosition();
 
     }
 
+    //need to think about cards order, how they overlay each other 
 	public void SetCardsPosition()
 	{
 		_cardsNumber = PlayerCardManager.Instance.CardsInHand.Count;
@@ -39,7 +41,8 @@ public class PlayerCardSpawner : MonoBehaviour
 
 		float handSize = _hand.gameObject.GetComponent<BoxCollider>().bounds.size.x;
 
-		float cardSize = PlayerCardManager.Instance.CardsInHand[0].GetComponent<SpriteRenderer>().bounds.size.x; // change to box collider 
+        //float cardSize = PlayerCardManager.Instance.CardsInHand[0].GetComponent<SpriteRenderer>().bounds.size.x; // change to box collider 
+        float cardSize = 0.06f; //temp
 
         float offset = cardSize - cardSize * (Mathf.Max(k_maxHandSize, _cardsNumber) - k_maxHandSize) / Mathf.Max(_cardsNumber - 1, 1);
 
@@ -52,15 +55,15 @@ public class PlayerCardSpawner : MonoBehaviour
 
 		float start = (_cardsNumber - 1) * -.5f * offset; // second part is the same as /2, we just do * 0.5 instead
 
-		for (int i = 0, renderPriority = 0; i < _cardsNumber; i++, renderPriority++)
+        for (int i = 0, renderPriority = 0; i < _cardsNumber; i++, renderPriority++)
 		{
 			GameObject card = PlayerCardManager.Instance.CardsInHand[i];
 
 			float x = start + i * offset;
 
-			// Consider adding parent for pCards
-			card.transform.position = new Vector3(x, _hand.position.y, _hand.position.z);
-			card.GetComponent<SpriteRenderer>().sortingOrder = renderPriority;
+            // Consider adding parent for pCards
+            card.transform.position = new Vector3(x, _hand.position.y, _hand.position.z);
+			//card.GetComponent<SpriteRenderer>().sortingOrder = renderPriority;
 
 			card.GetComponent<PlayerCardLogic>().SaveProperties();
 			card.SetActive(true);

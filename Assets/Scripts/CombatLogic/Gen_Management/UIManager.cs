@@ -76,7 +76,7 @@ public class UIManager : MonoBehaviour
         _playerHPText.text = string.Empty;
         _enemyHPText.text = string.Empty;
         _finalResultText.text = $"Winner: {_winner}";
-        _finalResultText.gameObject.SetActive(true);
+        //_finalResultText.gameObject.SetActive(true);
     }
 
     //temp

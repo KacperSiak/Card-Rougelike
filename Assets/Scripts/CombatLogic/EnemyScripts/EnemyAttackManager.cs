@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//here changes 
 public class EnemyAttackManager : MonoBehaviour
 {
     [SerializeField] public Dictionary<int, int> RoundsForCards { get; private set; } = new();
@@ -45,8 +46,8 @@ public class EnemyAttackManager : MonoBehaviour
     { 
         int amount = Mathf.CeilToInt(maxRoundsToAttack * (totalPower - minTotalPower) / (maxTotalPower - minTotalPower));
 
-        //return Mathf.Clamp(amount, minRound, maxRound);
-        return 100;
+        return Mathf.Clamp(amount, minRound, maxRound);
+        //return 100;
     }
 
     public void UpdateRounds()

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //public class CardHolder : MonoBehaviour
+//here changes, needs to be improved and cleaned 
 public class CardHolderManager : MonoBehaviour
 {
     [SerializeField] private Material _highlightMaterial;
@@ -65,16 +66,18 @@ public class CardHolderManager : MonoBehaviour
     {
         _isOccupied = true;
         //maybe use card size here 
-        float position = -0.015f;
+        float position = -0.05f;
+        float y = 0.001f;
         //float position = -1f;
 
         foreach (GameObject card in PlayerCardManager.Instance.SelectedCards) 
         {
-            card.transform.position = new Vector3(transform.position.x + position, transform.position.y, transform.position.z);
-            card.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
-            card.transform.localScale *= 0.8f;
-            card.GetComponent<SpriteRenderer>().sortingOrder -= 2;
-            position += 0.015f;
+            card.transform.position = new Vector3(transform.position.x + position, transform.position.y + y, transform.position.z);
+            card.transform.rotation = Quaternion.Euler(-90f, 0f, 0f);
+            //card.transform.localScale *= 0.8f;
+            //card.GetComponent<SpriteRenderer>().sortingOrder -= 2;
+            position += 0.05f;
+            y += 0.001f;
             //position++;
             card.GetComponent<PlayerCardLogic>().IsUsed = true;
         }

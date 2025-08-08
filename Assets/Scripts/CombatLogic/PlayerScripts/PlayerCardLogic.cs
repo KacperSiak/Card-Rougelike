@@ -1,5 +1,6 @@
 using UnityEngine;
 
+//here changes, clear and improve a bit
 public class PlayerCardLogic : MonoBehaviour
 {
     private Vector3 defaultPosition;
@@ -37,14 +38,14 @@ public class PlayerCardLogic : MonoBehaviour
         if (isSelected) return;
         //transform.position += new Vector3(0, 0.1f, 0f); // Move the card up slightly when hovered
         transform.position += new Vector3(0, 0.01f, 0f);
-        GetComponent<SpriteRenderer>().sortingOrder += 2;
+        //GetComponent<SpriteRenderer>().sortingOrder += 2;
     }
 
     private void OnMouseExit()
     {
         if (isSelected) return; 
         transform.position = defaultPosition; // Reset position when not hovered
-        GetComponent<SpriteRenderer>().sortingOrder -= 2;
+       //GetComponent<SpriteRenderer>().sortingOrder -= 2;
     }
 
     private void OnMouseDown()

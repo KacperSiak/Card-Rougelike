@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//here changes
 public class ObjPoolManager : MonoBehaviour
 {
     public static ObjPoolManager Instance { get; private set; }
@@ -30,11 +31,9 @@ public class ObjPoolManager : MonoBehaviour
         for (int i = 0; i < QueueSize; i++)
         {
             GameObject obj = Instantiate(_prefab);
-            //CardsSOTest cardData = RoundManager.Instance.PlayerCards[i];
             obj.SetActive(false);
             _objPool.Enqueue(obj);
-            //CardSetupManager.Instance.SetupCardPhysics(obj);
-            //CardSetupManager.Instance.SetupCardVisual(obj.GetComponent<MeshRenderer>(), cardData.column, cardData.row);
+            CardSetupManager.Instance.SetupCardPhysics(obj);
         }
 
     }
