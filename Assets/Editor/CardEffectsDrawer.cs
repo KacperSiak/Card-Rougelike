@@ -4,6 +4,8 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 
+//#if UNITY_EDITOR
+
 [CustomPropertyDrawer(typeof(CardEffect), true)]
 public class CardEffectsDrawer : PropertyDrawer
 {
@@ -81,3 +83,5 @@ public class CardEffectsDrawer : PropertyDrawer
 
 
 }
+
+//#endif

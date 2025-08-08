@@ -1,5 +1,7 @@
 using UnityEngine;
 using TMPro;
+
+//[RequireComponent(typeof(RectTransform))]
 public class ToolTipManager : MonoBehaviour
 {
     public static ToolTipManager Instance;
@@ -7,13 +9,18 @@ public class ToolTipManager : MonoBehaviour
     [SerializeField] private GameObject tooltipPanel;
     [SerializeField] private TextMeshProUGUI tooltipText;
 
-    private RectTransform panelRect;
-    private void Awake()
+	[SerializeField] private RectTransform panelRect;
+
+	private void OnValidate()
+	{
+		if(!panelRect)
+            panelRect = tooltipPanel.GetComponent<RectTransform>();
+	}
+
+	private void Awake()
     {
         Instance = this;
-        panelRect = tooltipPanel.GetComponent<RectTransform>();
         tooltipPanel.SetActive(false);
-
     }
     public void ShowToolTip(string name, string description, Vector2 position)
     {

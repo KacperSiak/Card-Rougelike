@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//public class CardHolder : MonoBehaviour
 public class CardHolderManager : MonoBehaviour
 {
     [SerializeField] private Material _highlightMaterial;
