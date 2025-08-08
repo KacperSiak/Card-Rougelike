@@ -63,7 +63,7 @@ public class GamblingManager : MonoBehaviour
         _rollButton.onClick.AddListener(Roll);
     }
 
-    private void Roll()
+    public void Roll()
     {
         PlayerOverlay.instance.SpendGold(5);
         int totalWeight = rewards.Sum(r => r.weight);

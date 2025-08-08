@@ -14,5 +14,6 @@ public class ChestOpen : MonoBehaviour
     private void OnMouseDown()
     {
         _anim.SetTrigger("ChestOpen");
+        GamblingManager.instance.Roll();
     }
 }
