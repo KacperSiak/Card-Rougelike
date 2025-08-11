@@ -5,12 +5,19 @@ public class CameraAnimation : MonoBehaviour
 {
     private Transform _targetTransform;
     private float _duration;
+    private bool _isPlaying = false;
 
     public void ChangeCameraPlacement(Transform target, float duration)
-    { 
+    {
+        if (_isPlaying) return;
+        
         _targetTransform = target;
         _duration = duration;
         StartCoroutine(MoveToTarget());
+        _isPlaying = true;
+        CamMovementManager.Instance.inProgress = true;
+        //temp
+        UIManager.Instance.TurnRoundOff();
     }
 
     public IEnumerator MoveToTarget()
@@ -30,6 +37,8 @@ public class CameraAnimation : MonoBehaviour
 
         transform.position = _targetTransform.position;
         transform.rotation = _targetTransform.rotation;
+
+        _isPlaying = false;
     }
 
 }

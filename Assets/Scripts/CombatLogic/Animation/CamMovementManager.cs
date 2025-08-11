@@ -6,12 +6,13 @@ public class CamMovementManager : MonoBehaviour
 {
     public static CamMovementManager Instance { get; private set; }
 
+    public bool inProgress { get; set; } = false;
+
     [SerializeField] private Transform _cameraTransform;
     [SerializeField] private CameraAnimation _cameraAnimation;
     [SerializeField] private float _duration;
     [SerializeField] private List<ClassForDictionary<string, Transform>> _dictList;
     private Dictionary<string, Transform> _camPositions = new();
-    private bool _inProgress = false;
 
     void Awake()
     {
@@ -32,18 +33,19 @@ public class CamMovementManager : MonoBehaviour
     {
         if (Input.anyKey)
         {
-            if (_inProgress)
+            if (inProgress)
                 return;
 
             CheckKeyAndActivateAnimation();
-            _inProgress = true;
             return;
         }
 
         else if (_cameraTransform.rotation != _camPositions["Main"].rotation)
         {
-            _inProgress = false;
+            inProgress = false;
             _cameraAnimation.ChangeCameraPlacement(target: _camPositions["Main"], duration: _duration);
+            //temp
+            UIManager.Instance.TurnRoundOn();
         }
 
     }
