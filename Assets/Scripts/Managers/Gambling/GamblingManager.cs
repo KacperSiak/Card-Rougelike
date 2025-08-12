@@ -92,7 +92,7 @@ public class GamblingManager : MonoBehaviour
     
     private void AddRelic()
     {
-        int coin = UnityEngine.Random.Range(0, 1);
+        int coin = UnityEngine.Random.Range(0, 2);
         RelicData epicRelic = ConsumablesAndRelicMenager.instance.RollEpicRelic();
         RelicData legendaryRelic = ConsumablesAndRelicMenager.instance.RollLegendaryRelic();
 

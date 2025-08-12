@@ -91,6 +91,46 @@ public class ConsumablesAndRelicMenager : MonoBehaviour
         return _drawnRelic;
     }
 
+    public RelicData RollCommonRelic()
+    {
+        List<RelicData> commonRelics = new List<RelicData>();
+        for (int i = 0; i < allRelics.Count; i++)
+        {
+            if (allRelics[i].rarity == Rarity.Common)
+            {
+                commonRelics.Add(allRelics[i]);
+            }
+        }
+
+        do
+        {
+            int index = Random.Range(0, commonRelics.Count);
+            _drawnRelic = commonRelics[index];
+        } while (!RelicChecker(_drawnRelic));
+
+        return _drawnRelic;
+    }
+
+    public RelicData RollRareRelic()
+    {
+        List<RelicData> rareRelics = new List<RelicData>();
+        for (int i = 0; i < allRelics.Count; i++)
+        {
+            if (allRelics[i].rarity == Rarity.Rare)
+            {
+                rareRelics.Add(allRelics[i]);
+            }
+        }
+
+        do
+        {
+            int index = Random.Range(0, rareRelics.Count);
+            _drawnRelic = rareRelics[index];
+        } while (!RelicChecker(_drawnRelic));
+
+        return _drawnRelic;
+    }
+
     public RelicData RollEpicRelic()
     {
         List<RelicData> epicRelics = new List<RelicData>();
