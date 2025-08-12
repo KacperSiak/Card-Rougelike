@@ -65,7 +65,7 @@ public class PlayerCardSpawner : MonoBehaviour
             card.transform.position = new Vector3(x, _hand.position.y, _hand.position.z);
 			//card.GetComponent<SpriteRenderer>().sortingOrder = renderPriority;
 
-			card.GetComponent<PlayerCardLogic>().SaveProperties();
+			card.GetComponent<PlayerCardLogic>().SaveDefaultProperties();
 			card.SetActive(true);
 
 		}

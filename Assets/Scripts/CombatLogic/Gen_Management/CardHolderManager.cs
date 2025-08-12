@@ -8,6 +8,7 @@ public class CardHolderManager : MonoBehaviour
     [SerializeField] private Material _highlightMaterial;
     [SerializeField] private Material _defaultMaterial;
     private bool _isOccupied = false;
+    private bool _isInspected = false;
 
     public Validator ValidatorType { get; private set; } = null;
 
@@ -39,12 +40,27 @@ public class CardHolderManager : MonoBehaviour
     private void OnMouseEnter()
     {
         if (!_isOccupied && PlayerCardManager.Instance.SelectedCards.Count != 0 && PlayerCardManager.Instance.SelectedCards.Count != 2)
+        {
             gameObject.GetComponent<MeshRenderer>().material = _highlightMaterial;
+            CamMovementManager.Instance.enabled = false;
+            CamMovementManager.Instance.ChangeCameraPlacement(targetKey: "W");
+            _isInspected = true;
+            pCardsAnimation.Instance.ActivatePlacementPreviewAnimation();
+        }
+
     }
 
     private void OnMouseExit()
     {
-        gameObject.GetComponent<MeshRenderer>().material = _defaultMaterial;
+        if (_isInspected)
+        {
+            gameObject.GetComponent<MeshRenderer>().material = _defaultMaterial;
+            CamMovementManager.Instance.ChangeCameraPlacement(targetKey: "Main");
+            CamMovementManager.Instance.enabled = true;
+            _isInspected = false;
+            pCardsAnimation.Instance.DeactivatePlacementPreviewAnimation();
+        }
+        
     }
 
     private void OnMouseDown()

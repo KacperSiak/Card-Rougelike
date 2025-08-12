@@ -20,7 +20,7 @@ public class CameraAnimation : MonoBehaviour
         UIManager.Instance.TurnRoundOff();
     }
 
-    public IEnumerator MoveToTarget()
+    private IEnumerator MoveToTarget()
     {
         Vector3 startPos = transform.position;
         Quaternion startRot = transform.rotation;

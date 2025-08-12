@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+//to be improved
 public class CamMovementManager : MonoBehaviour
 {
     public static CamMovementManager Instance { get; private set; }
 
+    //mb incapsulate more later 
     public bool inProgress { get; set; } = false;
 
     [SerializeField] private Transform _cameraTransform;
@@ -30,11 +32,10 @@ public class CamMovementManager : MonoBehaviour
     }
 
     void Update()
-    {
+    {   
         if (Input.anyKey)
         {
-            if (inProgress)
-                return;
+            if (inProgress) return;
 
             CheckKeyAndActivateAnimation();
             return;
@@ -47,7 +48,6 @@ public class CamMovementManager : MonoBehaviour
             //temp
             UIManager.Instance.TurnRoundOn();
         }
-
     }
 
     //to be improved 
@@ -81,4 +81,12 @@ public class CamMovementManager : MonoBehaviour
             }
         }
     }
+
+    //to be improved
+    public void ChangeCameraPlacement(string targetKey)
+    {
+        _cameraAnimation.ChangeCameraPlacement(target: _camPositions[targetKey], duration: _duration);
+        //temp
+        UIManager.Instance.TurnRoundOff();
+    }   
 }
