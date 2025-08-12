@@ -4,16 +4,21 @@ using UnityEngine.UI;
 public class ChestOpen : MonoBehaviour
 {
     private Animator _anim;
+    private bool _canOpen;
 
     private void Awake()
     {
         _anim = GetComponentInChildren<Animator>();
-        
+        _canOpen = true;
     }
 
     private void OnMouseDown()
     {
-        _anim.SetTrigger("ChestOpen");
-        GamblingManager.instance.Roll();
+        if (_canOpen)
+        {
+            _canOpen = false;
+            _anim.SetTrigger("ChestOpen");
+            GamblingManager.instance.Roll();
+        }
     }
 }

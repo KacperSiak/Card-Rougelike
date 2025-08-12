@@ -7,22 +7,20 @@ public class HorseOpen : MonoBehaviour
     [SerializeField] private Button _openButton;
     private Animator anim;
     private float _delaytime = 1f;
+    private bool _canOpen;
 
     void Awake()
     {
         anim = GetComponent<Animator>();
         _openButton.onClick.AddListener(Open);
+        _canOpen = true;
     }
 
     private void Open()
     {
-        anim.SetTrigger("Open");
-        StartCoroutine(EnableChestButton());
+        if (_canOpen) anim.SetTrigger("Open");
+        _canOpen = false;
     }
 
-    IEnumerator EnableChestButton()
-    {
-        yield return new WaitForSeconds(_delaytime);
-
-    }
+  
 }
