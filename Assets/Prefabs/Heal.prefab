@@ -123,7 +123,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 914779a2139080543ae8f3a5b2cdbeab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sceneToLoad: HealingScene
+  sceneToLoad: 
   playerMarkerPrefab: {fileID: 2953499796673057148, guid: 3a5a5f682334fbd4283dcb16d646bf80, type: 3}
   mapGenerator: {fileID: 0}
   mapManager: {fileID: 0}
