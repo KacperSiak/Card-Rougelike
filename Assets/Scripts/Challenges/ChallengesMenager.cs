@@ -94,12 +94,12 @@ public class ChallengesMenager : MonoBehaviour
     {
         int coin = Random.Range(0, 2);
         ConsumablesData cons = ConsumablesAndRelicMenager.instance.RollRandomCons();
-        if (_currentChallenge.difficulty == Difficulty.easy)
+        if (_currentChallenge.difficulty == Difficulty.Easy)
         {
             PlayerOverlay.instance.AddGold(25);
             _cardPack.OpePack();
         }
-        else if (_currentChallenge.difficulty == Difficulty.normal)
+        else if (_currentChallenge.difficulty == Difficulty.Normal)
         {
             PlayerOverlay.instance.AddGold(35);
             _vase.GotVase();

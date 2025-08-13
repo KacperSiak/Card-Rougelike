@@ -4,9 +4,9 @@ using UnityEngine;
 
 public enum Difficulty
 {
-    easy,
-    normal,
-    hard
+    Easy,
+    Normal,
+    Hard
 }
 
 [CreateAssetMenu(fileName = "ChallengesData", menuName = "Challenge/ChallengesData")]
@@ -70,7 +70,7 @@ public class NoDiscard : Challenges
         }
     }
 
-    private void QuestUndone()
+    private void QuestFailed()
     {
         _questInfo = false;
     }
@@ -111,7 +111,7 @@ public class NoConsumables : Challenges
         }
     }
 
-    private void QuestUndone()
+    private void QuestFailed()
     {
         _questInfo = false;
     }
@@ -208,7 +208,7 @@ public class NoJoke : Challenges
         }
     }
 
-    private void QuestUndone()
+    private void QuestFailed()
     {
         _questInfo = false;
     }
@@ -331,7 +331,7 @@ public class NoAssetCards : Challenges
         }
     }
 
-    private void QuestUndone()
+    private void QuestFailed()
     {
         _questInfo = false;
     }
