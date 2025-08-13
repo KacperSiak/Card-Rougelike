@@ -11,9 +11,11 @@ public class ChallengesMenager : MonoBehaviour
     [SerializeField] private List<ChallengesData> _easyChallenges;
     [SerializeField] private List<ChallengesData> _normalChallenges;
     [SerializeField] private List<ChallengesData> _hardChallenges;
+    [SerializeField] private List<GameObject> _slots;
 
     [SerializeField] private CardPack _cardPack;
     [SerializeField] private VaseRelicUpgrade _vase;
+    
     private ChallengesData _currentChallenge;
 
     public static ChallengesMenager instance;
@@ -30,17 +32,62 @@ public class ChallengesMenager : MonoBehaviour
 
     void DisplayEasy()
     {
-        return;
+        List<ChallengesData> _temporaryList;
+        _temporaryList = new List<ChallengesData>(_easyChallenges);
+        _easyButton.gameObject.SetActive(false);
+        _normalButton.gameObject.SetActive(false);
+        _hardButton.gameObject.SetActive(false);
+        foreach (var slot in  _slots)
+        {
+            slot.gameObject.SetActive(true);
+            int index = Random.Range(0, _temporaryList.Count);
+            var slotUI = slot.GetComponent<ChallengesUI>();
+            if (slotUI != null)
+            {
+                slotUI.Setup(_temporaryList[index]);
+                _temporaryList.Remove(_temporaryList[index]);
+            }
+        }
     }
 
     void DisplayNormal()
     {
-        return;
+        List<ChallengesData> _temporaryList;
+        _temporaryList = new List<ChallengesData>(_normalChallenges);
+        _easyButton.gameObject.SetActive(false);
+        _normalButton.gameObject.SetActive(false);
+        _hardButton.gameObject.SetActive(false);
+        foreach (var slot in _slots)
+        {
+            slot.gameObject.SetActive(true);
+            int index = Random.Range(0, _temporaryList.Count);
+            var slotUI = slot.GetComponent<ChallengesUI>();
+            if (slotUI != null)
+            {
+                slotUI.Setup(_temporaryList[index]);
+                _temporaryList.Remove(_temporaryList[index]);
+            }
+        }
     }
 
     void DisplayHard()
     {
-        return;
+        List<ChallengesData> _temporaryList;
+        _temporaryList = new List<ChallengesData>(_hardChallenges);
+        _easyButton.gameObject.SetActive(false);
+        _normalButton.gameObject.SetActive(false);
+        _hardButton.gameObject.SetActive(false);
+        foreach (var slot in _slots)
+        {
+            slot.gameObject.SetActive(true);
+            int index = Random.Range(0, _temporaryList.Count);
+            var slotUI = slot.GetComponent<ChallengesUI>();
+            if (slotUI != null)
+            {
+                slotUI.Setup(_temporaryList[index]);
+                _temporaryList.Remove(_temporaryList[index]);
+            }
+        }
     }
 
     public void AddReward()
@@ -73,6 +120,12 @@ public class ChallengesMenager : MonoBehaviour
                 ConsumablesAndRelicMenager.instance.AddCard(cons);
             }
         }
+    }
+
+    public void ChallengeAccepted(ChallengesData challenge)
+    {
+        _currentChallenge = challenge;
+        Debug.Log("Challenge Accepted");
     }
 
     private RelicData RollRelic()

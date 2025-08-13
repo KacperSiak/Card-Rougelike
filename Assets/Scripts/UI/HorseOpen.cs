@@ -6,7 +6,6 @@ public class HorseOpen : MonoBehaviour
 {
     [SerializeField] private Button _openButton;
     private Animator anim;
-    private float _delaytime = 1f;
     private bool _canOpen;
 
     void Awake()
