@@ -15,6 +15,7 @@ MonoBehaviour:
   challengeName: NoDiscard
   challengeDescription: Do not use discard during whole fight
   difficulty: 0
+  challIcon: {fileID: -1614491412, guid: 28a5df7ffde1bb5408169991d42c3ab0, type: 3}
   challenge:
   - rid: 2307447497862676576
   references:

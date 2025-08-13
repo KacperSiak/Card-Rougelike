@@ -16,6 +16,7 @@ MonoBehaviour:
   challengeDescription: Do not use Consumables cards and moirae cards during whole
     fight
   difficulty: 0
+  challIcon: {fileID: 721527010, guid: 28a5df7ffde1bb5408169991d42c3ab0, type: 3}
   challenge:
   - rid: 2307447497862676577
   references:
