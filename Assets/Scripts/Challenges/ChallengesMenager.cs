@@ -23,14 +23,26 @@ public class ChallengesMenager : MonoBehaviour
     private void Awake()
     {
         if (instance == null) instance = this;
-        else Debug.Log("Found Another Menager");
+        //else Debug.Log("Found Another Menager");
+        else
+        {
+            Debug.Log("Found Another Menager");
+            Destroy(gameObject);
+        }
 
         _easyButton.onClick.AddListener(DisplayEasy);
         _normalButton.onClick.AddListener(DisplayNormal);
         _hardButton.onClick.AddListener(DisplayHard);
     }
 
-    void DisplayEasy()
+	private void OnDestroy()
+	{
+		_easyButton.onClick.RemoveListener(DisplayEasy);
+		_normalButton.onClick.RemoveListener(DisplayNormal);
+		_hardButton.onClick.RemoveListener(DisplayHard);
+	}
+
+	void DisplayEasy()
     {
         List<ChallengesData> _temporaryList;
         _temporaryList = new List<ChallengesData>(_easyChallenges);
@@ -70,27 +82,32 @@ public class ChallengesMenager : MonoBehaviour
         }
     }
 
-    void DisplayHard()
-    {
-        List<ChallengesData> _temporaryList;
-        _temporaryList = new List<ChallengesData>(_hardChallenges);
-        _easyButton.gameObject.SetActive(false);
-        _normalButton.gameObject.SetActive(false);
-        _hardButton.gameObject.SetActive(false);
-        foreach (var slot in _slots)
-        {
-            slot.gameObject.SetActive(true);
-            int index = Random.Range(0, _temporaryList.Count);
-            var slotUI = slot.GetComponent<ChallengesUI>();
-            if (slotUI != null)
-            {
-                slotUI.Setup(_temporaryList[index]);
-                _temporaryList.Remove(_temporaryList[index]);
-            }
-        }
-    }
+    void DisplayHard() => Display(_hardChallenges);
+    //void DisplayNormal() => Display(_hardChallenges);
+    //void DisplayEasy() => Display(_hardChallenges);
 
-    public void AddReward()
+	private void Display(List<ChallengesData> list)
+    {
+		List<ChallengesData> _temporaryList;
+		_temporaryList = new List<ChallengesData>(list);
+		_easyButton.gameObject.SetActive(false);
+		_normalButton.gameObject.SetActive(false);
+		_hardButton.gameObject.SetActive(false);
+		foreach (var slot in _slots)
+		{
+			slot.gameObject.SetActive(true);
+			int index = Random.Range(0, _temporaryList.Count);
+			var slotUI = slot.GetComponent<ChallengesUI>();
+			if (slotUI != null)
+			{
+				slotUI.Setup(_temporaryList[index]);
+				_temporaryList.Remove(_temporaryList[index]);
+			}
+		}
+	}
+
+	//Magic numbers
+	public void AddReward()
     {
         int coin = Random.Range(0, 2);
         ConsumablesData cons = ConsumablesAndRelicMenager.instance.RollRandomCons();
@@ -127,7 +144,8 @@ public class ChallengesMenager : MonoBehaviour
         _currentChallenge = challenge;
         Debug.Log("Challenge Accepted");
     }
-
+     
+    //Magic numbers
     private RelicData RollRelic()
     {
         int number = Random.Range(0, 100);

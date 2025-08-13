@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //to be improved
-public class CamMovementManager : MonoBehaviour
+public class CamMovementManager : MonoBehaviour, ISerializationCallbackReceiver
 {
     public static CamMovementManager Instance { get; private set; }
 
@@ -20,15 +20,6 @@ public class CamMovementManager : MonoBehaviour
     {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
-    }
-
-    void Start()
-    {
-        _camPositions.Clear();
-        foreach(var k in _dictList)
-        {
-            _camPositions.Add(k.key, k.value);
-        }
     }
 
     void Update()
@@ -88,5 +79,16 @@ public class CamMovementManager : MonoBehaviour
         _cameraAnimation.ChangeCameraPlacement(target: _camPositions[targetKey], duration: _duration);
         //temp
         UIManager.Instance.TurnRoundOff();
-    }   
+    }
+
+    public void OnBeforeSerialize() { }
+
+	public void OnAfterDeserialize()
+	{
+		_camPositions.Clear();
+		foreach (var k in _dictList)
+		{
+			_camPositions.Add(k.key, k.value);
+		}
+	}
 }

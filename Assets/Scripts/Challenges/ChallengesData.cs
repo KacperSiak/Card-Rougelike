@@ -13,6 +13,7 @@ public enum Difficulty
 public class ChallengesData : ScriptableObject
 {
     public string challengeName;
+    //[field: SerializeField] public string ChallengeName { get; private set; }
     [TextArea] public string challengeDescription;
     public Difficulty difficulty;
     public Sprite challIcon;
@@ -154,27 +155,6 @@ public class ThreeSinglesInARow : Challenges
     private void QuestReset()
     {
         _soloCards = 0;
-    }
-}
-
-[Serializable]
-public class HalfEnemyHP : Challenges
-{
-    private ChallengeContext context;
-    public override void Register(ChallengeContext ctx)
-    {
-        context = ctx;
-        // OnHPFallTo50 += ChallengeComplete;
-    }
-    public override void Unregister(ChallengeContext ctx)
-    {
-        // OnHPFallTo50 -= ChallengeCOmplete;
-    }
-
-    private void ChallengeComplete()
-    {
-        context.challengesMenager.AddReward();
-        Unregister(context);
     }
 }
 

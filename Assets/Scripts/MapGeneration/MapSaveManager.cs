@@ -5,9 +5,12 @@ public class MapSaveManager : MonoBehaviour
 {
     [Header("Save Data")]
     public MapSaveDataSO mapSaveData;
-    
-    [Header("References")]
+
+	[Header("References")]
     public MapGenerator mapGenerator;
+    //consider using this pattern
+    //[SerializeField] private MapGenerator mapGenerator;
+    //this prevents any changes form outside while allowing the field to be drawn to inspector
     public MapManager mapManager;
     
     [Header("Settings")]
@@ -19,7 +22,7 @@ public class MapSaveManager : MonoBehaviour
         if (mapGenerator == null)
             mapGenerator = FindFirstObjectByType<MapGenerator>();
         if (mapManager == null)
-            mapManager = FindFirstObjectByType<MapManager>(); //tymczasowe
+            mapManager = FindFirstObjectByType<MapManager>(); //tymczasowe [mam nadzieje]
             
         if (autoLoadOnStart && mapSaveData != null && mapSaveData.CanLoadMap())
         {

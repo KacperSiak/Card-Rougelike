@@ -75,7 +75,8 @@ namespace Systems.SceneManagement
                 if (!sceneAt.isLoaded) continue;
 
                 var sceneName = sceneAt.name;
-                if (sceneName.Equals(activeScene) || sceneName == "Bootstrapper") continue;
+				//make name "Bootstrapper" const variable
+				if (sceneName.Equals(activeScene) || sceneName == "Bootstrapper") continue;
                 scenes.Add(sceneName);
             }
 
@@ -91,6 +92,9 @@ namespace Systems.SceneManagement
                 OnSceneUnloaded.Invoke(scene);
             }
 
+            //why is it here? using delay is usually a bad sign
+            //consider using this instead (just a suggestion, maybe this way is better for now)
+            //operationGroup.Operations[0].completed
             while (!operationGroup.IsDone)
             {
                 await Task.Delay(100);

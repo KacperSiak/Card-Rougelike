@@ -22,6 +22,7 @@ public class GamblingManager : MonoBehaviour
     public static GamblingManager instance;
     public static UnityEvent OnGamblingExit = new UnityEvent();
 
+    //private float _modifier;
     private float modifier;
     private class RewardEntry
     {

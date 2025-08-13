@@ -6,9 +6,16 @@ public class HorseOpen : MonoBehaviour
 {
     [SerializeField] private Button _openButton;
     private Animator anim;
+    private Animator _anim;
     private bool _canOpen;
 
-    void Awake()
+	private void OnValidate()
+	{
+		if(!_anim)
+            _anim = GetComponent<Animator>();
+	}
+
+	void Awake()
     {
         anim = GetComponent<Animator>();
         _openButton.onClick.AddListener(Open);

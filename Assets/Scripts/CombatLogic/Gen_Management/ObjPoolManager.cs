@@ -42,6 +42,7 @@ public class ObjPoolManager : MonoBehaviour
     {
         return _objPool.Dequeue();
     }
+    //resizing pool
 
     public void ReturnCard(GameObject card)
     { 

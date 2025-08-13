@@ -11,6 +11,7 @@ public class NewRunDialogue : MonoBehaviour
     [SerializeField] TextAsset inkFile;
 
     private Dictionary<string, int> countOfDefeats;
+    //private Dictionary<string, int> countOfDefeats = new(); intialize it here instead of in start
 
     private void Awake()
     {
@@ -46,6 +47,7 @@ public class NewRunDialogue : MonoBehaviour
         dialogueManager.EnterDialogueMode(inkFile, $"{defeatedBy}.died{whichTimeDefeated}");
     }
 
+    //use new unity input system in future
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Tab))

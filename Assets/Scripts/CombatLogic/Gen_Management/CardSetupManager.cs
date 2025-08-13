@@ -26,7 +26,8 @@ public class CardSetupManager : MonoBehaviour
         //setup card scale
         card.AddComponent<BoxCollider>();
         card.AddComponent<PlayerCardLogic>();
-        card.GetComponent<Transform>().rotation = Quaternion.Euler(200f, 0f, 0f);
+        //card.GetComponent<Transform>().rotation = Quaternion.Euler(200f, 0f, 0f);
+        card.transform.rotation = Quaternion.Euler(200f, 0f, 0f);
         card.GetComponent<BoxCollider>().size += new Vector3(0f, 0.01f, 0f);
         //setup box collider scale
     }

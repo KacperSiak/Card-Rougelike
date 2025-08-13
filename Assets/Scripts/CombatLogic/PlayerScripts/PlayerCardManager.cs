@@ -6,6 +6,7 @@ public class PlayerCardManager : MonoBehaviour
     public static PlayerCardManager Instance { get; private set; }
 
     [SerializeField] private PlayerCardSpawner _spawner;
+    //public List<PlayerCardLogic> CardsInHand { get; private set; }
     public List<GameObject> CardsInHand { get; private set; }
     public List<GameObject> SelectedCards { get; private set; }
     public int SelectedCardsPower { get; private set; }

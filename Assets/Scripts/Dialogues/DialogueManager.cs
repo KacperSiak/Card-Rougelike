@@ -17,13 +17,17 @@ public class DialogueManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI speakerName;
     [SerializeField] private Image speakerImage;
 
+    //consider enums
     private const string SPEAKER_TAG = "speaker", PORTRAIT_TAG = "portrait";
 
     private Story currentStory;
-    public bool isDialoguePlaying; // true when dialogue is active
+	//make it so ite cant be changed from outside this class
+	//example:
+	//public bool IsDialoguePlaying { get; private set; } = false;
+	public bool isDialoguePlaying; // true when dialogue is active
     public bool isDialoguePaused;  // true when some event started and dialogue has to pause
 
-    [SerializeField]private float textDelay = .03f;
+    [SerializeField] private float textDelay = .03f;
 
     // Needed for text generation
     bool isTextGenerating;
@@ -38,6 +42,7 @@ public class DialogueManager : MonoBehaviour
     }
 
     public static DialogueManager GetInstance() => instance;
+    //public static DialogueManager Instance => instance;
 
     private void Start()
     {
@@ -49,6 +54,7 @@ public class DialogueManager : MonoBehaviour
         lineToGenerate = "";
     }
 
+    //use new unity input system in the future
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Backspace))

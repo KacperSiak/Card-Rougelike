@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+//public class PlayerCardsAnimation : MonoBehaviour
 public class pCardsAnimation : MonoBehaviour
 {
     [SerializeField] private float _interval = 3;
@@ -19,7 +20,12 @@ public class pCardsAnimation : MonoBehaviour
         else Destroy(gameObject);
     }
 
-    void Update()
+	private void OnDisable()
+	{
+		StopAllCoroutines();
+	}
+
+	void Update()
     {
         if (_currentTime < _interval)
         {
@@ -32,6 +38,7 @@ public class pCardsAnimation : MonoBehaviour
 
     private IEnumerator IdleAnimation()
     {
+        //what if empty hand
         var card = PlayerCardManager.Instance.CardsInHand[0];
         card.GetComponent<PlayerCardLogic>().SetAnimationPlacement(newPosition: card.transform.position + _idleV, newRotation: card.transform.rotation);
 

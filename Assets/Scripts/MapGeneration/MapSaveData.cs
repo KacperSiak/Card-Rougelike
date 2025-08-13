@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using MapSystem;
 
+//consider using struct
 [System.Serializable]
 public class SerializableMapNode
 {

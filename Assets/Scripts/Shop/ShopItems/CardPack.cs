@@ -17,6 +17,7 @@ public class CardPack : ShopItem
     public Sprite icon;
     public int buyPrice;
 
+    //public void OpenPack()
     public void OpePack()
     {
         if (_type == CardPackType.normal)

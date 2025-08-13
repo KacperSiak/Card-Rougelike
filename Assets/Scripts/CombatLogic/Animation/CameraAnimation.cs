@@ -13,7 +13,8 @@ public class CameraAnimation : MonoBehaviour
         
         _targetTransform = target;
         _duration = duration;
-        StartCoroutine(MoveToTarget());
+		//stopping corutine
+		StartCoroutine(MoveToTarget());
         _isPlaying = true;
         CamMovementManager.Instance.inProgress = true;
         //temp
