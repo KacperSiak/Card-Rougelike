@@ -23,37 +23,32 @@ public class ChallengesMenager : MonoBehaviour
     private void Awake()
     {
         if (instance == null) instance = this;
-        else Debug.Log("Found Another Menager");
+        else
+        {
+            Debug.Log("Found Another Menager");
+            Destroy(gameObject);
+        }
 
         _easyButton.onClick.AddListener(DisplayEasy);
         _normalButton.onClick.AddListener(DisplayNormal);
         _hardButton.onClick.AddListener(DisplayHard);
     }
 
-    void DisplayEasy()
+    private void OnDestroy()
     {
-        List<ChallengesData> _temporaryList;
-        _temporaryList = new List<ChallengesData>(_easyChallenges);
-        _easyButton.gameObject.SetActive(false);
-        _normalButton.gameObject.SetActive(false);
-        _hardButton.gameObject.SetActive(false);
-        foreach (var slot in  _slots)
-        {
-            slot.gameObject.SetActive(true);
-            int index = Random.Range(0, _temporaryList.Count);
-            var slotUI = slot.GetComponent<ChallengesUI>();
-            if (slotUI != null)
-            {
-                slotUI.Setup(_temporaryList[index]);
-                _temporaryList.Remove(_temporaryList[index]);
-            }
-        }
+        _easyButton.onClick.RemoveListener(DisplayEasy);
+        _normalButton.onClick.RemoveListener(DisplayNormal);
+        _hardButton.onClick.RemoveListener(DisplayHard);
     }
 
-    void DisplayNormal()
+    private void DisplayEasy() => Display(_easyChallenges);
+    private void DisplayNormal() => Display(_normalChallenges);
+    private void DisplayHard() => Display(_hardChallenges);
+
+    private void Display(List<ChallengesData> list)
     {
         List<ChallengesData> _temporaryList;
-        _temporaryList = new List<ChallengesData>(_normalChallenges);
+        _temporaryList = new List<ChallengesData>(list);
         _easyButton.gameObject.SetActive(false);
         _normalButton.gameObject.SetActive(false);
         _hardButton.gameObject.SetActive(false);
@@ -70,26 +65,7 @@ public class ChallengesMenager : MonoBehaviour
         }
     }
 
-    void DisplayHard()
-    {
-        List<ChallengesData> _temporaryList;
-        _temporaryList = new List<ChallengesData>(_hardChallenges);
-        _easyButton.gameObject.SetActive(false);
-        _normalButton.gameObject.SetActive(false);
-        _hardButton.gameObject.SetActive(false);
-        foreach (var slot in _slots)
-        {
-            slot.gameObject.SetActive(true);
-            int index = Random.Range(0, _temporaryList.Count);
-            var slotUI = slot.GetComponent<ChallengesUI>();
-            if (slotUI != null)
-            {
-                slotUI.Setup(_temporaryList[index]);
-                _temporaryList.Remove(_temporaryList[index]);
-            }
-        }
-    }
-
+    // MAgic numbers to move to other script (reward script)
     public void AddReward()
     {
         int coin = Random.Range(0, 2);
@@ -114,7 +90,7 @@ public class ChallengesMenager : MonoBehaviour
             PlayerOverlay.instance.AddGold(45);
             PlayerOverlay.instance.SetMaxHP(newHP);
             _vase.GotVase();
-            RelicEventsSystem.RelicAcquired(RollRelic());
+            //RelicEventsSystem.RelicAcquired(RollRelic());
             if (coin == 0)
             {
                 ConsumablesAndRelicMenager.instance.AddCard(cons);
@@ -128,15 +104,16 @@ public class ChallengesMenager : MonoBehaviour
         Debug.Log("Challenge Accepted");
     }
 
-    private RelicData RollRelic()
-    {
-        int number = Random.Range(0, 100);
-        RelicData relic;
-        if (number < 40) relic = ConsumablesAndRelicMenager.instance.RollCommonRelic();
-        else if (number < 70) relic = ConsumablesAndRelicMenager.instance.RollRareRelic();
-        else if (number < 95) relic = ConsumablesAndRelicMenager.instance.RollEpicRelic();
-        else relic = ConsumablesAndRelicMenager.instance.RollLegendaryRelic();
+    // To change into another script with rewards
+    //private RelicData RollRelic()
+    //{
+    //    int number = Random.Range(0, 100);
+    //    RelicData relic;
+    //    if (number < 40) relic = ConsumablesAndRelicMenager.instance.RollCommonRelic();
+    //    else if (number < 70) relic = ConsumablesAndRelicMenager.instance.RollRareRelic();
+    //    else if (number < 95) relic = ConsumablesAndRelicMenager.instance.RollEpicRelic();
+    //    else relic = ConsumablesAndRelicMenager.instance.RollLegendaryRelic();
 
-        return relic;
-    }
+    //    return relic;
+    //}
 }

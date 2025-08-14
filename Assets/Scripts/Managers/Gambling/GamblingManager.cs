@@ -54,8 +54,8 @@ public class GamblingManager : MonoBehaviour
             new RewardEntry("Add Relic", _positiveWeight, () => AddRelic()),
             new RewardEntry("Add Time", _positiveWeight, () => MapManager.instance.ModifieTime(60, true)),
             new RewardEntry("Greek Vase", _positiveWeight, () => _vase.GotVase()),
-            new RewardEntry("Nomal Card Pack", _positiveWeight, () => _pack.OpePack()),
-            new RewardEntry("Bonus Card PAck", _positiveWeight, () => _bonusPack.OpePack()),
+            new RewardEntry("Normal Card Pack", _positiveWeight, () => _pack.OpePack()),
+            new RewardEntry("Bonus Card Pack", _positiveWeight, () => _bonusPack.OpePack()),
 
             new RewardEntry("Hermes Joke", _neutralWeight, () => HermesJoke()),
 
