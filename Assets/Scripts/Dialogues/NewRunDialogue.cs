@@ -6,9 +6,9 @@ public class NewRunDialogue : MonoBehaviour
 {
     public static NewRunDialogue instance;
 
-    DialogueManager dialogueManager;
+    private DialogueManager dialogueManager;
 
-    [SerializeField] TextAsset inkFile;
+    [SerializeField] private TextAsset inkFile;
 
     private Dictionary<string, int> countOfDefeats;
 
@@ -26,7 +26,7 @@ public class NewRunDialogue : MonoBehaviour
         NewGameAssign();
     }
 
-    // has to be called at the beggining of 'New Game'
+    // has to be called when save file is loaded first time
     void NewGameAssign()
     {
         countOfDefeats.Add("Minotaur",0);
@@ -36,12 +36,14 @@ public class NewRunDialogue : MonoBehaviour
         countOfDefeats.Add("Athena",0);
     }
 
-    // call this when starting new Run
+    // this is function to be called when dialogue on new run has to show up
     public void DialogueByDefeat(string defeatedBy)
     {
         int whichTimeDefeated = countOfDefeats[defeatedBy];
         whichTimeDefeated++;
         countOfDefeats[defeatedBy] = whichTimeDefeated;
+
+        PlayerPrefs.SetInt(defeatedBy, whichTimeDefeated);
 
         dialogueManager.EnterDialogueMode(inkFile, $"{defeatedBy}.died{whichTimeDefeated}");
     }

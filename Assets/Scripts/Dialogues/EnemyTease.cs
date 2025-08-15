@@ -1,12 +1,13 @@
+using System.Collections;
 using UnityEngine;
 
 public class EnemyTease : MonoBehaviour
 {
     public static EnemyTease instance;
 
-    private DialogueManager dialogueManager;
+    [SerializeField] GameObject teasePanel;
 
-    private TextAsset inkJSON;
+    [SerializeField] float teaseTime;
 
     private void Awake()
     {
@@ -14,13 +15,15 @@ public class EnemyTease : MonoBehaviour
             instance = this;
     }
 
-    private void Start()
-    {
-        dialogueManager = DialogueManager.GetInstance();
-    }
-
     public void Tease()
     {
-        dialogueManager.EnterDialogueMode(inkJSON);
+        StartCoroutine("showWindow");
+    }
+
+    IEnumerator showWindow()
+    {
+        teasePanel.SetActive(true);
+        yield return new WaitForSeconds(teaseTime);
+        teasePanel.SetActive(false);
     }
 }
