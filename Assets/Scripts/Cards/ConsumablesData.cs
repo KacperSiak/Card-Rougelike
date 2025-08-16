@@ -323,7 +323,7 @@ public class LegendaryReroll : CardEffect
         }
         for (int i = 0; i < 2; i++)
         {
-            RelicData relic = ctx.consAndRel.RollLegendaryRelic();
+            RelicData relic = ctx.consAndRel.RollRarityRelic(Rarity.Legendary);
             RelicEventsSystem.RelicAcquired(relic);
         }
     }

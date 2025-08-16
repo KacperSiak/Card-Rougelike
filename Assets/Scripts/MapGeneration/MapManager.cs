@@ -159,4 +159,9 @@ public class MapManager : MonoBehaviour
         if (add) currentMapTime += time;
         else currentMapTime -= time;
     }
+
+    public void AutoTeleport()
+    {
+        currentMapTime = 0;
+    }
 }

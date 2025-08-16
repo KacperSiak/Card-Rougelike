@@ -63,36 +63,44 @@ public class MaxHealth : Rewards
 [Serializable]
 public class RandomCommonRelic : Rewards
 {
+    private RelicData _rolledRelic;
     public override void AddReward(RewardContext ctx)
     {
-        ctx.consAndRelic.RollCommonRelic();
+        _rolledRelic = ctx.consAndRelic.RollRarityRelic(Rarity.Common);
+        RelicEventsSystem.RelicAcquired(_rolledRelic);
     }
 }
 
 [Serializable]
 public class RandomRareRelic : Rewards
 {
+    private RelicData _rolledRelic;
     public override void AddReward(RewardContext ctx)
     {
-        ctx.consAndRelic.RollRareRelic();
+        _rolledRelic = ctx.consAndRelic.RollRarityRelic(Rarity.Rare);
+        RelicEventsSystem.RelicAcquired(_rolledRelic);
     }
 }
 
 [Serializable]
 public class RandomEpicRelic : Rewards
 {
+    private RelicData _rolledRelic;
     public override void AddReward(RewardContext ctx)
     {
-        ctx.consAndRelic.RollEpicRelic();
+        _rolledRelic = ctx.consAndRelic.RollRarityRelic(Rarity.Epic);
+        RelicEventsSystem.RelicAcquired(_rolledRelic);
     }
 }
 
 [Serializable]
 public class RandomLegendaryRelic : Rewards
 {
+    private RelicData _rolledRelic;
     public override void AddReward(RewardContext ctx)
     {
-        ctx.consAndRelic.RollLegendaryRelic();
+        _rolledRelic = ctx.consAndRelic.RollRarityRelic(Rarity.Legendary);
+        RelicEventsSystem.RelicAcquired(_rolledRelic);
     }
 }
 
@@ -122,5 +130,14 @@ public class LoseGold : Rewards
     public override void AddReward(RewardContext ctx)
     {
         ctx.player.SpendGold(gold);
+    }
+}
+
+[Serializable]
+public class AutoTeleport : Rewards
+{
+    public override void AddReward(RewardContext ctx)
+    {
+        ctx.mapManager.AutoTeleport();
     }
 }

@@ -91,14 +91,6 @@ public class ConsumablesAndRelicMenager : MonoBehaviour
         return _drawnRelic;
     }
 
-    public RelicData RollCommonRelic() => RollRarityRelic(Rarity.Common);
-
-    public RelicData RollRareRelic() => RollRarityRelic(Rarity.Rare);
-
-    public RelicData RollEpicRelic() => RollRarityRelic(Rarity.Epic);
-
-    public RelicData RollLegendaryRelic() => RollRarityRelic(Rarity.Legendary);
-
     public RelicData RollRarityRelic(Rarity relicRarity)
     {
         List<RelicData> needeRarityRelics = new List<RelicData>();

@@ -207,8 +207,8 @@ public class BetterGamblingLuck : PotionEffects
     private float resetModifier = 1;
     public override void Register(PotionContext ctx, int fightLeft)
     {
-        ctx.gambler.SetModifier(modifier);
-        GamblingManager.OnGamblingExit.AddListener(ResetModifier);
+        // ctx.gambler.SetModifier(modifier);
+        // GamblingManager.OnGamblingExit.AddListener(ResetModifier);
     }
 
     public override void Unregister(PotionContext ctx){}
@@ -217,7 +217,7 @@ public class BetterGamblingLuck : PotionEffects
 
     private void ResetModifier()
     {
-        GamblingManager.instance.SetModifier(resetModifier);
+        // GamblingManager.instance.SetModifier(resetModifier);
     }
 
 }

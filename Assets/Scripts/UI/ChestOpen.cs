@@ -18,7 +18,7 @@ public class ChestOpen : MonoBehaviour
         {
             _canOpen = false;
             _anim.SetTrigger("ChestOpen");
-            GamblingManager.instance.Roll();
+            // GamblingManager.instance.Roll();
         }
     }
 }
