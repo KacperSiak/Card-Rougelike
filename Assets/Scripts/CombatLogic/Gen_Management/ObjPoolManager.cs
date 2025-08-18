@@ -33,7 +33,6 @@ public class ObjPoolManager : MonoBehaviour
             GameObject obj = Instantiate(_prefab);
             obj.SetActive(false);
             _objPool.Enqueue(obj);
-            CardSetupManager.Instance.SetupCardPhysics(obj);
         }
 
     }
