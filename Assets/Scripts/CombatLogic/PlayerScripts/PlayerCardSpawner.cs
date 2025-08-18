@@ -1,13 +1,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-//here changes, needs to be improved 
 public class PlayerCardSpawner : MonoBehaviour
 {
-    //[SerializeField] private BoxCollider _hand; // consider changing hand to this 
-    [SerializeField] private Transform _hand;
+    [SerializeField] private BoxCollider _hand;
     private int _cardsNumber = 0;
-    private const int k_maxHandSize = 8; // consider changing this variable
+    private const int k_maxHandSize = 8; // max without overlay
+    private float _cardSize = 0.06f;
 
     public AnimationCurve _curve;
 
@@ -24,7 +23,6 @@ public class PlayerCardSpawner : MonoBehaviour
             CardsSOTest card = playerDeck[Random.Range(0, playerDeck.Count)];
             playerDeck.Remove(card);
 
-            //cardObject.GetComponent<SpriteRenderer>().sprite = card.graphics;
             cardObject.GetComponent<PlayerCardLogic>().SetCardProperties(card);
             CardSetupManager.Instance.SetupCardVisual(cardObject.GetComponent<MeshRenderer>(), card.column, card.row);
         }
@@ -33,18 +31,14 @@ public class PlayerCardSpawner : MonoBehaviour
 
     }
 
-    //need to think about cards order, how they overlay each other 
 	public void SetCardsPosition()
 	{
 		_cardsNumber = PlayerCardManager.Instance.CardsInHand.Count;
 		if (_cardsNumber == 0) return;
 
-		float handSize = _hand.gameObject.GetComponent<BoxCollider>().bounds.size.x;
+		float handSize = _hand.bounds.size.x;
 
-        //float cardSize = PlayerCardManager.Instance.CardsInHand[0].GetComponent<SpriteRenderer>().bounds.size.x; // change to box collider 
-        float cardSize = 0.06f; //temp
-
-        float offset = cardSize - cardSize * (Mathf.Max(k_maxHandSize, _cardsNumber) - k_maxHandSize) / Mathf.Max(_cardsNumber - 1, 1);
+        float offset = _cardSize - _cardSize * (Mathf.Max(k_maxHandSize, _cardsNumber) - k_maxHandSize) / Mathf.Max(_cardsNumber - 1, 1);
 
         //Same as the above
         //float offset;
@@ -54,6 +48,7 @@ public class PlayerCardSpawner : MonoBehaviour
         //    offset = cardSize - cardSize * (_cardsNumber - k_maxHandSize) / (float)(_cardsNumber - 1);
 
 		float start = (_cardsNumber - 1) * -.5f * offset; // second part is the same as /2, we just do * 0.5 instead
+        float z = -0.0096f;
 
         for (int i = 0, renderPriority = 0; i < _cardsNumber; i++, renderPriority++)
 		{
@@ -62,11 +57,11 @@ public class PlayerCardSpawner : MonoBehaviour
 			float x = start + i * offset;
 
             // Consider adding parent for pCards
-            card.transform.position = new Vector3(x, _hand.position.y, _hand.position.z);
-			//card.GetComponent<SpriteRenderer>().sortingOrder = renderPriority;
+            card.transform.position = new Vector3(x, _hand.gameObject.transform.position.y, _hand.gameObject.transform.position.z + z);
 
 			card.GetComponent<PlayerCardLogic>().SaveDefaultProperties();
 			card.SetActive(true);
+            z -= 0.0001f;
 
 		}
 

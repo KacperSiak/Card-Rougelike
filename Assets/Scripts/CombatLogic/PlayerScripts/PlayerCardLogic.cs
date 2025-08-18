@@ -1,6 +1,5 @@
 using UnityEngine;
 
-//here changes, clear and improve a bit
 //mb separate saving properties and card logic
 public class PlayerCardLogic : MonoBehaviour
 {
@@ -58,10 +57,8 @@ public class PlayerCardLogic : MonoBehaviour
     private void OnMouseEnter()
     {
         if (_isSelected) return;
-        //transform.position += new Vector3(0, 0.1f, 0f); // Move the card up slightly when hovered
-        transform.position += new Vector3(0, 0.01f, 0f);
+        transform.position += new Vector3(0f, 0.0125f, -0.00088f);
         SaveCurrentProperties();
-        //GetComponent<SpriteRenderer>().sortingOrder += 2;
     }
 
     private void OnMouseExit()
@@ -69,7 +66,6 @@ public class PlayerCardLogic : MonoBehaviour
         if (_isSelected) return; 
         transform.position = _defaultPosition; // Reset position when not hovered
         SaveCurrentProperties();
-        //GetComponent<SpriteRenderer>().sortingOrder -= 2;
     }
 
     private void OnMouseDown()
@@ -79,8 +75,7 @@ public class PlayerCardLogic : MonoBehaviour
             if (PlayerCardManager.Instance.SelectedCards.Count == 3)
                 return; // Prevent selecting more than 3 cards
 
-            //transform.position = defaultPosition + new Vector3(0, 0.15f, 0f);
-            transform.position = _defaultPosition + new Vector3(0, 0.015f, 0f);
+            transform.position = _defaultPosition + new Vector3(0f, 0.015f, 0f);
             SaveCurrentProperties();
             PlayerCardManager.Instance.AddSelectedCards(gameObject);
             _isSelected = true;

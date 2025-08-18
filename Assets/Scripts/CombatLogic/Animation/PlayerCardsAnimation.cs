@@ -2,14 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class pCardsAnimation : MonoBehaviour
+public class PlayerCardsAnimation : MonoBehaviour
 {
     [SerializeField] private float _interval = 3;
     [SerializeField] private float _duration = 0.1f;
     private float _currentTime = 0;
     private Vector3 _idleV = new Vector3(0, 0.0001f, 0f); // Idle animation vector
 
-    public static pCardsAnimation Instance { get; private set; }
+    public static PlayerCardsAnimation Instance { get; private set; }
 
     [SerializeField] private List<Transform> _newPositions;
 

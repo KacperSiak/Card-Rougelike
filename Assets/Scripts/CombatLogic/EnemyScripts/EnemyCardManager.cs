@@ -83,7 +83,7 @@ public class EnemyCardManager : MonoBehaviour
 
     public void SetupCardHolder(int index, Validator validator)
     {
-        cardHolders[index].GetComponent<CardHolderManager>().SetProperties(validator, index);
+        cardHolders[index].GetComponent<CardHolderLogic>().SetProperties(validator, index);
     }
 
     public void SetupCardsInGame(int key)
@@ -127,7 +127,7 @@ public class EnemyCardManager : MonoBehaviour
 
         foreach (var cardHolder in cardHolders)
         {
-            if (cardHolder.GetComponent<CardHolderManager>().EnemyComboIndex != -1)
+            if (cardHolder.GetComponent<CardHolderLogic>().EnemyComboIndex != -1)
             {
                 startIndex += 3;
                 continue;

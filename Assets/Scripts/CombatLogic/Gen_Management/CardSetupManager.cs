@@ -1,6 +1,5 @@
 using UnityEngine;
 
-//here changes
 public class CardSetupManager : MonoBehaviour
 {
     public static CardSetupManager Instance { get; private set; }

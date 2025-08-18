@@ -51,7 +51,7 @@ public class EnemyCardSpawner : MonoBehaviour
                 CardsSOTest card = cardsBySuit[randomCleanSuit][randomCleanCard];
                 cardsBySuit[randomCleanSuit].RemoveAt(randomCleanCard);
 
-                cardObject.GetComponent<SpriteRenderer>().sprite = card.graphics;
+                CardSetupManager.Instance.SetupCardVisual(cardObject.GetComponent<MeshRenderer>(), card.column, card.row);
                 cardObject.GetComponent<EnemyCardLogic>().SetCardProperties(card);
                 power += card.power;
                 cardObject.SetActive(true);
@@ -110,12 +110,12 @@ public class EnemyCardSpawner : MonoBehaviour
 
             randomDirtySuit++;
 
-             cardObject.GetComponent<SpriteRenderer>().sprite = card.graphics;
-             cardObject.GetComponent<EnemyCardLogic>().SetCardProperties(card);
-             power += card.power;
-             cardObject.SetActive(true);
+            CardSetupManager.Instance.SetupCardVisual(cardObject.GetComponent<MeshRenderer>(), card.column, card.row);
+            cardObject.GetComponent<EnemyCardLogic>().SetCardProperties(card);
+            power += card.power;
+            cardObject.SetActive(true);
 
-             EnemyCardManager.Instance.UpdateCardsInGame(key, cardObject);
+            EnemyCardManager.Instance.UpdateCardsInGame(key, cardObject);
         }
 
         EnemyCardManager.Instance.SetupCardHolder(key, validator: _dirty);
@@ -135,7 +135,7 @@ public class EnemyCardSpawner : MonoBehaviour
 
         CheckCardsInDeckAmount(cardsBySuit, randomSuit);
 
-        cardObject.GetComponent<SpriteRenderer>().sprite = card.graphics;
+        CardSetupManager.Instance.SetupCardVisual(cardObject.GetComponent<MeshRenderer>(), card.column, card.row);
         cardObject.GetComponent<EnemyCardLogic>().SetCardProperties(card);
         power += card.power;
         cardObject.SetActive(true);

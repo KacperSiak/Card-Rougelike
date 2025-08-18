@@ -5,9 +5,9 @@ public class Validator : MonoBehaviour
 {
     [SerializeField] protected EnemyAttackManager _enemyAttackManager;
     protected bool _isValid = false;
-    protected CardHolderManager _cardHolder;
+    protected CardHolderLogic _cardHolder;
 
-    public void Validate(CardHolderManager cardHolder)
+    public void Validate(CardHolderLogic cardHolder)
     {
         _cardHolder = cardHolder;
         _isValid = true;

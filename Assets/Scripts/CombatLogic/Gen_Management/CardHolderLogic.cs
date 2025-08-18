@@ -1,9 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-//public class CardHolder : MonoBehaviour
-//here changes, needs to be improved and cleaned 
-public class CardHolderManager : MonoBehaviour
+public class CardHolderLogic : MonoBehaviour
 {
     [SerializeField] private Material _highlightMaterial;
     [SerializeField] private Material _defaultMaterial;
@@ -45,7 +43,7 @@ public class CardHolderManager : MonoBehaviour
             CamMovementManager.Instance.enabled = false;
             CamMovementManager.Instance.ChangeCameraPlacement(targetKey: "W");
             _isInspected = true;
-            pCardsAnimation.Instance.ActivatePlacementPreviewAnimation();
+            PlayerCardsAnimation.Instance.ActivatePlacementPreviewAnimation();
         }
 
     }
@@ -58,7 +56,7 @@ public class CardHolderManager : MonoBehaviour
             CamMovementManager.Instance.ChangeCameraPlacement(targetKey: "Main");
             CamMovementManager.Instance.enabled = true;
             _isInspected = false;
-            pCardsAnimation.Instance.DeactivatePlacementPreviewAnimation();
+            PlayerCardsAnimation.Instance.DeactivatePlacementPreviewAnimation();
         }
         
     }
@@ -81,20 +79,17 @@ public class CardHolderManager : MonoBehaviour
     public void OnValidated()
     {
         _isOccupied = true;
-        //maybe use card size here 
+
         float position = -0.05f;
         float y = 0.001f;
-        //float position = -1f;
 
         foreach (GameObject card in PlayerCardManager.Instance.SelectedCards) 
         {
             card.transform.position = new Vector3(transform.position.x + position, transform.position.y + y, transform.position.z);
             card.transform.rotation = Quaternion.Euler(-90f, 0f, 0f);
-            //card.transform.localScale *= 0.8f;
-            //card.GetComponent<SpriteRenderer>().sortingOrder -= 2;
+            card.transform.localScale *= 1.2f;
             position += 0.05f;
             y += 0.001f;
-            //position++;
             card.GetComponent<PlayerCardLogic>().IsUsed = true;
         }
 
