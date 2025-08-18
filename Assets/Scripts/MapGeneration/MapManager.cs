@@ -1,5 +1,7 @@
+using System; // Kacper Added
 using UnityEngine;
 using System.Collections.Generic;
+using System.Data;
 
 public class MapManager : MonoBehaviour
 {
@@ -10,10 +12,17 @@ public class MapManager : MonoBehaviour
     public float maxMapTime = 0f;
     public float currentMapTime = 0f;
 
+    // Kacper Added
+    private float _modifier = 1;
+    public static MapManager instance;
+
     void Start()
     {
         if (mapGenerator == null)
             mapGenerator = FindFirstObjectByType<MapGenerator>(); //tymczasowe
+
+        if (instance == null)
+            instance = this;
     }
 
     public void CalculateMaxMapTime()
@@ -47,7 +56,7 @@ public class MapManager : MonoBehaviour
 
     public void TravelToNode(Vector2 fromPos, Vector2 toPos)
     {
-        float travelTime = Vector2.Distance(fromPos, toPos);
+        float travelTime = (float)Math.Round(Vector2.Distance(fromPos, toPos) * _modifier); //Kacper modified
         currentMapTime -= travelTime;
         
         if (currentMapTime < 0f)
@@ -132,5 +141,27 @@ public class MapManager : MonoBehaviour
         {
             Debug.LogWarning("[MapManager] No player marker found for teleport!");
         }
+    }
+
+    // Kacper Added
+    public void SetNewModifier(float newModifier)
+    {
+        _modifier = newModifier;
+    }
+
+    public void ResetModifier()
+    {
+        _modifier = 1;
+    }
+
+    public void ModifieTime(float time, bool add)
+    {
+        if (add) currentMapTime += time;
+        else currentMapTime -= time;
+    }
+
+    public void AutoTeleport()
+    {
+        currentMapTime = 0;
     }
 }
