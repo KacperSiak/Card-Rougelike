@@ -11,7 +11,6 @@ public class MapSaveManager : MonoBehaviour
     public MapManager mapManager;
     
     [Header("Settings")]
-    public bool autoSaveBeforeSceneChange = true;
     public bool autoLoadOnStart = true;
     
     void Start()
@@ -130,43 +129,5 @@ public class MapSaveManager : MonoBehaviour
             mapSaveData.ClearSave();
             Debug.Log("[MapSaveManager] Save deleted");
         }
-    }
-    
-    public void SaveBeforeSceneChange()
-    {
-        if (autoSaveBeforeSceneChange)
-        {
-            SaveCurrentMap();
-        }
-    }
-    
-    [ContextMenu("Save Current Map")]
-    public void SaveFromMenu()
-    {
-        SaveCurrentMap();
-    }
-    
-    [ContextMenu("Load Saved Map")]
-    public void LoadFromMenu()
-    {
-        LoadSavedMap();
-    }
-    
-    [ContextMenu("Delete Saved Map")]
-    public void DeleteFromMenu()
-    {
-        DeleteSavedMap();
-    }
-    
-    [ContextMenu("Create New Save Data Asset")]
-    public void CreateSaveDataAsset()
-    {
-        #if UNITY_EDITOR
-        var saveData = ScriptableObject.CreateInstance<MapSaveDataSO>();
-        UnityEditor.AssetDatabase.CreateAsset(saveData, "Assets/MapSaveData.asset");
-        UnityEditor.AssetDatabase.SaveAssets();
-        mapSaveData = saveData;
-        Debug.Log("Created new MapSaveDataSO asset");
-        #endif
     }
 }
