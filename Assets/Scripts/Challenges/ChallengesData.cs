@@ -4,9 +4,9 @@ using UnityEngine;
 
 public enum Difficulty
 {
-    easy,
-    normal,
-    hard
+    Easy,
+    Normal,
+    Hard
 }
 
 [CreateAssetMenu(fileName = "ChallengesData", menuName = "Challenge/ChallengesData")]
@@ -15,7 +15,7 @@ public class ChallengesData : ScriptableObject
     public string challengeName;
     [TextArea] public string challengeDescription;
     public Difficulty difficulty;
-    [TextArea] public string rewardDestcription;
+    public Sprite challIcon;
     [SerializeReference] public List<Challenges> challenge;
 }
 
@@ -38,24 +38,4 @@ public abstract class Challenges
 {
     public abstract void Register(ChallengeContext ctx);
     public abstract void Unregister(ChallengeContext ctx);
-}
-
-[Serializable]
-public class NoDiscard : Challenges
-{
-    public override void Register(ChallengeContext ctx)
-    {
-        // listen to NoDicardFightEvent
-        // OnNoDiscardFight.AddListener(NoDiscardFightWon)
-    }
-
-    public override void Unregister(ChallengeContext ctx)
-    {
-        throw new NotImplementedException();
-    }
-
-    private void NoDisardFightWon(ChallengeContext ctx)
-    {
-        ctx.challengesMenager.AddReward();
-    }
 }

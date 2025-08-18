@@ -91,81 +91,21 @@ public class ConsumablesAndRelicMenager : MonoBehaviour
         return _drawnRelic;
     }
 
-    public RelicData RollCommonRelic()
+    public RelicData RollRarityRelic(Rarity relicRarity)
     {
-        List<RelicData> commonRelics = new List<RelicData>();
+        List<RelicData> needeRarityRelics = new List<RelicData>();
         for (int i = 0; i < allRelics.Count; i++)
         {
-            if (allRelics[i].rarity == Rarity.Common)
+            if (allRelics[i].rarity == relicRarity)
             {
-                commonRelics.Add(allRelics[i]);
+                needeRarityRelics.Add(allRelics[i]);
             }
         }
 
         do
         {
-            int index = Random.Range(0, commonRelics.Count);
-            _drawnRelic = commonRelics[index];
-        } while (!RelicChecker(_drawnRelic));
-
-        return _drawnRelic;
-    }
-
-    public RelicData RollRareRelic()
-    {
-        List<RelicData> rareRelics = new List<RelicData>();
-        for (int i = 0; i < allRelics.Count; i++)
-        {
-            if (allRelics[i].rarity == Rarity.Rare)
-            {
-                rareRelics.Add(allRelics[i]);
-            }
-        }
-
-        do
-        {
-            int index = Random.Range(0, rareRelics.Count);
-            _drawnRelic = rareRelics[index];
-        } while (!RelicChecker(_drawnRelic));
-
-        return _drawnRelic;
-    }
-
-    public RelicData RollEpicRelic()
-    {
-        List<RelicData> epicRelics = new List<RelicData>();
-        for (int i = 0; i < allRelics.Count; i++)
-        {
-            if (allRelics[i].rarity == Rarity.Epic)
-            {
-                epicRelics.Add(allRelics[i]);
-            }
-        }
-
-        do
-        {
-            int index = Random.Range(0, epicRelics.Count);
-            _drawnRelic = epicRelics[index];
-        } while (!RelicChecker(_drawnRelic));
-
-        return _drawnRelic;
-    }
-
-    public RelicData RollLegendaryRelic()
-    {
-        List<RelicData> legendaryRelics = new List<RelicData>();
-        for (int i = 0; i < allRelics.Count; i++)
-        {
-            if (allRelics[i].rarity == Rarity.Legendary)
-            {
-                legendaryRelics.Add(allRelics[i]);
-            }
-        }
-
-        do
-        {
-            int index = Random.Range(0, legendaryRelics.Count);
-            _drawnRelic = legendaryRelics[index];
+            int index = Random.Range(0, needeRarityRelics.Count);
+            _drawnRelic = needeRarityRelics[index];
         } while (!RelicChecker(_drawnRelic));
 
         return _drawnRelic;
