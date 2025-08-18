@@ -40,35 +40,38 @@ public class ShopSlotUI : MonoBehaviour
         }
         if (PlayerOverlay.instance.gold >= _currentPrice)
         {
-            if (_currentItem is RelicData relic)
+            switch (_currentItem)
             {
-                PlayerOverlay.instance.SpendGold(_currentPrice);
-                RelicEventsSystem.RelicAcquired(relic);
+                case RelicData relic:
+                    PlayerOverlay.instance.SpendGold(_currentPrice);
+                    RelicEventsSystem.RelicAcquired(relic);
+                    break;
 
-            }
-            else if (_currentItem is ConsumablesData consumable)
-            {
-                if(ConsumablesAndRelicMenager.instance.SlotChecker())
-                {
+                case ConsumablesData consumable when ConsumablesAndRelicMenager.instance.SlotChecker():
                     ConsumablesAndRelicMenager.instance.AddCard(consumable);
                     PlayerOverlay.instance.SpendGold(_currentPrice);
-                }
+                    break;
+
+                case CardPack cardPack:
+                    PlayerOverlay.instance.SpendGold(_currentPrice);
+                    cardPack.OpePack();
+                    break;
+
+                case VaseRelicUpgrade vase:
+                    PlayerOverlay.instance.SpendGold(_currentPrice);
+                    vase.GotVase();
+                    break;
+
+                case PotionData potion:
+                    PlayerOverlay.instance.SpendGold(_currentPrice);
+                    BuffsAndDebuffsManager.instance.ApplyBuff(potion);
+                    break;
+
+                default:
+                    Debug.LogWarning("Nieznany typ itemu: " + _currentItem);
+                    break;
             }
-            else if (_currentItem is CardPack cardPack)
-            {
-                PlayerOverlay.instance.SpendGold(_currentPrice);
-                cardPack.OpePack();
-            }
-            else if (_currentItem is VaseRelicUpgrade vase)
-            {
-                PlayerOverlay.instance.SpendGold(_currentPrice);
-                vase.GotVase();
-            }
-            else if (_currentItem is PotionData potion)
-            {
-                PlayerOverlay.instance.SpendGold(_currentPrice);
-                BuffsAndDebuffsManager.instance.ApplyBuff(potion);
-            }
+
             Debug.Log("Item bought");
             gameObject.SetActive(false);
         }
