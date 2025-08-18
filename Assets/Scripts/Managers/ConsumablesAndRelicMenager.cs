@@ -40,7 +40,7 @@ public class ConsumablesAndRelicMenager : MonoBehaviour
 
     private void Start()
     {
-        _ctx = new RelicContext { player = PlayerOverlay.instance };
+        _ctx = new RelicContext();
     }
 
     private void OnDestroy()

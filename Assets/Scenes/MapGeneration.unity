@@ -701,7 +701,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0ee6308b37cc5f64d9d59107393bab85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mapSaveData: {fileID: 11400000, guid: 00b83cb05e9f11a4faae4573932f27d7, type: 2}
+  mapSaveData: {fileID: 11400000, guid: 48ca783d96a91264e85c9eeddbbb238c, type: 2}
   mapGenerator: {fileID: 594651636}
   mapManager: {fileID: 594651637}
   autoSaveBeforeSceneChange: 1

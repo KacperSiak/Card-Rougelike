@@ -5,6 +5,7 @@ public class HealingManager : MonoBehaviour
 {
     [SerializeField] private Button _healButton;
     [SerializeField] private Button _backButton;
+    [SerializeField] private int healAmount;
 
     private void Awake()
     {
@@ -13,7 +14,6 @@ public class HealingManager : MonoBehaviour
 
     private void Heal()
     {
-        int healAmount = 50;
         PlayerOverlay.instance.AddHealth(healAmount);
         _healButton.onClick.RemoveAllListeners();
     }

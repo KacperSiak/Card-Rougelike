@@ -14,15 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mapSeed: -1999647176
   numberOfLevels: 7
-  playerPosition: {x: 2.7687478, y: -5.6722984}
+  playerPosition: {x: -1.7229538, y: -18.39199}
   hasPlayerPosition: 1
   maxMapTime: 60.7248
-  currentMapTime: 54.7248
+  currentMapTime: 0
   minNodesPerLevel: 2
   maxNodesPerLevel: 3
   horizontalSpacing: 3
   verticalSpacing: 3
   horizontalRandomRange: 0.5
   verticalRandomRange: 0.5
-  saveDate: 2025-08-12 13:45:47
+  saveDate: 2025-08-18 10:15:35
   isValid: 1
