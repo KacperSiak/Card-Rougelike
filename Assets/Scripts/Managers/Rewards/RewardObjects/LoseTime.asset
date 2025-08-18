@@ -12,8 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d10987bfe49cf245b0aaa2a899a7ae7, type: 3}
   m_Name: LoseTime
   m_EditorClassIdentifier: 
-  <rewardName>k__BackingField: 
-  rewardEffect: []
+  <rewardName>k__BackingField: LoseTime
+  rewardEffect:
+  - rid: 2307447610706755729
   references:
     version: 2
-    RefIds: []
+    RefIds:
+    - rid: 2307447610706755729
+      type: {class: LoseTime, ns: , asm: Assembly-CSharp}
+      data:
+        timeToLose: 20
