@@ -346,10 +346,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3806b4cbec7871148b2ec959c9c6c4cc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  positiveOucomes: []
-  negativeOutcomes: []
-  RollButton: {fileID: 0}
-  ReturnButton: {fileID: 0}
+  rewards:
+  - reward: {fileID: 11400000, guid: e5fd4fe4c9fcfe4488161acaf52336f7, type: 2}
+    weight: 0
+  RollButton: {fileID: 1817448829}
+  ReturnButton: {fileID: 2009401747}
+  jokeIcon: {fileID: 0}
+  joketext: {fileID: 0}
 --- !u!4 &1007430809
 Transform:
   m_ObjectHideFlags: 0

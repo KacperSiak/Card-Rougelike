@@ -63,10 +63,12 @@ public class GamblingManager : MonoBehaviour
     {
         if (joke.jokeIcon != null)
         {
+            jokeIcon.gameObject.SetActive(true);
             jokeIcon.sprite = joke.jokeIcon;
         }
         else
         {
+            jokeIcon.gameObject.SetActive(true);
             joketext.text = joke.joke;
         }
     }
