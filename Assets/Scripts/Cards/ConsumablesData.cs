@@ -11,13 +11,13 @@ public enum CardRarity
 [CreateAssetMenu(fileName = "ConsumablesData", menuName = "Shop/Consumable")]
 public class ConsumablesData : ShopItem
 {
-    public string cardID;
-    public string cardName;
-    [TextArea] public string cardDescription;
-    public Sprite icon;
-    public CardRarity rarity;
-    public int buyPrice;
-    public int sellPrice;
+    [field: SerializeField] public string cardID { get; private set; }
+    [field: SerializeField] public string cardName { get; private set; }
+    [field: SerializeField] [TextArea] public string cardDescription { get; private set; }
+    [field: SerializeField] public Sprite icon { get; private set; }
+    [field: SerializeField] public CardRarity rarity { get; private set; }
+    [field: SerializeField] public int buyPrice { get; private set; }
+    [field: SerializeField] public int sellPrice { get; private set; }
     [SerializeReference] public List<CardEffect> cardEffects;
 }
 
