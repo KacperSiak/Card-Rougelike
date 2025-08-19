@@ -1334,6 +1334,7 @@ GameObject:
   - component: {fileID: 1896323852}
   - component: {fileID: 1896323851}
   - component: {fileID: 1896323853}
+  - component: {fileID: 1896323854}
   m_Layer: 0
   m_Name: DialogueManager
   m_TagString: Untagged
@@ -1354,13 +1355,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dialogueForTesting: {fileID: 4900000, guid: ab6e4505f4bff04499e67d9f36be46d6, type: 3}
-  dialoguePanel: {fileID: 693296680}
-  dialogueText: {fileID: 1150955118}
-  speakerName: {fileID: 1907820460}
-  speakerImage: {fileID: 692304538}
+  _dialoguePanel: {fileID: 693296680}
+  _dialogueText: {fileID: 1150955118}
+  _speakerName: {fileID: 1907820460}
+  _speakerImage: {fileID: 692304538}
   isDialoguePlaying: 0
   isDialoguePaused: 0
-  textDelay: 0.03
+  _textDelay: 0.03
 --- !u!4 &1896323852
 Transform:
   m_ObjectHideFlags: 0
@@ -1389,6 +1390,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inkFile: {fileID: 4900000, guid: f64a28a6392ad414d8ddf495e3aa77d5, type: 3}
+  defeatedBy: Athena
+--- !u!114 &1896323854
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1896323850}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ff209ab9480be844941254346060dc3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _teasePanel: {fileID: 2112347904}
+  _teaseText: {fileID: 1528731248}
+  _teaseLines:
+  - Line 1
+  - Line 2
+  - Line 3
 --- !u!1 &1907820458
 GameObject:
   m_ObjectHideFlags: 0

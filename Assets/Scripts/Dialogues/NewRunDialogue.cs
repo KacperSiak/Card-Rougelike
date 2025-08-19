@@ -12,6 +12,8 @@ public class NewRunDialogue : MonoBehaviour
 
     private Dictionary<string, int> countOfDefeats;
 
+    [SerializeField] string defeatedBy;
+
     private void Awake()
     {
         if(instance == null)
@@ -39,6 +41,8 @@ public class NewRunDialogue : MonoBehaviour
     // this is function to be called when dialogue on new run has to show up
     public void DialogueByDefeat(string defeatedBy)
     {
+        if (dialogueManager.isDialoguePlaying) return;
+
         int whichTimeDefeated = countOfDefeats[defeatedBy];
         whichTimeDefeated++;
         countOfDefeats[defeatedBy] = whichTimeDefeated;
@@ -52,7 +56,7 @@ public class NewRunDialogue : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Tab))
         {
-            DialogueByDefeat("Minotaur");
+            DialogueByDefeat(defeatedBy);
         }
     }
 }
