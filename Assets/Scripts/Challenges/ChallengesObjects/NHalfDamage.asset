@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c47cce8b929c374181fa743286205e0, type: 3}
+  m_Name: NHalfDamage
+  m_EditorClassIdentifier: 
+  challengeName: HalfDamage
+  challengeDescription: Deal at least 50% damage to the enemy's total health.
+  difficulty: 1
+  challenge:
+  - rid: 2307447497862676579
+  references:
+    version: 2
+    RefIds:
+    - rid: 2307447497862676579
+      type: {class: HalfEnemyHP, ns: , asm: Assembly-CSharp}
+      data: 

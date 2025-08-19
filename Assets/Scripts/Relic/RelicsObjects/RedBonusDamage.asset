@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ac408ffee77df04da26ff85eae270b0, type: 3}
+  m_Name: RedBonusDamage
+  m_EditorClassIdentifier: 
+  relicID: RedBonusDamage
+  relicName: Red Riptide
+  description: Deal +1 additional damage for every played red card
+  icon: {fileID: 0}
+  rarity: 3
+  buyPrice: 0
+  sellPrice: 250
+  relicEffets:
+  - rid: 5888606579394871298
+  references:
+    version: 2
+    RefIds:
+    - rid: 5888606579394871298
+      type: {class: RedBonusDamage, ns: , asm: Assembly-CSharp}
+      data: 
