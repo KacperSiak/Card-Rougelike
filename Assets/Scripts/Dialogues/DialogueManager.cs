@@ -9,8 +9,7 @@ public class DialogueManager : MonoBehaviour
 {
     public static DialogueManager instance;
     private EnemyTease _enemyTease;
-
-    public TextAsset dialogueForTesting;
+    private NewRunDialogue _newRunDialogue;
 
     [Header("Dialogue Panel Components")]
     [SerializeField] private GameObject _dialoguePanel;
@@ -25,14 +24,14 @@ public class DialogueManager : MonoBehaviour
     public bool isDialoguePaused;  // true when some event started and dialogue has to pause
     private bool _isTextGenerating;
 
-    [SerializeField]private float _textDelay = .003f;
+    [SerializeField] private float _textDelay = .003f;
 
     private void Awake()
     {
         if (instance != null)
             Debug.LogWarning("Found more than one Dialogue Manager in the scene!");
-
-        instance = this;
+        else
+            instance = this;
     }
 
     public static DialogueManager GetInstance() => instance;
@@ -40,6 +39,7 @@ public class DialogueManager : MonoBehaviour
     private void Start()
     {
         _enemyTease = GetComponent<EnemyTease>();
+        _newRunDialogue = GetComponent<NewRunDialogue>();
 
         isDialoguePaused = false;
 
@@ -49,12 +49,6 @@ public class DialogueManager : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Backspace))
-            EnterDialogueMode(dialogueForTesting);
-
-        if (Input.GetKeyDown(KeyCode.Backslash))
-            ShowEnemyTease();
-
         if (!isDialoguePlaying) return;
 
         if (Input.GetKeyDown(KeyCode.Space))
@@ -63,7 +57,7 @@ public class DialogueManager : MonoBehaviour
         }
     }
 
-    void InteractionWithDialogueBox()
+    public void InteractionWithDialogueBox()
     {
         if (_isTextGenerating)
             SkipDialogueGeneration();
@@ -71,9 +65,14 @@ public class DialogueManager : MonoBehaviour
             ContinueStory();
     }
 
+    public void DialogueByDefeat(string defeatedBy)=>
+        _newRunDialogue.DialogueByDefeat(defeatedBy);
+    
+
+    #region Enter dialogue methods
+    // Start dialogue from file
     public void EnterDialogueMode(TextAsset inkJSON)
     {
-        Debug.Log("Entering Dialogue Mode");
         _currentStory = new Story(inkJSON.text);
         isDialoguePlaying = true;
         _dialoguePanel.SetActive(true);
@@ -81,9 +80,21 @@ public class DialogueManager : MonoBehaviour
         ContinueStory();
     }
 
+    // Start dialogue from path
+    public void EnterDialogueMode(string path)
+    {
+        TextAsset inkJSON = Resources.Load<TextAsset>(path);
+
+        _currentStory = new Story(inkJSON.text);
+        isDialoguePlaying = true;
+        _dialoguePanel.SetActive(true);
+
+        ContinueStory();
+    }
+
+    // Start dialogue from file, at certain knot
     public void EnterDialogueMode(TextAsset inkJSON, string knotName)
     {
-        Debug.Log("Entering Dialogue Mode");
         _currentStory = new Story(inkJSON.text);
         isDialoguePlaying = true;
         _currentStory.ChoosePathString(knotName);
@@ -92,7 +103,21 @@ public class DialogueManager : MonoBehaviour
         ContinueStory();
     }
 
-    public void ExitDialogueMode()
+    // Start dialogue from path, at certain knot
+    public void EnterDialogueMode(string path, string knotName)
+    {
+        TextAsset inkJSON = Resources.Load<TextAsset>(path);
+
+        _currentStory = new Story(inkJSON.text);
+        isDialoguePlaying = true;
+        _currentStory.ChoosePathString(knotName);
+        _dialoguePanel.SetActive(true);
+
+        ContinueStory();
+    }
+    #endregion
+
+    private void ExitDialogueMode()
     {
         _dialoguePanel.SetActive(false);
         isDialoguePlaying = false;
@@ -101,7 +126,7 @@ public class DialogueManager : MonoBehaviour
         _currentStory = null;
     }
 
-    public void ContinueStory()
+    private void ContinueStory()
     {
         if (_currentStory.canContinue)
         {
@@ -119,10 +144,8 @@ public class DialogueManager : MonoBehaviour
 
     private void HandleTags(List<string> currentTags)
     {
-        // loop through each tag and handle it accordingly
         foreach (string tag in currentTags)
         {
-            // parse the tag
             string[] splitTag = tag.Split(':');
             if (splitTag.Length != 2)
             {

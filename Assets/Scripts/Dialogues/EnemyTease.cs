@@ -5,6 +5,10 @@ using UnityEngine;
 
 public class EnemyTease : MonoBehaviour
 {
+    /// <summary>
+    /// Whole script needs refactoring
+    /// </summary>
+
     [SerializeField] private GameObject _teasePanel;
     [SerializeField] private TextMeshProUGUI _teaseText;
     [SerializeField] private string[] _teaseLines;

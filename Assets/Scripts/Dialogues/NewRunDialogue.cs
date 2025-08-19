@@ -51,12 +51,4 @@ public class NewRunDialogue : MonoBehaviour
 
         dialogueManager.EnterDialogueMode(inkFile, $"{defeatedBy}.died{whichTimeDefeated}");
     }
-
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Tab))
-        {
-            DialogueByDefeat(defeatedBy);
-        }
-    }
 }
