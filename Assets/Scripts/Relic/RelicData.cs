@@ -14,14 +14,14 @@ public enum Rarity
 [CreateAssetMenu(fileName = "RelicData", menuName = "Shop/Relic")]
 public class RelicData : ShopItem
 {
-    public string relicID;
-    public string relicName;
-    [TextArea] public string description;
-    public Sprite icon;
-    public Rarity rarity;
-    public int buyPrice;
-    public int sellPrice;
-    public bool Upgradeable;
+    [field: SerializeField] public string relicID { get; private set; } 
+    [field: SerializeField] public string relicName { get; private set; }
+    [field: SerializeField] [TextArea] public string description { get; private set; }
+    [field: SerializeField] public Sprite icon { get; private set; }
+    [field: SerializeField] public Rarity rarity { get; private set; }
+    [field: SerializeField] public int buyPrice { get; private set; }
+    [field: SerializeField] public int sellPrice { get; private set; }
+    [field: SerializeField] public bool Upgradeable { get; private set; }
     [SerializeReference] public List<RelicEffects> relicEffets;
 }
 

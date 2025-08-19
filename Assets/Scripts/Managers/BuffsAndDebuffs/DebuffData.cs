@@ -5,10 +5,10 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "DebuffData", menuName = "Debuff/DebuffData")]
 public class DebuffData : ScriptableObject
 {
-    public string debuffName;
-    [TextArea] public string debuffDesc;
-    public Sprite debuffIcon;
-    public int debuffTurns;
+    [field: SerializeField] public string debuffName { get; private set; }
+    [field: SerializeField] [TextArea] public string debuffDesc { get; private set; }
+    [field: SerializeField] public Sprite debuffIcon { get; private set; }
+    [field: SerializeField] public int debuffTurns { get; private set; }
     [SerializeReference] public List<DebuffEffects> debuffs;
 }
 
