@@ -16,7 +16,7 @@ public class GamblingManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI joketext;
     public static GamblingManager instance;
 
-    
+    public float modifier;
 
     private void Awake()
     {
@@ -35,19 +35,24 @@ public class GamblingManager : MonoBehaviour
 
     private void Roll()
     {
-        int total = rewards.Sum(r => r.weight);
-        int roll = Random.Range(0, total);
-        int acc = 0;
+        float total = rewards.Sum(r => 
+            r.type == RewardType.Positive
+            ? r.weight * modifier
+            : r.weight
+         );
+        float roll = Random.Range(0, total);
+        float acc = 0;
         foreach (var r in rewards)
         {
-            acc += r.weight;
-            if (roll<acc)
+            if (r.type == RewardType.Positive) acc += r.weight * modifier;
+            else acc += r.weight;
+            if (roll < acc)
             {
                 ApplyReward(r.reward);
                 break;
             }
         }
-
+        modifier = 1;
     }
 
     private void ApplyReward(RewardsData reward)
@@ -72,4 +77,9 @@ public class GamblingManager : MonoBehaviour
             joketext.text = joke.joke;
         }
     }
+
+    public void Modify(float newModifier)
+    {
+        modifier = newModifier;
+    }    
 }
