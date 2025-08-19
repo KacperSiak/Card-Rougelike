@@ -6,6 +6,6 @@ public class AddTime : Rewards
     private float time;
     public override void AddReward(RewardContext ctx)
     {
-        ctx.mapManager.ModifieTime(time, true);
+        ctx.mapManager.ModifyTime(time, true);
     }
 }
