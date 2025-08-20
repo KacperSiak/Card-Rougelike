@@ -12,10 +12,10 @@ public enum Difficulty
 [CreateAssetMenu(fileName = "ChallengesData", menuName = "Challenge/ChallengesData")]
 public class ChallengesData : ScriptableObject
 {
-    public string challengeName;
-    [TextArea] public string challengeDescription;
-    public Difficulty difficulty;
-    public Sprite challIcon;
+    [field: SerializeField] public string challengeName { get; private set; }
+    [field: SerializeField] [TextArea] public string challengeDescription { get; private set; }
+    [field: SerializeField] public Difficulty difficulty { get; private set; }
+    [field: SerializeField] public Sprite challIcon { get; private set; }
     [SerializeReference] public List<Challenges> challenge;
 }
 

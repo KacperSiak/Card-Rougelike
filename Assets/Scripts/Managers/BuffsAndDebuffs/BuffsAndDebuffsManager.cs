@@ -26,10 +26,7 @@ public class BuffsAndDebuffsManager : MonoBehaviour
 
     public void ApplyBuff(PotionData potion)
     {
-        var ctx = new PotionContext
-        {
-            player = PlayerOverlay.instance
-        };
+        var ctx = new PotionContext();
         foreach (var effect in potion.potionEffects)
         {
             effect.Register(ctx, potion.fightsLeft);
@@ -41,10 +38,7 @@ public class BuffsAndDebuffsManager : MonoBehaviour
 
     public void ApplyDebuff(DebuffData debuff)
     {
-        var ctx = new DebuffContext
-        {
-            player = PlayerOverlay.instance
-        };
+        var ctx = new DebuffContext();
         foreach (var effect in debuff.debuffs)
         {
             effect.Register(ctx, debuff.debuffTurns);
