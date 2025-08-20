@@ -681,6 +681,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1312256039
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1312256040}
+  m_Layer: 0
+  m_Name: GameSaveManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1312256040
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1312256039}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 21.402246, y: -34.142883, z: 9.557444}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1334777414
 GameObject:
   m_ObjectHideFlags: 0
@@ -692,7 +723,7 @@ GameObject:
   - component: {fileID: 1334777416}
   - component: {fileID: 1334777415}
   m_Layer: 0
-  m_Name: GameMenager
+  m_Name: GameManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -714,6 +745,8 @@ MonoBehaviour:
   loadGameButton: {fileID: 988998674}
   optionButton: {fileID: 1550172437}
   exitButton: {fileID: 774896739}
+  gameSceneName: MapGeneration
+  defaultSaveTemplate: {fileID: 11400000, guid: 48ca783d96a91264e85c9eeddbbb238c, type: 2}
 --- !u!4 &1334777416
 Transform:
   m_ObjectHideFlags: 0
@@ -1646,3 +1679,4 @@ SceneRoots:
   - {fileID: 1246847795}
   - {fileID: 1293283622}
   - {fileID: 1334777416}
+  - {fileID: 1312256040}

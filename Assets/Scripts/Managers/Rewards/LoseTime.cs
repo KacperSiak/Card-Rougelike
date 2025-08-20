@@ -7,6 +7,6 @@ public class LoseTime : Rewards
 
     public override void AddReward(RewardContext ctx)
     {
-        ctx.mapManager.ModifieTime(timeToLose, false);
+        ctx.mapManager.ModifyTime(timeToLose, false);
     }
 }
