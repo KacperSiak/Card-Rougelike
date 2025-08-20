@@ -300,9 +300,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 394158869}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9278dc6bd5759ef44b9c12747465b390, type: 3}
+  m_Script: {fileID: 11500000, guid: 93d33c7584a57d946871aba2c2211ec4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  tooltipText: {fileID: 338963520}
+  offset: {x: 20, y: 20}
+  showDelay: 0.5
 --- !u!1 &418985535
 GameObject:
   m_ObjectHideFlags: 0
@@ -654,7 +657,7 @@ MonoBehaviour:
   playerMarkerPrefab: {fileID: 2953499796673057148, guid: 3a5a5f682334fbd4283dcb16d646bf80, type: 3}
   currentPlayerMarker: {fileID: 0}
   bossPrefab: {fileID: 2933860668956614407, guid: dc8b3ac756e3dcd4eb46b6ad12fb2515, type: 3}
-  bossNodeYRotation: 0
+  bossNodeYRotation: 270
   bossYOffset: 0.1
   numberOfLevels: 7
   minNodesPerLevel: 2
@@ -1265,12 +1268,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e1f4ef710b2792428c0a0efe584d028, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  showDebugRays: 1
-  logRaycastHits: 1
-  debugRaycastLayer:
-    m_Bits: 64
-  debugCamera: {fileID: 0}
-  lastHoveredObject: {fileID: 0}
 --- !u!4 &1681245144
 Transform:
   m_ObjectHideFlags: 0
