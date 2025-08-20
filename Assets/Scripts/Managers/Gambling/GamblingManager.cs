@@ -22,18 +22,7 @@ public class GamblingManager : MonoBehaviour
     {
         instance = this;
     }
-
-    private void OnEnable()
-    {
-        RollButton.onClick.AddListener(Roll);
-    }
-
-    private void OnDisable()
-    {
-        RollButton.onClick.RemoveAllListeners();
-    }
-
-    private void Roll()
+    public void Roll()
     {
         float total = rewards.Sum(r => 
             r.type == RewardType.Positive
