@@ -11,6 +11,7 @@ namespace MapSystem
         Shop,
         Heal,
         Gambling,
+        Challenge,
         Boss
     }
 }

@@ -303,9 +303,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93d33c7584a57d946871aba2c2211ec4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tooltipText: {fileID: 338963520}
-  offset: {x: 20, y: 20}
-  showDelay: 0.5
 --- !u!1 &418985535
 GameObject:
   m_ObjectHideFlags: 0
@@ -598,7 +595,7 @@ Transform:
   m_GameObject: {fileID: 594651634}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 5, y: 0, z: 3}
+  m_LocalPosition: {x: 5, y: 0, z: 3.44}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -643,14 +640,28 @@ MonoBehaviour:
     maxCount: 2
     prefab: {fileID: 8174134825137076215, guid: 78ea7ab5ff7d80e4a91f1b760d2c1274, type: 3}
     minLevel: 3
-    yRotation: 0
+    yRotation: 270
     yOffset: 0.1
   - type: 5
     minCount: 1
     maxCount: 1
     prefab: {fileID: 326543052393104125, guid: 45e6ba8307dc33245b20e1f1262a9850, type: 3}
     minLevel: 2
-    yRotation: 0
+    yRotation: 270
+    yOffset: 0.1
+  - type: 7
+    minCount: 1
+    maxCount: 1
+    prefab: {fileID: 127485283810057978, guid: 53bc51de7fb532846bb8307f964c7ae0, type: 3}
+    minLevel: 2
+    yRotation: 270
+    yOffset: 0.1
+  - type: 6
+    minCount: 1
+    maxCount: 1
+    prefab: {fileID: 735902577752656663, guid: 8340656962c78ce4cba06bc561791b9e, type: 3}
+    minLevel: 2
+    yRotation: 270
     yOffset: 0.1
   startNodePrefab: {fileID: 6232041481457399150, guid: 54149da3998ed4b4da4129eeb4a5e95f, type: 3}
   startNodeYRotation: 0
@@ -659,6 +670,7 @@ MonoBehaviour:
   bossPrefab: {fileID: 2933860668956614407, guid: dc8b3ac756e3dcd4eb46b6ad12fb2515, type: 3}
   bossNodeYRotation: 270
   bossYOffset: 0.1
+  bossDistanceMultiplier: 1.25
   numberOfLevels: 7
   minNodesPerLevel: 2
   maxNodesPerLevel: 3
@@ -1022,15 +1034,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: aafb85fc912c7ad448f58fa7e3899b7a, type: 3}
       propertyPath: m_LocalScale.x
-      value: 28.100422
+      value: 29.589743
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: aafb85fc912c7ad448f58fa7e3899b7a, type: 3}
       propertyPath: m_LocalScale.y
-      value: 28.12081
+      value: 29.611212
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: aafb85fc912c7ad448f58fa7e3899b7a, type: 3}
       propertyPath: m_LocalScale.z
-      value: 28.6713
+      value: 30.19088
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: aafb85fc912c7ad448f58fa7e3899b7a, type: 3}
       propertyPath: m_LocalPosition.x
