@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4dce2b1003ba8b94499851aac558fec9, type: 3}
   m_Name: CardBuff
   m_EditorClassIdentifier: 
-  cardID: CardBuff
-  cardName: CardBuff
-  cardDescription: Boost one card of your choice. It deals double damage
-  icon: {fileID: -1463789882, guid: 28a5df7ffde1bb5408169991d42c3ab0, type: 3}
-  rarity: 1
-  buyPrice: 80
-  sellPrice: 40
+  <cardID>k__BackingField: 
+  <cardName>k__BackingField: 
+  <cardDescription>k__BackingField: 
+  <icon>k__BackingField: {fileID: 721527010, guid: 28a5df7ffde1bb5408169991d42c3ab0, type: 3}
+  <rarity>k__BackingField: 0
+  <buyPrice>k__BackingField: 0
+  <sellPrice>k__BackingField: 0
   cardEffects:
   - rid: 5888606709509259327
   references:

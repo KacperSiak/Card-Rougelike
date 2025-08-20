@@ -12,13 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ac408ffee77df04da26ff85eae270b0, type: 3}
   m_Name: AddDiscard
   m_EditorClassIdentifier: 
-  relicID: AddDiscard
-  relicName: Second Chance
-  description: Get +1 discard each fight
-  icon: {fileID: 21300000, guid: 9c259d6389c91c4458e6129b81699224, type: 3}
-  rarity: 0
-  buyPrice: 150
-  sellPrice: 100
+  <relicID>k__BackingField: 
+  <relicName>k__BackingField: AddDiscard
+  description: 
+  <icon>k__BackingField: {fileID: 21300000, guid: 9c259d6389c91c4458e6129b81699224, type: 3}
+  <rarity>k__BackingField: 0
+  <buyPrice>k__BackingField: 0
+  <sellPrice>k__BackingField: 0
+  <Upgradeable>k__BackingField: 0
   relicEffets:
   - rid: 5888606709509259328
   references:
