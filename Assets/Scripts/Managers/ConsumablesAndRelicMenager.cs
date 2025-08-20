@@ -40,7 +40,7 @@ public class ConsumablesAndRelicMenager : MonoBehaviour
 
     private void Start()
     {
-        _ctx = new RelicContext { player = PlayerOverlay.instance };
+        _ctx = new RelicContext();
     }
 
     private void OnDestroy()
@@ -91,41 +91,21 @@ public class ConsumablesAndRelicMenager : MonoBehaviour
         return _drawnRelic;
     }
 
-    public RelicData RollEpicRelic()
+    public RelicData RollRarityRelic(Rarity relicRarity)
     {
-        List<RelicData> epicRelics = new List<RelicData>();
+        List<RelicData> needeRarityRelics = new List<RelicData>();
         for (int i = 0; i < allRelics.Count; i++)
         {
-            if (allRelics[i].rarity == Rarity.Epic)
+            if (allRelics[i].rarity == relicRarity)
             {
-                epicRelics.Add(allRelics[i]);
+                needeRarityRelics.Add(allRelics[i]);
             }
         }
 
         do
         {
-            int index = Random.Range(0, epicRelics.Count);
-            _drawnRelic = epicRelics[index];
-        } while (!RelicChecker(_drawnRelic));
-
-        return _drawnRelic;
-    }
-
-    public RelicData RollLegendaryRelic()
-    {
-        List<RelicData> legendaryRelics = new List<RelicData>();
-        for (int i = 0; i < allRelics.Count; i++)
-        {
-            if (allRelics[i].rarity == Rarity.Legendary)
-            {
-                legendaryRelics.Add(allRelics[i]);
-            }
-        }
-
-        do
-        {
-            int index = Random.Range(0, legendaryRelics.Count);
-            _drawnRelic = legendaryRelics[index];
+            int index = Random.Range(0, needeRarityRelics.Count);
+            _drawnRelic = needeRarityRelics[index];
         } while (!RelicChecker(_drawnRelic));
 
         return _drawnRelic;

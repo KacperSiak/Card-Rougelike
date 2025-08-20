@@ -154,9 +154,14 @@ public class MapManager : MonoBehaviour
         _modifier = 1;
     }
 
-    public void ModifieTime(float time, bool add)
+    public void ModifyTime(float time, bool add)
     {
         if (add) currentMapTime += time;
         else currentMapTime -= time;
+    }
+
+    public void AutoTeleport()
+    {
+        currentMapTime = 0;
     }
 }

@@ -21,12 +21,12 @@ public class RelicEffectsDrawer : PropertyDrawer
         var typeName = property.managedReferenceFullTypename;
         var displayName = GetShortTypeName(typeName);
 
-        if (EditorGUI.DropdownButton(typeRect, new GUIContent(displayName ?? "Sellect Card Effect Type"), FocusType.Keyboard))
+        if (EditorGUI.DropdownButton(typeRect, new GUIContent(displayName ?? "Sellect Relic Effect Type"), FocusType.Keyboard))
         {
             var menu = new GenericMenu();
             if (typeMap == null || typeMap.Count == 0)
             {
-                menu.AddDisabledItem(new GUIContent("No Card Effect Available"));
+                menu.AddDisabledItem(new GUIContent("No Relic Effect Available"));
                 menu.ShowAsContext();
                 return;
             }
