@@ -12,13 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ac408ffee77df04da26ff85eae270b0, type: 3}
   m_Name: EquivalentRedExchange
   m_EditorClassIdentifier: 
-  relicID: EquivalentRedExchange
-  relicName: EquivalentExchange
+  <relicID>k__BackingField: DiamondsEqualsHearths
+  <relicName>k__BackingField: Equivalent exchange
   description: Diamonds and hearths count as same suit
-  icon: {fileID: 0}
-  rarity: 1
-  buyPrice: 150
-  sellPrice: 100
+  <icon>k__BackingField: {fileID: 0}
+  <rarity>k__BackingField: 1
+  <buyPrice>k__BackingField: 0
+  <sellPrice>k__BackingField: 0
+  <Upgradeable>k__BackingField: 0
   relicEffets:
   - rid: 5888606574037696641
   references:

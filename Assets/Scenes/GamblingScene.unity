@@ -1681,7 +1681,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _startPos: {x: 0.3649996, y: 25.974, z: -7.26}
   _endPos: {x: 0.094, y: 27.27, z: -20.25}
-  _duration: 2
+  _duration: 1.5
 --- !u!1 &919132149378919937
 GameObject:
   m_ObjectHideFlags: 0
