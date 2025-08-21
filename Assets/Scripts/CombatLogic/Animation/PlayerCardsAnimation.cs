@@ -27,7 +27,13 @@ public class PlayerCardsAnimation : MonoBehaviour
             return;
         }
 
-        StartCoroutine(IdleAnimation());
+        CheckAnimationConditions();
+    }
+
+    private void CheckAnimationConditions()
+    {
+        if(PlayerCardManager.Instance.CardsInHand.Count != 0)
+            StartCoroutine(IdleAnimation());
     }
 
     private IEnumerator IdleAnimation()
