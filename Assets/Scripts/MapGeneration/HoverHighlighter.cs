@@ -6,20 +6,32 @@ public class HoverHighlighter : MonoBehaviour
     public Color baseColor = Color.white;
     public Color highlightColor = Color.yellow;
     
+    [Header("Icon Animation")]
+    public Transform iconToAnimate;
+    public float liftHeight = 0.5f;
+    public float animationSpeed = 3f;
+    
     [Header("Settings")]
     public LayerMask raycastLayer = -1;
+    public bool disableOnPlayerPosition = true;
     
     private Renderer objectRenderer;
     private Collider objectCollider;
+    private NodeClickHandler nodeClickHandler;
     private bool isHighlighted = false;
     private MaterialPropertyBlock propertyBlock;
     private static readonly int BaseColorProperty = Shader.PropertyToID("_BaseColor");
     private static readonly int ColorProperty = Shader.PropertyToID("_Color");
+    
+    private Vector3 originalIconPosition;
+    private Vector3 targetIconPosition;
+    private bool isAnimating = false;
 
     void Start()
     {
         objectRenderer = GetComponent<Renderer>();
         objectCollider = GetComponent<Collider>(); // do not look for references in runtime
+        nodeClickHandler = GetComponent<NodeClickHandler>();
         
         if (objectRenderer == null)
         {
@@ -34,6 +46,12 @@ public class HoverHighlighter : MonoBehaviour
         }
         
         propertyBlock = new MaterialPropertyBlock();
+        
+        if (iconToAnimate != null)
+        {
+            originalIconPosition = iconToAnimate.localPosition;
+            targetIconPosition = originalIconPosition;
+        }
         
         SetColor(false);
     }
@@ -64,13 +82,15 @@ public class HoverHighlighter : MonoBehaviour
                 }
             }
         }
-        else //SetHighlight(hit.transform == transform);
+        else
         {
             if (isHighlighted)
             {
                 SetHighlight(false);
             }
         }
+        
+        AnimateIcon();
     }
     
     private void SetHighlight(bool highlight)
@@ -79,7 +99,13 @@ public class HoverHighlighter : MonoBehaviour
         
         if (highlight == isHighlighted) return;
         
+        if (disableOnPlayerPosition && IsPlayerOnThisNode())
+        {
+            return;
+        }
+        
         SetColor(highlight);
+        SetIconTarget(highlight);
         
         isHighlighted = highlight;
     }
@@ -115,5 +141,61 @@ public class HoverHighlighter : MonoBehaviour
     public void ForceHighlight(bool highlight)
     {
         SetHighlight(highlight);
+    }
+    
+    [ContextMenu("Check Player Position")]
+    public void CheckPlayerPosition()
+    {
+        bool playerHere = IsPlayerOnThisNode();
+        Debug.Log($"[HoverHighlighter] Player on this node: {playerHere}");
+    }
+    
+    private void SetIconTarget(bool highlight)
+    {
+        if (iconToAnimate == null) return;
+        
+        if (highlight)
+        {
+            targetIconPosition = originalIconPosition + Vector3.up * liftHeight;
+        }
+        else
+        {
+            targetIconPosition = originalIconPosition;
+        }
+        
+        isAnimating = true;
+    }
+    
+    private void AnimateIcon()
+    {
+        if (iconToAnimate == null || !isAnimating) return;
+        
+        iconToAnimate.localPosition = Vector3.Lerp(
+            iconToAnimate.localPosition, 
+            targetIconPosition, 
+            animationSpeed * Time.deltaTime
+        );
+        
+        if (Vector3.Distance(iconToAnimate.localPosition, targetIconPosition) < 0.01f)
+        {
+            iconToAnimate.localPosition = targetIconPosition;
+            isAnimating = false;
+        }
+    }
+    
+    private bool IsPlayerOnThisNode()
+    {
+        if (nodeClickHandler == null) return false;
+        
+        MapManager mapManager = MapManager.instance;
+        if (mapManager == null) return false;
+        
+        GameObject playerMarker = mapManager.mapGenerator?.currentPlayerMarker;
+        if (playerMarker == null) return false;
+        
+        float distanceThreshold = 1f;
+        float distance = Vector3.Distance(transform.position, playerMarker.transform.position);
+        
+        return distance < distanceThreshold;
     }
 }
