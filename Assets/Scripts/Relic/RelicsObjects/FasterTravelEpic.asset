@@ -12,13 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ac408ffee77df04da26ff85eae270b0, type: 3}
   m_Name: FasterTravelEpic
   m_EditorClassIdentifier: 
-  relicID: FasterTravelEpic
-  relicName: Hermes Sandals
+  <relicID>k__BackingField: QuickTravelEpic
+  <relicName>k__BackingField: Hermes Sandals
   description: Travel costs 55% less time
-  icon: {fileID: 0}
-  rarity: 2
-  buyPrice: 0
-  sellPrice: 150
+  <icon>k__BackingField: {fileID: 0}
+  <rarity>k__BackingField: 2
+  <buyPrice>k__BackingField: 0
+  <sellPrice>k__BackingField: 0
+  <Upgradeable>k__BackingField: 0
   relicEffets:
   - rid: 5888606574037696648
   references:
@@ -27,4 +28,4 @@ MonoBehaviour:
     - rid: 5888606574037696648
       type: {class: FasterTravel, ns: , asm: Assembly-CSharp}
       data:
-        _speedModifier: 0.45
+        speedModifier: 0.45
