@@ -427,9 +427,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   allItems:
+  - {fileID: 11400000, guid: acddaf0a3f8824d46a7bbecb9cc7d42f, type: 2}
   - {fileID: 11400000, guid: 4d70fc18e59011e4b89943ed0f2c0e32, type: 2}
-  - {fileID: 11400000, guid: 6729ac2ac14665d4882949b6927db477, type: 2}
-  - {fileID: 11400000, guid: 119a5aa7aad71c44f8108c457743f73b, type: 2}
+  - {fileID: 11400000, guid: 9b1446067e1307847b004453ab43c642, type: 2}
   _slots:
   - {fileID: 508320826}
   - {fileID: 1627660336}
@@ -786,6 +786,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tooltipPanel: {fileID: 1338524144}
   tooltipText: {fileID: 2066783975}
+  panelRect: {fileID: 1338524145}
 --- !u!114 &639151793
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -800,6 +801,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _debuffList: []
   _buffAndDebuffUI: {fileID: 1679897988}
+  _currentDebuffs: []
+  _currentPotionEffects: []
 --- !u!1 &780094081
 GameObject:
   m_ObjectHideFlags: 0

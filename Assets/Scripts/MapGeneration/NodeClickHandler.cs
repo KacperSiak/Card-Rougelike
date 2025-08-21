@@ -176,7 +176,7 @@ public class NodeClickHandler : MonoBehaviour
             var mapSaveManager = FindFirstObjectByType<MapSaveManager>();
             if (mapSaveManager != null)
             {
-                mapSaveManager.SaveBeforeSceneChange();
+                mapSaveManager.SaveCurrentMap();
                 Debug.Log("[NodeClickHandler] Map saved by MapSaveManager");
             }
             

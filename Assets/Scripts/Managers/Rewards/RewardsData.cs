@@ -7,8 +7,15 @@ public struct RewardStruct
 {
     public RewardsData reward;
     public int weight;
+    public RewardType type;
 }
 
+public enum RewardType
+{
+    Positive,
+    Negative,
+    Neutral
+}
 
 
 [CreateAssetMenu(fileName = "RewardsData", menuName = "Scriptable Objects/RewardsData")]
