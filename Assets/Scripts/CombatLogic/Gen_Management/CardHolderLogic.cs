@@ -41,7 +41,7 @@ public class CardHolderLogic : MonoBehaviour
         {
             gameObject.GetComponent<MeshRenderer>().material = _highlightMaterial;
             CamMovementManager.Instance.enabled = false;
-            CamMovementManager.Instance.ChangeCameraPlacement(targetKey: "W");
+            CamMovementManager.Instance.ChangeCameraPlacement(targetKey: "Main");
             _isInspected = true;
             PlayerCardsAnimation.Instance.ActivatePlacementPreviewAnimation();
         }
