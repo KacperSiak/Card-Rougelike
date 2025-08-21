@@ -5,8 +5,10 @@ using UnityEngine.UI;
 public class HorseOpen : MonoBehaviour
 {
     [SerializeField] private Button _openButton;
+    [SerializeField] private ChestOpen _chest;
     private Animator anim;
     private bool _canOpen;
+    private float time = 0.833f;
 
     void Awake()
     {
@@ -17,9 +19,18 @@ public class HorseOpen : MonoBehaviour
 
     private void Open()
     {
-        if (_canOpen) anim.SetTrigger("Open");
-        _canOpen = false;
+        if (_canOpen)
+        {
+            _canOpen = false;
+            anim.SetTrigger("HorseOpen");
+            StartCoroutine(WaitForHorse(time));
+        }
     }
 
+    IEnumerator WaitForHorse(float time)
+    {
+        yield return new WaitForSeconds(time);
+        _chest.ChestOpening();
+    }
   
 }
