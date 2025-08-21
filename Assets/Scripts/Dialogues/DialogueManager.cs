@@ -8,54 +8,47 @@ using UnityEngine.UI;
 public class DialogueManager : MonoBehaviour
 {
     public static DialogueManager instance;
-
-    public TextAsset dialogueForTesting;
+    private EnemyTease _enemyTease;
+    private NewRunDialogue _newRunDialogue;
 
     [Header("Dialogue Panel Components")]
-    [SerializeField] private GameObject dialoguePanel;
-    [SerializeField] private TextMeshProUGUI dialogueText;
-    [SerializeField] private TextMeshProUGUI speakerName;
-    [SerializeField] private Image speakerImage;
+    [SerializeField] private GameObject _dialoguePanel;
+    [SerializeField] private TextMeshProUGUI _dialogueText;
+    [SerializeField] private TextMeshProUGUI _speakerName;
+    [SerializeField] private Image _speakerImage;
 
     private const string SPEAKER_TAG = "speaker", PORTRAIT_TAG = "portrait";
 
-    private Story currentStory;
-    public bool isDialoguePlaying; // true when dialogue is active
+    private Story _currentStory;
+    public bool isDialoguePlaying; 
     public bool isDialoguePaused;  // true when some event started and dialogue has to pause
+    private bool _isTextGenerating;
 
-    [SerializeField]private float textDelay = .03f;
-
-    // Needed for text generation
-    bool isTextGenerating;
-    string lineToGenerate;
+    [SerializeField] private float _textDelay = .003f;
 
     private void Awake()
     {
         if (instance != null)
             Debug.LogWarning("Found more than one Dialogue Manager in the scene!");
-
-        instance = this;
+        else
+            instance = this;
     }
 
     public static DialogueManager GetInstance() => instance;
 
     private void Start()
     {
+        _enemyTease = GetComponent<EnemyTease>();
+        _newRunDialogue = GetComponent<NewRunDialogue>();
+
         isDialoguePaused = false;
 
         isDialoguePlaying = false;
-        dialoguePanel.SetActive(false);
-
-        lineToGenerate = "";
+        _dialoguePanel.SetActive(false);
     }
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Backspace))
-        {
-            EnterDialogueMode(dialogueForTesting);
-        }
-
         if (!isDialoguePlaying) return;
 
         if (Input.GetKeyDown(KeyCode.Space))
@@ -64,54 +57,85 @@ public class DialogueManager : MonoBehaviour
         }
     }
 
-    void InteractionWithDialogueBox()
+    public void InteractionWithDialogueBox()
     {
-        if (isTextGenerating)
+        if (_isTextGenerating)
             SkipDialogueGeneration();
-        else if (!isTextGenerating)
+        else if (!_isTextGenerating)
             ContinueStory();
     }
 
+    public void DialogueByDefeat(string defeatedBy)=>
+        _newRunDialogue.DialogueByDefeat(defeatedBy);
+    
+
+    #region Enter dialogue methods
+    // Start dialogue from file
     public void EnterDialogueMode(TextAsset inkJSON)
     {
-        Debug.Log("Entering Dialogue Mode");
-        currentStory = new Story(inkJSON.text);
+        _currentStory = new Story(inkJSON.text);
         isDialoguePlaying = true;
-        dialoguePanel.SetActive(true);
+        _dialoguePanel.SetActive(true);
 
         ContinueStory();
     }
 
+    // Start dialogue from path
+    public void EnterDialogueMode(string path)
+    {
+        TextAsset inkJSON = Resources.Load<TextAsset>(path);
+
+        _currentStory = new Story(inkJSON.text);
+        isDialoguePlaying = true;
+        _dialoguePanel.SetActive(true);
+
+        ContinueStory();
+    }
+
+    // Start dialogue from file, at certain knot
     public void EnterDialogueMode(TextAsset inkJSON, string knotName)
     {
-        Debug.Log("Entering Dialogue Mode");
-        currentStory = new Story(inkJSON.text);
+        _currentStory = new Story(inkJSON.text);
         isDialoguePlaying = true;
-        currentStory.ChoosePathString(knotName);
-        dialoguePanel.SetActive(true);
+        _currentStory.ChoosePathString(knotName);
+        _dialoguePanel.SetActive(true);
 
         ContinueStory();
     }
 
-    public void ExitDialogueMode()
+    // Start dialogue from path, at certain knot
+    public void EnterDialogueMode(string path, string knotName)
     {
-        dialoguePanel.SetActive(false);
+        TextAsset inkJSON = Resources.Load<TextAsset>(path);
+
+        _currentStory = new Story(inkJSON.text);
+        isDialoguePlaying = true;
+        _currentStory.ChoosePathString(knotName);
+        _dialoguePanel.SetActive(true);
+
+        ContinueStory();
+    }
+    #endregion
+
+    private void ExitDialogueMode()
+    {
+        _dialoguePanel.SetActive(false);
         isDialoguePlaying = false;
         isDialoguePaused = false;
-        dialogueText.text = "";
-        currentStory = null;
+        _dialogueText.text = "";
+        _currentStory = null;
     }
 
-    public void ContinueStory()
+    private void ContinueStory()
     {
-        if (currentStory.canContinue)
+        if (_currentStory.canContinue)
         {
             if (!isDialoguePaused)
             { 
-                lineToGenerate = currentStory.Continue();
-                StartCoroutine("DialogueDisplay");
+                //_lineToGenerate = _currentStory.Continue();
+                StartCoroutine("DialogueDisplay", _currentStory.Continue());
 
-                HandleTags(currentStory.currentTags);
+                HandleTags(_currentStory.currentTags);
             }
         }
         else
@@ -120,10 +144,8 @@ public class DialogueManager : MonoBehaviour
 
     private void HandleTags(List<string> currentTags)
     {
-        // loop through each tag and handle it accordingly
         foreach (string tag in currentTags)
         {
-            // parse the tag
             string[] splitTag = tag.Split(':');
             if (splitTag.Length != 2)
             {
@@ -136,18 +158,18 @@ public class DialogueManager : MonoBehaviour
             switch (tagKey)
             {
                 case SPEAKER_TAG:
-                    speakerName.text = tagValue;
+                    _speakerName.text = tagValue;
                     break;
                 case PORTRAIT_TAG:
                     if (tagValue == "null")
                     {
-                        speakerImage.enabled = false;
+                        _speakerImage.enabled = false;
                         break;
                     }
-                    speakerImage.enabled = true;
+                    _speakerImage.enabled = true;
                     string[] splitPortraitName = tagValue.Split("_");
                     Sprite sprite = Resources.Load<Sprite>($"Dialogue Sprites/{splitPortraitName[0].Trim()}/{splitPortraitName[1].Trim()}");
-                    speakerImage.sprite = sprite;
+                    _speakerImage.sprite = sprite;
                     break;
                 default:
                     Debug.LogWarning("Tag came in but is not currently being handled: " + tag);
@@ -156,38 +178,40 @@ public class DialogueManager : MonoBehaviour
         }
     }
 
-    IEnumerator DialogueDisplay()
+    IEnumerator DialogueDisplay(string line)
     {
-        isTextGenerating = true;
+        _isTextGenerating = true;
 
-        dialogueText.text = lineToGenerate;
-        dialogueText.maxVisibleCharacters = 0;
+        _dialogueText.text = line;
+        _dialogueText.maxVisibleCharacters = 0;
 
-        for (int i = 0; i < dialogueText.text.Length; i++)
+        for (int i = 0; i < _dialogueText.text.Length; i++)
         {
-            dialogueText.maxVisibleCharacters++;
-            yield return new WaitForSeconds(textDelay);
+            _dialogueText.maxVisibleCharacters++;
+            yield return new WaitForSeconds(_textDelay);
         }
 
-        isTextGenerating = false;
+        _isTextGenerating = false;
     }
 
     private void SkipDialogueGeneration()
     {
         StopCoroutine("DialogueDisplay");
-        dialogueText.maxVisibleCharacters = dialogueText.text.Length;
-        isTextGenerating = false;
+        _dialogueText.maxVisibleCharacters = _dialogueText.text.Length;
+        _isTextGenerating = false;
     }
 
     public void FastSkip()     // only for debbuging and testing, skips whole dialogue
     {
-        float ogTextDelay = textDelay;
-        textDelay = 0;
-        while (currentStory.canContinue)
+        float ogTextDelay = _textDelay;
+        _textDelay = 0;
+        while (_currentStory.canContinue)
         {
             ContinueStory();
         }
-        if (!currentStory.canContinue)
-            textDelay = ogTextDelay;
+        if (!_currentStory.canContinue)
+            _textDelay = ogTextDelay;
     }
+
+    public void ShowEnemyTease() => _enemyTease.Tease();
 }
