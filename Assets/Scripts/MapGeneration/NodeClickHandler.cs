@@ -52,12 +52,46 @@ public class NodeClickHandler : MonoBehaviour
         }
     }
 
+    void Update()
+    {
+        // Backup right click detection
+        if (Input.GetMouseButtonDown(1))
+        {
+            // Check if mouse is over this object
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            
+            if (Physics.Raycast(ray, out hit))
+            {
+                if (hit.collider.gameObject == gameObject)
+                {
+                    Debug.Log($"[NodeClickHandler] BACKUP: Right click detected via Update() on {name}!");
+                    ShowNodeInfo();
+                }
+            }
+        }
+    }
+
     private Vector3 mouseDownPosition;
     private float dragThreshold = 10f;
 
     void OnMouseDown()
     {
+        Debug.Log($"[NodeClickHandler] OnMouseDown triggered on {name}");
         mouseDownPosition = Input.mousePosition;
+        
+        // Check which button is pressed
+        if (Input.GetMouseButton(1))
+        {
+            Debug.Log($"[NodeClickHandler] RIGHT CLICK detected on {name}!");
+            ShowNodeInfo();
+            return;
+        }
+        
+        if (Input.GetMouseButton(0))
+        {
+            Debug.Log($"[NodeClickHandler] Left click detected on {name}");
+        }
     }
     
     void OnMouseUp()
@@ -187,5 +221,56 @@ public class NodeClickHandler : MonoBehaviour
     public void TriggerLoadScene()
     {
         LoadScene();
+    }
+    
+    private void ShowNodeInfo()
+    {
+        Debug.Log($"[NodeClickHandler] ShowNodeInfo() called on {nodeType} node: {name}");
+        
+        // Find UI manager and show info
+        NodeInfoUI nodeInfoUI = FindFirstObjectByType<NodeInfoUI>();
+        if (nodeInfoUI != null)
+        {
+            Debug.Log($"[NodeClickHandler] NodeInfoUI found! Showing info...");
+            nodeInfoUI.ShowInfo(GetNodeName(), GetNodeDescription(), transform.position);
+        }
+        else
+        {
+            Debug.LogWarning($"[NodeClickHandler] NodeInfoUI NOT FOUND! Fallback info: {GetNodeName()} - {GetNodeDescription()}");
+        }
+    }
+    
+    private string GetNodeName()
+    {
+        switch (nodeType)
+        {
+            case NodeType.Start: return "Start";
+            case NodeType.Enemy: return "Enemy";
+            case NodeType.Elite: return "Elite Enemy";
+            case NodeType.Shop: return "Shop";
+            case NodeType.Treasure: return "Treasure";
+            case NodeType.Heal: return "Rest Site";
+            case NodeType.Gambling: return "Gambling";
+            case NodeType.Challenge: return "Challenge";
+            case NodeType.Boss: return "Boss";
+            default: return "Unknown";
+        }
+    }
+    
+    private string GetNodeDescription()
+    {
+        switch (nodeType)
+        {
+            case NodeType.Start: return "Your starting point";
+            case NodeType.Enemy: return "Fight enemies";
+            case NodeType.Elite: return "Fight elite enemies for better rewards";
+            case NodeType.Shop: return "Buy items and cards";
+            case NodeType.Treasure: return "Find treasure";
+            case NodeType.Heal: return "Rest and heal";
+            case NodeType.Gambling: return "Take risks for rewards";
+            case NodeType.Challenge: return "Special challenges";
+            case NodeType.Boss: return "Final boss";
+            default: return "Unknown location";
+        }
     }
 }

@@ -1251,6 +1251,8 @@ MonoBehaviour:
   maxBounds: {x: -10, y: -10}
   minZoom: 5
   maxZoom: 60
+  moveSpeed: 5
+  smoothTime: 0.3
 --- !u!1 &1681245142
 GameObject:
   m_ObjectHideFlags: 0

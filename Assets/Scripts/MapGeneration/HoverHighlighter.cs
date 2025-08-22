@@ -13,11 +13,9 @@ public class HoverHighlighter : MonoBehaviour
     
     [Header("Settings")]
     public LayerMask raycastLayer = -1;
-    public bool disableOnPlayerPosition = true;
     
     private Renderer objectRenderer;
     private Collider objectCollider;
-    private NodeClickHandler nodeClickHandler;
     private bool isHighlighted = false;
     private MaterialPropertyBlock propertyBlock;
     private static readonly int BaseColorProperty = Shader.PropertyToID("_BaseColor");
@@ -31,7 +29,6 @@ public class HoverHighlighter : MonoBehaviour
     {
         objectRenderer = GetComponent<Renderer>();
         objectCollider = GetComponent<Collider>(); // do not look for references in runtime
-        nodeClickHandler = GetComponent<NodeClickHandler>();
         
         if (objectRenderer == null)
         {
@@ -99,11 +96,6 @@ public class HoverHighlighter : MonoBehaviour
         
         if (highlight == isHighlighted) return;
         
-        if (disableOnPlayerPosition && IsPlayerOnThisNode())
-        {
-            return;
-        }
-        
         SetColor(highlight);
         SetIconTarget(highlight);
         
@@ -143,13 +135,6 @@ public class HoverHighlighter : MonoBehaviour
         SetHighlight(highlight);
     }
     
-    [ContextMenu("Check Player Position")]
-    public void CheckPlayerPosition()
-    {
-        bool playerHere = IsPlayerOnThisNode();
-        Debug.Log($"[HoverHighlighter] Player on this node: {playerHere}");
-    }
-    
     private void SetIconTarget(bool highlight)
     {
         if (iconToAnimate == null) return;
@@ -181,21 +166,5 @@ public class HoverHighlighter : MonoBehaviour
             iconToAnimate.localPosition = targetIconPosition;
             isAnimating = false;
         }
-    }
-    
-    private bool IsPlayerOnThisNode()
-    {
-        if (nodeClickHandler == null) return false;
-        
-        MapManager mapManager = MapManager.instance;
-        if (mapManager == null) return false;
-        
-        GameObject playerMarker = mapManager.mapGenerator?.currentPlayerMarker;
-        if (playerMarker == null) return false;
-        
-        float distanceThreshold = 1f;
-        float distance = Vector3.Distance(transform.position, playerMarker.transform.position);
-        
-        return distance < distanceThreshold;
     }
 }
