@@ -38,38 +38,16 @@ public class NodeInfoUI : MonoBehaviour
     
     public void ShowInfo(string title, string description, Vector3 worldPos)
     {
-        Debug.Log($"[NodeInfoUI] ShowInfo called - Title: {title}, Description: {description}");
-        
-        if (panel == null)
-        {
-            Debug.LogError("[NodeInfoUI] Panel is NULL!");
-            return;
-        }
+        if (panel == null) return;
         
         if (titleText != null)
-        {
             titleText.text = title;
-            Debug.Log($"[NodeInfoUI] Title text set to: {title}");
-        }
-        else
-        {
-            Debug.LogWarning("[NodeInfoUI] Title text is NULL!");
-        }
             
         if (descriptionText != null)
-        {
             descriptionText.text = description;
-            Debug.Log($"[NodeInfoUI] Description text set to: {description}");
-        }
-        else
-        {
-            Debug.LogWarning("[NodeInfoUI] Description text is NULL!");
-        }
         
         panel.SetActive(true);
         hideTimer = hideAfterSeconds;
-        
-        Debug.Log($"[NodeInfoUI] Panel activated! Hide timer set to {hideAfterSeconds} seconds");
     }
     
     public void HideInfo()

@@ -54,10 +54,8 @@ public class NodeClickHandler : MonoBehaviour
 
     void Update()
     {
-        // Backup right click detection
         if (Input.GetMouseButtonDown(1))
         {
-            // Check if mouse is over this object
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
             
@@ -65,7 +63,6 @@ public class NodeClickHandler : MonoBehaviour
             {
                 if (hit.collider.gameObject == gameObject)
                 {
-                    Debug.Log($"[NodeClickHandler] BACKUP: Right click detected via Update() on {name}!");
                     ShowNodeInfo();
                 }
             }
@@ -77,20 +74,12 @@ public class NodeClickHandler : MonoBehaviour
 
     void OnMouseDown()
     {
-        Debug.Log($"[NodeClickHandler] OnMouseDown triggered on {name}");
         mouseDownPosition = Input.mousePosition;
         
-        // Check which button is pressed
         if (Input.GetMouseButton(1))
         {
-            Debug.Log($"[NodeClickHandler] RIGHT CLICK detected on {name}!");
             ShowNodeInfo();
             return;
-        }
-        
-        if (Input.GetMouseButton(0))
-        {
-            Debug.Log($"[NodeClickHandler] Left click detected on {name}");
         }
     }
     
@@ -225,18 +214,10 @@ public class NodeClickHandler : MonoBehaviour
     
     private void ShowNodeInfo()
     {
-        Debug.Log($"[NodeClickHandler] ShowNodeInfo() called on {nodeType} node: {name}");
-        
-        // Find UI manager and show info
         NodeInfoUI nodeInfoUI = FindFirstObjectByType<NodeInfoUI>();
         if (nodeInfoUI != null)
         {
-            Debug.Log($"[NodeClickHandler] NodeInfoUI found! Showing info...");
             nodeInfoUI.ShowInfo(GetNodeName(), GetNodeDescription(), transform.position);
-        }
-        else
-        {
-            Debug.LogWarning($"[NodeClickHandler] NodeInfoUI NOT FOUND! Fallback info: {GetNodeName()} - {GetNodeDescription()}");
         }
     }
     
