@@ -10,6 +10,7 @@ public class PlayerCardLogic : MonoBehaviour
     private bool _isSelected = false;
 
     public bool IsUsed { get; set; } = false;
+    private bool _isAvailable = false;
 
     public CardsSOTest Card { get; private set; }
 
@@ -40,6 +41,7 @@ public class PlayerCardLogic : MonoBehaviour
     public void SetCardProperties(CardsSOTest card)
     {
         Card = card;
+        _isAvailable = true;
     }
 
     public void SetAnimationPlacement(Vector3 newPosition, Quaternion newRotation)
@@ -56,21 +58,21 @@ public class PlayerCardLogic : MonoBehaviour
 
     private void OnMouseEnter()
     {
-        if (_isSelected) return;
+        if (_isSelected || !_isAvailable) return;
         transform.position += new Vector3(0f, 0.0125f, -0.00088f);
         SaveCurrentProperties();
     }
 
     private void OnMouseExit()
     {
-        if (_isSelected) return; 
+        if (_isSelected || !_isAvailable) return; 
         transform.position = _defaultPosition; // Reset position when not hovered
         SaveCurrentProperties();
     }
 
     private void OnMouseDown()
     {
-        if (!_isSelected)
+        if (!_isSelected && _isAvailable)
         {
             if (PlayerCardManager.Instance.SelectedCards.Count == 3)
                 return; // Prevent selecting more than 3 cards
@@ -81,7 +83,7 @@ public class PlayerCardLogic : MonoBehaviour
             _isSelected = true;
         }
 
-        else if(!IsUsed)
+        else if(!IsUsed && _isAvailable)
         {
             transform.position = _defaultPosition;
             SaveCurrentProperties();
@@ -102,6 +104,7 @@ public class PlayerCardLogic : MonoBehaviour
         transform.localScale = _defaultSize;
         transform.localRotation = Quaternion.identity;
         Card = null; 
+        _isAvailable = false;
         MakeReusable();
         SaveCurrentProperties();
     }

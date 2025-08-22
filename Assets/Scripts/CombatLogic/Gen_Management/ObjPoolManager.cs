@@ -12,7 +12,7 @@ public class ObjPoolManager : MonoBehaviour
     [SerializeField] private Transform _end;
     [SerializeField] float _duration = 0.2f;
 
-    private Queue<GameObject> _objPool = new();
+    private List<GameObject> _objPool = new();
 
     public int QueueSize { get; private set; } = 0;
     public bool IsDeckReady { get; private set; } = false;
@@ -38,7 +38,8 @@ public class ObjPoolManager : MonoBehaviour
             GameObject obj = Instantiate(_prefab);
             obj.SetActive(false);
             obj.transform.SetPositionAndRotation(_start.position, Quaternion.identity);
-            _objPool.Enqueue(obj);
+            _objPool.Add(obj);
+            obj.transform.localScale *= 1.7f;
         }
 
         StartCoroutine(StartDeckAnimation());
@@ -58,7 +59,6 @@ public class ObjPoolManager : MonoBehaviour
             {
                 elapsed += Time.deltaTime;
                 obj.transform.SetPositionAndRotation(Vector3.Lerp(startPos, endPos, elapsed / _duration), Quaternion.Slerp(startRot, _end.transform.rotation, elapsed / _duration));
-                obj.transform.localScale += new Vector3(0.01f, 0.01f, 0.01f);
                 yield return null;
             }
 
@@ -70,12 +70,14 @@ public class ObjPoolManager : MonoBehaviour
 
     public GameObject GetCardFromPool()
     {
-        return _objPool.Dequeue();
+        GameObject card = _objPool[_objPool.Count - 1];
+        _objPool.Remove(card);
+        return card;
     }
 
     public void ReturnCard(GameObject card)
     { 
-        _objPool.Enqueue(card);
+        _objPool.Add(card);
     }
     
 }
