@@ -52,12 +52,35 @@ public class NodeClickHandler : MonoBehaviour
         }
     }
 
+    void Update()
+    {
+        if (Input.GetMouseButtonDown(1))
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            
+            if (Physics.Raycast(ray, out hit))
+            {
+                if (hit.collider.gameObject == gameObject)
+                {
+                    ShowNodeInfo();
+                }
+            }
+        }
+    }
+
     private Vector3 mouseDownPosition;
     private float dragThreshold = 10f;
 
     void OnMouseDown()
     {
         mouseDownPosition = Input.mousePosition;
+        
+        if (Input.GetMouseButton(1))
+        {
+            ShowNodeInfo();
+            return;
+        }
     }
     
     void OnMouseUp()
@@ -187,5 +210,48 @@ public class NodeClickHandler : MonoBehaviour
     public void TriggerLoadScene()
     {
         LoadScene();
+    }
+    
+    private void ShowNodeInfo()
+    {
+        NodeInfoUI nodeInfoUI = FindFirstObjectByType<NodeInfoUI>();
+        if (nodeInfoUI != null)
+        {
+            nodeInfoUI.ShowInfo(GetNodeName(), GetNodeDescription(), transform.position);
+        }
+    }
+    
+    private string GetNodeName()
+    {
+        switch (nodeType)
+        {
+            case NodeType.Start: return "Start";
+            case NodeType.Enemy: return "Enemy";
+            case NodeType.Elite: return "Elite Enemy";
+            case NodeType.Shop: return "Shop";
+            case NodeType.Treasure: return "Treasure";
+            case NodeType.Heal: return "Rest Site";
+            case NodeType.Gambling: return "Gambling";
+            case NodeType.Challenge: return "Challenge";
+            case NodeType.Boss: return "Boss";
+            default: return "Unknown";
+        }
+    }
+    
+    private string GetNodeDescription()
+    {
+        switch (nodeType)
+        {
+            case NodeType.Start: return "Your starting point";
+            case NodeType.Enemy: return "Fight enemies";
+            case NodeType.Elite: return "Fight elite enemies for better rewards";
+            case NodeType.Shop: return "Buy items and cards";
+            case NodeType.Treasure: return "Find treasure";
+            case NodeType.Heal: return "Rest and heal";
+            case NodeType.Gambling: return "Take risks for rewards";
+            case NodeType.Challenge: return "Special challenges";
+            case NodeType.Boss: return "Final boss";
+            default: return "Unknown location";
+        }
     }
 }

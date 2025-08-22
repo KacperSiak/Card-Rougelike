@@ -12,16 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2943e8972f40c54897c5ddfa072df4e, type: 3}
   m_Name: MapSaveData
   m_EditorClassIdentifier: 
-  mapSeed: -1498059006
+  mapSeed: 788152937
   numberOfLevels: 7
-  playerPosition: {x: -1.2308626, y: -19.094292}
+  playerPosition: {x: 1.4395244, y: -8.589033}
   hasPlayerPosition: 1
-  maxMapTime: 63.392246
-  currentMapTime: 0
+  maxMapTime: 62.782597
+  currentMapTime: 17.782597
   minNodesPerLevel: 2
   maxNodesPerLevel: 3
   horizontalSpacing: 3
   verticalSpacing: 3
   horizontalRandomRange: 0.5
   verticalRandomRange: 0.5
-  saveDate: 2025-08-22 12:22:40
+  saveDate: 2025-08-21 14:02:28
