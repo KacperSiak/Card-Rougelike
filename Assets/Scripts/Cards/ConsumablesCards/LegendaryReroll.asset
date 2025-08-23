@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4dce2b1003ba8b94499851aac558fec9, type: 3}
   m_Name: LegendaryReroll
   m_EditorClassIdentifier: 
-  cardID: LegendaryReroll
-  cardName: Aphordite's bless
-  cardDescription: Lose all your relics. Get two random legendary relics
-  icon: {fileID: 0}
-  rarity: 0
-  buyPrice: 80
-  sellPrice: 40
+  <cardID>k__BackingField: LegendaryReroll
+  <cardName>k__BackingField: Aphrodite's bless
+  <cardDescription>k__BackingField: 'You lose all relics and get 2 legedary '
+  <icon>k__BackingField: {fileID: 0}
+  <rarity>k__BackingField: 0
+  <buyPrice>k__BackingField: 0
+  <sellPrice>k__BackingField: 0
   cardEffects:
   - rid: 5888606620320792705
   references:

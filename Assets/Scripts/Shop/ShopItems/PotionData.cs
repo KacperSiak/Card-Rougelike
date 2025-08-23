@@ -5,11 +5,11 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "PotionData", menuName = "Shop/PotionData")]
 public class PotionData : ShopItem
 {
-    public string potionName;
-    [TextArea] public string potionDescription;
-    public int buyPrice;
-    public int fightsLeft;
-    public Sprite potionIcon;
+    [field: SerializeField] public string potionName;
+    [field: SerializeField, TextArea] public string potionDescription;
+    [field: SerializeField] public int buyPrice;
+    [field: SerializeField] public int fightsLeft;
+    [field: SerializeField] public Sprite potionIcon;
     [SerializeReference] public List<PotionEffects> potionEffects;
 }
 

@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4dce2b1003ba8b94499851aac558fec9, type: 3}
   m_Name: CardBuff
   m_EditorClassIdentifier: 
-  <cardID>k__BackingField: 
+  <cardID>k__BackingField: CardBuff
   <cardName>k__BackingField: 
-  <cardDescription>k__BackingField: 
+  <cardDescription>k__BackingField: Buff one card. It deals bonus damage (x2/x3/x5)
   <icon>k__BackingField: {fileID: 721527010, guid: 28a5df7ffde1bb5408169991d42c3ab0, type: 3}
   <rarity>k__BackingField: 0
   <buyPrice>k__BackingField: 0

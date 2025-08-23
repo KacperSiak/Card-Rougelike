@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea794a9f71dedaa4ea38dec2157374d9, type: 3}
   m_Name: SpadesBonusDamage
   m_EditorClassIdentifier: 
-  debuffName: SpadesBonusDamage
-  debuffDesc: Enemy Spades cards deal 25% more damage
-  debuffIcon: {fileID: 0}
-  debuffTurns: 5
+  <debuffName>k__BackingField: 
+  <debuffDesc>k__BackingField: Enemy spades cards deas 25% more damage
+  <debuffIcon>k__BackingField: {fileID: 0}
+  <debuffTurns>k__BackingField: 5
   debuffs:
   - rid: 2307447362607644734
   references:

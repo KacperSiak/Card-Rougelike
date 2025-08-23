@@ -12,11 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea794a9f71dedaa4ea38dec2157374d9, type: 3}
   m_Name: ShopPricesBoost
   m_EditorClassIdentifier: 
-  debuffName: 
-  debuffDesc: 
-  debuffIcon: {fileID: 0}
-  debuffTurns: 0
-  debuffs: []
+  <debuffName>k__BackingField: 
+  <debuffDesc>k__BackingField: Shop prices rise by 25%
+  <debuffIcon>k__BackingField: {fileID: 0}
+  <debuffTurns>k__BackingField: 0
+  debuffs:
+  - rid: 2307447727691923538
   references:
     version: 2
-    RefIds: []
+    RefIds:
+    - rid: 2307447727691923538
+      type: {class: ShopPriceRise, ns: , asm: Assembly-CSharp}
+      data:
+        shopRise: 0.25
