@@ -16,7 +16,7 @@ public class RelicData : ShopItem
 {
     [field: SerializeField] public string relicID { get; private set; } 
     [field: SerializeField] public string relicName { get; private set; }
-    [TextArea] public string description;
+    [field: SerializeField, TextArea] public string description;
     [field: SerializeField] public Sprite icon { get; private set; }
     [field: SerializeField] public Rarity rarity { get; private set; }
     [field: SerializeField] public int buyPrice { get; private set; }

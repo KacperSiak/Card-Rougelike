@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4dce2b1003ba8b94499851aac558fec9, type: 3}
   m_Name: InstaKill
   m_EditorClassIdentifier: 
-  cardID: InstaKill
-  cardName: InstaKill
-  cardDescription: 'Kill an enemy minion '
-  icon: {fileID: 0}
-  rarity: 1
-  buyPrice: 80
-  sellPrice: 40
+  <cardID>k__BackingField: Instakill
+  <cardName>k__BackingField: 
+  <cardDescription>k__BackingField: Insta kill card/sequence of opponent (minion)
+  <icon>k__BackingField: {fileID: 0}
+  <rarity>k__BackingField: 1
+  <buyPrice>k__BackingField: 0
+  <sellPrice>k__BackingField: 0
   cardEffects:
   - rid: 5888606620320792662
   references:
