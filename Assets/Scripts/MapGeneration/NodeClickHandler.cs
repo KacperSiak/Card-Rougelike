@@ -214,6 +214,12 @@ public class NodeClickHandler : MonoBehaviour
     
     private void ShowNodeInfo()
     {
+        CameraController cameraController = FindFirstObjectByType<CameraController>();
+        if (cameraController != null)
+        {
+            cameraController.CenterOnPosition(transform.position);
+        }
+        
         NodeInfoUI nodeInfoUI = FindFirstObjectByType<NodeInfoUI>();
         if (nodeInfoUI != null)
         {

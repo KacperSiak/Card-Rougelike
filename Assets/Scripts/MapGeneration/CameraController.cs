@@ -3,8 +3,11 @@ using UnityEngine;
 public class CameraController : MonoBehaviour
 {
     [Header("Movement Limits")]
-    public Vector2 minBounds = new Vector2(0f, -50f);
-    public Vector2 maxBounds = new Vector2(0f, 10f); 
+    public Vector2 minBounds = new Vector2(-50f, -50f);
+    public Vector2 maxBounds = new Vector2(50f, 10f); 
+    
+    [Header("Camera Height")]
+    public float cameraHeight = 15f;
     
     [Header("Zoom Settings")]
     public float minZoom = 5f;
@@ -42,9 +45,11 @@ public class CameraController : MonoBehaviour
             Vector3 deltaWorld = lastMousePosition - currentMouseWorld;
             
             Vector3 newPosition = transform.position;
+            newPosition.x += deltaWorld.x;
             newPosition.z += deltaWorld.z;
             
-            newPosition.z = Mathf.Clamp(newPosition.z, minBounds.y, maxBounds.y); // limiting to bounds
+            newPosition.x = Mathf.Clamp(newPosition.x, minBounds.x, maxBounds.x);
+            newPosition.z = Mathf.Clamp(newPosition.z, minBounds.y, maxBounds.y);
             
             transform.position = newPosition;
         }
@@ -78,20 +83,52 @@ public class CameraController : MonoBehaviour
     {
         if (mapGenerator != null && mapGenerator.mapLevels != null && mapGenerator.mapLevels.Count > 0)
         {
+            float minX = float.MaxValue, maxX = float.MinValue;
             float minZ = float.MaxValue, maxZ = float.MinValue;
             
             foreach (var level in mapGenerator.mapLevels)
             {
                 foreach (var node in level)
                 {
+                    if (node.Position.x < minX) minX = node.Position.x;
+                    if (node.Position.x > maxX) maxX = node.Position.x;
                     if (node.Position.y < minZ) minZ = node.Position.y;
                     if (node.Position.y > maxZ) maxZ = node.Position.y;
                 }
             }
             
             float padding = 10f;
-            minBounds = new Vector2(0, minZ - padding);
-            maxBounds = new Vector2(0, maxZ + padding);
+            minBounds = new Vector2(minX - padding, minZ - padding);
+            maxBounds = new Vector2(maxX + padding, maxZ + padding);
         }
+    }
+    
+    public void CenterOnPosition(Vector3 worldPosition)
+    {
+        Vector3 targetPosition = transform.position;
+        targetPosition.z = worldPosition.z;
+        
+        targetPosition.z = Mathf.Clamp(targetPosition.z, minBounds.y, maxBounds.y);
+        
+        StartCoroutine(SmoothMoveToPosition(targetPosition));
+    }
+    
+    private System.Collections.IEnumerator SmoothMoveToPosition(Vector3 targetPos)
+    {
+        Vector3 startPos = transform.position;
+        float duration = 0.5f;
+        float elapsed = 0f;
+        
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / duration;
+            t = Mathf.SmoothStep(0f, 1f, t);
+            
+            transform.position = Vector3.Lerp(startPos, targetPos, t);
+            yield return null;
+        }
+        
+        transform.position = targetPos;
     }
 }
