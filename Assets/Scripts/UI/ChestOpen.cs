@@ -47,7 +47,7 @@ public class ChestOpen : MonoBehaviour
     IEnumerator WaitForChest(float time)
     {
         yield return new WaitForSeconds(time);
-        GamblingManager.instance.Roll();
+        GamblingManager.Instance.Roll();
     }
 
     public void ChestOpening()

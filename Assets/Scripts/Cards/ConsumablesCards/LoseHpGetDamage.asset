@@ -12,13 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4dce2b1003ba8b94499851aac558fec9, type: 3}
   m_Name: LoseHpGetDamage
   m_EditorClassIdentifier: 
-  cardID: LoseHpGetDamage
-  cardName: Are's Sacrifice
-  cardDescription: You lose some of your hp but you deal more damage next turn
-  icon: {fileID: 0}
-  rarity: 0
-  buyPrice: 80
-  sellPrice: 40
+  <cardID>k__BackingField: LoseHpGetDamage
+  <cardName>k__BackingField: Sacrifice
+  <cardDescription>k__BackingField: You lose 25% of your current hp and get x more
+    damage till the end of the round
+  <icon>k__BackingField: {fileID: 0}
+  <rarity>k__BackingField: 0
+  <buyPrice>k__BackingField: 0
+  <sellPrice>k__BackingField: 0
   cardEffects:
   - rid: 5888606620320792690
   references:

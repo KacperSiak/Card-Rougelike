@@ -12,13 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4dce2b1003ba8b94499851aac558fec9, type: 3}
   m_Name: ShopBlock
   m_EditorClassIdentifier: 
-  cardID: ShopBlock
-  cardName: 
-  cardDescription: You can't visit shop this run but you get 2 relics
-  icon: {fileID: 0}
-  rarity: 0
-  buyPrice: 80
-  sellPrice: 40
+  <cardID>k__BackingField: ShopBlock
+  <cardName>k__BackingField: Hephaestus' Forge
+  <cardDescription>k__BackingField: You cannot access the shop until end of the run
+    but you get x relics
+  <icon>k__BackingField: {fileID: 0}
+  <rarity>k__BackingField: 0
+  <buyPrice>k__BackingField: 0
+  <sellPrice>k__BackingField: 0
   cardEffects:
   - rid: 5888606620320792704
   references:
@@ -26,4 +27,5 @@ MonoBehaviour:
     RefIds:
     - rid: 5888606620320792704
       type: {class: ShopBlock, ns: , asm: Assembly-CSharp}
-      data: 
+      data:
+        relicCount: 0

@@ -3,7 +3,7 @@
 [Serializable]
 public class NoMoreHealsMoreHP: CardEffect
 {
-    private int bonusHealth;
+    public int bonusHealth;
     public override void ApplyEffect(ConsumableContext ctx)
     {
         // block fountains

@@ -30,7 +30,7 @@ public class BuffAndDebuffIconUI : MonoBehaviour
         if (_fightsLeftModifier <= 0)
         {
             Destroy(gameObject);
-            BuffsAndDebuffsManager.instance._currentPotionEffects.Remove(_potion);
+            BuffsAndDebuffsManager.Instance._currentPotionEffects.Remove(_potion);
         }
     }
     
@@ -48,7 +48,7 @@ public class BuffAndDebuffIconUI : MonoBehaviour
         if (_turnsLeftModifier <= 0)
         {
             Destroy(gameObject);
-            BuffsAndDebuffsManager.instance._currentDebuffs.Remove(_debuff);
+            BuffsAndDebuffsManager.Instance._currentDebuffs.Remove(_debuff);
         }
     }
 }

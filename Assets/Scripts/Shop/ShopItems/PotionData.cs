@@ -5,11 +5,11 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "PotionData", menuName = "Shop/PotionData")]
 public class PotionData : ShopItem
 {
-    public string potionName;
-    [TextArea] public string potionDescription;
-    public int buyPrice;
-    public int fightsLeft;
-    public Sprite potionIcon;
+    [field: SerializeField] public string potionName;
+    [field: SerializeField, TextArea] public string potionDescription;
+    [field: SerializeField] public int buyPrice;
+    [field: SerializeField] public int fightsLeft;
+    [field: SerializeField] public Sprite potionIcon;
     [SerializeReference] public List<PotionEffects> potionEffects;
 }
 
@@ -22,10 +22,10 @@ public class PotionContext
 
     public PotionContext()
     {
-        player = PlayerOverlay.instance;
-        shopManager = ShopMenager.instance;
-        gambler = GamblingManager.instance;
-        buffsAndDebuffsManager = BuffsAndDebuffsManager.instance;
+        player = PlayerOverlay.Instance;
+        shopManager = ShopMenager.Instance;
+        gambler = GamblingManager.Instance;
+        buffsAndDebuffsManager = BuffsAndDebuffsManager.Instance;
     }
 }
 

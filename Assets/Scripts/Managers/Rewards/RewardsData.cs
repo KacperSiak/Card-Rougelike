@@ -34,10 +34,10 @@ public class RewardContext
 
     public RewardContext()
     {
-        player = PlayerOverlay.instance;
-        consAndRelic = ConsumablesAndRelicMenager.instance;
+        player = PlayerOverlay.Instance;
+        consAndRelic = ConsumablesAndRelicMenager.Instance;
         mapManager = MapManager.instance;
-        gambling = GamblingManager.instance;
+        gambling = GamblingManager.Instance;
     }
 }
 

@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4dce2b1003ba8b94499851aac558fec9, type: 3}
   m_Name: FreeBuy
   m_EditorClassIdentifier: 
-  cardID: FreeBuy
-  cardName: FreeBuy
-  cardDescription: Your next purchase in the stor is free
-  icon: {fileID: 0}
-  rarity: 1
-  buyPrice: 80
-  sellPrice: 40
+  <cardID>k__BackingField: FreeBuy
+  <cardName>k__BackingField: 
+  <cardDescription>k__BackingField: Your next buy is free
+  <icon>k__BackingField: {fileID: 0}
+  <rarity>k__BackingField: 1
+  <buyPrice>k__BackingField: 0
+  <sellPrice>k__BackingField: 0
   cardEffects:
   - rid: 5888606620320792665
   references:

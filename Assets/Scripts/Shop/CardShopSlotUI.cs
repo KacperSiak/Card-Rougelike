@@ -28,8 +28,8 @@ public class CardShopSlotUI : MonoBehaviour
             DeckManager.instance.RemmoveCard(_cardToSell);
         }
 
-        PlayerOverlay.instance.AddGold(price);
-        ShopMenager.instance.cardslots.Remove(gameObject);
+        PlayerOverlay.Instance.AddGold(price);
+        ShopMenager.Instance.cardslots.Remove(gameObject);
         Destroy(gameObject);
     }
 

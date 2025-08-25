@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4dce2b1003ba8b94499851aac558fec9, type: 3}
   m_Name: ExtraTurn
   m_EditorClassIdentifier: 
-  cardID: ExtraTurn
-  cardName: ExtraTurn
-  cardDescription: Get an extra turn
-  icon: {fileID: 0}
-  rarity: 1
-  buyPrice: 80
-  sellPrice: 40
+  <cardID>k__BackingField: Extra turn
+  <cardName>k__BackingField: 
+  <cardDescription>k__BackingField: can play one additional turn
+  <icon>k__BackingField: {fileID: 0}
+  <rarity>k__BackingField: 1
+  <buyPrice>k__BackingField: 0
+  <sellPrice>k__BackingField: 0
   cardEffects:
   - rid: 5888606620320792658
   references:

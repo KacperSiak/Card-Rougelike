@@ -12,13 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4dce2b1003ba8b94499851aac558fec9, type: 3}
   m_Name: DeckForMap
   m_EditorClassIdentifier: 
-  cardID: DeckForMap
-  cardName: Hermes Delivery
-  cardDescription: You get new random deck but you clear whole map
-  icon: {fileID: 0}
-  rarity: 0
-  buyPrice: 80
-  sellPrice: 40
+  <cardID>k__BackingField: DeckForMap
+  <cardName>k__BackingField: Hermes Delivery
+  <cardDescription>k__BackingField: You reroll whole your deck (get new deck but
+    with the same card rarity you had) but you clear all enemies on the map (except
+    boss)
+  <icon>k__BackingField: {fileID: 0}
+  <rarity>k__BackingField: 0
+  <buyPrice>k__BackingField: 0
+  <sellPrice>k__BackingField: 0
   cardEffects:
   - rid: 5888606620320792692
   references:

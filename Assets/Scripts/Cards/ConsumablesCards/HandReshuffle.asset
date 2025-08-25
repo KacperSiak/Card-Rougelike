@@ -12,14 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4dce2b1003ba8b94499851aac558fec9, type: 3}
   m_Name: HandReshuffle
   m_EditorClassIdentifier: 
-  cardID: HandReshuffle
-  cardName: HandReshuffle
-  cardDescription: Reshuffle your entire hand
-  icon: {fileID: 0}
-  rarity: 0
-  buyPrice: 80
-  sellPrice: 40
-  cardEffects: []
+  <cardID>k__BackingField: HandReshuffle
+  <cardName>k__BackingField: 
+  <cardDescription>k__BackingField: Reshuffle your entire hand
+  <icon>k__BackingField: {fileID: 0}
+  <rarity>k__BackingField: 0
+  <buyPrice>k__BackingField: 0
+  <sellPrice>k__BackingField: 0
+  cardEffects:
+  - rid: 2307447727691923533
   references:
     version: 2
-    RefIds: []
+    RefIds:
+    - rid: 2307447727691923533
+      type: {class: HandReshuffle, ns: , asm: Assembly-CSharp}
+      data: 
