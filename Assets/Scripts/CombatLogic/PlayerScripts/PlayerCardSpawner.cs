@@ -64,6 +64,7 @@ public class PlayerCardSpawner : MonoBehaviour
             card.GetComponent<PlayerCardLogic>().SaveDefaultProperties();
 			card.SetActive(true);
             z -= 0.0007f;
+            card.transform.SetParent(_hand.gameObject.transform, true);
 
 		}
 
