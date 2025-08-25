@@ -22,10 +22,10 @@ public class PotionContext
 
     public PotionContext()
     {
-        player = PlayerOverlay.instance;
-        shopManager = ShopMenager.instance;
-        gambler = GamblingManager.instance;
-        buffsAndDebuffsManager = BuffsAndDebuffsManager.instance;
+        player = PlayerOverlay.Instance;
+        shopManager = ShopMenager.Instance;
+        gambler = GamblingManager.Instance;
+        buffsAndDebuffsManager = BuffsAndDebuffsManager.Instance;
     }
 }
 

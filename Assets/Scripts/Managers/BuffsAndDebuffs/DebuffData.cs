@@ -19,8 +19,8 @@ public class DebuffContext
 
     public DebuffContext()
     {
-        player = PlayerOverlay.instance;
-        shopManager = ShopMenager.instance;
+        player = PlayerOverlay.Instance;
+        shopManager = ShopMenager.Instance;
     }
 }
 

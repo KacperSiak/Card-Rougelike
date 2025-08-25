@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ShopPricesBoost
   m_EditorClassIdentifier: 
   <debuffName>k__BackingField: 
-  <debuffDesc>k__BackingField: Shop prices rise by 25%
+  <debuffDesc>k__BackingField: Shop prices rise by 25% till the end of the act
   <debuffIcon>k__BackingField: {fileID: 0}
   <debuffTurns>k__BackingField: 0
   debuffs:

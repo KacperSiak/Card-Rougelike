@@ -13,7 +13,7 @@ public class RelicUIDisplay : MonoBehaviour
 
     private void RefreshDisplay()
     {
-        foreach (var relic in ConsumablesAndRelicMenager.instance.currentRelics)
+        foreach (var relic in ConsumablesAndRelicMenager.Instance.currentRelics)
         {
             AddIcon(relic);
         }

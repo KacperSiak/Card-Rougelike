@@ -27,9 +27,9 @@ public class ChallengeContext
 
     public ChallengeContext()
     {
-        player = PlayerOverlay.instance;
+        player = PlayerOverlay.Instance;
         mapManager = MapManager.instance;
-        challengesMenager = ChallengesMenager.instance;
+        challengesMenager = ChallengesMenager.Instance;
     }
 }
 

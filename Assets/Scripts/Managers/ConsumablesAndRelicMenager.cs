@@ -2,8 +2,8 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 
-public class ConsumablesAndRelicMenager : MonoBehaviour
-{
+public class ConsumablesAndRelicMenager : PersistenSingleton<ConsumablesAndRelicMenager>
+{ 
     [Header("Relics")]
     [SerializeField] private RelicUIDisplay _relicUI;
     public List<RelicData> currentRelics;
@@ -20,22 +20,11 @@ public class ConsumablesAndRelicMenager : MonoBehaviour
     public List<ConsumablesData> currentConsums;
     public int slotCounter = 0;
 
-    public static ConsumablesAndRelicMenager instance;
-
-    private void Awake()
+    protected override void OnSingletonAwake()
     {
         RelicEventsSystem.OnRelicAcquired.AddListener(HandleRelicAcquired);
         RelicEventsSystem.OnRelicRemoved.AddListener(HandleRelicRemoved);
         RelicIconButtonsUI.OnRelicUpgrade.AddListener(RelicUpgrade);
-
-        if (instance == null)
-        {
-            instance = this;
-        }
-        else
-        {
-            Debug.Log("Found Another ConsumableMenager");
-        }
     }
 
     private void Start()
@@ -43,10 +32,13 @@ public class ConsumablesAndRelicMenager : MonoBehaviour
         _ctx = new RelicContext();
     }
 
-    private void OnDestroy()
+    protected override void OnDestroy()
     {
         RelicEventsSystem.OnRelicAcquired.RemoveListener(HandleRelicAcquired);
         RelicEventsSystem.OnRelicRemoved.RemoveListener(HandleRelicRemoved);
+        RelicIconButtonsUI.OnRelicUpgrade.RemoveListener(RelicUpgrade);
+
+        base.OnDestroy();
     }
 
     // Relics //    
@@ -59,7 +51,7 @@ public class ConsumablesAndRelicMenager : MonoBehaviour
             _relicUI.AddIcon(relic);
         }
 
-        ShopMenager.instance.allItems.Remove(relic);
+        ShopMenager.Instance.allItems.Remove(relic);
     }
 
     private void HandleRelicRemoved(RelicData relic)
@@ -67,7 +59,7 @@ public class ConsumablesAndRelicMenager : MonoBehaviour
         currentRelics.Remove(relic);
         foreach (var effect in relic.relicEffets) effect.Unregister(_ctx);
 
-        ShopMenager.instance.allItems.Add(relic);
+        ShopMenager.Instance.allItems.Add(relic);
     }
 
     public bool RelicChecker(RelicData relic)
@@ -119,7 +111,7 @@ public class ConsumablesAndRelicMenager : MonoBehaviour
         RelicEventsSystem.RelicAcquired(foundRelic);
         RelicEventsSystem.RelicRemoved(relic);
         currentRelics.Remove(relic);
-        ShopMenager.instance.allItems.Add(_vase);
+        ShopMenager.Instance.allItems.Add(_vase);
     }
 
     public Rarity RelicRarityNeed(Rarity rarity)

@@ -2,7 +2,7 @@ using UnityEngine;
 using System;
 using TMPro;
 
-public class PlayerOverlay : MonoBehaviour
+public class PlayerOverlay : PersistenSingleton<PlayerOverlay>
 {
     public int gold;
     public float maxHP;
@@ -11,20 +11,12 @@ public class PlayerOverlay : MonoBehaviour
     public int rollTickets;
     [SerializeField] private TextMeshProUGUI _text;
 
-    public static PlayerOverlay instance;
+    protected override void OnSingletonAwake() { }
 
-    private void Awake()
+    protected override void OnDestroy()
     {
-        if (instance == null)
-        {
-            instance = this;
-        }
-        else
-        {
-            Debug.LogWarning("Found another PlayerOverlay");
-        }
+        base.OnDestroy();
     }
-
     public void SpendGold(int gold)
     {
         this.gold -= gold;

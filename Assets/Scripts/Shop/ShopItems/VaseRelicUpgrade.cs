@@ -13,6 +13,6 @@ public class VaseRelicUpgrade : ShopItem
     {
         OnVaseAcquired.Invoke();
         RelicIconButtonsUI.vaseEnabled = true;
-        ShopMenager.instance.allItems.Remove(this);
+        ShopMenager.Instance.allItems.Remove(this);
     }
 }

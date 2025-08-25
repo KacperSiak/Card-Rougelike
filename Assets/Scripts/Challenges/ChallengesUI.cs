@@ -24,6 +24,6 @@ public class ChallengesUI : MonoBehaviour
 
     private void AcceptChallenge()
     {
-        ChallengesMenager.instance.ChallengeAccepted(_currentChallenge);
+        ChallengesMenager.Instance.ChallengeAccepted(_currentChallenge);
     }
 }

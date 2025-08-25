@@ -24,4 +24,4 @@ MonoBehaviour:
     - rid: 2307447362607644734
       type: {class: SuitEnemyDamageBuff, ns: , asm: Assembly-CSharp}
       data:
-        bonusDamage: 25
+        bonusDamage: 0.25

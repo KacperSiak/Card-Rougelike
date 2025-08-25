@@ -32,7 +32,7 @@ public class RelicContext
 
     public RelicContext()
     {
-        player = PlayerOverlay.instance;
+        player = PlayerOverlay.Instance;
         mapManager = MapManager.instance;
     }
 }

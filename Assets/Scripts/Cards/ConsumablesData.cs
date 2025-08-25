@@ -29,9 +29,9 @@ public class ConsumableContext
 
     public ConsumableContext()
     {
-        player = PlayerOverlay.instance;
-        shop = ShopMenager.instance;
-        consAndRel = ConsumablesAndRelicMenager.instance;
+        player = PlayerOverlay.Instance;
+        shop = ShopMenager.Instance;
+        consAndRel = ConsumablesAndRelicMenager.Instance;
     }
 }
 
