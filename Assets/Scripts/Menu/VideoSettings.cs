@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class VideoSettings : MonoBehaviour
 {
-    [SerializeField] private Toggle _windowedToggle, _fullScreenToggle;
+    [SerializeField] private Toggle fullScreenToggle;
     [SerializeField] private TMP_Dropdown resolutionDropdown;
 
     private Resolution[] resolutions;
@@ -52,21 +52,20 @@ public class VideoSettings : MonoBehaviour
         Screen.SetResolution(resolution.width, resolution.height, true);
     }
 
-    // I want to change it to one toggle
-    public void SetFullScreen()
+    public void SetFullScreenMode()
     {
-        _windowedToggle.SetIsOnWithoutNotify(false);
-        Screen.fullScreenMode = FullScreenMode.ExclusiveFullScreen;
-        Screen.fullScreen = true;
-        _fullScreenToggle.SetIsOnWithoutNotify(true);
-    }
-
-    public void SetWindowed()
-    {
-        _fullScreenToggle.SetIsOnWithoutNotify(false);
-        Screen.fullScreenMode = FullScreenMode.Windowed;
-        Screen.fullScreen = false;
-        _windowedToggle.SetIsOnWithoutNotify(true);
+        if (!fullScreenToggle.isOn)
+        { // windowed
+            fullScreenToggle.SetIsOnWithoutNotify(false);
+            Screen.fullScreenMode = FullScreenMode.Windowed;
+            Screen.fullScreen = false;
+        }
+        else
+        { // fullscreen
+            fullScreenToggle.SetIsOnWithoutNotify(true);
+            Screen.fullScreenMode = FullScreenMode.ExclusiveFullScreen;
+            Screen.fullScreen = true;
+        }
     }
 
 }
