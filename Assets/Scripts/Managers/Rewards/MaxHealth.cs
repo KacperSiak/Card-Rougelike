@@ -3,7 +3,7 @@
 [Serializable]
 public class MaxHealth : Rewards
 {
-    private float newMaxHealth;
+    public float newMaxHealth;
     public override void AddReward(RewardContext ctx)
     {
         ctx.player.SetMaxHP(newMaxHealth);

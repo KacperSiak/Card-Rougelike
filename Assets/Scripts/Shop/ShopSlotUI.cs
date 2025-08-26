@@ -54,7 +54,7 @@ public class ShopSlotUI : MonoBehaviour
 
                 case CardPack cardPack:
                     PlayerOverlay.Instance.SpendGold(_currentPrice);
-                    cardPack.OpePack();
+                    cardPack.OpenPack();
                     break;
 
                 case VaseRelicUpgrade vase:
