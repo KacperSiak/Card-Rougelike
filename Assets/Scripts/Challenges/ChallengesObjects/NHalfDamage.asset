@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c47cce8b929c374181fa743286205e0, type: 3}
   m_Name: NHalfDamage
   m_EditorClassIdentifier: 
-  challengeName: HalfDamage
-  challengeDescription: Deal at least 50% damage to the enemy's total health.
-  difficulty: 1
+  <challengeName>k__BackingField: 
+  <challengeDescription>k__BackingField: You have to deal atleast 50% of enemy health
+  <difficulty>k__BackingField: 1
+  <challIcon>k__BackingField: {fileID: 0}
   challenge:
   - rid: 2307447497862676579
   references:

@@ -12,8 +12,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d10987bfe49cf245b0aaa2a899a7ae7, type: 3}
   m_Name: NormalRewards
   m_EditorClassIdentifier: 
-  <rewardName>k__BackingField: 
-  rewardEffect: []
+  <rewardName>k__BackingField: NormalRewards
+  rewardEffect:
+  - rid: 2307447792721199207
+  - rid: 2307447792721199208
+  - rid: 2307447792721199216
   references:
     version: 2
-    RefIds: []
+    RefIds:
+    - rid: 2307447792721199207
+      type: {class: AddGold, ns: , asm: Assembly-CSharp}
+      data:
+        goldAmount: 35
+    - rid: 2307447792721199208
+      type: {class: VaseReward, ns: , asm: Assembly-CSharp}
+      data:
+        vase: {fileID: 11400000, guid: 3fb6e51069c5a81458ad9078f7fcfd2a, type: 2}
+    - rid: 2307447792721199216
+      type: {class: ConsumableCoin, ns: , asm: Assembly-CSharp}
+      data: 

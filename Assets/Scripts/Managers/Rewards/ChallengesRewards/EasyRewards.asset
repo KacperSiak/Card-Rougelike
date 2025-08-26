@@ -15,6 +15,7 @@ MonoBehaviour:
   <rewardName>k__BackingField: EasyGold
   rewardEffect:
   - rid: 2307447792721199184
+  - rid: 2307447792721199190
   references:
     version: 2
     RefIds:
@@ -22,3 +23,7 @@ MonoBehaviour:
       type: {class: AddGold, ns: , asm: Assembly-CSharp}
       data:
         goldAmount: 25
+    - rid: 2307447792721199190
+      type: {class: CardPackReward, ns: , asm: Assembly-CSharp}
+      data:
+        pack: {fileID: 11400000, guid: b8b1e55a7fbb4e84787745aac3d09b80, type: 2}

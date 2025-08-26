@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c47cce8b929c374181fa743286205e0, type: 3}
   m_Name: NNoJokerUse
   m_EditorClassIdentifier: 
-  challengeName: NoJokerUse
-  challengeDescription: Do not use jokers during whole fight
-  difficulty: 1
+  <challengeName>k__BackingField: 
+  <challengeDescription>k__BackingField: You cannot use jokers during a fight
+  <difficulty>k__BackingField: 1
+  <challIcon>k__BackingField: {fileID: 0}
   challenge:
   - rid: 2307447497862676580
   references:
