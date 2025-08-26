@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class ChallengesMenager : PersistenSingleton<ChallengesMenager>
 {
@@ -13,8 +14,11 @@ public class ChallengesMenager : PersistenSingleton<ChallengesMenager>
     [SerializeField] private List<ChallengesData> _hardChallenges;
     [SerializeField] private List<GameObject> _slots;
 
-    [SerializeField] private CardPack _cardPack;
-    [SerializeField] private VaseRelicUpgrade _vase;
+    [SerializeField] private RewardStruct _easyRewards;
+    [SerializeField] private RewardStruct _normalRewards;
+    [SerializeField] private RewardStruct _hardRewards;
+
+    [SerializeField] private TextMeshProUGUI _cuurentChallText;
     
     private ChallengesData _currentChallenge;
 
@@ -49,7 +53,7 @@ public class ChallengesMenager : PersistenSingleton<ChallengesMenager>
         {
             slot.gameObject.SetActive(true);
             int index = Random.Range(0, _temporaryList.Count);
-            var slotUI = slot.GetComponent<ChallengesUI>();
+            var slotUI = slot.GetComponent<ChallengesUITile>();
             if (slotUI != null)
             {
                 slotUI.Setup(_temporaryList[index]);
@@ -58,40 +62,40 @@ public class ChallengesMenager : PersistenSingleton<ChallengesMenager>
         }
     }
 
-    public void AddReward()
+    public void AddRewardForChall()
     {
-        int coin = Random.Range(0, 2);
-        ConsumablesData cons = ConsumablesAndRelicMenager.Instance.RollRandomCons();
-        if (_currentChallenge.difficulty == Difficulty.Easy)
+        switch (_currentChallenge.difficulty)
         {
-            PlayerOverlay.Instance.AddGold(25);
-            _cardPack.OpePack();
+            case Difficulty.Easy:
+                AddRewardByDifficulty( _easyRewards);
+                break;
+
+            case Difficulty.Normal:
+                AddRewardByDifficulty(_normalRewards);
+                break;
+
+            case Difficulty.Hard:
+                AddRewardByDifficulty(_hardRewards);
+                break;
         }
-        else if (_currentChallenge.difficulty == Difficulty.Normal)
+    }
+
+    public void AddRewardByDifficulty(RewardStruct diffRewards)
+    {
+        var ctx = new RewardContext();
+        
+        foreach (var reward in diffRewards.reward.rewardEffect)
         {
-            PlayerOverlay.Instance.AddGold(35);
-            _vase.GotVase();
-            if (coin == 0)
-            {
-                ConsumablesAndRelicMenager.Instance.AddCard(cons);
-            }
+            reward.AddReward(ctx);
         }
-        else
-        {
-            float newHP = PlayerOverlay.Instance.maxHP + 5;
-            PlayerOverlay.Instance.AddGold(45);
-            PlayerOverlay.Instance.SetMaxHP(newHP);
-            _vase.GotVase();
-            if (coin == 0)
-            {
-                ConsumablesAndRelicMenager.Instance.AddCard(cons);
-            }
-        }
+        
+        
     }
 
     public void ChallengeAccepted(ChallengesData challenge)
     {
         _currentChallenge = challenge;
+        _cuurentChallText.text = challenge.challengeName;
         Debug.Log("Challenge Accepted");
     }
 }

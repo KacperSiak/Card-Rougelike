@@ -24,7 +24,7 @@ public class ThreeSinglesInARow : Challenges
         _soloCards++;
         if (_soloCards >= 3)
         {
-            context.challengesMenager.AddReward();
+            context.challengesMenager.AddRewardForChall();
             Unregister(context);
         }
     }

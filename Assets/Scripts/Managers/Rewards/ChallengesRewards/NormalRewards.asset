@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d10987bfe49cf245b0aaa2a899a7ae7, type: 3}
+  m_Name: NormalRewards
+  m_EditorClassIdentifier: 
+  <rewardName>k__BackingField: NormalRewards
+  rewardEffect:
+  - rid: 2307447792721199207
+  - rid: 2307447792721199208
+  - rid: 2307447792721199216
+  references:
+    version: 2
+    RefIds:
+    - rid: 2307447792721199207
+      type: {class: AddGold, ns: , asm: Assembly-CSharp}
+      data:
+        goldAmount: 35
+    - rid: 2307447792721199208
+      type: {class: VaseReward, ns: , asm: Assembly-CSharp}
+      data:
+        vase: {fileID: 11400000, guid: 3fb6e51069c5a81458ad9078f7fcfd2a, type: 2}
+    - rid: 2307447792721199216
+      type: {class: ConsumableCoin, ns: , asm: Assembly-CSharp}
+      data: 

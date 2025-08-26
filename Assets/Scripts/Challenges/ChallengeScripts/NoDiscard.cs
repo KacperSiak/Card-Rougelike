@@ -25,7 +25,7 @@ public class NoDiscard : Challenges
     {
         if (_questInfo)
         {
-            context.challengesMenager.AddReward();
+            context.challengesMenager.AddRewardForChall();
             Unregister(context);
         }
     }

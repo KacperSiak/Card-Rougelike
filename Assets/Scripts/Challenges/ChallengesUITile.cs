@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class ChallengesUI : MonoBehaviour
+public class ChallengesUITile : MonoBehaviour
 {
     [SerializeField] private Image _challengeIcon;
     [SerializeField] private Button _acceptButton;

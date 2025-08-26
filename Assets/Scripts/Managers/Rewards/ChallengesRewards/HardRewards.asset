@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d10987bfe49cf245b0aaa2a899a7ae7, type: 3}
+  m_Name: HardRewards
+  m_EditorClassIdentifier: 
+  <rewardName>k__BackingField: HarRewards
+  rewardEffect:
+  - rid: 2307447792721199217
+  - rid: 2307447792721199234
+  - rid: 2307447792721199218
+  - rid: 2307447792721199220
+  - rid: 2307447792721199219
+  references:
+    version: 2
+    RefIds:
+    - rid: 2307447792721199217
+      type: {class: AddGold, ns: , asm: Assembly-CSharp}
+      data:
+        goldAmount: 45
+    - rid: 2307447792721199218
+      type: {class: VaseReward, ns: , asm: Assembly-CSharp}
+      data:
+        vase: {fileID: 11400000, guid: 3fb6e51069c5a81458ad9078f7fcfd2a, type: 2}
+    - rid: 2307447792721199219
+      type: {class: ConsumableCoin, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 2307447792721199220
+      type: {class: MaxHealth, ns: , asm: Assembly-CSharp}
+      data:
+        newMaxHealth: 5
+    - rid: 2307447792721199234
+      type: {class: RandomRelic, ns: , asm: Assembly-CSharp}
+      data:
+        rewards:
+        - reward: {fileID: 11400000, guid: e06f4258fc0988b458b352a55ab09a2c, type: 2}
+          weight: 40
+          type: 0
+        - reward: {fileID: 11400000, guid: 75fde6533e9772947bf14dcf45d846ee, type: 2}
+          weight: 30
+          type: 0
+        - reward: {fileID: 11400000, guid: 0f555cc443f0a7942b6e23739b5069b8, type: 2}
+          weight: 25
+          type: 0
+        - reward: {fileID: 11400000, guid: c0fad16393c657b429ab53640600cef1, type: 2}
+          weight: 5
+          type: 0
