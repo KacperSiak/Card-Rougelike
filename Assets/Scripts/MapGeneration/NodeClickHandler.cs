@@ -22,7 +22,7 @@ public class NodeClickHandler : MonoBehaviour
 
     void Start()
     {
-        // tymczasowy fallback
+        // tymczasowe
         if (mapGenerator == null)
         {
             mapGenerator = FindFirstObjectByType<MapGenerator>();
