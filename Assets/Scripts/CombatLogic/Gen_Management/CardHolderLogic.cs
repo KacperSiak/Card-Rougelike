@@ -112,7 +112,7 @@ public class CardHolderLogic : MonoBehaviour
         {
             card.gameObject.SetActive(false);
             card.ResetCard();
-            ObjPoolManager.Instance.ReturnCard(card.gameObject);
+            ObjPoolManager.Instance.ReturnCard(card.gameObject, isSenderPlayer: true);
         }
 
         PCardScripts.Clear();

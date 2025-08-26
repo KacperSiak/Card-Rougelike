@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mapSeed: -1130205615
   numberOfLevels: 7
-  playerPosition: {x: -1.2833309, y: -17.859722}
+  playerPosition: {x: -1.3837757, y: -18.602966}
   hasPlayerPosition: 1
   maxMapTime: 63.840515
   currentMapTime: 0
@@ -24,5 +24,4 @@ MonoBehaviour:
   verticalSpacing: 3
   horizontalRandomRange: 0.5
   verticalRandomRange: 0.5
-  saveDate: 2025-08-21 20:32:06
-  isValid: 1
+  saveDate: 2025-08-26 17:43:27

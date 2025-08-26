@@ -7,14 +7,23 @@ public class ObjPoolManager : MonoBehaviour
 {
     public static ObjPoolManager Instance { get; private set; }
 
-    [SerializeField] private GameObject _prefab;
-    [SerializeField] private Transform _start;
-    [SerializeField] private Transform _end;
+    [Header("Prefabs")]
+    [SerializeField] private GameObject _prefabPlayer;
+    [SerializeField] private GameObject _prefabEnemy;
+
+    [Header("AnimationPositions")]
+    [SerializeField] private Transform _startPlayer;
+    [SerializeField] private Transform _endPlayer;
+    [SerializeField] private Transform _startEnemy;
+    [SerializeField] private Transform _endEnemy;
+
     [SerializeField] float _duration = 0.2f;
 
-    private List<GameObject> _objPool = new();
+    private List<GameObject> _enemyPool = new();
+    private List<GameObject> _playerPool = new();
 
-    public int QueueSize { get; private set; } = 0;
+    public int PlayerPoolSize { get; private set; } = 0;
+    public int EnemyPoolSize { get; private set; } = 0;
     public bool IsDeckReady { get; private set; } = false;
 
 
@@ -28,56 +37,101 @@ public class ObjPoolManager : MonoBehaviour
 
     }
 
-    //setup could be different then 
     private void CreateObjPool()
     {
-        QueueSize = RoundManager.Instance.PlayerCards.Count;
+        PlayerPoolSize = RoundManager.Instance.PlayerCards.Count;
+        EnemyPoolSize = RoundManager.Instance.EnemyCards.Count;
 
-        for (int i = 0; i < QueueSize; i++)
+        for (int i = 0; i < PlayerPoolSize; i++)
         {
-            GameObject obj = Instantiate(_prefab);
-            obj.SetActive(false);
-            obj.transform.SetPositionAndRotation(_start.position, Quaternion.identity);
-            _objPool.Add(obj);
-            obj.transform.localScale *= 1.7f;
+            CreateCard(_prefabPlayer, _startPlayer, _playerPool);
         }
 
-        StartCoroutine(StartDeckAnimation());
+        for (int i = 0; i < EnemyPoolSize; i++)
+        {
+            CreateCard(_prefabEnemy, _startEnemy, _enemyPool);
+        }
+
+        StartCoroutine(PlayDeckAnimation());
     }
 
-    private IEnumerator StartDeckAnimation()
+    private void CreateCard(GameObject prefab, Transform start, List<GameObject> pool)
     {
-        Vector3 endPos = _end.transform.position;
+        GameObject obj = Instantiate(prefab);
+        obj.SetActive(false);
+        obj.transform.SetPositionAndRotation(start.position, Quaternion.identity);
+        pool.Add(obj);
+        obj.transform.localScale *= 1.7f;
+    }
 
-        foreach (GameObject obj in _objPool)
+    private IEnumerator PlayDeckAnimation()
+    {
+        Vector3 endPosPlayer = _endPlayer.transform.position;
+        Vector3 endPosEnemy = _endEnemy.transform.position;
+        GameObject obj;
+
+        //think for better later
+        for (int i = 0; i < _playerPool.Count; i++)
         {
-            obj.transform.GetPositionAndRotation(out Vector3 startPos, out Quaternion startRot);
+            obj = _playerPool[i];
+            obj.transform.GetPositionAndRotation(out Vector3 startPosP, out Quaternion startRotP);
             obj.SetActive(true);
             float elapsed = 0f;
 
             while (elapsed < _duration)
             {
                 elapsed += Time.deltaTime;
-                obj.transform.SetPositionAndRotation(Vector3.Lerp(startPos, endPos, elapsed / _duration), Quaternion.Slerp(startRot, _end.transform.rotation, elapsed / _duration));
+                float t = Mathf.SmoothStep(0f, 1f, elapsed / _duration);
+                obj.transform.SetPositionAndRotation(Vector3.Lerp(startPosP, endPosPlayer, t), Quaternion.Slerp(startRotP, _endPlayer.transform.rotation, t));
                 yield return null;
             }
 
-            endPos += new Vector3(0, 0.001f, 0);
+            endPosPlayer += new Vector3(0, 0.001f, 0);
+
+            if (i < _enemyPool.Count)
+            {
+                obj = _enemyPool[i];
+                obj.transform.GetPositionAndRotation(out Vector3 startPosE, out Quaternion startRotE);
+                obj.SetActive(true);
+                elapsed = 0f;
+
+                while (elapsed < _duration)
+                {
+                    elapsed += Time.deltaTime;
+                    float t = Mathf.SmoothStep(0f, 1f, elapsed / _duration);
+                    obj.transform.SetPositionAndRotation(Vector3.Lerp(startPosE, endPosEnemy, t), Quaternion.Slerp(startRotE, _endEnemy.transform.rotation, t));
+                    yield return null;
+                }
+                endPosEnemy += new Vector3(0, 0.001f, 0);
+            }
         }
 
         IsDeckReady = true;
     }
 
-    public GameObject GetCardFromPool()
+    public GameObject GetCardFromPool(bool isSenderPlayer)
     {
-        GameObject card = _objPool[_objPool.Count - 1];
-        _objPool.Remove(card);
-        return card;
+        if (isSenderPlayer)
+        {
+            GameObject card = _playerPool[^1];
+            _playerPool.Remove(card);
+            return card;
+        }
+        else
+        {
+            GameObject card = _enemyPool[^1];
+            _enemyPool.Remove(card);
+            return card;
+        }
     }
 
-    public void ReturnCard(GameObject card)
+    public void ReturnCard(GameObject card, bool isSenderPlayer)
     { 
-        _objPool.Add(card);
+        if(isSenderPlayer)
+            _playerPool.Add(card);
+
+        else
+            _enemyPool.Add(card);
     }
     
 }

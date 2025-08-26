@@ -16,7 +16,7 @@ public class PlayerCardSpawner : MonoBehaviour
         {
             if(playerDeck.Count == 0) break;
 
-            GameObject cardObject = ObjPoolManager.Instance.GetCardFromPool();
+            GameObject cardObject = ObjPoolManager.Instance.GetCardFromPool(isSenderPlayer: true);
             playerCards.Add(cardObject);
             PlayerCardManager.Instance.IncreaseCardsInHandAmount();
 

@@ -121,7 +121,7 @@ public class PlayerCardManager : MonoBehaviour
         {
             card.GetComponent<PlayerCardLogic>().ResetCard();
             card.SetActive(false);
-            ObjPoolManager.Instance.ReturnCard(card);
+            ObjPoolManager.Instance.ReturnCard(card, isSenderPlayer: true);
         }
         ClearSelectedStorage();
     }

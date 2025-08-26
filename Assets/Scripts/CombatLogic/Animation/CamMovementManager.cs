@@ -29,7 +29,6 @@ public class CamMovementManager : MonoBehaviour
     {
         _camPositionsFirstSet.Clear();
         _camPositionsSecondSet.Clear();
-        _currentCamPositionsSet = _isFirstSet ? _camPositionsFirstSet : _camPositionsSecondSet;
         for (int i = 0, divider = 0; i < _dictList.Count; i++, divider++)
         {
             if(divider < 3)
@@ -38,6 +37,7 @@ public class CamMovementManager : MonoBehaviour
                 _camPositionsSecondSet.Add(_dictList[i].key, _dictList[i].value);
 
         }
+        _currentCamPositionsSet = _isFirstSet ? _camPositionsFirstSet : _camPositionsSecondSet;
     }
 
     void Update()
@@ -50,11 +50,11 @@ public class CamMovementManager : MonoBehaviour
             return;
         }
 
-        else if (_cameraTransform.rotation != _currentCamPositionsSet["Main"].rotation)
+        else if (_cameraTransform.rotation != _currentCamPositionsSet["Main"].rotation) //?
         {
-            inProgress = false;
             _currentCamPositionsSet = _isFirstSet ? _camPositionsFirstSet : _camPositionsSecondSet;
             _cameraAnimation.ChangeCameraPlacement(target: _currentCamPositionsSet["Main"], duration: _duration);
+            inProgress = false;
             //temp
             UIManager.Instance.TurnRoundOn();
         }
@@ -73,6 +73,7 @@ public class CamMovementManager : MonoBehaviour
                         if (!_isFirstSet)
                         {
                             _cameraAnimation.ChangeCameraPlacement(target: _camPositionsFirstSet["Main"], duration: _duration);
+                            inProgress = false;
                             _isFirstSet = true;
                         }
                         break;
@@ -88,6 +89,7 @@ public class CamMovementManager : MonoBehaviour
                         if (_isFirstSet)
                         {
                             _cameraAnimation.ChangeCameraPlacement(target: _camPositionsSecondSet["Main"], duration: _duration);
+                            inProgress = false;
                             _isFirstSet = false;
                         }
                         else
@@ -111,9 +113,9 @@ public class CamMovementManager : MonoBehaviour
     //to be improved
     public void ChangeCameraPlacement(string targetKey)
     {
-        _cameraAnimation.ChangeCameraPlacement(target: _camPositionsFirstSet[targetKey], duration: _duration);
-        _isFirstSet = true;
+        //_cameraAnimation.ChangeCameraPlacement(target: _camPositionsFirstSet[targetKey], duration: _duration);
+        //_isFirstSet = true;
         //temp
-        UIManager.Instance.TurnRoundOff();
+        //UIManager.Instance.TurnRoundOff();
     }   
 }
