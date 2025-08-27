@@ -635,12 +635,12 @@ MonoBehaviour:
   connectionWidth: 0.1
   connectionYOffset: 0
   minConnectionsPerNode: 2
-  maxConnectionsPerNode: 3
-  maxConnectionDistance: 4
+  maxConnectionsPerNode: 4
+  maxConnectionDistance: 5
   cameraController: {fileID: 1665362199}
   mapManager: {fileID: 594651637}
   fixedSeed: 0
-  lastUsedSeed: 0
+  lastUsedSeed: 401670215
 --- !u!114 &594651637
 MonoBehaviour:
   m_ObjectHideFlags: 0
