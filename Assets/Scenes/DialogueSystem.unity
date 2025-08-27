@@ -551,6 +551,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1758210355}
+  - component: {fileID: 1758210356}
   m_Layer: 0
   m_Name: Managers
   m_TagString: Untagged
@@ -575,6 +576,44 @@ Transform:
   - {fileID: 105118342}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1758210356
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1758210354}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e0fd2c6348d683e4a8d6cf3a678f034e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OverallDialogueInformation:
+    numberOfDeaths: 0
+    goodGambleAttempts: 0
+    badGambleAttempts: 0
+    allGambleAttempts: 0
+    opponentInformation:
+    - opponentName: Minotaur
+      numberOfDefeatsByOpponent: 0
+      goodGambleDialoguePlayed: 0
+      badGambleDialoguePlayed: 0
+    - opponentName: Arachne
+      numberOfDefeatsByOpponent: 0
+      goodGambleDialoguePlayed: 0
+      badGambleDialoguePlayed: 0
+    - opponentName: Griffon
+      numberOfDefeatsByOpponent: 0
+      goodGambleDialoguePlayed: 0
+      badGambleDialoguePlayed: 0
+    - opponentName: Satyr
+      numberOfDefeatsByOpponent: 0
+      goodGambleDialoguePlayed: 0
+      badGambleDialoguePlayed: 0
+    - opponentName: Athena
+      numberOfDefeatsByOpponent: 0
+      goodGambleDialoguePlayed: 0
+      badGambleDialoguePlayed: 0
 --- !u!1 &1825717672
 GameObject:
   m_ObjectHideFlags: 0
@@ -725,6 +764,34 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1758210355}
     m_Modifications:
+    - target: {fileID: 544501872079754672, guid: 1d39c60ddd5ce0b42a0fd49f4d7e0e59, type: 3}
+      propertyPath: defeatedBy
+      value: Minotaur
+      objectReference: {fileID: 0}
+    - target: {fileID: 544501872079754672, guid: 1d39c60ddd5ce0b42a0fd49f4d7e0e59, type: 3}
+      propertyPath: defeatInkFile
+      value: 
+      objectReference: {fileID: 4900000, guid: f64a28a6392ad414d8ddf495e3aa77d5, type: 3}
+    - target: {fileID: 544501872079754672, guid: 1d39c60ddd5ce0b42a0fd49f4d7e0e59, type: 3}
+      propertyPath: badGambleInkFile
+      value: 
+      objectReference: {fileID: 4900000, guid: db7392690205c3e4f81a55ec2b2a8466, type: 3}
+    - target: {fileID: 544501872079754672, guid: 1d39c60ddd5ce0b42a0fd49f4d7e0e59, type: 3}
+      propertyPath: firstDeathInkFile
+      value: 
+      objectReference: {fileID: 4900000, guid: 36416e74b0a7bdb4cb092bef83786ed0, type: 3}
+    - target: {fileID: 544501872079754672, guid: 1d39c60ddd5ce0b42a0fd49f4d7e0e59, type: 3}
+      propertyPath: goodGambleInkFile
+      value: 
+      objectReference: {fileID: 4900000, guid: 77dbb204aae058b4cb803c1d4cc2f279, type: 3}
+    - target: {fileID: 544501872079754672, guid: 1d39c60ddd5ce0b42a0fd49f4d7e0e59, type: 3}
+      propertyPath: numberOfDefeatTexts
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 544501872079754672, guid: 1d39c60ddd5ce0b42a0fd49f4d7e0e59, type: 3}
+      propertyPath: numberOfGambleTexts
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 2314343032834705749, guid: 1d39c60ddd5ce0b42a0fd49f4d7e0e59, type: 3}
       propertyPath: _teaseText
       value: 
@@ -796,8 +863,42 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7125283261403119519, guid: 1d39c60ddd5ce0b42a0fd49f4d7e0e59, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 473128083336940703}
   m_SourcePrefab: {fileID: 100100000, guid: 1d39c60ddd5ce0b42a0fd49f4d7e0e59, type: 3}
+--- !u!1 &473128083336940702 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7125283261403119519, guid: 1d39c60ddd5ce0b42a0fd49f4d7e0e59, type: 3}
+  m_PrefabInstance: {fileID: 473128083336940701}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &473128083336940703
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 473128083336940702}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e0fd2c6348d683e4a8d6cf3a678f034e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OverallDialogueInformation:
+    numberOfDeaths: 0
+    goodGambleAttempts: 0
+    badGambleAttempts: 0
+    allGambleAttempts: 0
+    opponentInformation:
+    - opponentName: Minotaur
+      numberOfDefeatsByOpponent: 0
+      goodGambleDialoguePlayed: 0
+      badGambleDialoguePlayed: 0
+    - opponentName: Arachne
+      numberOfDefeatsByOpponent: 0
+      goodGambleDialoguePlayed: 0
+      badGambleDialoguePlayed: 0
 --- !u!1001 &924796108187843030
 PrefabInstance:
   m_ObjectHideFlags: 0

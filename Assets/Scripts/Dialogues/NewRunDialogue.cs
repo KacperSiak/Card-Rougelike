@@ -1,18 +1,25 @@
 using Ink.Parsed;
+using Ink.UnityIntegration;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class NewRunDialogue : MonoBehaviour
 {
     public static NewRunDialogue instance;
 
     private DialogueManager dialogueManager;
+    private OverallDialogueInformation data;
 
-    [SerializeField] private TextAsset inkFile;
+    [SerializeField] private TextAsset defeatInkFile;
+    [SerializeField] private TextAsset goodGambleInkFile;
+    [SerializeField] private TextAsset badGambleInkFile;
+    [SerializeField] private TextAsset firstDeathInkFile;
 
-    private Dictionary<string, int> countOfDefeats;
+    [SerializeField] int numberOfDefeatTexts, numberOfGambleTexts;
 
-    [SerializeField] string defeatedBy;
+
+    [SerializeField] string defeatedBy; // for testing
 
     private void Awake()
     {
@@ -22,33 +29,68 @@ public class NewRunDialogue : MonoBehaviour
 
     private void Start()
     {
-        countOfDefeats = new Dictionary<string, int>();
-
         dialogueManager = DialogueManager.GetInstance();
-        NewGameAssign();
+        data = GetComponent<DialogueData>().OverallDialogueInformation;
     }
 
-    // has to be called when save file is loaded first time
-    void NewGameAssign()
+    private void Update()
     {
-        countOfDefeats.Add("Minotaur",0);
-        countOfDefeats.Add("Arachne",0);
-        countOfDefeats.Add("Griffon",0);
-        countOfDefeats.Add("Satyr",0);
-        countOfDefeats.Add("Athena",0);
+        if (Input.GetKeyDown(KeyCode.Tab))
+            dialogueManager.DialogueByDefeat(defeatedBy);
     }
 
-    // this is function to be called when dialogue on new run has to show up
+    // this is function to be called when dialogue on new run has to show up - IT IS CALLED FROM DIALOGUEMANAGER
     public void DialogueByDefeat(string defeatedBy)
     {
         if (dialogueManager.isDialoguePlaying) return;
 
-        int whichTimeDefeated = countOfDefeats[defeatedBy];
-        whichTimeDefeated++;
-        countOfDefeats[defeatedBy] = whichTimeDefeated;
+        int deaths = data.numberOfDeaths;
+        int goodGamble = data.goodGambleAttempts;
+        int badGamble = data.badGambleAttempts;
+        int totalGamble = data.allGambleAttempts;
 
-        PlayerPrefs.SetInt(defeatedBy, whichTimeDefeated);
+        int bgTries = data.opponentInformation.FirstOrDefault(c => c.opponentName == defeatedBy)?.badGambleDialoguePlayed ?? -1;
+        int ggTries = data.opponentInformation.FirstOrDefault(c => c.opponentName == defeatedBy)?.goodGambleDialoguePlayed ?? -1;
 
-        dialogueManager.EnterDialogueMode(inkFile, $"{defeatedBy}.died{whichTimeDefeated}");
+        if (deaths == 1)
+            dialogueManager.EnterDialogueMode(firstDeathInkFile);
+        else
+        {
+            int defeatedByCount = data.opponentInformation.FirstOrDefault(c => c.opponentName == defeatedBy)?.numberOfDefeatsByOpponent ?? -1;
+
+            if (defeatedByCount <= numberOfDefeatTexts)
+                dialogueManager.EnterDialogueMode(defeatInkFile, $"{defeatedBy}.died{defeatedByCount}");
+            else if(defeatedByCount > numberOfDefeatTexts)
+            {
+                if(goodGamble > badGamble && ggTries <= numberOfGambleTexts)
+                {
+                    if(totalGamble <= 5)
+                    {
+                        dialogueManager.EnterDialogueMode(goodGambleInkFile, $"lessThanFive.died{ggTries+1}");
+                    }
+                    if(totalGamble > 5)
+                    {
+                        dialogueManager.EnterDialogueMode(goodGambleInkFile, $"moreThanFive.died{ggTries+1}");
+                    }
+                }
+                else if(badGamble > goodGamble && bgTries <= numberOfGambleTexts)
+                {
+                    if (totalGamble <= 5)
+                    {
+                        dialogueManager.EnterDialogueMode(badGambleInkFile, $"lessThanFive.died{bgTries + 1}");
+                    }
+                    if (totalGamble > 5)
+                    {
+                        dialogueManager.EnterDialogueMode(badGambleInkFile, $"moreThanFive.died{bgTries + 1}");
+                    }
+                }
+                else
+                {
+                    Debug.LogWarning($"[NewRunDialogue] There is no more dialogue to choose from!");
+                }
+            }
+
+        }
+
     }
 }
