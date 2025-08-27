@@ -48,7 +48,6 @@ public class RelicIconButtonsUI : MonoBehaviour
         {
             PlayerOverlay.Instance.AddGold(_relic.sellPrice);
         }
-        ToolTipManager.Instance.HideToolTip();
         RelicEventsSystem.RelicRemoved(_relic);
         Destroy(gameObject);
     }
@@ -74,7 +73,6 @@ public class RelicIconButtonsUI : MonoBehaviour
         OnRelicUpgrade.Invoke(_relic);
         _vaseButton.gameObject.SetActive(false);
         vaseEnabled = false;
-        ToolTipManager.Instance.HideToolTip();
         Destroy(gameObject);
     }
 }
