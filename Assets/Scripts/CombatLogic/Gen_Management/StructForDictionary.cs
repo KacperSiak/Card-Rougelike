@@ -1,7 +1,7 @@
 using System;
 
 [Serializable]
-public class ClassForDictionary<T1, T2>
+public struct StructForDictionary<T1, T2>
 {
     public T1 key;
     public T2 value;

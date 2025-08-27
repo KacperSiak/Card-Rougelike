@@ -40,7 +40,7 @@ public class ObjPoolManager : MonoBehaviour
     private void CreateObjPool()
     {
         PlayerPoolSize = RoundManager.Instance.PlayerCards.Count;
-        EnemyPoolSize = RoundManager.Instance.EnemyCards.Count;
+        EnemyPoolSize = CombatManager.Instance.GetCurrentDeckSize();
 
         for (int i = 0; i < PlayerPoolSize; i++)
         {

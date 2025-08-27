@@ -10,7 +10,6 @@ public class RoundManager : MonoBehaviour
 
     public static RoundManager Instance { get; private set; }
 
-    [field: SerializeField] public List<CardsSOTest> EnemyCards { get; private set; }
     [field: SerializeField] public List<CardsSOTest> PlayerCards { get; private set; }
     private bool _alreadyFinished = false; // to prevent double calls of the end of combat
 

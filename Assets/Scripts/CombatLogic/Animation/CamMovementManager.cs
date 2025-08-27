@@ -13,7 +13,7 @@ public class CamMovementManager : MonoBehaviour
     [SerializeField] private Transform _cameraTransform;
     [SerializeField] private CameraAnimation _cameraAnimation;
     [SerializeField] private float _duration;
-    [SerializeField] private List<ClassForDictionary<string, Transform>> _dictList;
+    [SerializeField] private List<StructForDictionary<string, Transform>> _dictList;
     private Dictionary<string, Transform> _camPositionsFirstSet = new();
     private Dictionary<string, Transform> _camPositionsSecondSet = new();
     private Dictionary<string, Transform> _currentCamPositionsSet = new();

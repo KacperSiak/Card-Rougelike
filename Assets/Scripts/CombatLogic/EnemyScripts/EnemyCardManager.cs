@@ -10,7 +10,7 @@ public class EnemyCardManager : MonoBehaviour
     public List<GameObject> cardHolders;
     public List<Transform> cardObjects;
 
-    private Dictionary<int, List<CardsSOTest>> _cardsBySuitDeck = new Dictionary<int, List<CardsSOTest>>();
+    private Dictionary<int, List<CardsSOTest>> _cardsBySuitDeck = new();
 
     public Dictionary<int, List<GameObject>> CardsInGame { get; private set;} 
     public Dictionary<int, int> CardsInGamePower { get; private set; } 
@@ -42,17 +42,19 @@ public class EnemyCardManager : MonoBehaviour
 
     public void StartCombat()
     {
-        for (int i = 0, j = 0; i < _suitsAmount; i++)
-        {
-            _cardsBySuitDeck.Add(i, new List<CardsSOTest>());
-            int cardsInSuit = _cardsSameSuit + j;
+        //for (int i = 0, j = 0; i < _suitsAmount; i++)
+        //{
+        //    _cardsBySuitDeck.Add(i, new List<CardsSOTest>());
+        //    int cardsInSuit = _cardsSameSuit + j;
 
-            for (; j < cardsInSuit; j++)
-            {
-                _cardsBySuitDeck[i].Add(RoundManager.Instance.EnemyCards[j]);
-            }
+        //    for (; j < cardsInSuit; j++)
+        //    {
+        //        _cardsBySuitDeck[i].Add(RoundManager.Instance.EnemyCards[j]);
+        //    }
 
-        }
+        //}
+        _cardsBySuitDeck.Clear();
+        _cardsBySuitDeck = CombatManager.Instance.GetCurrentDeck();
 
         CardsInGame = new Dictionary<int, List<GameObject>>();
         CardsInGamePower = new Dictionary<int, int>();
