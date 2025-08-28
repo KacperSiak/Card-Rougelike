@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -44,6 +45,14 @@ public class PlayerCardManager : MonoBehaviour
         _playerDeckInGame = new List<CardsSOTest>(RoundManager.Instance.PlayerCards);
         SelectedCards = new List<GameObject>();
         CardsInHand = new List<GameObject>();
+        StartCoroutine(WaitForSpawn());
+    }
+
+    private IEnumerator WaitForSpawn()
+    {
+        while (!ObjPoolManager.Instance.IsDeckReady)
+            yield return null;
+            
         _spawner.SpawnCards(_playerDeckInGame, CardsInHand, _cardsInHandDefault);
     }
 
@@ -112,7 +121,7 @@ public class PlayerCardManager : MonoBehaviour
         {
             card.GetComponent<PlayerCardLogic>().ResetCard();
             card.SetActive(false);
-            ObjPoolManager.Instance.ReturnCard(card);
+            ObjPoolManager.Instance.ReturnCard(card, isSenderPlayer: true);
         }
         ClearSelectedStorage();
     }

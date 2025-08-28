@@ -8,9 +8,9 @@ public class EnemyCardManager : MonoBehaviour
     [SerializeField] private EnemyCardSpawner _spawner;
     
     public List<GameObject> cardHolders;
-    public List<GameObject> cardObjects;
+    public List<Transform> cardObjects;
 
-    private Dictionary<int, List<CardsSOTest>> _cardsBySuitDeck = new Dictionary<int, List<CardsSOTest>>();
+    private Dictionary<int, List<CardsSOTest>> _cardsBySuitDeck = new();
 
     public Dictionary<int, List<GameObject>> CardsInGame { get; private set;} 
     public Dictionary<int, int> CardsInGamePower { get; private set; } 
@@ -42,25 +42,26 @@ public class EnemyCardManager : MonoBehaviour
 
     public void StartCombat()
     {
-        for (int i = 0, j = 0; i < _suitsAmount; i++)
-        {
-            _cardsBySuitDeck.Add(i, new List<CardsSOTest>());
-            int cardsInSuit = _cardsSameSuit + j;
+        //for (int i = 0, j = 0; i < _suitsAmount; i++)
+        //{
+        //    _cardsBySuitDeck.Add(i, new List<CardsSOTest>());
+        //    int cardsInSuit = _cardsSameSuit + j;
 
-            for (; j < cardsInSuit; j++)
-            {
-                _cardsBySuitDeck[i].Add(RoundManager.Instance.EnemyCards[j]);
-            }
+        //    for (; j < cardsInSuit; j++)
+        //    {
+        //        _cardsBySuitDeck[i].Add(RoundManager.Instance.EnemyCards[j]);
+        //    }
 
-        }
+        //}
+        _cardsBySuitDeck.Clear();
+        _cardsBySuitDeck = CombatManager.Instance.GetCurrentDeck();
 
         CardsInGame = new Dictionary<int, List<GameObject>>();
         CardsInGamePower = new Dictionary<int, int>();
 
-        for (int i = 0, j = 0; i < 3; i++)
+        for (int i = 0; i < 3; i++)
         {
-            SetupSpawner(startObjectIndex: j, cardHolderIndex: i);
-            j += 3;
+            SetupSpawner(startObjectIndex: i, cardHolderIndex: i);
         }
     }
 
@@ -73,17 +74,17 @@ public class EnemyCardManager : MonoBehaviour
         switch (isSingle)
         {
             case true:
-                _spawner.SpawnSingle(startObjectIndex + 1, cardHolderIndex, _cardsBySuitDeck);
+                _spawner.SpawnSingle(cardObjects[startObjectIndex], cardHolderIndex, _cardsBySuitDeck);
                 break;
             case false:
-                _spawner.SpawnCombo(startObjectIndex, cardHolderIndex, _cardsBySuitDeck);
+                _spawner.SpawnCombo(cardObjects[startObjectIndex], cardHolderIndex, _cardsBySuitDeck);
                 break;
         }
     }
 
     public void SetupCardHolder(int index, Validator validator)
     {
-        cardHolders[index].GetComponent<CardHolderManager>().SetProperties(validator, index);
+        cardHolders[index].GetComponent<CardHolderLogic>().SetProperties(validator, index);
     }
 
     public void SetupCardsInGame(int key)
@@ -127,14 +128,14 @@ public class EnemyCardManager : MonoBehaviour
 
         foreach (var cardHolder in cardHolders)
         {
-            if (cardHolder.GetComponent<CardHolderManager>().EnemyComboIndex != -1)
+            if (cardHolder.GetComponent<CardHolderLogic>().EnemyComboIndex != -1)
             {
-                startIndex += 3;
+                startIndex++;
                 continue;
             } 
 
             SetupSpawner(startObjectIndex: startIndex, cardHolderIndex: cardHolders.IndexOf(cardHolder));
-            startIndex += 3;
+            startIndex++;
         }
     }
 
@@ -142,7 +143,7 @@ public class EnemyCardManager : MonoBehaviour
     {
         foreach (var card in cardObjects)
         {
-            card.SetActive(false);
+            card.gameObject.SetActive(false);
         }
         CardsInGame.Clear();
         CardsInGamePower.Clear();

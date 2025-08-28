@@ -15,7 +15,7 @@ public class DiscardManager : MonoBehaviour
         {
             card.GetComponent<PlayerCardLogic>().ResetCard();
             card.SetActive(false);
-            ObjPoolManager.Instance.ReturnCard(card);
+            ObjPoolManager.Instance.ReturnCard(card, isSenderPlayer: true);
         }
 
         PlayerCardManager.Instance.UpdateAfterDiscard(amount: PlayerCardManager.Instance.SelectedCards.Count);

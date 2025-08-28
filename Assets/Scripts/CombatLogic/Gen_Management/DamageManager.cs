@@ -6,7 +6,7 @@ public class DamageManager : MonoBehaviour
    public static DamageManager Instance { get; private set; }
    [SerializeField] private EnemyAttackManager _enemyAttackManager;
 
-   [SerializeField] private List<CardHolderManager> _cardHolders;
+   [SerializeField] private List<CardHolderLogic> _cardHolders;
 
     void Awake()
     { 

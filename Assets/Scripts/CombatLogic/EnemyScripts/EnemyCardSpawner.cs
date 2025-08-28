@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,11 +8,12 @@ public class EnemyCardSpawner : MonoBehaviour
     [SerializeField] private ValidateClean _clean;
     [SerializeField] private ValidateDirty _dirty;
     [SerializeField] private ValidateSingle _single;
-    private int _cardsInCombo = 3;
-    private int _cardsBuffer = 2;
+    private readonly int _cardsInCombo = 3;
+    private readonly int _cardsBuffer = 2;
 
-    public void SpawnCombo(int indexObject, int indexCardHolder, Dictionary<int, List<CardsSOTest>> cardsBySuit)
+    public void SpawnCombo(Transform indexObject, int indexCardHolder, Dictionary<int, List<CardsSOTest>> cardsBySuit)
     {  
+       // Vector3 spawnPosition = indexObject.position - new Vector3(0.1f, 0, 0);
         int cleanOrDirty = Random.Range(0, 2); // randomly from 0-1, 0 is clean, 1 is dirty
         bool isClean = cleanOrDirty == 0;
 
@@ -30,7 +32,7 @@ public class EnemyCardSpawner : MonoBehaviour
 
             if (cardsBySuit[randomCleanSuit].Count <= _cardsBuffer)
             {
-                SpawnSingle(indexObject + 1, indexCardHolder, cardsBySuit);
+                SpawnSingle(indexObject, indexCardHolder, cardsBySuit);
                 return;
             }
 
@@ -42,21 +44,23 @@ public class EnemyCardSpawner : MonoBehaviour
                 { 
                     if (cardsBySuit[randomCleanSuit][randomCleanCard].power + j != cardsBySuit[randomCleanSuit][randomCleanCard + j].power)
                     {
-                        EnemyCardManager.Instance.SetupSpawner(indexObject, indexCardHolder);
+                        EnemyCardManager.Instance.SetupSpawner(indexCardHolder, indexCardHolder);
                         return;
                     }
                 }
 
-                GameObject cardObject = EnemyCardManager.Instance.cardObjects[indexObject + i];
+                GameObject cardObject = ObjPoolManager.Instance.GetCardFromPool(isSenderPlayer: false);
+                //cardObject.transform.localScale /= 1.7f;
+                //cardObject.transform.SetPositionAndRotation(spawnPosition, indexObject.rotation);
                 CardsSOTest card = cardsBySuit[randomCleanSuit][randomCleanCard];
                 cardsBySuit[randomCleanSuit].RemoveAt(randomCleanCard);
 
-                cardObject.GetComponent<SpriteRenderer>().sprite = card.graphics;
+                CardSetupManager.Instance.SetupCardVisual(cardObject.GetComponent<MeshRenderer>(), card.column, card.row);
                 cardObject.GetComponent<EnemyCardLogic>().SetCardProperties(card);
                 power += card.power;
-                cardObject.SetActive(true);
 
                 EnemyCardManager.Instance.UpdateCardsInGame(key, cardObject);
+                //spawnPosition += new Vector3(0.1f, 0, 0);
             }
 
             CheckCardsInDeckAmount(cardsBySuit, randomCleanSuit);
@@ -64,12 +68,13 @@ public class EnemyCardSpawner : MonoBehaviour
             EnemyCardManager.Instance.SetupCardHolder(key, validator: _clean);
             EnemyCardManager.Instance.SetupPower(key, power);
             _enemyAttackManager.SetRoundAttack(key);
+            StartCoroutine(AnimatedPlacement(indexObject, _cardsInCombo, key, 1f));
             return;
         }
 
         if (cardsBySuit.Count <= _cardsBuffer)
         {
-             EnemyCardManager.Instance.SetupSpawner(indexObject, indexCardHolder);
+             EnemyCardManager.Instance.SetupSpawner(indexCardHolder, indexCardHolder);
              return;
         }
 
@@ -91,15 +96,18 @@ public class EnemyCardSpawner : MonoBehaviour
 
               if (index.Count != count)
               {
-                    EnemyCardManager.Instance.SetupSpawner(indexObject, indexCardHolder);
+                    EnemyCardManager.Instance.SetupSpawner(indexCardHolder, indexCardHolder);
                     return;
               }
         }
 
         for (int i = 0; i < _cardsInCombo; i++)
         {
-             GameObject cardObject = EnemyCardManager.Instance.cardObjects[indexObject + i];
-             CardsSOTest card = cardsBySuit[randomDirtySuit][index[i]];
+            GameObject cardObject = ObjPoolManager.Instance.GetCardFromPool(isSenderPlayer: false);
+            //cardObject.transform.localScale /= 1.7f;
+            //cardObject.transform.SetPositionAndRotation(spawnPosition, indexObject.rotation);
+
+            CardsSOTest card = cardsBySuit[randomDirtySuit][index[i]];
              cardsBySuit[randomDirtySuit].Remove(card);
 
             if (cardsBySuit[randomDirtySuit].Count == 0)
@@ -110,35 +118,37 @@ public class EnemyCardSpawner : MonoBehaviour
 
             randomDirtySuit++;
 
-             cardObject.GetComponent<SpriteRenderer>().sprite = card.graphics;
-             cardObject.GetComponent<EnemyCardLogic>().SetCardProperties(card);
-             power += card.power;
-             cardObject.SetActive(true);
+            CardSetupManager.Instance.SetupCardVisual(cardObject.GetComponent<MeshRenderer>(), card.column, card.row);
+            cardObject.GetComponent<EnemyCardLogic>().SetCardProperties(card);
+            power += card.power;
 
-             EnemyCardManager.Instance.UpdateCardsInGame(key, cardObject);
+            EnemyCardManager.Instance.UpdateCardsInGame(key, cardObject);
+            //spawnPosition += new Vector3(0.1f, 0, 0);
         }
 
         EnemyCardManager.Instance.SetupCardHolder(key, validator: _dirty);
         EnemyCardManager.Instance.SetupPower(key, power);
         _enemyAttackManager.SetRoundAttack(key);
+        StartCoroutine(AnimatedPlacement(indexObject, _cardsInCombo, key, 1f));
     }
 
-    public void SpawnSingle(int cardObjectIndex, int indexCardHolder, Dictionary<int, List<CardsSOTest>> cardsBySuit)
+    public void SpawnSingle(Transform cardObjectIndex, int indexCardHolder, Dictionary<int, List<CardsSOTest>> cardsBySuit)
     { 
         int randomSuit = Random.Range(0, cardsBySuit.Count);
         int randomCard = Random.Range(0, cardsBySuit[randomSuit].Count); 
         int power = 0;
 
-        GameObject cardObject = EnemyCardManager.Instance.cardObjects[cardObjectIndex];
+        GameObject cardObject = ObjPoolManager.Instance.GetCardFromPool(isSenderPlayer: false);
+        //cardObject.transform.localScale /= 1.7f;
+        //cardObject.transform.SetPositionAndRotation(cardObjectIndex.position, cardObjectIndex.rotation);
         CardsSOTest card = cardsBySuit[randomSuit][randomCard]; 
         cardsBySuit[randomSuit].RemoveAt(randomCard);
 
         CheckCardsInDeckAmount(cardsBySuit, randomSuit);
 
-        cardObject.GetComponent<SpriteRenderer>().sprite = card.graphics;
+        CardSetupManager.Instance.SetupCardVisual(cardObject.GetComponent<MeshRenderer>(), card.column, card.row);
         cardObject.GetComponent<EnemyCardLogic>().SetCardProperties(card);
         power += card.power;
-        cardObject.SetActive(true);
             
         int keySingle = indexCardHolder;
         if (!EnemyCardManager.Instance.CardsInGame.ContainsKey(keySingle))
@@ -148,6 +158,39 @@ public class EnemyCardSpawner : MonoBehaviour
         EnemyCardManager.Instance.SetupCardHolder(keySingle, validator: _single);
         EnemyCardManager.Instance.SetupPower(keySingle, power);
         _enemyAttackManager.SetRoundAttack(keySingle);
+
+        StartCoroutine(AnimatedPlacement(cardObjectIndex, 1, keySingle, 1f));
+    }
+
+    private IEnumerator AnimatedPlacement(Transform parentPosition, int amount, int key, float _duration)
+    {
+        Vector3 spawnPosition;
+
+        if (amount == 1)
+            spawnPosition = parentPosition.position;
+        else
+            spawnPosition = parentPosition.position - new Vector3(0.1f, 0, 0);
+
+        while(!ObjPoolManager.Instance.IsDeckReady)
+            yield return null;
+
+        for (int i = 0; i < amount; i++)
+        {
+            GameObject cardObject = EnemyCardManager.Instance.CardsInGame[key][i];
+            cardObject.SetActive(true);
+            cardObject.transform.localScale /= 1.7f;
+            cardObject.transform.GetPositionAndRotation(out Vector3 startPos, out Quaternion startRot);
+            float elapsed = 0f;
+
+            while (elapsed < _duration)
+            {
+                elapsed += Time.deltaTime;
+                float t = Mathf.SmoothStep(0f, 1f, elapsed / _duration);
+                cardObject.transform.SetPositionAndRotation(Vector3.Lerp(startPos, spawnPosition, t), Quaternion.Slerp(startRot, parentPosition.transform.rotation, t));
+                yield return null;
+            }
+            spawnPosition += new Vector3(0.1f, 0, 0);
+        }
     }
 
     private void CheckCardsInDeckAmount(Dictionary<int, List<CardsSOTest>> deck, int key)

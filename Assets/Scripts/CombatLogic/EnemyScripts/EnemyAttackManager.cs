@@ -75,7 +75,7 @@ public class EnemyAttackManager : MonoBehaviour
                 card.SetActive(false);
             }
             EnemyCardManager.Instance.RemoveCardFromGame(i);
-            EnemyCardManager.Instance.cardHolders[i].GetComponent<CardHolderManager>().ResetCardHolderEnemyCards();
+            EnemyCardManager.Instance.cardHolders[i].GetComponent<CardHolderLogic>().ResetCardHolderEnemyCards();
         }
     }
 

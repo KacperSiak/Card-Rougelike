@@ -1,13 +1,16 @@
 using UnityEngine;
 
-//here changes, clear and improve a bit
+//mb separate saving properties and card logic
 public class PlayerCardLogic : MonoBehaviour
 {
-    private Vector3 defaultPosition;
-    private Vector3 defaultSize;
-    private bool isSelected = false;
+    private Vector3 _defaultPosition;
+    private Vector3 _lastPosition;
+    private Quaternion _lastRotation;
+    private Vector3 _defaultSize;
+    private bool _isSelected = false;
 
     public bool IsUsed { get; set; } = false;
+    private bool _isAvailable = false;
 
     public CardsSOTest Card { get; private set; }
 
@@ -22,65 +25,87 @@ public class PlayerCardLogic : MonoBehaviour
         RoundManager.OnRoundEnd -= MakeReusable;
     }
 
-    public void SaveProperties()
+    public void SaveDefaultProperties()
     {
-        defaultPosition = transform.position;
-        defaultSize = transform.localScale;
+        _defaultPosition = transform.position;
+        _defaultSize = transform.localScale;
+        SaveCurrentProperties();
+    }
+
+    public void SaveCurrentProperties()
+    {
+        _lastPosition = transform.position;
+        _lastRotation = transform.rotation;
     }
 
     public void SetCardProperties(CardsSOTest card)
     {
         Card = card;
+        _isAvailable = true;
+    }
+
+    public void SetAnimationPlacement(Vector3 newPosition, Quaternion newRotation)
+    {
+        transform.position = newPosition;
+        transform.rotation = newRotation;
+    }
+
+    public void ResetLastPlacement()
+    {
+        transform.position = _lastPosition;
+        transform.rotation = _lastRotation;
     }
 
     private void OnMouseEnter()
     {
-        if (isSelected) return;
-        //transform.position += new Vector3(0, 0.1f, 0f); // Move the card up slightly when hovered
-        transform.position += new Vector3(0, 0.01f, 0f);
-        //GetComponent<SpriteRenderer>().sortingOrder += 2;
+        if (_isSelected || !_isAvailable) return;
+        transform.position += new Vector3(0f, 0.0125f, -0.00088f);
+        SaveCurrentProperties();
     }
 
     private void OnMouseExit()
     {
-        if (isSelected) return; 
-        transform.position = defaultPosition; // Reset position when not hovered
-       //GetComponent<SpriteRenderer>().sortingOrder -= 2;
+        if (_isSelected || !_isAvailable) return; 
+        transform.position = _defaultPosition; // Reset position when not hovered
+        SaveCurrentProperties();
     }
 
     private void OnMouseDown()
     {
-        if (!isSelected)
+        if (!_isSelected && _isAvailable)
         {
             if (PlayerCardManager.Instance.SelectedCards.Count == 3)
                 return; // Prevent selecting more than 3 cards
 
-            //transform.position = defaultPosition + new Vector3(0, 0.15f, 0f);
-            transform.position = defaultPosition + new Vector3(0, 0.015f, 0f);
+            transform.position = _defaultPosition + new Vector3(0f, 0.015f, 0f);
+            SaveCurrentProperties();
             PlayerCardManager.Instance.AddSelectedCards(gameObject);
-            isSelected = true;
+            _isSelected = true;
         }
 
-        else if(!IsUsed)
+        else if(!IsUsed && _isAvailable)
         {
-            transform.position = defaultPosition;
+            transform.position = _defaultPosition;
+            SaveCurrentProperties();
             PlayerCardManager.Instance.RemoveSelectedCards(gameObject);
-            isSelected = false;
+            _isSelected = false;
         }
 
     }
     public void MakeReusable()
     {
-        isSelected = false;
+        _isSelected = false;
         IsUsed = false;
     }
 
     public void ResetCard()
     {
         transform.position = Vector3.zero;
-        transform.localScale = defaultSize;
+        transform.localScale = _defaultSize;
         transform.localRotation = Quaternion.identity;
         Card = null; 
+        _isAvailable = false;
         MakeReusable();
+        SaveCurrentProperties();
     }
 }

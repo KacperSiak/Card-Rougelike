@@ -11,10 +11,10 @@ public enum Suits
 
 [CreateAssetMenu(fileName = "CardsSOTest", menuName = "Scriptable Objects/CardsSOTest")]
 
+//will be main cardSO script
 public class CardsSOTest : ScriptableObject
 {
     public int power;
-    public Sprite graphics;
     public int column;
     public int row;
     public Suits suit;
