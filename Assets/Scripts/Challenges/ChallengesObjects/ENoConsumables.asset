@@ -12,11 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c47cce8b929c374181fa743286205e0, type: 3}
   m_Name: ENoConsumables
   m_EditorClassIdentifier: 
-  challengeName: NoConsumables
-  challengeDescription: Do not use Consumables cards and moirae cards during whole
-    fight
-  difficulty: 0
-  challIcon: {fileID: 721527010, guid: 28a5df7ffde1bb5408169991d42c3ab0, type: 3}
+  <challengeName>k__BackingField: chall1
+  <challengeDescription>k__BackingField: You cannot use conusmable cards during fight
+  <difficulty>k__BackingField: 0
+  <challIcon>k__BackingField: {fileID: 0}
   challenge:
   - rid: 2307447497862676577
   references:

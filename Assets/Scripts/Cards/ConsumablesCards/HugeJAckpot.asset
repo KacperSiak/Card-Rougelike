@@ -10,15 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4dce2b1003ba8b94499851aac558fec9, type: 3}
-  m_Name: HugeJAckpot
+  m_Name: HugeJackpot
   m_EditorClassIdentifier: 
-  cardID: HugeJackpot
-  cardName: HugeJackpot
-  cardDescription: +1 random relic, 50 coins, a regular card pack, one moirae card
-  icon: {fileID: 0}
-  rarity: 1
-  buyPrice: 80
-  sellPrice: 40
+  <cardID>k__BackingField: HugeJackpot
+  <cardName>k__BackingField: 
+  <cardDescription>k__BackingField: You get 1 relic, 50drachma, a pack of bonus cards
+    and one moirae card
+  <icon>k__BackingField: {fileID: 0}
+  <rarity>k__BackingField: 1
+  <buyPrice>k__BackingField: 0
+  <sellPrice>k__BackingField: 0
   cardEffects:
   - rid: 5888606620320792667
   references:

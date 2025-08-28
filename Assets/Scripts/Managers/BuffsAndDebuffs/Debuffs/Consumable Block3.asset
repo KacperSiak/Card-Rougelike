@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea794a9f71dedaa4ea38dec2157374d9, type: 3}
   m_Name: Consumable Block3
   m_EditorClassIdentifier: 
-  debuffName: ConsumableBlock
-  debuffDesc: You cant use consumables cards till end of the fight
-  debuffIcon: {fileID: 0}
-  debuffTurns: 0
+  <debuffName>k__BackingField: 
+  <debuffDesc>k__BackingField: You cannot use Consumables till the end of the fight
+  <debuffIcon>k__BackingField: {fileID: 0}
+  <debuffTurns>k__BackingField: 0
   debuffs:
   - rid: 2307447362607644733
   references:

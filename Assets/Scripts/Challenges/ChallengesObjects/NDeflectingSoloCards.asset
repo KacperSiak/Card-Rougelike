@@ -12,9 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c47cce8b929c374181fa743286205e0, type: 3}
   m_Name: NDeflectingSoloCards
   m_EditorClassIdentifier: 
-  challengeName: DefelctingSoloCards
-  challengeDescription: Deflect 3 Solo ccards in a row
-  difficulty: 1
+  <challengeName>k__BackingField: Solo Cards
+  <challengeDescription>k__BackingField: You have to Beat three Single cards in a
+    row without placing your cards against enemy sequences
+  <difficulty>k__BackingField: 1
+  <challIcon>k__BackingField: {fileID: 0}
   challenge:
   - rid: 2307447497862676578
   references:
@@ -22,4 +24,5 @@ MonoBehaviour:
     RefIds:
     - rid: 2307447497862676578
       type: {class: ThreeSinglesInARow, ns: , asm: Assembly-CSharp}
-      data: 
+      data:
+        _maxSoloCards: 3

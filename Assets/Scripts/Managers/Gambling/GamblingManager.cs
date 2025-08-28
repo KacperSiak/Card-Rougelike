@@ -5,7 +5,7 @@ using System.Linq;
 
 
 
-public class GamblingManager : MonoBehaviour
+public class GamblingManager : PersistenSingleton<GamblingManager>
 {
     [SerializeField] private RewardStruct[] rewards;
 
@@ -14,26 +14,17 @@ public class GamblingManager : MonoBehaviour
 
     [SerializeField] private Image jokeIcon;
     [SerializeField] private TextMeshProUGUI joketext;
-    public static GamblingManager instance;
 
     public float modifier;
 
-    private void Awake()
+    protected override void OnSingletonAwake() { }
+
+    protected override void OnDestroy()
     {
-        instance = this;
+        base.OnDestroy();
     }
 
-    private void OnEnable()
-    {
-        RollButton.onClick.AddListener(Roll);
-    }
-
-    private void OnDisable()
-    {
-        RollButton.onClick.RemoveAllListeners();
-    }
-
-    private void Roll()
+    public void Roll()
     {
         float total = rewards.Sum(r => 
             r.type == RewardType.Positive

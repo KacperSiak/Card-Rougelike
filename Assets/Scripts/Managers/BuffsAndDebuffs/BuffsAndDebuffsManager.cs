@@ -1,27 +1,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BuffsAndDebuffsManager : MonoBehaviour
+public class BuffsAndDebuffsManager : PersistenSingleton<BuffsAndDebuffsManager>
 {
     [SerializeField] private List<DebuffData> _debuffList;
     [SerializeField] private BuffAndDebuffUI _buffAndDebuffUI;
-    public static BuffsAndDebuffsManager instance;
 
     public List<DebuffData> _currentDebuffs;
     public List<PotionData> _currentPotionEffects;
 
     private bool _debuffProetection = false;
 
-    private void Awake()
+    protected override void OnSingletonAwake() { }
+
+    protected override void OnDestroy()
     {
-        if (instance == null)
-        {
-            instance = this;
-        }
-        else
-        {
-            Debug.Log("I found another Buff and Debuff Menager");
-        }
+        base.OnDestroy();
     }
 
     public void ApplyBuff(PotionData potion)

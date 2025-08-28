@@ -1,8 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
-public class ChallengesMenager : MonoBehaviour
+public class ChallengesMenager : PersistenSingleton<ChallengesMenager>
 {
     [SerializeField] private Button _easyButton;
     [SerializeField] private Button _normalButton;
@@ -13,32 +14,30 @@ public class ChallengesMenager : MonoBehaviour
     [SerializeField] private List<ChallengesData> _hardChallenges;
     [SerializeField] private List<GameObject> _slots;
 
-    [SerializeField] private CardPack _cardPack;
-    [SerializeField] private VaseRelicUpgrade _vase;
-    
+    [SerializeField] private RewardStruct _easyRewards;
+    [SerializeField] private RewardStruct _normalRewards;
+    [SerializeField] private RewardStruct _hardRewards;
+
+    [SerializeField] private TextMeshProUGUI _cuurentChallText;
+
+    private ChallengeContext _context;
     private ChallengesData _currentChallenge;
 
-    public static ChallengesMenager instance;
-
-    private void Awake()
+    protected override void OnSingletonAwake()
     {
-        if (instance == null) instance = this;
-        else
-        {
-            Debug.Log("Found Another Menager");
-            Destroy(gameObject);
-        }
-
         _easyButton.onClick.AddListener(DisplayEasy);
         _normalButton.onClick.AddListener(DisplayNormal);
         _hardButton.onClick.AddListener(DisplayHard);
+        _context = new ChallengeContext();
     }
 
-    private void OnDestroy()
+    protected override void OnDestroy()
     {
         _easyButton.onClick.RemoveListener(DisplayEasy);
         _normalButton.onClick.RemoveListener(DisplayNormal);
         _hardButton.onClick.RemoveListener(DisplayHard);
+
+        base.OnDestroy();
     }
 
     private void DisplayEasy() => Display(_easyChallenges);
@@ -56,7 +55,7 @@ public class ChallengesMenager : MonoBehaviour
         {
             slot.gameObject.SetActive(true);
             int index = Random.Range(0, _temporaryList.Count);
-            var slotUI = slot.GetComponent<ChallengesUI>();
+            var slotUI = slot.GetComponent<ChallengesUITile>();
             if (slotUI != null)
             {
                 slotUI.Setup(_temporaryList[index]);
@@ -65,55 +64,56 @@ public class ChallengesMenager : MonoBehaviour
         }
     }
 
-    // MAgic numbers to move to other script (reward script)
-    public void AddReward()
+    public void AddRewardForChall()
     {
-        int coin = Random.Range(0, 2);
-        ConsumablesData cons = ConsumablesAndRelicMenager.instance.RollRandomCons();
-        if (_currentChallenge.difficulty == Difficulty.Easy)
+        switch (_currentChallenge.difficulty)
         {
-            PlayerOverlay.instance.AddGold(25);
-            _cardPack.OpePack();
+            case Difficulty.Easy:
+                AddRewardByDifficulty( _easyRewards);
+                break;
+
+            case Difficulty.Normal:
+                AddRewardByDifficulty(_normalRewards);
+                break;
+
+            case Difficulty.Hard:
+                AddRewardByDifficulty(_hardRewards);
+                break;
         }
-        else if (_currentChallenge.difficulty == Difficulty.Normal)
+    }
+
+    public void AddRewardByDifficulty(RewardStruct diffRewards)
+    {
+        var ctx = new RewardContext();
+        
+        foreach (var reward in diffRewards.reward.rewardEffect)
         {
-            PlayerOverlay.instance.AddGold(35);
-            _vase.GotVase();
-            if (coin == 0)
-            {
-                ConsumablesAndRelicMenager.instance.AddCard(cons);
-            }
+            reward.AddReward(ctx);
         }
-        else
-        {
-            float newHP = PlayerOverlay.instance.maxHP + 5;
-            PlayerOverlay.instance.AddGold(45);
-            PlayerOverlay.instance.SetMaxHP(newHP);
-            _vase.GotVase();
-            //RelicEventsSystem.RelicAcquired(RollRelic());
-            if (coin == 0)
-            {
-                ConsumablesAndRelicMenager.instance.AddCard(cons);
-            }
-        }
+        
+        
     }
 
     public void ChallengeAccepted(ChallengesData challenge)
     {
         _currentChallenge = challenge;
+        _cuurentChallText.text = _currentChallenge.challengeName;
+
+        var trigger = _cuurentChallText.GetComponent<TooltipTrigger>();
+        if (trigger == null) trigger = _cuurentChallText.gameObject.AddComponent<TooltipTrigger>();
+
+        trigger.Setup(challenge.challengeDescription);
         Debug.Log("Challenge Accepted");
+
+        foreach (var chall in _currentChallenge.challenge)
+        {
+            chall.Register(_context);
+        }
     }
 
-    // To change into another script with rewards
-    //private RelicData RollRelic()
-    //{
-    //    int number = Random.Range(0, 100);
-    //    RelicData relic;
-    //    if (number < 40) relic = ConsumablesAndRelicMenager.instance.RollCommonRelic();
-    //    else if (number < 70) relic = ConsumablesAndRelicMenager.instance.RollRareRelic();
-    //    else if (number < 95) relic = ConsumablesAndRelicMenager.instance.RollEpicRelic();
-    //    else relic = ConsumablesAndRelicMenager.instance.RollLegendaryRelic();
-
-    //    return relic;
-    //}
+    public void ChallengeProgressUpdate(int current, int max)
+    {
+        _cuurentChallText.text = _currentChallenge.challengeName;
+        _cuurentChallText.text += " " + current + "/" + max;
+    }
 }

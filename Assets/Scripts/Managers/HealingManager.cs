@@ -14,7 +14,7 @@ public class HealingManager : MonoBehaviour
 
     private void Heal()
     {
-        PlayerOverlay.instance.AddHealth(healAmount);
+        PlayerOverlay.Instance.AddHealth(healAmount);
         _healButton.onClick.RemoveAllListeners();
     }
 }

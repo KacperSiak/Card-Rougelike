@@ -30,7 +30,7 @@ public class RelicIconButtonsUI : MonoBehaviour
         _removeButton.onClick.AddListener(RemoveRelic);
         _vaseButton.onClick.AddListener(UpgradeRelic);
 
-        if(ShopMenager.instance.inSellingMode)
+        if(ShopMenager.Instance.inSellingMode)
         {
             _buttonText.text = $"Sell {relic.sellPrice}";
         }
@@ -44,11 +44,10 @@ public class RelicIconButtonsUI : MonoBehaviour
 
     public void RemoveRelic()
     {
-        if (ShopMenager.instance.inSellingMode)
+        if (ShopMenager.Instance.inSellingMode)
         {
-            PlayerOverlay.instance.AddGold(_relic.sellPrice);
+            PlayerOverlay.Instance.AddGold(_relic.sellPrice);
         }
-        ToolTipManager.Instance.HideToolTip();
         RelicEventsSystem.RelicRemoved(_relic);
         Destroy(gameObject);
     }
@@ -74,7 +73,6 @@ public class RelicIconButtonsUI : MonoBehaviour
         OnRelicUpgrade.Invoke(_relic);
         _vaseButton.gameObject.SetActive(false);
         vaseEnabled = false;
-        ToolTipManager.Instance.HideToolTip();
         Destroy(gameObject);
     }
 }
