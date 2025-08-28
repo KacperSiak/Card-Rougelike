@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 1956313238955379535}
   - component: {fileID: 7133194635707935725}
   - component: {fileID: 5438547205370341738}
+  - component: {fileID: 8375111901741507122}
   m_Layer: 0
   m_Name: Challenge
   m_TagString: Untagged
@@ -128,6 +129,27 @@ MonoBehaviour:
   mapGenerator: {fileID: 0}
   mapManager: {fileID: 0}
   nodeType: 7
+--- !u!114 &8375111901741507122
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 127485283810057978}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 63a891d1646a1ee41b443cd607480cc7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseColor: {r: 1, g: 1, b: 1, a: 1}
+  highlightColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  iconToAnimate: {fileID: 8815148642061213357}
+  liftHeight: 0.5
+  animationSpeed: 3
+  disableShadows: 0
+  raycastLayer:
+    serializedVersion: 2
+    m_Bits: 4294967295
 --- !u!1001 &4373257727513187426
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -271,9 +293,17 @@ PrefabInstance:
       value: herakles
       objectReference: {fileID: 0}
     - target: {fileID: 4407187375235809858, guid: bb7868606922c934f8261efa35d63573, type: 3}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4407187375235809858, guid: bb7868606922c934f8261efa35d63573, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 05913dfadca1cbe4c8a9874d2ce80515, type: 2}
+    - target: {fileID: 8424073627695423409, guid: bb7868606922c934f8261efa35d63573, type: 3}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8424073627695423409, guid: bb7868606922c934f8261efa35d63573, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
