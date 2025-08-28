@@ -36,11 +36,11 @@ public class NewRunDialogue : MonoBehaviour
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Tab))
-            dialogueManager.DialogueByDefeat(defeatedBy);
+            dialogueManager.EnterDefeatDialogueMode(defeatedBy);
     }
 
     // this is function to be called when dialogue on new run has to show up - IT IS CALLED FROM DIALOGUEMANAGER
-    public void DialogueByDefeat(string defeatedBy)
+    public void DefeatDialogue(string defeatedBy)
     {
         if (dialogueManager.isDialoguePlaying) return;
 
@@ -49,8 +49,8 @@ public class NewRunDialogue : MonoBehaviour
         int badGamble = data.badGambleAttempts;
         int totalGamble = data.allGambleAttempts;
 
-        int bgTries = data.opponentInformation.FirstOrDefault(c => c.opponentName == defeatedBy)?.badGambleDialoguePlayed ?? -1;
-        int ggTries = data.opponentInformation.FirstOrDefault(c => c.opponentName == defeatedBy)?.goodGambleDialoguePlayed ?? -1;
+        int bgTries = data.opponentInformation.FirstOrDefault(c => c.opponentName == defeatedBy)?.badGambleDialoguePlayed ?? -1;   // bad gamble tries individual for each opponent
+        int ggTries = data.opponentInformation.FirstOrDefault(c => c.opponentName == defeatedBy)?.goodGambleDialoguePlayed ?? -1;  // good gamble tries individual for each opponent
 
         if (deaths == 1)
             dialogueManager.EnterDialogueMode(firstDeathInkFile);
