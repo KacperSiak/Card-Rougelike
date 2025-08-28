@@ -408,7 +408,7 @@ public class MapGenerator : MonoBehaviour
                 }
 
                 bool isNextLevelBoss = (level + 1) == numberOfLevels - 1;
-                int connectionsToMake = isNextLevelBoss ? 1 : Mathf.Min(maxConnectionsPerNode, sortedNextNodes.Count);
+                int connectionsToMake = isNextLevelBoss ? 1 : Mathf.Min(2, sortedNextNodes.Count);
 
                 for (int i = 0; i < connectionsToMake; i++)
                 {
@@ -510,8 +510,7 @@ public class MapGenerator : MonoBehaviour
             {
                 if (node.Type == NodeType.Boss) continue;
 
-                // Ensure node has at least minConnectionsPerNode connections
-                while (node.ConnectedNodes.Count < minConnectionsPerNode)
+                if (node.ConnectedNodes.Count == 0)
                 {
                     var unconnectedPrevNodes = previousLevel
                         .Where(prevNode => !node.ConnectedNodes.Contains(prevNode))
@@ -533,10 +532,6 @@ public class MapGenerator : MonoBehaviour
                         
                         node.ConnectedNodes.Add(closestNode);
                         closestNode.ConnectedNodes.Add(node);
-                    }
-                    else
-                    {
-                        break; // No more nodes to connect to
                     }
                 }
             }

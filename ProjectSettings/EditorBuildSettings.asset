@@ -14,7 +14,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Experimental.unity
     guid: c9be718a85113f647a695d05bf1d6373
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/Bootstrapper.unity
     guid: 12c3104d3516f0043bfe9d6ec3bfefd1
   m_configObjects:

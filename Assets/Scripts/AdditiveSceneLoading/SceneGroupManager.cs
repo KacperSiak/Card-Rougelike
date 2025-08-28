@@ -56,6 +56,11 @@ namespace Systems.SceneManagement
             if (activeScene.IsValid())
             {
                 SceneManager.SetActiveScene(activeScene);
+                EnableActiveSceneObjects(activeScene);
+                DisableInactiveSceneCameras(activeScene);
+                DisableInactiveSceneUI(activeScene);
+                DisableInactiveSceneLights(activeScene);
+                DisableInactiveSceneObjects(activeScene);
             }
 
             OnSceneGroupLoaded.Invoke();
@@ -97,6 +102,84 @@ namespace Systems.SceneManagement
             }
 
             await Resources.UnloadUnusedAssets();
+        }
+
+        void DisableInactiveSceneCameras(Scene activeScene)
+        {
+            Camera[] allCameras = UnityEngine.Object.FindObjectsOfType<Camera>();
+            
+            foreach (Camera cam in allCameras)
+            {
+                if (cam.gameObject.scene != activeScene)
+                {
+                    cam.enabled = false;
+                }
+            }
+        }
+
+        void DisableInactiveSceneUI(Scene activeScene)
+        {
+            Canvas[] allCanvases = UnityEngine.Object.FindObjectsOfType<Canvas>();
+            
+            foreach (Canvas canvas in allCanvases)
+            {
+                if (canvas.gameObject.scene != activeScene && canvas.renderMode == RenderMode.ScreenSpaceOverlay)
+                {
+                    canvas.enabled = false;
+                }
+            }
+        }
+
+        void DisableInactiveSceneLights(Scene activeScene)
+        {
+            Light[] allLights = UnityEngine.Object.FindObjectsOfType<Light>();
+            
+            foreach (Light light in allLights)
+            {
+                if (light.gameObject.scene != activeScene)
+                {
+                    light.enabled = false;
+                }
+            }
+        }
+
+        void DisableInactiveSceneObjects(Scene activeScene)
+        {
+            // Get all root GameObjects from all scenes
+            for (int i = 0; i < SceneManager.sceneCount; i++)
+            {
+                Scene scene = SceneManager.GetSceneAt(i);
+                
+                if (scene == activeScene || !scene.isLoaded) continue;
+                
+                GameObject[] rootObjects = scene.GetRootGameObjects();
+                
+                foreach (GameObject rootObj in rootObjects)
+                {
+                    // Keep essential objects like DontDestroyOnLoad objects
+                    if (rootObj.name.Contains("DontDestroyOnLoad") || 
+                        rootObj.name.Contains("Bootstrapper") ||
+                        rootObj.name.Contains("SceneLoader") ||
+                        rootObj.name.Contains("Manager"))
+                    {
+                        continue;
+                    }
+                    
+                    // Disable the entire object hierarchy
+                    rootObj.SetActive(false);
+                }
+            }
+        }
+
+        void EnableActiveSceneObjects(Scene activeScene)
+        {
+            GameObject[] rootObjects = activeScene.GetRootGameObjects();
+            
+            foreach (GameObject rootObj in rootObjects)
+            {
+                // Enable all root objects in active scene
+                rootObj.SetActive(true);
+            }
         }
     }
 
