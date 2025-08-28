@@ -13,10 +13,10 @@ public class EnemyCardManager : MonoBehaviour
     private Dictionary<int, List<CardsSOTest>> _cardsBySuitDeck = new();
 
     public Dictionary<int, List<GameObject>> CardsInGame { get; private set;} 
-    public Dictionary<int, int> CardsInGamePower { get; private set; } 
+    public Dictionary<int, int> CardsInGamePower { get; private set; }
 
-    private int _suitsAmount = 4;
-    private int _cardsSameSuit = 5;
+    public int CardsInGameCount { get; private set; } = 0;
+    private int _bittenCards = 0;
 
     void Awake()
     {
@@ -42,17 +42,6 @@ public class EnemyCardManager : MonoBehaviour
 
     public void StartCombat()
     {
-        //for (int i = 0, j = 0; i < _suitsAmount; i++)
-        //{
-        //    _cardsBySuitDeck.Add(i, new List<CardsSOTest>());
-        //    int cardsInSuit = _cardsSameSuit + j;
-
-        //    for (; j < cardsInSuit; j++)
-        //    {
-        //        _cardsBySuitDeck[i].Add(RoundManager.Instance.EnemyCards[j]);
-        //    }
-
-        //}
         _cardsBySuitDeck.Clear();
         _cardsBySuitDeck = CombatManager.Instance.GetCurrentDeck();
 
@@ -95,12 +84,15 @@ public class EnemyCardManager : MonoBehaviour
     public void UpdateCardsInGame(int key, GameObject cardObject)
     { 
         CardsInGame[key].Add(cardObject);
+        CardsInGameCount++;
     }
 
-    public void RemoveCardFromGame(int key)
+    public void RemoveCardFromGame(int key, int amount)
     {
         CardsInGame.Remove(key);
         CardsInGamePower.Remove(key);
+        _bittenCards++; 
+        CardsInGameCount -= amount;
     }
 
     public void SetupPower(int keyCardsIndex, int power)
@@ -115,8 +107,10 @@ public class EnemyCardManager : MonoBehaviour
 
     public bool CheckRoundReadiness()
     {
-        if(_cardsBySuitDeck.Count == 0 && CardsInGame.Count == 0) return false;
-        
+        if(_cardsBySuitDeck.Count == 0 && CardsInGame.Count == 0) return false; 
+
+        else if (_bittenCards >= RoundManager.Instance.CurrentCombatDetails.key) return false;
+
         return true;
     }
 

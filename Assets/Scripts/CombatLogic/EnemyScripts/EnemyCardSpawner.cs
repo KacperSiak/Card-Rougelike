@@ -12,8 +12,13 @@ public class EnemyCardSpawner : MonoBehaviour
     private readonly int _cardsBuffer = 2;
 
     public void SpawnCombo(Transform indexObject, int indexCardHolder, Dictionary<int, List<CardsSOTest>> cardsBySuit)
-    {  
-       // Vector3 spawnPosition = indexObject.position - new Vector3(0.1f, 0, 0);
+    {
+        if (EnemyCardManager.Instance.CardsInGameCount >= RoundManager.Instance.CurrentCombatDetails.value)
+        {
+            SpawnSingle(indexObject, indexCardHolder, cardsBySuit);
+            return;
+        }
+        
         int cleanOrDirty = Random.Range(0, 2); // randomly from 0-1, 0 is clean, 1 is dirty
         bool isClean = cleanOrDirty == 0;
 
@@ -50,8 +55,6 @@ public class EnemyCardSpawner : MonoBehaviour
                 }
 
                 GameObject cardObject = ObjPoolManager.Instance.GetCardFromPool(isSenderPlayer: false);
-                //cardObject.transform.localScale /= 1.7f;
-                //cardObject.transform.SetPositionAndRotation(spawnPosition, indexObject.rotation);
                 CardsSOTest card = cardsBySuit[randomCleanSuit][randomCleanCard];
                 cardsBySuit[randomCleanSuit].RemoveAt(randomCleanCard);
 
@@ -60,7 +63,6 @@ public class EnemyCardSpawner : MonoBehaviour
                 power += card.power;
 
                 EnemyCardManager.Instance.UpdateCardsInGame(key, cardObject);
-                //spawnPosition += new Vector3(0.1f, 0, 0);
             }
 
             CheckCardsInDeckAmount(cardsBySuit, randomCleanSuit);
@@ -104,8 +106,6 @@ public class EnemyCardSpawner : MonoBehaviour
         for (int i = 0; i < _cardsInCombo; i++)
         {
             GameObject cardObject = ObjPoolManager.Instance.GetCardFromPool(isSenderPlayer: false);
-            //cardObject.transform.localScale /= 1.7f;
-            //cardObject.transform.SetPositionAndRotation(spawnPosition, indexObject.rotation);
 
             CardsSOTest card = cardsBySuit[randomDirtySuit][index[i]];
              cardsBySuit[randomDirtySuit].Remove(card);
@@ -123,7 +123,6 @@ public class EnemyCardSpawner : MonoBehaviour
             power += card.power;
 
             EnemyCardManager.Instance.UpdateCardsInGame(key, cardObject);
-            //spawnPosition += new Vector3(0.1f, 0, 0);
         }
 
         EnemyCardManager.Instance.SetupCardHolder(key, validator: _dirty);
@@ -139,8 +138,6 @@ public class EnemyCardSpawner : MonoBehaviour
         int power = 0;
 
         GameObject cardObject = ObjPoolManager.Instance.GetCardFromPool(isSenderPlayer: false);
-        //cardObject.transform.localScale /= 1.7f;
-        //cardObject.transform.SetPositionAndRotation(cardObjectIndex.position, cardObjectIndex.rotation);
         CardsSOTest card = cardsBySuit[randomSuit][randomCard]; 
         cardsBySuit[randomSuit].RemoveAt(randomCard);
 

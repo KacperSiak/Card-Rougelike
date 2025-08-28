@@ -12,7 +12,7 @@ public class PlayerManager : MonoBehaviour
         else Destroy(gameObject);
     }
     
-    private int _playerHP = 50; 
+    private int _playerHP = 50; //temp 
 
     public int PlayerHP
     {

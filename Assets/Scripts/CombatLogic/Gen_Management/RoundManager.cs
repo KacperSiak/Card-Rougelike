@@ -11,6 +11,7 @@ public class RoundManager : MonoBehaviour
     public static RoundManager Instance { get; private set; }
 
     [field: SerializeField] public List<CardsSOTest> PlayerCards { get; private set; }
+    public StructForDictionary<int, int> CurrentCombatDetails { get; private set; } 
     private bool _alreadyFinished = false; // to prevent double calls of the end of combat
 
     public static event Action OnHPChanged;
@@ -68,6 +69,7 @@ public class RoundManager : MonoBehaviour
     {
         Cursor.visible = true;
         _playerHP = PlayerManager.Instance.PlayerHP;
+        CurrentCombatDetails = CombatManager.Instance.GetCurrentCombatDetails();
         OnCombatStart?.Invoke();
     }
 

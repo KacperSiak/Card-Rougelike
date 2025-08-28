@@ -7,12 +7,16 @@ public class CombatManager : MonoBehaviour
     public static CombatManager Instance { get; private set; }
     
     //need to be set by the map field before we load combat scene 
-    public NodeType CurrentNodeType { get; set; } = NodeType.Enemy; // temp default value
+    public NodeType CurrentNodeType { get; set; } = NodeType.Boss; // temp default value
 
     [SerializeField] private List<StructForDictionary<NodeType, List<StructForDictionary<int, List<CardsSOTest>>>>> _listDifferentTypes;
+
+    [SerializeField] private List<StructForDictionary<NodeType, StructForDictionary<int, int>>> _listCombatDetails; 
+
     private StructForDictionary<int, List<CardsSOTest>> _innerDeck = new();
 
     private Dictionary<NodeType, Dictionary<int, List<CardsSOTest>>> _decksForDifferentTypes = new();
+    private Dictionary<NodeType, StructForDictionary<int, int>> _combatDetails = new();
     private Dictionary<NodeType, int> _deckSize = new();
 
     private void Awake()
@@ -27,6 +31,7 @@ public class CombatManager : MonoBehaviour
     private void SetProperties()
     {
         _decksForDifferentTypes.Clear();
+        _combatDetails.Clear();
         _deckSize.Clear();
 
         foreach (var enemyType in _listDifferentTypes)
@@ -36,10 +41,20 @@ public class CombatManager : MonoBehaviour
             for (int i = 0; i < enemyType.value.Count; i++)
             {
                 _innerDeck = enemyType.value[i];
-                _decksForDifferentTypes[enemyType.key].Add(i, new List<CardsSOTest>(_innerDeck.value));
+                _decksForDifferentTypes[enemyType.key].Add(_innerDeck.key, new List<CardsSOTest>(_innerDeck.value)); //?
             }
-            //_deckSize[enemyType.key] = _decksForDifferentTypes[enemyType.key].Keys.Count * _decksForDifferentTypes[enemyType.key][0].Count; //?:??????????
+            _deckSize[enemyType.key] = _decksForDifferentTypes[enemyType.key].Keys.Count * _decksForDifferentTypes[enemyType.key][0].Count; //?
         }
+
+        foreach (var detail in _listCombatDetails)
+        {
+            _combatDetails.Add(detail.key, detail.value);
+        }
+    }
+
+   public StructForDictionary<int, int> GetCurrentCombatDetails()
+    {
+        return _combatDetails[CurrentNodeType];
     }
 
     public int GetCurrentDeckSize()
