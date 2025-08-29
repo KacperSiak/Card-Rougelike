@@ -11,7 +11,7 @@ public class ChestOpen : MonoBehaviour
     private Animator _anim;
     private bool _canOpen;
     private bool _opening;
-    private float _time = 0.83f;
+    
     private void Awake()
     {
         _anim = GetComponentInChildren<Animator>();
@@ -40,14 +40,8 @@ public class ChestOpen : MonoBehaviour
         {
             _canOpen = false;
             _anim.SetTrigger("ChestOpen");
-            StartCoroutine(WaitForChest(_time));
+            GamblingManager.Instance.Roll();
         }
-    }
-
-    IEnumerator WaitForChest(float time)
-    {
-        yield return new WaitForSeconds(time);
-        GamblingManager.Instance.Roll();
     }
 
     public void ChestOpening()
