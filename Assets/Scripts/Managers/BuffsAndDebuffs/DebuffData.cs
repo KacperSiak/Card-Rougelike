@@ -6,7 +6,7 @@ using UnityEngine;
 public class DebuffData : ScriptableObject
 {
     [field: SerializeField] public string debuffName { get; private set; }
-    [field: SerializeField] [TextArea] public string debuffDesc { get; private set; }
+    [field: SerializeField, TextArea] public string debuffDesc { get; private set; }
     [field: SerializeField] public Sprite debuffIcon { get; private set; }
     [field: SerializeField] public int debuffTurns { get; private set; }
     [SerializeReference] public List<DebuffEffects> debuffs;
@@ -19,8 +19,8 @@ public class DebuffContext
 
     public DebuffContext()
     {
-        player = PlayerOverlay.instance;
-        shopManager = ShopMenager.instance;
+        player = PlayerOverlay.Instance;
+        shopManager = ShopMenager.Instance;
     }
 }
 

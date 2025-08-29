@@ -13,7 +13,7 @@ public enum Difficulty
 public class ChallengesData : ScriptableObject
 {
     [field: SerializeField] public string challengeName { get; private set; }
-    [field: SerializeField] [TextArea] public string challengeDescription { get; private set; }
+    [field: SerializeField, TextArea] public string challengeDescription { get; private set; }
     [field: SerializeField] public Difficulty difficulty { get; private set; }
     [field: SerializeField] public Sprite challIcon { get; private set; }
     [SerializeReference] public List<Challenges> challenge;
@@ -27,9 +27,9 @@ public class ChallengeContext
 
     public ChallengeContext()
     {
-        player = PlayerOverlay.instance;
+        player = PlayerOverlay.Instance;
         mapManager = MapManager.instance;
-        challengesMenager = ChallengesMenager.instance;
+        challengesMenager = ChallengesMenager.Instance;
     }
 }
 

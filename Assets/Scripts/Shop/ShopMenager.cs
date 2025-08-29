@@ -4,7 +4,7 @@ using UnityEngine.UI;
 using TMPro;
 using UnityEngine.Events;
 
-public class ShopMenager : MonoBehaviour
+public class ShopMenager : PersistenSingleton<ShopMenager>
 {
     public List<ShopItem> allItems;
     [Header("Slot Lists")]
@@ -32,24 +32,11 @@ public class ShopMenager : MonoBehaviour
     private int _goldForRerol;
     private List<BaseCard> _cardsForVisual;
 
-    public static ShopMenager instance;
     public bool inSellingMode { get; private set; } = false;
 
     public static UnityEvent OnSellingMode = new UnityEvent();
     public static UnityEvent OffSellingMode = new UnityEvent();
-    private void Awake()
-    {
-        if (instance == null)
-        {
-            instance = this;
-        }
-        else
-        {
-            Debug.Log("Found Another ShopMenager");
-        }
-    }
-
-    private void Start()
+    protected override void OnSingletonAwake() 
     {
         _rerollButton.onClick.AddListener(RerollForGold);
         _sellModeButton.onClick.AddListener(SellingMode);
@@ -57,6 +44,23 @@ public class ShopMenager : MonoBehaviour
         _Lutter.onClick.AddListener(OpenMenu);
         _closeLuttMenu.onClick.AddListener(CloseMenu);
         _closeShop.onClick.AddListener(CloseShop);
+    }
+
+    protected override void OnDestroy()
+    {
+        _rerollButton.onClick.RemoveListener(RerollForGold);
+        _sellModeButton.onClick.RemoveListener(SellingMode);
+        _eatLutter.onClick.RemoveListener(EatLutter);
+        _Lutter.onClick.RemoveListener(OpenMenu);
+        _closeLuttMenu.onClick.RemoveListener(CloseMenu);
+        _closeShop.onClick.RemoveListener(CloseShop);
+
+        base.OnDestroy();
+    }
+
+    private void Start()
+    {
+        
         RerollShop();
         _goldForRerol = 5;
         _rerollText.text = "Reroll: " + _goldForRerol;
@@ -120,10 +124,10 @@ public class ShopMenager : MonoBehaviour
     {
         foreach (var slotObj in cardslots)
             slotObj.SetActive(false);
-        if (PlayerOverlay.instance.gold >= _goldForRerol)
+        if (PlayerOverlay.Instance.gold >= _goldForRerol)
         {
             RerollShop();
-            PlayerOverlay.instance.SpendGold(_goldForRerol);
+            PlayerOverlay.Instance.SpendGold(_goldForRerol);
             _goldForRerol += 1;
             _rerollText.text = "Reroll: " + _goldForRerol;
             _lutterPanel.SetActive(false);

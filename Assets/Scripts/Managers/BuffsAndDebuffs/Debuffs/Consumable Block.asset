@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea794a9f71dedaa4ea38dec2157374d9, type: 3}
   m_Name: Consumable Block
   m_EditorClassIdentifier: 
-  debuffName: ConsumableBlock
-  debuffDesc: You cant use consumables cards for 3 turns
-  debuffIcon: {fileID: 0}
-  debuffTurns: 3
+  <debuffName>k__BackingField: 
+  <debuffDesc>k__BackingField: For 3 turrns you cannot use Consumables cards
+  <debuffIcon>k__BackingField: {fileID: 0}
+  <debuffTurns>k__BackingField: 3
   debuffs:
   - rid: 2307447362607644733
   references:

@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4dce2b1003ba8b94499851aac558fec9, type: 3}
   m_Name: FutureSeeing
   m_EditorClassIdentifier: 
-  cardID: FutureSeeing
-  cardName: Oracle Propheecy
-  cardDescription: Look at the next minion of your oponent
-  icon: {fileID: 0}
-  rarity: 0
-  buyPrice: 80
-  sellPrice: 40
+  <cardID>k__BackingField: FutureSeeing
+  <cardName>k__BackingField: ORacle PRophecy
+  <cardDescription>k__BackingField: You can see next minion of your oponent
+  <icon>k__BackingField: {fileID: 0}
+  <rarity>k__BackingField: 0
+  <buyPrice>k__BackingField: 0
+  <sellPrice>k__BackingField: 0
   cardEffects:
   - rid: 5888606620320792659
   references:

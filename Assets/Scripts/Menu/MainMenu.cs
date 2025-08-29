@@ -8,7 +8,10 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private Button loadGameButton;
     [SerializeField] private Button optionButton;
     [SerializeField] private Button exitButton;
-    
+
+    [SerializeField] private GameObject optionsPanel;
+    private bool isOptionsOpen = false;
+
     [Header("Game Settings")]
     [SerializeField] private string gameSceneName = "GameScene";
     [SerializeField] private MapSaveDataSO defaultSaveTemplate;
@@ -53,7 +56,16 @@ public class MainMenu : MonoBehaviour
 
     private void OpenOptions()
     {
-        return;
+        isOptionsOpen = !isOptionsOpen;
+        optionsPanel.SetActive(isOptionsOpen);
+    }
+
+    [Header("List of windows in settings panel")]
+    [SerializeField] private GameObject[] windows;
+    public void HideAllWindows()
+    {
+        foreach(GameObject window in windows)
+            window.SetActive(false);
     }
 
     private void ExitGame()

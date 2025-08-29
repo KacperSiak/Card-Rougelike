@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c47cce8b929c374181fa743286205e0, type: 3}
   m_Name: HNoAssetCards
   m_EditorClassIdentifier: 
-  challengeName: NoAssetCards
-  challengeDescription: Do not use asset cards during whole fight
-  difficulty: 2
+  <challengeName>k__BackingField: 
+  <challengeDescription>k__BackingField: You cannot use asset cards
+  <difficulty>k__BackingField: 2
+  <challIcon>k__BackingField: {fileID: 0}
   challenge:
   - rid: 2307447497862676583
   references:

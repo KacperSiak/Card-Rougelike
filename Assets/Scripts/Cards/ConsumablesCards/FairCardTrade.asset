@@ -12,13 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4dce2b1003ba8b94499851aac558fec9, type: 3}
   m_Name: FairCardTrade
   m_EditorClassIdentifier: 
-  cardID: FairCardTrade
-  cardName: Themis's trade
-  cardDescription: You lose one chosen card and get new one of the same rarity
-  icon: {fileID: 0}
-  rarity: 0
-  buyPrice: 80
-  sellPrice: 40
+  <cardID>k__BackingField: FairCardTrade
+  <cardName>k__BackingField: Themis's trade
+  <cardDescription>k__BackingField: You lose one random consumable card to get new
+    one of the same rarity
+  <icon>k__BackingField: {fileID: 0}
+  <rarity>k__BackingField: 0
+  <buyPrice>k__BackingField: 0
+  <sellPrice>k__BackingField: 0
   cardEffects:
   - rid: 5888606620320792708
   references:

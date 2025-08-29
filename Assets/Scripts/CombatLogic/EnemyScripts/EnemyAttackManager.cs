@@ -1,28 +1,27 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//here changes 
 public class EnemyAttackManager : MonoBehaviour
 {
     [SerializeField] public Dictionary<int, int> RoundsForCards { get; private set; } = new();
     private int _round;
-    private const int minTotalPower = 2;
-    private const int maxTotalPower = 42;
-    private const int maxRoundsToAttack = 5;
-    private const int minRound = 1;
-    private const int maxRound = 5;
-    private const int limit = 3;
+    private const int k_powerIndex = 6; 
+    private const int k_minRound = 1;
+    private const int k_maxRound = 5;
+    private const int k_limit = 3;
 
     private void OnEnable()
     {
         RoundManager.OnCombatEnd += OnCombatEnd;
-        RoundManager.OnRoundStart += StartCombatSetup;
+        RoundManager.OnCombatStart += StartCombatSetup;
     }
 
 
     private void OnDisable()
     {
         RoundManager.OnCombatEnd -= OnCombatEnd;
-        RoundManager.OnRoundStart -= StartCombatSetup;
+        RoundManager.OnCombatStart -= StartCombatSetup;
     }
 
     public void StartCombatSetup()
@@ -43,14 +42,15 @@ public class EnemyAttackManager : MonoBehaviour
 
     private int CalculateRound(int totalPower)
     { 
-        int amount = Mathf.CeilToInt(maxRoundsToAttack * (totalPower - minTotalPower) / (maxTotalPower - minTotalPower));
+        int amount = Mathf.CeilToInt(totalPower / (float)k_powerIndex); 
 
-        return Mathf.Clamp(amount, minRound, maxRound);
+        return Mathf.Clamp(amount, k_minRound, k_maxRound);
+        //return 100;
     }
 
     public void UpdateRounds()
     {
-        for (int i = 0; i < limit; i++)
+        for (int i = 0; i < k_limit; i++)
         {
             if (!RoundsForCards.ContainsKey(i))
             {
@@ -70,10 +70,10 @@ public class EnemyAttackManager : MonoBehaviour
             RemoveKey(i);
             foreach (var card in EnemyCardManager.Instance.CardsInGame[i])
             {
-                card.SetActive(false);
+                card.SetActive(false); //here pool control
             }
-            EnemyCardManager.Instance.RemoveCardFromGame(i);
-            EnemyCardManager.Instance.cardHolders[i].GetComponent<CardHolderManager>().ResetCardHolderEnemyCards();
+            EnemyCardManager.Instance.RemoveCardFromGame(i, EnemyCardManager.Instance.CardsInGame[i].Count);
+            EnemyCardManager.Instance.cardHolders[i].GetComponent<CardHolderLogic>().ResetCardHolderEnemyCards();
         }
     }
 

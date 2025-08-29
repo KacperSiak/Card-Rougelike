@@ -12,18 +12,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4dce2b1003ba8b94499851aac558fec9, type: 3}
   m_Name: LowerHpRelicSlot
   m_EditorClassIdentifier: 
-  cardID: LowerHpRelicSlot
-  cardName: Asclepius' Covenant
-  cardDescription: You lose x of your max hp but you get relic slot
-  icon: {fileID: 0}
-  rarity: 0
-  buyPrice: 80
-  sellPrice: 40
+  <cardID>k__BackingField: LowerHpRelicSlot
+  <cardName>k__BackingField: Asclepius' Covenant
+  <cardDescription>k__BackingField: You lose 20% of max health but you get Relic
+    Slot
+  <icon>k__BackingField: {fileID: 0}
+  <rarity>k__BackingField: 0
+  <buyPrice>k__BackingField: 0
+  <sellPrice>k__BackingField: 0
   cardEffects:
-  - rid: 5888606620320792700
+  - rid: 2307447727691923528
   references:
     version: 2
     RefIds:
-    - rid: 5888606620320792700
+    - rid: 2307447727691923528
       type: {class: LowerHpRelicSlot, ns: , asm: Assembly-CSharp}
-      data: 
+      data:
+        hpModifier: 0.8

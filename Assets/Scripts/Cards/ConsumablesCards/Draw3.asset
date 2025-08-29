@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4dce2b1003ba8b94499851aac558fec9, type: 3}
   m_Name: Draw3
   m_EditorClassIdentifier: 
-  cardID: 'Draw3 '
-  cardName: 'Draw3 '
-  cardDescription: Draw 3 random regular cards and continue your turn
-  icon: {fileID: 0}
-  rarity: 1
-  buyPrice: 80
-  sellPrice: 40
+  <cardID>k__BackingField: Draw3
+  <cardName>k__BackingField: 
+  <cardDescription>k__BackingField: 'Draw 3 cards '
+  <icon>k__BackingField: {fileID: 0}
+  <rarity>k__BackingField: 1
+  <buyPrice>k__BackingField: 0
+  <sellPrice>k__BackingField: 0
   cardEffects:
   - rid: 5888606620320792656
   references:

@@ -16,7 +16,7 @@ public class HalfEnemyHP : Challenges
 
     private void ChallengeComplete()
     {
-        context.challengesMenager.AddReward();
+        context.challengesMenager.AddRewardForChall();
         Unregister(context);
     }
 }

@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea794a9f71dedaa4ea38dec2157374d9, type: 3}
   m_Name: Hp Lose2
   m_EditorClassIdentifier: 
-  debuffName: HpLose
-  debuffDesc: Lose one health every turn
-  debuffIcon: {fileID: 0}
-  debuffTurns: 8
+  <debuffName>k__BackingField: 
+  <debuffDesc>k__BackingField: You lose 3 health at the end of the turn
+  <debuffIcon>k__BackingField: {fileID: 0}
+  <debuffTurns>k__BackingField: 5
   debuffs:
   - rid: 2307447362607644736
   references:
@@ -24,4 +24,4 @@ MonoBehaviour:
     - rid: 2307447362607644736
       type: {class: HPLose, ns: , asm: Assembly-CSharp}
       data:
-        lostHP: 1
+        lostHP: 3

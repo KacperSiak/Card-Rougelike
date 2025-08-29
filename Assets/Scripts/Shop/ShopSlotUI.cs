@@ -33,38 +33,38 @@ public class ShopSlotUI : MonoBehaviour
 
     public void Buy()
     {
-        if (ShopMenager.instance.IsFreeBuyActive())
+        if (ShopMenager.Instance.IsFreeBuyActive())
         {
             _currentPrice = 0;
-            ShopMenager.instance.ConsumeFreeBuy();
+            ShopMenager.Instance.ConsumeFreeBuy();
         }
-        if (PlayerOverlay.instance.gold >= _currentPrice)
+        if (PlayerOverlay.Instance.gold >= _currentPrice)
         {
             switch (_currentItem)
             {
                 case RelicData relic:
-                    PlayerOverlay.instance.SpendGold(_currentPrice);
+                    PlayerOverlay.Instance.SpendGold(_currentPrice);
                     RelicEventsSystem.RelicAcquired(relic);
                     break;
 
-                case ConsumablesData consumable when ConsumablesAndRelicMenager.instance.SlotChecker():
-                    ConsumablesAndRelicMenager.instance.AddCard(consumable);
-                    PlayerOverlay.instance.SpendGold(_currentPrice);
+                case ConsumablesData consumable when ConsumablesAndRelicMenager.Instance.SlotChecker():
+                    ConsumablesAndRelicMenager.Instance.AddCard(consumable);
+                    PlayerOverlay.Instance.SpendGold(_currentPrice);
                     break;
 
                 case CardPack cardPack:
-                    PlayerOverlay.instance.SpendGold(_currentPrice);
-                    cardPack.OpePack();
+                    PlayerOverlay.Instance.SpendGold(_currentPrice);
+                    cardPack.OpenPack();
                     break;
 
                 case VaseRelicUpgrade vase:
-                    PlayerOverlay.instance.SpendGold(_currentPrice);
+                    PlayerOverlay.Instance.SpendGold(_currentPrice);
                     vase.GotVase();
                     break;
 
                 case PotionData potion:
-                    PlayerOverlay.instance.SpendGold(_currentPrice);
-                    BuffsAndDebuffsManager.instance.ApplyBuff(potion);
+                    PlayerOverlay.Instance.SpendGold(_currentPrice);
+                    BuffsAndDebuffsManager.Instance.ApplyBuff(potion);
                     break;
 
                 default:

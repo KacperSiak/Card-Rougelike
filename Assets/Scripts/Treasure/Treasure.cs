@@ -17,6 +17,6 @@ public class Treasure : MonoBehaviour
     }
     private void GetTreasure()
     {
-        PlayerOverlay.instance.AddGold(gold);
+        PlayerOverlay.Instance.AddGold(gold);
     }
 }

@@ -13,7 +13,7 @@ public class ConsumablesData : ShopItem
 {
     [field: SerializeField] public string cardID { get; private set; }
     [field: SerializeField] public string cardName { get; private set; }
-    [field: SerializeField] [TextArea] public string cardDescription { get; private set; }
+    [field: SerializeField, TextArea]  public string cardDescription { get; private set; }
     [field: SerializeField] public Sprite icon { get; private set; }
     [field: SerializeField] public CardRarity rarity { get; private set; }
     [field: SerializeField] public int buyPrice { get; private set; }
@@ -29,9 +29,9 @@ public class ConsumableContext
 
     public ConsumableContext()
     {
-        player = PlayerOverlay.instance;
-        shop = ShopMenager.instance;
-        consAndRel = ConsumablesAndRelicMenager.instance;
+        player = PlayerOverlay.Instance;
+        shop = ShopMenager.Instance;
+        consAndRel = ConsumablesAndRelicMenager.Instance;
     }
 }
 

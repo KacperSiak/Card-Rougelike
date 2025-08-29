@@ -12,9 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c47cce8b929c374181fa743286205e0, type: 3}
   m_Name: HUseOnlyBlackCards
   m_EditorClassIdentifier: 
-  challengeName: UseOnlyBlackCards
-  challengeDescription: Use only black cards (spades/clubs) during fight
-  difficulty: 2
+  <challengeName>k__BackingField: 
+  <challengeDescription>k__BackingField: You have to beat all enemy minions with
+    Black Cards
+  <difficulty>k__BackingField: 2
+  <challIcon>k__BackingField: {fileID: 0}
   challenge:
   - rid: 2307447497862676582
   references:

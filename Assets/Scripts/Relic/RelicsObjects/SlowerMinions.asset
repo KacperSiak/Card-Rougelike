@@ -12,13 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ac408ffee77df04da26ff85eae270b0, type: 3}
   m_Name: SlowerMinions
   m_EditorClassIdentifier: 
-  relicID: SlowerMinions
-  relicName: Aegis PRotection II
+  <relicID>k__BackingField: SlowerMinions
+  <relicName>k__BackingField: Aegis Protection II
   description: Increase the number of turns of each oponnent's card by one
-  icon: {fileID: 0}
-  rarity: 2
-  buyPrice: 0
-  sellPrice: 150
+  <icon>k__BackingField: {fileID: 0}
+  <rarity>k__BackingField: 2
+  <buyPrice>k__BackingField: 0
+  <sellPrice>k__BackingField: 0
+  <Upgradeable>k__BackingField: 0
   relicEffets:
   - rid: 5888606579394871305
   references:

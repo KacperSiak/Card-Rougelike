@@ -6,6 +6,6 @@ public class BonusCardPackReward : Rewards
     public CardPack cardPack;
     public override void AddReward(RewardContext ctx)
     {
-        cardPack.OpePack();
+        cardPack.OpenPack();
     }
 }

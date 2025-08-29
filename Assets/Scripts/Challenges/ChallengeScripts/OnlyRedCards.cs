@@ -25,7 +25,7 @@ public class OnlyRedCards : Challenges
     {
         if (_questInfo)
         {
-            context.challengesMenager.AddReward();
+            context.challengesMenager.AddRewardForChall();
             Unregister(context);
         }
     }
