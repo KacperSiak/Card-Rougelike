@@ -29,7 +29,7 @@ public class DialogueManager : MonoBehaviour
     private void Awake()
     {
         if (instance != null)
-            Debug.LogWarning("Found more than one Dialogue Manager in the scene!");
+            Debug.LogWarning("[DialogueManager] Found more than one Dialogue Manager in the scene!");
         else
             instance = this;
     }
@@ -65,8 +65,8 @@ public class DialogueManager : MonoBehaviour
             ContinueStory();
     }
 
-    public void DialogueByDefeat(string defeatedBy)=>
-        _newRunDialogue.DialogueByDefeat(defeatedBy);
+    public void EnterDefeatDialogueMode(string defeatedBy)=>
+        _newRunDialogue.DefeatDialogue(defeatedBy);
     
 
     #region Enter dialogue methods
@@ -132,7 +132,6 @@ public class DialogueManager : MonoBehaviour
         {
             if (!isDialoguePaused)
             { 
-                //_lineToGenerate = _currentStory.Continue();
                 StartCoroutine("DialogueDisplay", _currentStory.Continue());
 
                 HandleTags(_currentStory.currentTags);
@@ -201,7 +200,7 @@ public class DialogueManager : MonoBehaviour
         _isTextGenerating = false;
     }
 
-    public void FastSkip()     // only for debbuging and testing, skips whole dialogue
+    public void SkipAll()     // only for debbuging and testing, skips whole dialogue
     {
         float ogTextDelay = _textDelay;
         _textDelay = 0;
