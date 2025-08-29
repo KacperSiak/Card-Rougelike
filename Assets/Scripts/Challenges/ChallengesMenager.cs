@@ -19,7 +19,8 @@ public class ChallengesMenager : PersistenSingleton<ChallengesMenager>
     [SerializeField] private RewardStruct _hardRewards;
 
     [SerializeField] private TextMeshProUGUI _cuurentChallText;
-    
+
+    private ChallengeContext _context;
     private ChallengesData _currentChallenge;
 
     protected override void OnSingletonAwake()
@@ -27,6 +28,7 @@ public class ChallengesMenager : PersistenSingleton<ChallengesMenager>
         _easyButton.onClick.AddListener(DisplayEasy);
         _normalButton.onClick.AddListener(DisplayNormal);
         _hardButton.onClick.AddListener(DisplayHard);
+        _context = new ChallengeContext();
     }
 
     protected override void OnDestroy()
@@ -95,7 +97,23 @@ public class ChallengesMenager : PersistenSingleton<ChallengesMenager>
     public void ChallengeAccepted(ChallengesData challenge)
     {
         _currentChallenge = challenge;
-        _cuurentChallText.text = challenge.challengeName;
+        _cuurentChallText.text = _currentChallenge.challengeName;
+
+        var trigger = _cuurentChallText.GetComponent<TooltipTrigger>();
+        if (trigger == null) trigger = _cuurentChallText.gameObject.AddComponent<TooltipTrigger>();
+
+        trigger.Setup(challenge.challengeDescription);
         Debug.Log("Challenge Accepted");
+
+        foreach (var chall in _currentChallenge.challenge)
+        {
+            chall.Register(_context);
+        }
+    }
+
+    public void ChallengeProgressUpdate(int current, int max)
+    {
+        _cuurentChallText.text = _currentChallenge.challengeName;
+        _cuurentChallText.text += " " + current + "/" + max;
     }
 }

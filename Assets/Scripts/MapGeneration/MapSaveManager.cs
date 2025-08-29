@@ -10,9 +10,6 @@ public class MapSaveManager : MonoBehaviour
     public MapGenerator mapGenerator;
     public MapManager mapManager;
     
-    [Header("Settings")]
-    public bool autoLoadOnStart = true;
-    
     void Start()
     {
         if (mapGenerator == null)
@@ -26,7 +23,7 @@ public class MapSaveManager : MonoBehaviour
             Debug.Log("[MapSaveManager] Using active save from GameSaveManager");
         }
             
-        if (autoLoadOnStart && mapSaveData != null && mapSaveData.CanLoadMap())
+        if (mapSaveData != null && mapSaveData.CanLoadMap())
         {
             Debug.Log("[MapSaveManager] Loading saved map...");
             LoadSavedMap();

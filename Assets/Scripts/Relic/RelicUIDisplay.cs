@@ -27,10 +27,6 @@ public class RelicUIDisplay : MonoBehaviour
         if (img != null)
             img.sprite = relic.icon;
 
-        TooltipTrigger trigger = icon.GetComponent<TooltipTrigger>();
-        if (trigger != null)
-            trigger.relicData = relic;
-
         RelicIconButtonsUI iconUI = icon.GetComponent<RelicIconButtonsUI>();
         if (iconUI != null)
         {

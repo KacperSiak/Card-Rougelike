@@ -16,8 +16,16 @@ public class NodeClickHandler : MonoBehaviour
     public MapGenerator mapGenerator;
     public MapManager mapManager;
 
+    [Header("Player Movement")]
+    public float moveSpeed = 3f;
+    public float jumpHeight = 1f;
+    public AnimationCurve moveCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
+    public AnimationCurve jumpCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
+    
     [Header("Node Info")]
     public NodeType nodeType = NodeType.Enemy;
+    
+    private static bool isPlayerMoving = false;
     
 
     void Start()
@@ -99,6 +107,11 @@ public class NodeClickHandler : MonoBehaviour
 
     bool CanMoveToThisNode()
     {
+        if (isPlayerMoving)
+        {
+            return false;
+        }
+        
         if (currentPlayerNode == null) 
         {
             return true;
@@ -157,6 +170,70 @@ public class NodeClickHandler : MonoBehaviour
     
     void MovePlayerHere()
     {
+        if (playerMarker != null && currentPlayerNode != null)
+        {
+            StartCoroutine(SmoothMovePlayer());
+        }
+        else
+        {
+            MovePlayerInstant();
+        }
+    }
+    
+    System.Collections.IEnumerator SmoothMovePlayer()
+    {
+        isPlayerMoving = true;
+        
+        Vector3 fromPos = currentPlayerNode.position;
+        Vector3 toPos = transform.position;
+
+        if (mapManager != null)
+        {
+            Vector2 fromPos2D = new Vector2(fromPos.x, fromPos.z);
+            Vector2 toPos2D = new Vector2(toPos.x, toPos.z);
+            mapManager.TravelToNode(fromPos2D, toPos2D);
+        }
+        
+        float duration = Vector3.Distance(fromPos, toPos) / moveSpeed;
+        float elapsed = 0f;
+        
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / duration;
+            
+            float horizontalT = moveCurve.Evaluate(t);
+            Vector3 horizontalPos = Vector3.Lerp(fromPos, toPos, horizontalT);
+
+            float jumpT = jumpCurve.Evaluate(t);
+            float jumpOffset = Mathf.Sin(jumpT * Mathf.PI) * jumpHeight;
+
+            Vector3 currentPos = horizontalPos;
+            currentPos.y = horizontalPos.y + jumpOffset;
+            
+            playerMarker.transform.position = currentPos;
+
+            Vector3 direction = (toPos - fromPos).normalized;
+            if (direction != Vector3.zero)
+            {
+                float angle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
+                playerMarker.transform.rotation = Quaternion.Lerp(
+                    playerMarker.transform.rotation,
+                    Quaternion.Euler(0, angle, 0),
+                    Time.deltaTime * 5f
+                );
+            }
+            
+            yield return null;
+        }
+
+        playerMarker.transform.position = toPos;
+        currentPlayerNode = transform;
+        isPlayerMoving = false;
+    }
+    
+    void MovePlayerInstant()
+    {
         Vector3 fromPos3D = Vector3.zero;
         Vector3 toPos3D = transform.position;
         bool hasFromPosition = false;
@@ -174,9 +251,7 @@ public class NodeClickHandler : MonoBehaviour
         
         if (playerMarker != null)
         {
-            Vector3 newPos = toPos3D;
-            newPos.y = 0.2f;
-            playerMarker.transform.position = newPos;
+            playerMarker.transform.position = toPos3D;
             
             if (hasFromPosition)
             {
