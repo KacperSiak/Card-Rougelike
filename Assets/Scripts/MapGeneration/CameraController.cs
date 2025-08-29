@@ -11,7 +11,6 @@ public class CameraController : MonoBehaviour
     public float maxZoom = 20f;
 
     private Vector3 lastMousePosition;
-    private bool isDragging = false;
     private Camera cam;
     
     void Start()

@@ -1,9 +1,8 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "NormalCard", menuName = "Shop/NormalCard")]
-public class NormalCard : ShopItem
+[CreateAssetMenu(fileName = "NormalCard", menuName = "Card/NormalCard")]
+public class NormalCard : BaseCard
 {
-    public string cardName;
-    public int CardValue;
-    public Sprite face;
+    
 }
+

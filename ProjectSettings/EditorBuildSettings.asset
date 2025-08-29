@@ -16,7 +16,7 @@ EditorBuildSettings:
     guid: c9be718a85113f647a695d05bf1d6373
   - enabled: 0
     path: Assets/Scenes/Bootstrapper.unity
-    guid: e132ec9b3efe9074c94a39121fd07999
+    guid: 12c3104d3516f0043bfe9d6ec3bfefd1
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

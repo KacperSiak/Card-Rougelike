@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4dce2b1003ba8b94499851aac558fec9, type: 3}
+  m_Name: GoldFever
+  m_EditorClassIdentifier: 
+  <cardID>k__BackingField: GoldFever
+  <cardName>k__BackingField: 
+  <cardDescription>k__BackingField: Get x gold
+  <icon>k__BackingField: {fileID: 0}
+  <rarity>k__BackingField: 1
+  <buyPrice>k__BackingField: 0
+  <sellPrice>k__BackingField: 0
+  cardEffects:
+  - rid: 5888606620320792666
+  references:
+    version: 2
+    RefIds:
+    - rid: 5888606620320792666
+      type: {class: GoldFever, ns: , asm: Assembly-CSharp}
+      data:
+        gold: 0

@@ -13,7 +13,7 @@ public class RelicUIDisplay : MonoBehaviour
 
     private void RefreshDisplay()
     {
-        foreach (var relic in ConsumablesAndRelicMenager.instance.currentRelics)
+        foreach (var relic in ConsumablesAndRelicMenager.Instance.currentRelics)
         {
             AddIcon(relic);
         }
@@ -27,15 +27,10 @@ public class RelicUIDisplay : MonoBehaviour
         if (img != null)
             img.sprite = relic.icon;
 
-        TooltipTrigger trigger = icon.GetComponent<TooltipTrigger>();
-        if (trigger != null)
-            trigger.relicData = relic;
-
-        IconButtonUI iconUI = icon.GetComponent<IconButtonUI>();
+        RelicIconButtonsUI iconUI = icon.GetComponent<RelicIconButtonsUI>();
         if (iconUI != null)
         {
             iconUI.Init(relic);
-
 
             icon.GetComponent<Button>().onClick.AddListener(()=>
             {

@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 827ef48bd1529174695e62104b965800, type: 3}
+  m_Name: ClubsProtection
+  m_EditorClassIdentifier: 
+  potionName: ClubsProtection
+  potionDescription: 'Cards with clubs suit deals less damage '
+  buyPrice: 45
+  fightsLeft: 3
+  potionIcon: {fileID: 21300000, guid: 9c259d6389c91c4458e6129b81699224, type: 3}
+  potionEffects:
+  - rid: 2307447344931274754
+  references:
+    version: 2
+    RefIds:
+    - rid: 2307447344931274754
+      type: {class: LowerSuitMarkDamage, ns: , asm: Assembly-CSharp}
+      data: 

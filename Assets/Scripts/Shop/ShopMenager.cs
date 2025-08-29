@@ -2,80 +2,80 @@ using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine.Events;
-using UnityEngine.Rendering.Universal;
 
-public class ShopMenager : MonoBehaviour
+public class ShopMenager : PersistenSingleton<ShopMenager>
 {
-    public  List<ShopItem> allItems;
+    public List<ShopItem> allItems;
+    [Header("Slot Lists")]
     [SerializeField] private List<GameObject> _slots;
+    [SerializeField] private GameObject _cardPrefab;
+    [SerializeField] private Transform _cardPanel;
+    public List<GameObject> cardslots;
 
-    [SerializeField] private Button _rerollButton;
-    [SerializeField] private TextMeshProUGUI _rerollText;
+    [Header("Buttons")]
+    [SerializeField] private Button _rerollButton;  
+    [SerializeField] private Button _sellModeButton;
+    [SerializeField] private Button _eatLutter;
+    [SerializeField] private Button _Lutter;
+    [SerializeField] private Button _closeLuttMenu;
     [SerializeField] private Button _closeShop;
-    
+
+    [Header("Rest")]
+    [SerializeField] private TextMeshProUGUI _rerollText;
+    [SerializeField] private GameObject _lutterPanel;
+
     private int _numberOfItems = 3;
     private int _price;
     private float _priceMultiplier = 1f;
     private bool _freeBuyEffect = false;
     private int _goldForRerol;
+    private List<BaseCard> _cardsForVisual;
 
-    public static ShopMenager instance;
-    public bool inShop { get; private set; } = false;
+    public bool inSellingMode { get; private set; } = false;
 
-    public static UnityEvent OnShopOpen = new UnityEvent();
-    public static UnityEvent OnShopClose = new UnityEvent();
-    private void Awake()
+    public static UnityEvent OnSellingMode = new UnityEvent();
+    public static UnityEvent OffSellingMode = new UnityEvent();
+    protected override void OnSingletonAwake() 
     {
-        if (instance == null)
-        {
-            instance = this;
-        }
-        else
-        {
-            Debug.Log("Found Another ShopMenager");
-        }
+        _rerollButton.onClick.AddListener(RerollForGold);
+        _sellModeButton.onClick.AddListener(SellingMode);
+        _eatLutter.onClick.AddListener(EatLutter);
+        _Lutter.onClick.AddListener(OpenMenu);
+        _closeLuttMenu.onClick.AddListener(CloseMenu);
+        _closeShop.onClick.AddListener(CloseShop);
     }
 
-    public void OpenShop()
+    protected override void OnDestroy()
     {
-        inShop = true;
-        OnShopOpen.Invoke();
-    }
+        _rerollButton.onClick.RemoveListener(RerollForGold);
+        _sellModeButton.onClick.RemoveListener(SellingMode);
+        _eatLutter.onClick.RemoveListener(EatLutter);
+        _Lutter.onClick.RemoveListener(OpenMenu);
+        _closeLuttMenu.onClick.RemoveListener(CloseMenu);
+        _closeShop.onClick.RemoveListener(CloseShop);
 
-    private void CloseShop()
-    {
-        inShop = false;
-        OnShopClose.Invoke();
+        base.OnDestroy();
     }
-
 
     private void Start()
     {
-        _rerollButton.onClick.AddListener(RerollForGold);
-        _closeShop.onClick.AddListener(CloseShop);
+        
         RerollShop();
         _goldForRerol = 5;
-        _rerollText.text = "" + _goldForRerol;
-    }
+        _rerollText.text = "Reroll: " + _goldForRerol;
 
-    //private void Update()
-    //{
-    //    if (Input.GetKeyUp(KeyCode.L))
-    //    {
-    //        if (inShop)
-    //        {
-    //            CloseShop();
-    //            Debug.Log("Shop Closed");
-    //        }
-    //        else
-    //        {
-    //            OpenShop();
-    //            Debug.Log("Shop opened");
-    //        }
-    //    }
-    //}
+        _cardsForVisual = DeckManager.instance.DrawACardForShop();
+        for (int i = 0; i < _cardsForVisual.Count; i++)
+        {
+            var card = _cardsForVisual[i];
+            var cardSlot = Instantiate(_cardPrefab, _cardPanel);
+            cardSlot.SetActive(false);
+            var cardUI = cardSlot.GetComponent<CardShopSlotUI>();
+            cardslots.Add(cardSlot);
+            cardUI.Setup(card);
+        }
+    }
 
     private void OnEnable()
     {
@@ -89,7 +89,6 @@ public class ShopMenager : MonoBehaviour
         Discount.OnDiscountDeactivated.RemoveListener(RemoveDiscount);
     }
 
-
     public void RerollShop()
     {
         List<ShopItem> currentItems;
@@ -97,7 +96,7 @@ public class ShopMenager : MonoBehaviour
         {
             currentItems = GetRandomItems(allItems, _numberOfItems);
         }
-        while (currentItems.TrueForAll(i => i is RelicData) || currentItems.TrueForAll(i => i is ConsumablesData) || currentItems.TrueForAll(i => i is NormalCard)); 
+        while (currentItems.TrueForAll(i => i is RelicData) || currentItems.TrueForAll(i => i is ConsumablesData) || currentItems.TrueForAll(i => i is PotionData));
 
         for (int i = 0; i < currentItems.Count; i++)
         {
@@ -115,18 +114,27 @@ public class ShopMenager : MonoBehaviour
             }
             else if (item is CardPack cardPack) _price = cardPack.buyPrice;
             else if (item is ConsumablesData consumable) _price = consumable.buyPrice;
+            else if (item is VaseRelicUpgrade vase) _price = vase.price;
+            else if (item is PotionData potion) _price = potion.buyPrice;
             shopSlot.Setup(item, Mathf.RoundToInt(_price * _priceMultiplier));
-        } 
+        }
     }
 
     private void RerollForGold()
     {
-        if (PlayerOverlay.instance.gold >= _goldForRerol)
+        foreach (var slotObj in cardslots)
+            slotObj.SetActive(false);
+        if (PlayerOverlay.Instance.gold >= _goldForRerol)
         {
             RerollShop();
-            PlayerOverlay.instance.SpendGold(_goldForRerol);
+            PlayerOverlay.Instance.SpendGold(_goldForRerol);
             _goldForRerol += 1;
-            _rerollText.text = "" + _goldForRerol;
+            _rerollText.text = "Reroll: " + _goldForRerol;
+            _lutterPanel.SetActive(false);
+        }
+        else
+        {
+            Debug.Log("You cannot Roll");
         }
     }
 
@@ -173,7 +181,6 @@ public class ShopMenager : MonoBehaviour
                 var shopSlot = slotObj.GetComponent<ShopSlotUI>();
                 shopSlot.RecalculatePrice(multiplayer, true);
             }
-            
         }
     }
 
@@ -193,4 +200,54 @@ public class ShopMenager : MonoBehaviour
     {
         return _freeBuyEffect;
     }
+
+    private void SellingMode()
+    {
+        inSellingMode = true;
+        OnSellingMode.Invoke();
+        _lutterPanel.SetActive(false);
+        foreach (var slotObj in _slots)
+            slotObj.SetActive(false);
+
+        foreach (var slot in cardslots)
+            slot.SetActive(true);
+    }
+
+    private void CloseShop()
+    {
+        foreach (var slotObj in cardslots)
+            slotObj.SetActive(false);
+        inSellingMode = false;
+        OffSellingMode.Invoke();
+    }
+
+    private void EatLutter()
+    {
+        foreach (var slotObj in cardslots)
+            slotObj.SetActive(false);
+        inSellingMode = false;
+        OffSellingMode.Invoke();
+        _lutterPanel.SetActive(false);
+        foreach ( var slotObj in _slots)
+        {
+            if(!slotObj.activeSelf) slotObj.SetActive(true);
+            var shopslot = slotObj.GetComponent<ShopSlotUI>();
+            shopslot.RecalculatePrice(9999, false);
+        }
+    }
+
+    private void OpenMenu()
+    {
+        inSellingMode = false;
+        OffSellingMode.Invoke();
+        _lutterPanel.SetActive(true);
+    }
+
+    private void CloseMenu()
+    {
+        inSellingMode=false;
+        OffSellingMode.Invoke();
+        _lutterPanel.SetActive(false);
+    }
 }
+

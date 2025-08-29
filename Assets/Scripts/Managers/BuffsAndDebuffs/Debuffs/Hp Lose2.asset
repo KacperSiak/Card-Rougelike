@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea794a9f71dedaa4ea38dec2157374d9, type: 3}
+  m_Name: Hp Lose2
+  m_EditorClassIdentifier: 
+  <debuffName>k__BackingField: 
+  <debuffDesc>k__BackingField: You lose 3 health at the end of the turn
+  <debuffIcon>k__BackingField: {fileID: 0}
+  <debuffTurns>k__BackingField: 5
+  debuffs:
+  - rid: 2307447362607644736
+  references:
+    version: 2
+    RefIds:
+    - rid: 2307447362607644736
+      type: {class: HPLose, ns: , asm: Assembly-CSharp}
+      data:
+        lostHP: 3

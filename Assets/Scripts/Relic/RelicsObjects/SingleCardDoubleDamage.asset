@@ -12,13 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ac408ffee77df04da26ff85eae270b0, type: 3}
   m_Name: SingleCardDoubleDamage
   m_EditorClassIdentifier: 
-  relicID: SingleCardDoubleDamage
-  relicName: Athena's owl pin
+  <relicID>k__BackingField: SingleCardDoubleDamage
+  <relicName>k__BackingField: Athena's owl pin
   description: Beating a sequence with a single card deals double damage
-  icon: {fileID: 0}
-  rarity: 1
-  buyPrice: 150
-  sellPrice: 100
+  <icon>k__BackingField: {fileID: 0}
+  <rarity>k__BackingField: 1
+  <buyPrice>k__BackingField: 0
+  <sellPrice>k__BackingField: 0
+  <Upgradeable>k__BackingField: 1
   relicEffets:
   - rid: 5888606574037696644
   references:
