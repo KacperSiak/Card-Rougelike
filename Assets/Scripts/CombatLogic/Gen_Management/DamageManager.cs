@@ -41,10 +41,6 @@ public class DamageManager : MonoBehaviour
 
             _cardHolders[i].ResetCardHolderEnemyCards();
 
-            foreach (var card in EnemyCardManager.Instance.CardsInGame[i])
-            {
-                card.SetActive(false);
-            }//here pool control
             EnemyCardManager.Instance.RemoveCardFromGame(key: i, EnemyCardManager.Instance.CardsInGame[i].Count);
             _enemyAttackManager.RemoveKey(key: i);
         }

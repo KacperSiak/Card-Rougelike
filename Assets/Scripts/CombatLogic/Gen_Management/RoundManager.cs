@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -70,6 +71,14 @@ public class RoundManager : MonoBehaviour
         Cursor.visible = true;
         _playerHP = PlayerManager.Instance.PlayerHP;
         CurrentCombatDetails = CombatManager.Instance.GetCurrentCombatDetails();
+        StartCoroutine(CheckCombatReadiness());
+    }
+
+    private IEnumerator CheckCombatReadiness()
+    {
+        while (!ObjPoolManager.Instance.IsDeckReady)
+            yield return null;
+
         OnCombatStart?.Invoke();
     }
 

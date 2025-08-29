@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-//here changes 
 public class EnemyAttackManager : MonoBehaviour
 {
     [SerializeField] public Dictionary<int, int> RoundsForCards { get; private set; } = new();
@@ -68,10 +67,6 @@ public class EnemyAttackManager : MonoBehaviour
             if (RoundManager.Instance.PlayerHP <= 0) return;
 
             RemoveKey(i);
-            foreach (var card in EnemyCardManager.Instance.CardsInGame[i])
-            {
-                card.SetActive(false); //here pool control
-            }
             EnemyCardManager.Instance.RemoveCardFromGame(i, EnemyCardManager.Instance.CardsInGame[i].Count);
             EnemyCardManager.Instance.cardHolders[i].GetComponent<CardHolderLogic>().ResetCardHolderEnemyCards();
         }

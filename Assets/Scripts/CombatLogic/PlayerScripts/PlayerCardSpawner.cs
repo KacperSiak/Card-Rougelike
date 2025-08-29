@@ -59,7 +59,6 @@ public class PlayerCardSpawner : MonoBehaviour
             // Consider adding parent for pCards
             card.transform.position = new Vector3(x, _hand.gameObject.transform.position.y, _hand.gameObject.transform.position.z + z);
             card.transform.rotation = Quaternion.Euler(200f, card.transform.rotation.y, card.transform.rotation.z);
-            card.transform.localScale /= 1.7f;
 
             card.GetComponent<PlayerCardLogic>().SaveDefaultProperties();
 			card.SetActive(true);

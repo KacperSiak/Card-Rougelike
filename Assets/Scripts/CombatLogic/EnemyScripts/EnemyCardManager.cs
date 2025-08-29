@@ -6,7 +6,8 @@ public class EnemyCardManager : MonoBehaviour
     public static EnemyCardManager Instance { get; private set; }
 
     [SerializeField] private EnemyCardSpawner _spawner;
-    
+    [SerializeField] private EnemyCardAnimation _animation;
+
     public List<GameObject> cardHolders;
     public List<Transform> cardObjects;
 
@@ -87,8 +88,10 @@ public class EnemyCardManager : MonoBehaviour
         CardsInGameCount++;
     }
 
+    //?
     public void RemoveCardFromGame(int key, int amount)
     {
+        _animation.RemoveCard(CardsInGame[key].ConvertAll(card => card.transform).ToArray());
         CardsInGame.Remove(key);
         CardsInGamePower.Remove(key);
         _bittenCards++; 
@@ -105,7 +108,7 @@ public class EnemyCardManager : MonoBehaviour
         CardsInGamePower[keyCardsIndex] -= power;
     }
 
-    public bool CheckRoundReadiness()
+    public bool CheckRoundReadiness() // here improve logic later
     {
         if(_cardsBySuitDeck.Count == 0 && CardsInGame.Count == 0) return false; 
 
@@ -133,7 +136,8 @@ public class EnemyCardManager : MonoBehaviour
         }
     }
 
-    private void OnCombatEnd()
+    //??
+    private void OnCombatEnd() //here improve
     {
         foreach (var card in cardObjects)
         {

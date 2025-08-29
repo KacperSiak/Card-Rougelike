@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class PlayerCardsAnimation : MonoBehaviour
 {
-    [SerializeField] private float _interval = 3;
+    [field: SerializeField] public int Interval = 3;
     [SerializeField] private float _duration = 0.1f;
-    private float _currentTime = 0;
     private Vector3 _idleV = new Vector3(0, 0.0001f, 0f); // Idle animation vector
+    public bool WaveAnimationActive { get; private set; } = false;
 
     public static PlayerCardsAnimation Instance { get; private set; }
 
@@ -19,21 +19,13 @@ public class PlayerCardsAnimation : MonoBehaviour
         else Destroy(gameObject);
     }
 
-    void Update()
+    public void StartWaveAnimation()
     {
-        if (_currentTime < _interval)
-        {
-            _currentTime += Time.deltaTime;
+        if(PlayerCardManager.Instance.CardsInHand.Count == 0)
             return;
-        }
 
-        CheckAnimationConditions();
-    }
-
-    private void CheckAnimationConditions()
-    {
-        if(PlayerCardManager.Instance.CardsInHand.Count != 0)
-            StartCoroutine(IdleAnimation());
+        WaveAnimationActive = true;
+        StartCoroutine(IdleAnimation());
     }
 
     private IEnumerator IdleAnimation()
@@ -55,13 +47,12 @@ public class PlayerCardsAnimation : MonoBehaviour
         
         card = PlayerCardManager.Instance.CardsInHand[PlayerCardManager.Instance.CardsInHand.Count - 1];
         card.GetComponent<PlayerCardLogic>().ResetLastPlacement();
-        _currentTime = 0;
+        WaveAnimationActive = false;
     }
 
     public void ActivatePlacementPreviewAnimation()
     {
         enabled = false;
-        _currentTime = 0;
 
         foreach (var card in PlayerCardManager.Instance.SelectedCards)
         {
