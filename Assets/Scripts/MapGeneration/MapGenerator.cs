@@ -11,9 +11,9 @@ public struct NodeTypeSettings
     public int maxCount;
     public GameObject prefab;
     public int minLevel;
-    [Tooltip("Rotacja tego typu node'a na osi Y (w stopniach)")]
+    [Tooltip("Rotacja tego typu node'a na osi Y")]
     public float yRotation;
-    [Tooltip("Podniesienie node'a na osi Y (np. 0 = na ziemi, 0.5 = wyżej)")]
+    [Tooltip("Podniesienie node'a na osi Y")]
     public float yOffset;
 }
 
@@ -24,7 +24,7 @@ public class MapGenerator : MonoBehaviour
 
     [Header("Start Node Configuration")]
     public GameObject startNodePrefab;
-    [Tooltip("Rotacja start node'a na osi Y (w stopniach)")]
+    [Tooltip("Rotacja start node'a na osi Y")]
     public float startNodeYRotation = 0f;
 
     [Header("Player Configuration")]
@@ -35,10 +35,12 @@ public class MapGenerator : MonoBehaviour
 
     [Header("Boss Configuration")]
     public GameObject bossPrefab;
-    [Tooltip("Rotacja boss node'a na osi Y (w stopniach)")]
+    [Tooltip("Rotacja boss node'a na osi Y")]
     public float bossNodeYRotation = 0f;
-    [Tooltip("Podniesienie boss node'a na osi Y (np. 0 = na ziemi, 0.5 = wyżej)")]
+    [Tooltip("Podniesienie boss node'a na osi Y")]
     public float bossYOffset = 0f;
+    [Tooltip("Mnożnik dystansu dla boss node'a")]
+    public float bossDistanceMultiplier = 1.5f;
 
     [Header("Map Settings")]
     public int numberOfLevels = 8;
@@ -133,6 +135,7 @@ public class MapGenerator : MonoBehaviour
         ClearOldNodes();
         ResetMapState();
         GenerateMapStructure();
+        AdjustBossNodePosition();
         ConnectNodes();
         InstantiateMapVisuals();
         SpawnPlayerMarker();
@@ -431,6 +434,56 @@ public class MapGenerator : MonoBehaviour
 
                 closestPreBossNode.ConnectedNodes.Add(bossNode);
                 bossNode.ConnectedNodes.Add(closestPreBossNode);
+            }
+        }
+    }
+
+    void AdjustBossNodePosition()
+    {
+        if (bossDistanceMultiplier <= 1.0f) return; // Jeśli mnożnik <= 1.0, nie robimy nic
+
+        int bossLevel = numberOfLevels - 1;
+        if (bossLevel >= mapLevels.Count) return;
+
+        List<MapNode> bossNodes = mapLevels[bossLevel];
+        if (bossNodes.Count == 0) return;
+
+        foreach (var bossNode in bossNodes)
+        {
+            if (bossNode.Type == NodeType.Boss)
+            {
+                // Przesuwamy boss node dalej od centrum mapy
+                Vector2 centerOfMap = Vector2.zero;
+                
+                // Obliczamy środek mapy na podstawie wszystkich node'ów
+                int totalNodes = 0;
+                Vector2 sumPositions = Vector2.zero;
+                for (int level = 0; level < mapLevels.Count - 1; level++) // Pomijamy poziom boss'a
+                {
+                    foreach (var node in mapLevels[level])
+                    {
+                        sumPositions += node.Position;
+                        totalNodes++;
+                    }
+                }
+                
+                if (totalNodes > 0)
+                {
+                    centerOfMap = sumPositions / totalNodes;
+                }
+
+                // Obliczamy kierunek od centrum do boss node'a
+                Vector2 directionFromCenter = (bossNode.Position - centerOfMap).normalized;
+                
+                // Jeśli boss jest w centrum, nadajemy mu losowy kierunek
+                if (directionFromCenter.magnitude < 0.1f)
+                {
+                    directionFromCenter = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f)).normalized;
+                }
+
+                // Przesuwamy boss node o dodatkowy dystans
+                float additionalDistance = verticalSpacing * (bossDistanceMultiplier - 1.0f);
+                bossNode.Position += directionFromCenter * additionalDistance;
             }
         }
     }

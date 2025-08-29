@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//here changes 
 public class EnemyAttackManager : MonoBehaviour
 {
     [SerializeField] public Dictionary<int, int> RoundsForCards { get; private set; } = new();
@@ -15,14 +16,14 @@ public class EnemyAttackManager : MonoBehaviour
     private void OnEnable()
     {
         RoundManager.OnCombatEnd += OnCombatEnd;
-        RoundManager.OnRoundStart += StartCombatSetup;
+        RoundManager.OnCombatStart += StartCombatSetup;
     }
 
 
     private void OnDisable()
     {
         RoundManager.OnCombatEnd -= OnCombatEnd;
-        RoundManager.OnRoundStart -= StartCombatSetup;
+        RoundManager.OnCombatStart -= StartCombatSetup;
     }
 
     public void StartCombatSetup()
@@ -46,6 +47,7 @@ public class EnemyAttackManager : MonoBehaviour
         int amount = Mathf.CeilToInt(maxRoundsToAttack * (totalPower - minTotalPower) / (maxTotalPower - minTotalPower));
 
         return Mathf.Clamp(amount, minRound, maxRound);
+        //return 100;
     }
 
     public void UpdateRounds()
@@ -73,7 +75,7 @@ public class EnemyAttackManager : MonoBehaviour
                 card.SetActive(false);
             }
             EnemyCardManager.Instance.RemoveCardFromGame(i);
-            EnemyCardManager.Instance.cardHolders[i].GetComponent<CardHolderManager>().ResetCardHolderEnemyCards();
+            EnemyCardManager.Instance.cardHolders[i].GetComponent<CardHolderLogic>().ResetCardHolderEnemyCards();
         }
     }
 

@@ -8,7 +8,7 @@ public class EnemyCardManager : MonoBehaviour
     [SerializeField] private EnemyCardSpawner _spawner;
     
     public List<GameObject> cardHolders;
-    public List<GameObject> cardObjects;
+    public List<Transform> cardObjects;
 
     private Dictionary<int, List<CardsSOTest>> _cardsBySuitDeck = new Dictionary<int, List<CardsSOTest>>();
 
@@ -29,7 +29,7 @@ public class EnemyCardManager : MonoBehaviour
     {
         RoundManager.OnCombatEnd += OnCombatEnd;
         RoundManager.OnRoundEnd += RefillCards;
-        RoundManager.OnRoundStart += StartCombat;
+        RoundManager.OnCombatStart += StartCombat;
     }
 
 
@@ -37,7 +37,7 @@ public class EnemyCardManager : MonoBehaviour
     {
         RoundManager.OnCombatEnd -= OnCombatEnd;
         RoundManager.OnRoundEnd -= RefillCards;
-        RoundManager.OnRoundStart -= StartCombat;
+        RoundManager.OnCombatStart -= StartCombat;
     }
 
     public void StartCombat()
@@ -57,10 +57,9 @@ public class EnemyCardManager : MonoBehaviour
         CardsInGame = new Dictionary<int, List<GameObject>>();
         CardsInGamePower = new Dictionary<int, int>();
 
-        for (int i = 0, j = 0; i < 3; i++)
+        for (int i = 0; i < 3; i++)
         {
-            SetupSpawner(startObjectIndex: j, cardHolderIndex: i);
-            j += 3;
+            SetupSpawner(startObjectIndex: i, cardHolderIndex: i);
         }
     }
 
@@ -73,17 +72,17 @@ public class EnemyCardManager : MonoBehaviour
         switch (isSingle)
         {
             case true:
-                _spawner.SpawnSingle(startObjectIndex + 1, cardHolderIndex, _cardsBySuitDeck);
+                _spawner.SpawnSingle(cardObjects[startObjectIndex], cardHolderIndex, _cardsBySuitDeck);
                 break;
             case false:
-                _spawner.SpawnCombo(startObjectIndex, cardHolderIndex, _cardsBySuitDeck);
+                _spawner.SpawnCombo(cardObjects[startObjectIndex], cardHolderIndex, _cardsBySuitDeck);
                 break;
         }
     }
 
-    public void SetupCardHolder(int index, IValidate validationType)
+    public void SetupCardHolder(int index, Validator validator)
     {
-        cardHolders[index].GetComponent<CardHolderManager>().SetProperties(validationType, index);
+        cardHolders[index].GetComponent<CardHolderLogic>().SetProperties(validator, index);
     }
 
     public void SetupCardsInGame(int key)
@@ -127,14 +126,14 @@ public class EnemyCardManager : MonoBehaviour
 
         foreach (var cardHolder in cardHolders)
         {
-            if (cardHolder.GetComponent<CardHolderManager>().EnemyComboIndex != -1)
+            if (cardHolder.GetComponent<CardHolderLogic>().EnemyComboIndex != -1)
             {
-                startIndex += 3;
+                startIndex++;
                 continue;
             } 
 
             SetupSpawner(startObjectIndex: startIndex, cardHolderIndex: cardHolders.IndexOf(cardHolder));
-            startIndex += 3;
+            startIndex++;
         }
     }
 
@@ -142,7 +141,7 @@ public class EnemyCardManager : MonoBehaviour
     {
         foreach (var card in cardObjects)
         {
-            card.SetActive(false);
+            card.gameObject.SetActive(false);
         }
         CardsInGame.Clear();
         CardsInGamePower.Clear();

@@ -11,7 +11,6 @@ public class MapSaveManager : MonoBehaviour
     public MapManager mapManager;
     
     [Header("Settings")]
-    public bool autoSaveBeforeSceneChange = true;
     public bool autoLoadOnStart = true;
     
     void Start()
@@ -20,6 +19,12 @@ public class MapSaveManager : MonoBehaviour
             mapGenerator = FindFirstObjectByType<MapGenerator>();
         if (mapManager == null)
             mapManager = FindFirstObjectByType<MapManager>(); //tymczasowe
+        
+        if (GameSaveManager.Instance != null && GameSaveManager.Instance.HasActiveSave())
+        {
+            mapSaveData = GameSaveManager.Instance.GetActiveSave();
+            Debug.Log("[MapSaveManager] Using active save from GameSaveManager");
+        }
             
         if (autoLoadOnStart && mapSaveData != null && mapSaveData.CanLoadMap())
         {
@@ -28,7 +33,11 @@ public class MapSaveManager : MonoBehaviour
         }
         else
         {
-            Debug.Log("[MapSaveManager] No save found - a new map will be generated");
+            if (mapSaveData == null)
+            {
+                CreateDefaultSave();
+            }
+            Debug.Log("[MapSaveManager] No save found or creating new map");
         }
     }
     
@@ -132,41 +141,23 @@ public class MapSaveManager : MonoBehaviour
         }
     }
     
-    public void SaveBeforeSceneChange()
+    private void CreateDefaultSave()
     {
-        if (autoSaveBeforeSceneChange)
-        {
-            SaveCurrentMap();
-        }
-    }
-    
-    [ContextMenu("Save Current Map")]
-    public void SaveFromMenu()
-    {
-        SaveCurrentMap();
-    }
-    
-    [ContextMenu("Load Saved Map")]
-    public void LoadFromMenu()
-    {
-        LoadSavedMap();
-    }
-    
-    [ContextMenu("Delete Saved Map")]
-    public void DeleteFromMenu()
-    {
-        DeleteSavedMap();
-    }
-    
-    [ContextMenu("Create New Save Data Asset")]
-    public void CreateSaveDataAsset()
-    {
-        #if UNITY_EDITOR
-        var saveData = ScriptableObject.CreateInstance<MapSaveDataSO>();
-        UnityEditor.AssetDatabase.CreateAsset(saveData, "Assets/MapSaveData.asset");
-        UnityEditor.AssetDatabase.SaveAssets();
-        mapSaveData = saveData;
-        Debug.Log("Created new MapSaveDataSO asset");
-        #endif
+        mapSaveData = ScriptableObject.CreateInstance<MapSaveDataSO>();
+        
+        mapSaveData.numberOfLevels = 8;
+        mapSaveData.minNodesPerLevel = 2;
+        mapSaveData.maxNodesPerLevel = 4;
+        mapSaveData.horizontalSpacing = 5f;
+        mapSaveData.verticalSpacing = 6f;
+        mapSaveData.horizontalRandomRange = 2f;
+        mapSaveData.verticalRandomRange = 1f;
+        mapSaveData.mapSeed = 0;
+        mapSaveData.hasPlayerPosition = false;
+        mapSaveData.maxMapTime = 0f;
+        mapSaveData.currentMapTime = 0f;
+        mapSaveData.saveDate = System.DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
+        
+        Debug.Log("[MapSaveManager] Default save created");
     }
 }
