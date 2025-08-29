@@ -1,33 +1,23 @@
-using System.Globalization;
+using NUnit.Framework.Internal;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class TooltipTrigger : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
-    public RelicData relicData;
-    public ConsumablesData consumable;
+    private string _description;
+
+    public void Setup(string description)
+    {
+        _description = description;
+    }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        string name = "";
-        string desc = "";
-
-        if (relicData != null)
-        {
-            name = relicData.name;
-            desc = relicData.description;
-        }
-        else if (consumable != null)
-        {
-            name = consumable.name;
-            desc = consumable.cardDescription;
-        }
-
-        ToolTipManager.Instance.ShowToolTip(name, desc, Input.mousePosition);
+        if(!string.IsNullOrEmpty(_description)) ToolTipControler.Instance.Show(_description);
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        ToolTipManager.Instance.HideToolTip();
+        ToolTipControler.Instance.Hide();
     }
 }
