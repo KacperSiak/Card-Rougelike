@@ -1,4 +1,4 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,6 +7,9 @@ public class PlayerCardManager : MonoBehaviour
     public static PlayerCardManager Instance { get; private set; }
 
     [SerializeField] private PlayerCardSpawner _spawner;
+    [SerializeField] private BoxCollider _mainHand;
+    [SerializeField] private BoxCollider _subMainHand;
+
     public List<GameObject> CardsInHand { get; private set; }
     public List<GameObject> SelectedCards { get; private set; }
     public int SelectedCardsPower { get; private set; }
@@ -45,7 +48,29 @@ public class PlayerCardManager : MonoBehaviour
         _playerDeckInGame = new List<CardsSOTest>(RoundManager.Instance.PlayerCards);
         SelectedCards = new List<GameObject>();
         CardsInHand = new List<GameObject>();
+        SetMainHand();
         _spawner.SpawnCards(_playerDeckInGame, CardsInHand, _cardsInHandDefault);
+    }
+
+    public void SetMainHand()
+    {
+        if (CamMovementManager.Instance.IsFirstSet)
+        {
+            _spawner.MainHand = _mainHand;
+            _mainHand.gameObject.SetActive(true);
+            _subMainHand.gameObject.SetActive(false);
+        }
+        else
+        {
+            _spawner.MainHand = _subMainHand;
+            _subMainHand.gameObject.SetActive(true);
+            _mainHand.gameObject.SetActive(false);
+        }
+    }
+
+    public void SetCards()
+    {
+        _spawner.SetCardsPosition();
     }
 
     public void AddSelectedCards(GameObject card)
@@ -75,7 +100,7 @@ public class PlayerCardManager : MonoBehaviour
             CardsInHand.Remove(card);
         }
 
-        _spawner.SetCardsPosition();
+        SetCards();
         ClearSelectedStorage();
     }
 

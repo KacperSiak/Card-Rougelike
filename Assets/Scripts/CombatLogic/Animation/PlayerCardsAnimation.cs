@@ -6,7 +6,7 @@ public class PlayerCardsAnimation : MonoBehaviour
 {
     [field: SerializeField] public int Interval = 3;
     [SerializeField] private float _duration = 0.1f;
-    private Vector3 _idleV = new Vector3(0, 0.0001f, 0f); // Idle animation vector
+    private Vector3 _idleV = new (0, 0.0001f, 0f); // Idle animation vector
     public bool WaveAnimationActive { get; private set; } = false;
 
     public static PlayerCardsAnimation Instance { get; private set; }
@@ -28,6 +28,12 @@ public class PlayerCardsAnimation : MonoBehaviour
         StartCoroutine(IdleAnimation());
     }
 
+    public void StopWaveAnimation()
+    {
+        WaveAnimationActive = false;
+        StopCoroutine(IdleAnimation());
+    }
+
     private IEnumerator IdleAnimation()
     {
         var card = PlayerCardManager.Instance.CardsInHand[0];
@@ -45,7 +51,7 @@ public class PlayerCardsAnimation : MonoBehaviour
             yield return new WaitForSeconds(_duration);
         }
         
-        card = PlayerCardManager.Instance.CardsInHand[PlayerCardManager.Instance.CardsInHand.Count - 1];
+        card = PlayerCardManager.Instance.CardsInHand[^1];
         card.GetComponent<PlayerCardLogic>().ResetLastPlacement();
         WaveAnimationActive = false;
     }

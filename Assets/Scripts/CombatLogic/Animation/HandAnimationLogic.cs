@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class IdleHandAnimationLogic : MonoBehaviour
+public class HandAnimationLogic : MonoBehaviour
 {
     [SerializeField] private float _duration = 0.1f; 
     [SerializeField] private float _idleValue = 0.1f;
@@ -10,22 +10,29 @@ public class IdleHandAnimationLogic : MonoBehaviour
     private float _elapsedTime;
     private int interval = 0;
 
-    private void OnEnable()
+    private void Awake()
     {
-        RoundManager.OnCombatStart += StartAnimations;
+        _objectPosition = transform.position;
+        _idlePosition = new Vector3(_objectPosition.x, _objectPosition.y + _idleValue, _objectPosition.z + +_idleValue);
     }
 
     private void OnDisable()
     {
-        RoundManager.OnCombatStart -= StartAnimations;
-        StopAllCoroutines();
+        DisableAnimations();
     }
 
-    void StartAnimations()
+    public void DisableAnimations()
     {
-        _objectPosition = transform.position;
-        _idlePosition = new Vector3(_objectPosition.x, _objectPosition.y + _idleValue, _objectPosition.z + +_idleValue);
+        StopAllCoroutines();
+        PlayerCardsAnimation.Instance.StopWaveAnimation();
+        transform.position = _objectPosition;
+        interval = 0;
+    }
+
+    public void EnableAnimations()
+    {
         StartCoroutine(StartAnimation());
+        interval = 0;
     }
 
     private IEnumerator StartAnimation()

@@ -3,9 +3,12 @@ using UnityEngine;
 //mb separate saving properties and card logic
 public class PlayerCardLogic : MonoBehaviour
 {
+    private Vector3 _hoverOffset = new (0f, 0.0125f, -0.00088f);
+    private Vector3 _pressedOffset = new (0f, 0.015f, 0f);
+
     private Vector3 _defaultPosition;
     private Vector3 _lastPosition;
-    private Quaternion _lastRotation;
+    private Quaternion _defaultRotation;
     private Vector3 _defaultSize;
     private bool _isSelected = false;
 
@@ -29,13 +32,24 @@ public class PlayerCardLogic : MonoBehaviour
     {
         _defaultPosition = transform.position;
         _defaultSize = transform.localScale;
+        _defaultRotation = transform.rotation;
         SaveCurrentProperties();
+    }
+
+    public void IncreaseDefaultProperties(Vector3 v)
+    { 
+        _defaultPosition += v;
+    }
+
+    public void DecreaseDefaultProperties(Vector3 v)
+    {
+        _defaultPosition -= v;
     }
 
     public void SaveCurrentProperties()
     {
-        _lastPosition = transform.position;
-        _lastRotation = transform.rotation;
+        _lastPosition = transform.localPosition;
+        _defaultRotation = transform.localRotation;
     }
 
     public void SetCardProperties(CardsSOTest card)
@@ -46,20 +60,19 @@ public class PlayerCardLogic : MonoBehaviour
 
     public void SetAnimationPlacement(Vector3 newPosition, Quaternion newRotation)
     {
-        transform.position = newPosition;
-        transform.rotation = newRotation;
+        transform.SetLocalPositionAndRotation(newPosition, newRotation);
     }
 
     public void ResetLastPlacement()
     {
-        transform.position = _lastPosition;
-        transform.rotation = _lastRotation;
+        transform.SetLocalPositionAndRotation(_defaultPosition, _defaultRotation);
     }
 
     private void OnMouseEnter()
     {
         if (_isSelected || !_isAvailable) return;
-        transform.position += new Vector3(0f, 0.0125f, -0.00088f);
+        transform.position += _hoverOffset;
+        IncreaseDefaultProperties(_hoverOffset);
         SaveCurrentProperties();
     }
 
