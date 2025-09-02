@@ -15,9 +15,9 @@ MonoBehaviour:
   <relicID>k__BackingField: QuickTravelComm
   <relicName>k__BackingField: Hermes sandals
   description: Travel costs 10% less time
-  <icon>k__BackingField: {fileID: 0}
+  <icon>k__BackingField: {fileID: 21300000, guid: 9c259d6389c91c4458e6129b81699224, type: 3}
   <rarity>k__BackingField: 0
-  <buyPrice>k__BackingField: 0
+  <buyPrice>k__BackingField: 1
   <sellPrice>k__BackingField: 0
   <Upgradeable>k__BackingField: 1
   relicEffets:

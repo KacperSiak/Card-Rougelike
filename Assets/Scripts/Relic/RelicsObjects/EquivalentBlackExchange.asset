@@ -17,7 +17,7 @@ MonoBehaviour:
   description: Spades and clubs counts as one suit
   <icon>k__BackingField: {fileID: 0}
   <rarity>k__BackingField: 1
-  <buyPrice>k__BackingField: 0
+  <buyPrice>k__BackingField: 1
   <sellPrice>k__BackingField: 0
   <Upgradeable>k__BackingField: 0
   relicEffets:
