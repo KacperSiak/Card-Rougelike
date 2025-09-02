@@ -23,11 +23,25 @@ public class ShopSlotUI : MonoBehaviour
         _currentPrice = price;
         _basePrice = price;
 
-        if (item is RelicData relic) _icon.sprite = relic.icon;
-        else if (item is ConsumablesData consumable) _icon.sprite = consumable.icon;
-        else if (item is NormalCard normal) _icon.sprite = normal.icon;
-        else if (item is VaseRelicUpgrade vase) _icon.sprite = vase.icon;
-        else if (item is PotionData potion) _icon.sprite = potion.potionIcon;
+
+        switch (item)
+        {
+            case RelicData relic:
+                _icon.sprite = relic.icon; break;
+
+            case ConsumablesData consumable:
+                _icon.sprite = consumable.icon; break;
+
+            case NormalCard normal:
+                _icon.sprite = normal.icon; break;
+
+            case VaseRelicUpgrade vase:
+                _icon.sprite = vase.icon; break;
+
+            case PotionData potion:
+                _icon.sprite = potion.potionIcon; break;
+        }
+ 
         _priceText.text = $"{price}";
     }
 
@@ -42,7 +56,7 @@ public class ShopSlotUI : MonoBehaviour
         {
             switch (_currentItem)
             {
-                case RelicData relic:
+                case RelicData relic when ConsumablesAndRelicMenager.Instance.RelicSlotCounter():
                     PlayerOverlay.Instance.SpendGold(_currentPrice);
                     RelicEventsSystem.RelicAcquired(relic);
                     break;

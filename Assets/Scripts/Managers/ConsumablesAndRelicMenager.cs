@@ -49,9 +49,8 @@ public class ConsumablesAndRelicMenager : PersistenSingleton<ConsumablesAndRelic
             currentRelics.Add(relic);
             foreach (var effect in relic.relicEffets) effect.Register(_ctx);
             _relicUI.AddIcon(relic);
-        }
-
-        ShopMenager.Instance.allItems.Remove(relic);
+            ShopMenager.Instance.allItems.Remove(relic);
+        } 
     }
 
     private void HandleRelicRemoved(RelicData relic)
@@ -68,6 +67,13 @@ public class ConsumablesAndRelicMenager : PersistenSingleton<ConsumablesAndRelic
         {
             return true;
         }
+
+        return false;
+    }
+
+    public bool RelicSlotCounter()
+    {
+        if (currentRelics.Count < maxRelics) return true;
 
         return false;
     }
