@@ -271,11 +271,14 @@ public class NodeClickHandler : MonoBehaviour
     {
         if (!string.IsNullOrEmpty(sceneToLoad))
         {
+            // Set the combat type
+            CombatManager.NextCombatNodeType = nodeType;
+            
+            // Save map state
             var mapSaveManager = FindFirstObjectByType<MapSaveManager>();
             if (mapSaveManager != null)
             {
                 mapSaveManager.SaveCurrentMap();
-                Debug.Log("[NodeClickHandler] Map saved by MapSaveManager");
             }
             
             SceneManager.LoadScene(sceneToLoad);
