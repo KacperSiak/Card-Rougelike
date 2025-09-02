@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: BonusGoldRare
   m_EditorClassIdentifier: 
   <relicID>k__BackingField: BonusGoldRare
-  <relicName>k__BackingField: HAron's Bag
+  <relicName>k__BackingField: Haron's Bag
   description: After fight gives use +10% Drachmy from basic coast
-  <icon>k__BackingField: {fileID: 21300000, guid: 9c259d6389c91c4458e6129b81699224, type: 3}
+  <icon>k__BackingField: {fileID: 21300000, guid: 3b86be9b92a57904088776ea5123995e, type: 3}
   <rarity>k__BackingField: 1
-  <buyPrice>k__BackingField: 1
+  <buyPrice>k__BackingField: 20
   <sellPrice>k__BackingField: 0
   <Upgradeable>k__BackingField: 1
   relicEffets:

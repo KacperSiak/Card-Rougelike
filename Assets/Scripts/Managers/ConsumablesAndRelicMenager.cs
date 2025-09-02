@@ -6,7 +6,7 @@ public class ConsumablesAndRelicMenager : PersistenSingleton<ConsumablesAndRelic
 { 
     [Header("Relics")]
     [SerializeField] private RelicUIDisplay _relicUI;
-    public List<RelicData> currentRelics;
+    public List<RelicData> currentRelics = new List<RelicData>();
     public List<RelicData> allRelics;
     public int maxRelics = 5;
     private RelicContext _ctx;
@@ -63,7 +63,7 @@ public class ConsumablesAndRelicMenager : PersistenSingleton<ConsumablesAndRelic
 
     public bool RelicChecker(RelicData relic)
     {
-        if (!currentRelics.Any(r => r.relicID == relic.relicID))
+        if (!currentRelics.Any(r => r.relicName == relic.relicName))
         {
             return true;
         }
@@ -112,12 +112,12 @@ public class ConsumablesAndRelicMenager : PersistenSingleton<ConsumablesAndRelic
     public void RelicUpgrade(RelicData relic)
     {
         Rarity neededRarity = RelicRarityNeed(relic.rarity);
-
         RelicData foundRelic = allRelics.Find(r => r.relicName == relic.relicName && r.rarity == neededRarity);
-        RelicEventsSystem.RelicAcquired(foundRelic);
         RelicEventsSystem.RelicRemoved(relic);
         currentRelics.Remove(relic);
         ShopMenager.Instance.allItems.Add(_vase);
+        RelicEventsSystem.RelicAcquired(foundRelic);
+        
     }
 
     public Rarity RelicRarityNeed(Rarity rarity)
