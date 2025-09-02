@@ -6,11 +6,21 @@ public class RelicUIDisplay : MonoBehaviour
     [SerializeField] private GameObject _iconPrefab;
     [SerializeField] private Transform _iconDisplay;
 
+    [SerializeField] private Button _showFullDisplay;
     private void Start()
     {
         RefreshDisplay();
     }
 
+    private void OnEnable()
+    {
+        _showFullDisplay.onClick.AddListener(ShowFullDisplay);
+    }
+
+    private void OnDisable()
+    {
+        _showFullDisplay.onClick.RemoveAllListeners();
+    }
     private void RefreshDisplay()
     {
         foreach (var relic in ConsumablesAndRelicMenager.Instance.currentRelics)
@@ -37,5 +47,10 @@ public class RelicUIDisplay : MonoBehaviour
                 iconUI.ToggleRemoveButton();
             });
         }
+    }
+
+    private void ShowFullDisplay()
+    {
+        return;
     }
 }
