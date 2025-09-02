@@ -17,7 +17,8 @@ public class PlayerCardLogic : MonoBehaviour
     private bool _isAvailable = false;
 
     public bool IsUsed { get; set; } = false;
-    
+    public bool IsNew { get; private set; } = true;
+
     public CardsSOTest Card { get; private set; }
 
 
@@ -25,9 +26,15 @@ public class PlayerCardLogic : MonoBehaviour
     {
         RoundManager.OnRoundEnd += MakeReusable;
         PlayerCardManager.OnViewChanged += OnViewChanged;
-        OnViewChanged();
     }
 
+    public void RestoreSelectedPosition()
+    { 
+        if(_isSelected)
+            transform.position += _pressedOffset;
+        else if(_isHovered)
+            transform.position += _hoverOffset;
+    }
 
     private void OnDisable()
     { 
@@ -46,12 +53,16 @@ public class PlayerCardLogic : MonoBehaviour
         _defaultPosition = transform.position;
         _defaultSize = transform.localScale;
         _defaultRotation = transform.rotation;
+
+        if (IsNew)
+            IsNew = false;
     }
 
     public void SetCardProperties(CardsSOTest card)
     {
         Card = card;
         _isAvailable = true;
+        OnViewChanged();
     }
 
     public void SetAnimationPlacement(Vector3 newPosition, Quaternion newRotation)
@@ -76,7 +87,9 @@ public class PlayerCardLogic : MonoBehaviour
     private void OnMouseExit()
     {
         if (_isSelected || !_isAvailable) return; 
-        transform.position -= _hoverOffset; 
+
+        if (_isHovered) transform.position -= _hoverOffset;
+
         _isHovered = false;
     }
 
@@ -90,6 +103,9 @@ public class PlayerCardLogic : MonoBehaviour
             transform.position += _pressedOffset;
             PlayerCardManager.Instance.AddSelectedCards(gameObject);
             _isSelected = true;
+
+            if(!CamMovementManager.Instance.IsFirstSet)
+            CamMovementManager.Instance.ChangeCameraPlacementOnSelected();
         }
 
         else if(!IsUsed && _isAvailable)
@@ -100,10 +116,13 @@ public class PlayerCardLogic : MonoBehaviour
         }
 
     }
+
+    //probably i won't need that itf
     public void MakeReusable()
     {
         _isSelected = false;
         IsUsed = false;
+        IsNew = true;
     }
 
     public void ResetCard()

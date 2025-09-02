@@ -115,11 +115,10 @@ public class CamMovementManager : MonoBehaviour
     }
 
     //to be improved
-    public void ChangeCameraPlacement(string targetKey)
+    public void ChangeCameraPlacementOnSelected()
     {
-        //_cameraAnimation.ChangeCameraPlacement(target: _camPositionsFirstSet[targetKey], duration: _duration);
-        //_isFirstSet = true;
-        //temp
-        //UIManager.Instance.TurnRoundOff();
+        _cameraAnimation.ChangeCameraPlacement(target: _camPositionsFirstSet["Main"], duration: _duration, isChanging: true);
+        InProgress = false;
+        IsFirstSet = true;
     }   
 }
