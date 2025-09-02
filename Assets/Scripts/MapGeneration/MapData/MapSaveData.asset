@@ -19,9 +19,9 @@ MonoBehaviour:
   maxMapTime: 90.63256
   currentMapTime: 81.63256
   minNodesPerLevel: 2
-  maxNodesPerLevel: 3
-  horizontalSpacing: 3
-  verticalSpacing: 3
-  horizontalRandomRange: 0.5
-  verticalRandomRange: 0.5
-  saveDate: 2025-08-28 12:12:26
+  maxNodesPerLevel: 4
+  horizontalSpacing: 5
+  verticalSpacing: 6
+  horizontalRandomRange: 2
+  verticalRandomRange: 1
+  saveDate: 
