@@ -10,6 +10,8 @@ public class PlayerCardManager : MonoBehaviour
     [SerializeField] private BoxCollider _mainHand;
     [SerializeField] private BoxCollider _subMainHand;
 
+    public static event Action OnViewChanged;
+
     public List<GameObject> CardsInHand { get; private set; }
     public List<GameObject> SelectedCards { get; private set; }
     public int SelectedCardsPower { get; private set; }
@@ -66,6 +68,8 @@ public class PlayerCardManager : MonoBehaviour
             _subMainHand.gameObject.SetActive(true);
             _mainHand.gameObject.SetActive(false);
         }
+
+        OnViewChanged?.Invoke();
     }
 
     public void SetCards()

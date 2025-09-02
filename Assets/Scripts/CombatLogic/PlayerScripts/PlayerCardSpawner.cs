@@ -49,7 +49,7 @@ public class PlayerCardSpawner : MonoBehaviour
         //    offset = cardSize - cardSize * (_cardsNumber - k_maxHandSize) / (float)(_cardsNumber - 1);
 
 		float start = (_cardsNumber - 1) * -.5f * offset; // second part is the same as /2, we just do * 0.5 instead
-        float z = -0.0009f;
+        float z = -0.0009f; //(+/-)
 
         for (int i = 0; i < _cardsNumber; i++)
 		{
@@ -59,7 +59,7 @@ public class PlayerCardSpawner : MonoBehaviour
 
             // Consider adding parent for pCards
             card.transform.position = new Vector3(x, MainHand.gameObject.transform.position.y, MainHand.gameObject.transform.position.z + z);
-            card.transform.rotation = Quaternion.Euler(200f, card.transform.rotation.y, card.transform.rotation.z);
+            card.transform.rotation = MainHand.transform.rotation;
 
             card.GetComponent<PlayerCardLogic>().SaveDefaultProperties();
 			card.SetActive(true);

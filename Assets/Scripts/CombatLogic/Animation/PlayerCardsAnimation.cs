@@ -4,9 +4,10 @@ using UnityEngine;
 
 public class PlayerCardsAnimation : MonoBehaviour
 {
+    [SerializeField] private Vector3[] _idleVectors;
     [field: SerializeField] public int Interval = 3;
     [SerializeField] private float _duration = 0.1f;
-    private Vector3 _idleV = new (0, 0.0001f, 0f); // Idle animation vector
+    private Vector3 _idleV = new();
     public bool WaveAnimationActive { get; private set; } = false;
 
     public static PlayerCardsAnimation Instance { get; private set; }
@@ -17,6 +18,22 @@ public class PlayerCardsAnimation : MonoBehaviour
     {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
+    }
+
+    private void OnEnable()
+    {
+        PlayerCardManager.OnViewChanged += OnViewChanged;
+        OnViewChanged();
+    }
+
+    private void OnDisable()
+    { 
+        PlayerCardManager.OnViewChanged -= OnViewChanged;
+    }
+
+    private void OnViewChanged()
+    { 
+        _idleV = CamMovementManager.Instance.IsFirstSet ? _idleVectors[0] : _idleVectors[1];
     }
 
     public void StartWaveAnimation()
@@ -37,7 +54,7 @@ public class PlayerCardsAnimation : MonoBehaviour
     private IEnumerator IdleAnimation()
     {
         var card = PlayerCardManager.Instance.CardsInHand[0];
-        card.GetComponent<PlayerCardLogic>().SetAnimationPlacement(newPosition: card.transform.position + _idleV, newRotation: card.transform.rotation);
+        card.GetComponent<PlayerCardLogic>().SetAnimationPlacement(newPosition: _idleV, newRotation: card.transform.rotation);
 
         yield return new WaitForSeconds(_duration);
 
@@ -46,13 +63,13 @@ public class PlayerCardsAnimation : MonoBehaviour
             var previousCard = card;
             card = PlayerCardManager.Instance.CardsInHand[i];
 
-            card.GetComponent<PlayerCardLogic>().SetAnimationPlacement(newPosition: card.transform.position + _idleV, newRotation: card.transform.rotation);
-            previousCard.GetComponent<PlayerCardLogic>().ResetLastPlacement();
+            card.GetComponent<PlayerCardLogic>().SetAnimationPlacement(newPosition: _idleV, newRotation: card.transform.rotation);
+            previousCard.GetComponent<PlayerCardLogic>().ResetLastPlacement(_idleV);
             yield return new WaitForSeconds(_duration);
         }
         
         card = PlayerCardManager.Instance.CardsInHand[^1];
-        card.GetComponent<PlayerCardLogic>().ResetLastPlacement();
+        card.GetComponent<PlayerCardLogic>().ResetLastPlacement(_idleV);
         WaveAnimationActive = false;
     }
 
@@ -71,7 +88,7 @@ public class PlayerCardsAnimation : MonoBehaviour
     {
         foreach (var card in PlayerCardManager.Instance.SelectedCards)
         {
-            card.GetComponent<PlayerCardLogic>().ResetLastPlacement();
+            //card.GetComponent<PlayerCardLogic>().ResetLastPlacement();
         }
 
         enabled = true;

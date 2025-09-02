@@ -24,7 +24,10 @@ public class HandAnimationLogic : MonoBehaviour
     public void DisableAnimations()
     {
         StopAllCoroutines();
-        PlayerCardsAnimation.Instance.StopWaveAnimation();
+
+        if(PlayerCardsAnimation.Instance)
+           PlayerCardsAnimation.Instance.StopWaveAnimation();
+
         transform.position = _objectPosition;
         interval = 0;
     }
@@ -50,10 +53,10 @@ public class HandAnimationLogic : MonoBehaviour
 
             if (PlayerCardManager.Instance.CardsInHand != null)
             {
-                foreach (var card in PlayerCardManager.Instance.CardsInHand)
-                {
-                    card.GetComponent<PlayerCardLogic>().SetAnimationPlacement(newPosition: card.transform.position, newRotation: card.transform.rotation);
-                }
+                //foreach (var card in PlayerCardManager.Instance.CardsInHand)
+                //{
+                //    card.GetComponent<PlayerCardLogic>().SetAnimationPlacement(newPosition: card.transform.position, newRotation: card.transform.rotation);
+                //}
             }
 
             yield return null;
@@ -74,10 +77,10 @@ public class HandAnimationLogic : MonoBehaviour
 
             if (PlayerCardManager.Instance.CardsInHand != null)
             {
-                foreach (var card in PlayerCardManager.Instance.CardsInHand)
-                {
-                    card.GetComponent<PlayerCardLogic>().SetAnimationPlacement(newPosition: card.transform.position, newRotation: card.transform.rotation);
-                }
+                //foreach (var card in PlayerCardManager.Instance.CardsInHand)
+                //{
+                //    card.GetComponent<PlayerCardLogic>().SetAnimationPlacement(newPosition: card.transform.position, newRotation: card.transform.rotation);
+                //}
             }
 
             yield return null;
