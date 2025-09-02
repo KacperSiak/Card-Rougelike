@@ -430,6 +430,11 @@ MonoBehaviour:
   - {fileID: 11400000, guid: acddaf0a3f8824d46a7bbecb9cc7d42f, type: 2}
   - {fileID: 11400000, guid: 4d70fc18e59011e4b89943ed0f2c0e32, type: 2}
   - {fileID: 11400000, guid: 9b1446067e1307847b004453ab43c642, type: 2}
+  - {fileID: 11400000, guid: ffff4c4c41bdf074bb6680b0cdbc6846, type: 2}
+  - {fileID: 11400000, guid: c714e96be7fcf5b40886f51e24b83521, type: 2}
+  - {fileID: 11400000, guid: 6e45d6b5b3d92114caad2dfd6ecdf461, type: 2}
+  - {fileID: 11400000, guid: 6194f05b82f95bc4ea16a432141c5b96, type: 2}
+  - {fileID: 11400000, guid: bc04ae905f3d8374084802b136c38b19, type: 2}
   _slots:
   - {fileID: 508320826}
   - {fileID: 1627660336}
@@ -784,9 +789,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cddf5768cf0e2cf42985172edcc3ab62, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tooltipPanel: {fileID: 1338524144}
-  tooltipText: {fileID: 2066783975}
-  panelRect: {fileID: 1338524145}
 --- !u!114 &639151793
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1619,6 +1621,7 @@ GameObject:
   - component: {fileID: 1324703282}
   - component: {fileID: 1324703281}
   - component: {fileID: 1324703280}
+  - component: {fileID: 1324703284}
   m_Layer: 5
   m_Name: Close
   m_TagString: Untagged
@@ -1728,6 +1731,20 @@ RectTransform:
   m_AnchoredPosition: {x: 260, y: -43}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1324703284
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1324703279}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 16c53c6852a37d84cab8a59107565de3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mapSceneName: MapScene
+  autoAttachToButton: 1
 --- !u!1 &1338524144
 GameObject:
   m_ObjectHideFlags: 0

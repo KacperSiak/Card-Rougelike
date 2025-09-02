@@ -59,35 +59,37 @@ public class ShopSlotUI : MonoBehaviour
                 case RelicData relic when ConsumablesAndRelicMenager.Instance.RelicSlotCounter():
                     PlayerOverlay.Instance.SpendGold(_currentPrice);
                     RelicEventsSystem.RelicAcquired(relic);
+                    gameObject.SetActive(false);
                     break;
 
                 case ConsumablesData consumable when ConsumablesAndRelicMenager.Instance.SlotChecker():
                     ConsumablesAndRelicMenager.Instance.AddCard(consumable);
                     PlayerOverlay.Instance.SpendGold(_currentPrice);
+                    gameObject.SetActive(false);
                     break;
 
                 case CardPack cardPack:
                     PlayerOverlay.Instance.SpendGold(_currentPrice);
                     cardPack.OpenPack();
+                    gameObject.SetActive(false);
                     break;
 
                 case VaseRelicUpgrade vase:
                     PlayerOverlay.Instance.SpendGold(_currentPrice);
                     vase.GotVase();
+                    gameObject.SetActive(false);
                     break;
 
                 case PotionData potion:
                     PlayerOverlay.Instance.SpendGold(_currentPrice);
                     BuffsAndDebuffsManager.Instance.ApplyBuff(potion);
+                    gameObject.SetActive(false);
                     break;
 
                 default:
                     Debug.LogWarning("Nieznany typ itemu: " + _currentItem);
                     break;
             }
-
-            Debug.Log("Item bought");
-            gameObject.SetActive(false);
         }
         else
         {
