@@ -36,7 +36,7 @@ public class EnemyCardAnimation : MonoBehaviour
 
                 float arc = Mathf.Sin(t * Mathf.PI) * _height;
 
-                Vector3 arcPos = new Vector3(straightPos.x, straightPos.y + arc, straightPos.z);
+                Vector3 arcPos = new(straightPos.x, straightPos.y + arc, straightPos.z);
 
                 Quaternion rot = Quaternion.Slerp(startRot, _removedCardPosition.rotation, curveT);
 
@@ -72,7 +72,7 @@ public class EnemyCardAnimation : MonoBehaviour
 
                 float arc = Mathf.Sin(t * Mathf.PI) * _height;
 
-                Vector3 arcPos = new Vector3(straightPos.x, straightPos.y + arc, straightPos.z);
+                Vector3 arcPos = new (straightPos.x, straightPos.y + arc, straightPos.z);
 
                 Quaternion rot = Quaternion.Slerp(startRot, parentPosition.transform.rotation, curveT);
 

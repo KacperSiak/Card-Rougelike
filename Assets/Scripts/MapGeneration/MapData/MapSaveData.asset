@@ -17,11 +17,11 @@ MonoBehaviour:
   playerPosition: {x: 0.12391949, y: -8.820967}
   hasPlayerPosition: 1
   maxMapTime: 90.63256
-  currentMapTime: 11.632561
+  currentMapTime: 36.63256
   minNodesPerLevel: 2
   maxNodesPerLevel: 3
   horizontalSpacing: 3
   verticalSpacing: 3
   horizontalRandomRange: 0.5
   verticalRandomRange: 0.5
-  saveDate: 2025-09-02 11:51:19
+  saveDate: 2025-08-30 16:04:45
