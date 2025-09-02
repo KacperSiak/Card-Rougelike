@@ -6,6 +6,8 @@ public class CombatManager : MonoBehaviour
 {
     public static CombatManager Instance { get; private set; }
     
+    public static NodeType NextCombatNodeType = NodeType.Enemy;
+    
     //need to be set by the map field before we load combat scene 
     public NodeType CurrentNodeType { get; set; } = NodeType.Boss; // temp default value
 
@@ -22,10 +24,16 @@ public class CombatManager : MonoBehaviour
     private void Awake()
     {
         if (Instance == null) Instance = this;
-
         else Destroy(gameObject);
 
+        CurrentNodeType = NextCombatNodeType;
+        
         SetProperties();
+    }
+    
+    void OnGUI()
+    {
+        GUI.Label(new Rect(10, Screen.height - 40, 300, 50), $"Combat Type: {CurrentNodeType}", new GUIStyle() { fontSize = 20, normal = new GUIStyleState() { textColor = Color.white } });
     }
 
     private void SetProperties()
@@ -65,5 +73,5 @@ public class CombatManager : MonoBehaviour
     public Dictionary<int, List<CardsSOTest>> GetCurrentDeck()
     {
         return _decksForDifferentTypes[CurrentNodeType];
-    }   
+    }
 }
