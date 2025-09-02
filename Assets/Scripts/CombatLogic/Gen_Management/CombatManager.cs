@@ -6,7 +6,6 @@ public class CombatManager : MonoBehaviour
 {
     public static CombatManager Instance { get; private set; }
     
-    // Simple static variable to transfer node type from map to combat
     public static NodeType NextCombatNodeType = NodeType.Enemy;
     
     //need to be set by the map field before we load combat scene 
@@ -27,7 +26,6 @@ public class CombatManager : MonoBehaviour
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
 
-        // Set combat type from map
         CurrentNodeType = NextCombatNodeType;
         
         SetProperties();
@@ -35,7 +33,6 @@ public class CombatManager : MonoBehaviour
     
     void OnGUI()
     {
-        // Simple UI to show current combat type (bottom left)
         GUI.Label(new Rect(10, Screen.height - 40, 300, 50), $"Combat Type: {CurrentNodeType}", new GUIStyle() { fontSize = 20, normal = new GUIStyleState() { textColor = Color.white } });
     }
 
