@@ -38,7 +38,7 @@ public class PlayerCardSpawner : MonoBehaviour
         { 
             StopAllCoroutines();
             isPlaying = false;
-            MainHand.gameObject.GetComponent<HandAnimationLogic>().EnableAnimations();
+            MainHand.gameObject.GetComponent<HandAnimationLogic>().EnableAnimations(true);
         }
 
         _cardsNumber = PlayerCardManager.Instance.CardsInHand.Count;
@@ -98,7 +98,7 @@ public class PlayerCardSpawner : MonoBehaviour
 
 		}
 
-        MainHand.gameObject.GetComponent<HandAnimationLogic>().EnableAnimations();
+        MainHand.gameObject.GetComponent<HandAnimationLogic>().EnableAnimations(true);
         isPlaying = false;
     }
 

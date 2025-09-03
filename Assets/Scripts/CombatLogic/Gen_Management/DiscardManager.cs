@@ -3,11 +3,38 @@ using UnityEngine;
 
 public class DiscardManager : MonoBehaviour
 {
+    [SerializeField] private GameObject _discardPanel;
     private int discardAvailableAmount = 3;
-    
+
+    private void Update()
+    {
+        if (Input.GetMouseButton(1) && PlayerCardManager.Instance.CardsInHand.Count != 0 && PlayerCardManager.Instance._playerDeckInGame.Count != 0)
+        {
+            CheckForDiscard();
+        }
+    }
+
+    private void CheckForDiscard()
+    {
+        if (discardAvailableAmount == 0 || PlayerCardManager.Instance.SelectedCards.Count == 0 || _discardPanel.activeInHierarchy) return;
+
+        _discardPanel.SetActive(true);
+        Time.timeScale = 0f;
+
+    }
+
+    public void Cancel()
+    {
+        _discardPanel.SetActive(false);
+        Time.timeScale = 1f;
+    }
+
     public void Discard()
     {
-        if (PlayerCardManager.Instance.SelectedCards.Count > discardAvailableAmount || PlayerCardManager.Instance.SelectedCards.Count == 0 || PlayerCardManager.Instance._playerDeckInGame.Count == 0) return;
+        if (PlayerCardManager.Instance.SelectedCards.Count > discardAvailableAmount) return;
+
+        _discardPanel.SetActive(false);
+        Time.timeScale = 1f;
 
         discardAvailableAmount -= PlayerCardManager.Instance.SelectedCards.Count;
 

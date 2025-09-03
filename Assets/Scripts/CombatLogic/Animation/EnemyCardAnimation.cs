@@ -8,6 +8,8 @@ public class EnemyCardAnimation : MonoBehaviour
     [SerializeField] private float _removalDuration = 1f;
     [SerializeField] private float _height = 0.4f;
     [SerializeField] private AnimationCurve _curve;
+    
+    public bool IsAnimating { get; private set; } = false;
 
     public void PlaceCards(Transform parentPosition, int amount, int key)
     {
@@ -23,6 +25,7 @@ public class EnemyCardAnimation : MonoBehaviour
     {
         foreach (var c in cards)
         {
+            c.SetParent(null);
             c.GetPositionAndRotation(out Vector3 startPos, out Quaternion startRot);
             float elapsed = 0f;
 
@@ -51,6 +54,7 @@ public class EnemyCardAnimation : MonoBehaviour
 
     private IEnumerator AnimatedPlacement(Transform parentPosition, int amount, int key)
     {
+        IsAnimating = true;
         Vector3 _finalSpawnPosition = (amount == 1) ? parentPosition.position : parentPosition.position - new Vector3(0.11f, 0, 0);
 
         for (int i = 0; i < amount; i++)
@@ -83,7 +87,11 @@ public class EnemyCardAnimation : MonoBehaviour
             }
 
             cardObject.transform.SetPositionAndRotation(_finalSpawnPosition, parentPosition.transform.rotation);
+            cardObject.transform.SetParent(parentPosition, true);
             _finalSpawnPosition += new Vector3(0.11f, 0, 0);
         }
+
+        IsAnimating = false;
+        EnemyCardManager.Instance.ControlIdleAnimation();
     }
 }

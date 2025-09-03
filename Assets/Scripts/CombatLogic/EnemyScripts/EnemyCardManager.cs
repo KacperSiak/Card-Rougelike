@@ -72,6 +72,19 @@ public class EnemyCardManager : MonoBehaviour
         }
     }
 
+    public void ControlIdleAnimation()
+    {
+        foreach (var cardHolder in cardObjects)
+        {
+            if (cardHolder.transform.childCount <= 0 || _animation.IsAnimating) return;
+        }
+
+        foreach (var cardHolder in cardObjects)
+        {
+            cardHolder.GetComponent<HandAnimationLogic>().EnableAnimations(false);
+        }
+    }
+
     public void SetupCardHolder(int index, Validator validator)
     {
         cardHolders[index].GetComponent<CardHolderLogic>().SetProperties(validator, index);
@@ -88,9 +101,9 @@ public class EnemyCardManager : MonoBehaviour
         CardsInGameCount++;
     }
 
-    //?
     public void RemoveCardFromGame(int key, int amount)
     {
+        cardObjects[key].GetComponent<HandAnimationLogic>().DisableAnimations();
         _animation.RemoveCard(CardsInGame[key].ConvertAll(card => card.transform).ToArray());
         CardsInGame.Remove(key);
         CardsInGamePower.Remove(key);
