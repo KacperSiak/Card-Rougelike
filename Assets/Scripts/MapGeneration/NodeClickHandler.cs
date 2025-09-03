@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using MapSystem;
+using Systems.SceneManagement;
 
 public class NodeClickHandler : MonoBehaviour
 {
@@ -100,7 +101,6 @@ public class NodeClickHandler : MonoBehaviour
             if (CanMoveToThisNode())
             {
                 MovePlayerHere();
-                LoadScene();
             }
         }
     }
@@ -229,7 +229,9 @@ public class NodeClickHandler : MonoBehaviour
 
         playerMarker.transform.position = toPos;
         currentPlayerNode = transform;
-        isPlayerMoving = false;
+    isPlayerMoving = false;
+        
+    LoadScene();
     }
     
     void MovePlayerInstant()
@@ -265,6 +267,8 @@ public class NodeClickHandler : MonoBehaviour
             
             playerMarker.SetActive(true);
         }
+
+    LoadScene();
     }
 
     void LoadScene()
@@ -273,12 +277,20 @@ public class NodeClickHandler : MonoBehaviour
         {
             CombatManager.NextCombatNodeType = nodeType;
             
-            var mapSaveManager = FindFirstObjectByType<MapSaveManager>();
+            var mapSaveManager = FindObjectOfType<MapSaveManager>();
             if (mapSaveManager != null)
             {
                 mapSaveManager.SaveCurrentMap();
             }
             
+            if (SceneLoader.Instance != null)
+            {
+                Debug.Log("Using additive scene activation for: " + sceneToLoad);
+                SceneLoader.Instance.manager.ActivateScene(sceneToLoad);
+                return;
+            }
+            
+            Debug.Log("SceneLoader not found, using normal scene loading for: " + sceneToLoad);
             SceneManager.LoadScene(sceneToLoad);
         }
     }
