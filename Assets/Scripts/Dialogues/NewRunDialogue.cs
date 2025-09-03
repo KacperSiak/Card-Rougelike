@@ -3,6 +3,7 @@ using Ink.UnityIntegration;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using Ink.Runtime;
 
 public class NewRunDialogue : MonoBehaviour
 {
@@ -14,6 +15,8 @@ public class NewRunDialogue : MonoBehaviour
     [SerializeField] private TextAsset defeatInkFile;
     [SerializeField] private TextAsset goodGambleInkFile;
     [SerializeField] private TextAsset badGambleInkFile;
+    [SerializeField] private TextAsset equalGambleInkFile;
+    [SerializeField] private TextAsset neutralInkFile;
 
     [SerializeField] int numberOfDefeatTexts, numberOfGambleTexts;
 
@@ -44,6 +47,8 @@ public class NewRunDialogue : MonoBehaviour
         int bgTriesMT5 = opponent?.badGambleDialoguePlayedMoreThanFive ?? -1;   // bad gamble tries individual for each opponent - more than 5 total gambling attempts
         int ggTriesLT5 = opponent?.goodGambleDialoguePlayedLessThanFive ?? -1;  // good gamble tries individual for each opponent - less than 5 total gambling attempts
         int ggTriesMT5 = opponent?.goodGambleDialoguePlayedMoreThanFive ?? -1;  // good gamble tries individual for each opponent - more than 5 total gambling attempts
+        int eqTries = opponent?.equalGambleDialoguePlayed ?? -1;                // equal gamble tries
+        int neutralTries = opponent?.neutralDialoguePlayed ?? -1;               // dialogues after every other has played
 
         if (deaths == 1)
         {
@@ -61,34 +66,45 @@ public class NewRunDialogue : MonoBehaviour
                 {
                     if (totalGamble <= 5 && ggTriesLT5 < numberOfGambleTexts)
                     {
-                        dialogueManager.EnterDialogueMode(goodGambleInkFile, $"lessThanFive.died{ggTriesLT5 + 1}");
-                        opponent.goodGambleDialoguePlayedLessThanFive++;
+                        Dialogue(goodGambleInkFile, $"lessThanFive.died{ggTriesLT5 + 1}", opponent.goodGambleDialoguePlayedLessThanFive);
                     }
                     if (totalGamble > 5 && ggTriesMT5 < numberOfGambleTexts)
                     {
-                        dialogueManager.EnterDialogueMode(goodGambleInkFile, $"moreThanFive.died{ggTriesMT5 + 1}");
-                        opponent.goodGambleDialoguePlayedMoreThanFive++;
+                        Dialogue(goodGambleInkFile, $"moreThanFive.died{ggTriesMT5 + 1}", opponent.goodGambleDialoguePlayedMoreThanFive);
                     }
                 }
                 else if (badGamble > goodGamble)
                 {
                     if (totalGamble <= 5 && bgTriesLT5 < numberOfGambleTexts)
                     {
-                        dialogueManager.EnterDialogueMode(badGambleInkFile, $"lessThanFive.died{bgTriesLT5 + 1}");
-                        opponent.badGambleDialoguePlayedLessThanFive++;
+                        Dialogue(badGambleInkFile, $"lessThanFive.died{bgTriesLT5 + 1}", opponent.badGambleDialoguePlayedLessThanFive);
                     }
                     if (totalGamble > 5 && bgTriesMT5 < numberOfGambleTexts)
                     {
-                        dialogueManager.EnterDialogueMode(badGambleInkFile, $"moreThanFive.died{bgTriesMT5 + 1}");
-                        opponent.goodGambleDialoguePlayedMoreThanFive++;
+                        Dialogue(badGambleInkFile, $"moreThanFive.died{bgTriesMT5 + 1}", opponent.goodGambleDialoguePlayedMoreThanFive);
                     }
+                }
+                else if (badGamble == goodGamble && eqTries < numberOfGambleTexts)
+                {
+                    Dialogue(equalGambleInkFile, $"main.died{eqTries + 1}", opponent.equalGambleDialoguePlayed++);
                 }
                 else
                 {
-                    Debug.LogWarning($"[NewRunDialogue] There is no more dialogue to choose from!");
+                    if (neutralTries < 3)
+                    {
+                        Dialogue(neutralInkFile, $"main.died{neutralTries + 1}", opponent.neutralDialoguePlayed);
+                    }
+                    else
+                        dialogueManager.EnterDialogueMode(neutralInkFile, $"main.died3");
                 }
             }
         }
         data.SaveToJson();
+    }
+
+    void Dialogue(TextAsset asset, string knot, int value)
+    {
+        dialogueManager.EnterDialogueMode(asset, knot);
+        value++;
     }
 }

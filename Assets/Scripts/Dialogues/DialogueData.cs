@@ -100,4 +100,6 @@ public class OpponentInformation
     public int goodGambleDialoguePlayedLessThanFive;
     public int badGambleDialoguePlayedMoreThanFive;
     public int badGambleDialoguePlayedLessThanFive;
+    public int equalGambleDialoguePlayed;
+    public int neutralDialoguePlayed;
 }
