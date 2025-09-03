@@ -1,24 +1,3 @@
-%YAML 1.1
-%TAG !u! tag:unity3d.com,2011:
---- !u!114 &11400000
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3d10987bfe49cf245b0aaa2a899a7ae7, type: 3}
-  m_Name: LoseTime
-  m_EditorClassIdentifier: 
-  <rewardName>k__BackingField: LoseTime
-  rewardEffect:
-  - rid: 2307447610706755729
-  references:
-    version: 2
-    RefIds:
-    - rid: 2307447610706755729
-      type: {class: LoseTime, ns: , asm: Assembly-CSharp}
-      data:
-        timeToLose: 20
+version https://git-lfs.github.com/spec/v1
+oid sha256:98dca26ae33787ab0c11af0d65b7f8f485b66c8072e5fe6d744768dce349dda8
+size 671

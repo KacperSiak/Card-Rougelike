@@ -1,28 +1,3 @@
-%YAML 1.1
-%TAG !u! tag:unity3d.com,2011:
---- !u!114 &11400000
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 827ef48bd1529174695e62104b965800, type: 3}
-  m_Name: HPRestore
-  m_EditorClassIdentifier: 
-  potionName: HPRestore
-  potionDescription: Restore 15 health after beating the room
-  buyPrice: 25
-  fightsLeft: 4
-  potionIcon: {fileID: 0}
-  potionEffects:
-  - rid: 2307447344931274757
-  references:
-    version: 2
-    RefIds:
-    - rid: 2307447344931274757
-      type: {class: RestoreHPAfterRoom, ns: , asm: Assembly-CSharp}
-      data:
-        healthToRestore: 15
+version https://git-lfs.github.com/spec/v1
+oid sha256:d7303bf6695021d3d5607c14a1b94a8829ceeb1b827cb0eea3938038ecf3f51d
+size 795

@@ -1,30 +1,3 @@
-%YAML 1.1
-%TAG !u! tag:unity3d.com,2011:
---- !u!114 &11400000
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4dce2b1003ba8b94499851aac558fec9, type: 3}
-  m_Name: CoinFlip
-  m_EditorClassIdentifier: 
-  <cardID>k__BackingField: CoinFlip
-  <cardName>k__BackingField: 
-  <cardDescription>k__BackingField: You have 50% chances to get x gold
-  <icon>k__BackingField: {fileID: -1614491412, guid: 28a5df7ffde1bb5408169991d42c3ab0, type: 3}
-  <rarity>k__BackingField: 0
-  <buyPrice>k__BackingField: 0
-  <sellPrice>k__BackingField: 0
-  cardEffects:
-  - rid: 5888606620320792668
-  references:
-    version: 2
-    RefIds:
-    - rid: 5888606620320792668
-      type: {class: CoinFlip, ns: , asm: Assembly-CSharp}
-      data:
-        gold: 0
+version https://git-lfs.github.com/spec/v1
+oid sha256:3dcd56ef997bdeafbaa0a05b150c2d55ef6ab4f4f2d6681fb6077af66b49bf84
+size 954

@@ -1,27 +1,3 @@
-%YAML 1.1
-%TAG !u! tag:unity3d.com,2011:
---- !u!114 &11400000
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ea794a9f71dedaa4ea38dec2157374d9, type: 3}
-  m_Name: Reshuffle
-  m_EditorClassIdentifier: 
-  <debuffName>k__BackingField: 
-  <debuffDesc>k__BackingField: Shuffle your hand into your deck and draw that many
-    cards
-  <debuffIcon>k__BackingField: {fileID: 0}
-  <debuffTurns>k__BackingField: 0
-  debuffs:
-  - rid: 2307447362607644735
-  references:
-    version: 2
-    RefIds:
-    - rid: 2307447362607644735
-      type: {class: Reshuffle, ns: , asm: Assembly-CSharp}
-      data: 
+version https://git-lfs.github.com/spec/v1
+oid sha256:3e63f0811f2fc55f4e226e619053348b0ffe713e349fec083dc710f788a3dd4f
+size 811

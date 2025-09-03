@@ -1,27 +1,3 @@
-%YAML 1.1
-%TAG !u! tag:unity3d.com,2011:
---- !u!114 &11400000
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a2943e8972f40c54897c5ddfa072df4e, type: 3}
-  m_Name: MapSaveData
-  m_EditorClassIdentifier: 
-  mapSeed: 0
-  numberOfLevels: 0
-  playerPosition: {x: 0, y: 0}
-  hasPlayerPosition: 0
-  maxMapTime: 0
-  currentMapTime: 0
-  minNodesPerLevel: 2
-  maxNodesPerLevel: 4
-  horizontalSpacing: 5
-  verticalSpacing: 6
-  horizontalRandomRange: 2
-  verticalRandomRange: 1
-  saveDate: 
+version https://git-lfs.github.com/spec/v1
+oid sha256:953efa2bc1a75c0c7192faec2a2cea2157ef9e68e34c7122486b54743a965375
+size 703
