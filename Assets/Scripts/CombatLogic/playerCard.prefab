@@ -109,7 +109,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.02, y: 0.03, z: 0.0000020000002}
+  m_Size: {x: 0.02, y: 0.03, z: 0.03}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &-7834521396677979391
 MonoBehaviour:
@@ -123,3 +123,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 60be74dabc7da444ab8d0f114ceb7a19, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _hoverVectors:
+  - {x: 0, y: 0.01, z: 0.01}
+  - {x: 0, y: 0.0125, z: -0.00088}
+  _pressedVectors:
+  - {x: 0, y: 0.01, z: 0.01}
+  - {x: 0, y: 0.0125, z: -0.00088}

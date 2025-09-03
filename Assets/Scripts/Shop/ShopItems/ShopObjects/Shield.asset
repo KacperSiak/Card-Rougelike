@@ -1,29 +1,3 @@
-%YAML 1.1
-%TAG !u! tag:unity3d.com,2011:
---- !u!114 &11400000
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 827ef48bd1529174695e62104b965800, type: 3}
-  m_Name: Shield
-  m_EditorClassIdentifier: 
-  potionName: Shield Potion
-  potionDescription: You have 80% chances to protect 15% of the damage
-  buyPrice: 25
-  fightsLeft: 3
-  potionIcon: {fileID: 0}
-  potionEffects:
-  - rid: 2307447344931274752
-  references:
-    version: 2
-    RefIds:
-    - rid: 2307447344931274752
-      type: {class: Shield, ns: , asm: Assembly-CSharp}
-      data:
-        chances: 80
-        dmgReduction: 15
+version https://git-lfs.github.com/spec/v1
+oid sha256:4a935b2e9692c50622278482ceb71c7202af84dc8ceccbf9df6c7048af69a954
+size 811

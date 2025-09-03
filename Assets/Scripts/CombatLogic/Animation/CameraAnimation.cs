@@ -7,20 +7,20 @@ public class CameraAnimation : MonoBehaviour
     private float _duration;
     private bool _isPlaying = false;
 
-    public void ChangeCameraPlacement(Transform target, float duration)
+    public void ChangeCameraPlacement(Transform target, float duration, bool isChanging)
     {
         if (_isPlaying) return;
         
         _targetTransform = target;
         _duration = duration;
-        StartCoroutine(MoveToTarget());
+        StartCoroutine(MoveToTarget(isChanging));
         _isPlaying = true;
-        CamMovementManager.Instance.inProgress = true;
+        CamMovementManager.Instance.InProgress = true;
         //temp
         UIManager.Instance.TurnRoundOff();
     }
 
-    private IEnumerator MoveToTarget()
+    private IEnumerator MoveToTarget(bool isChanging)
     {
         transform.GetPositionAndRotation(out Vector3 startPos, out Quaternion startRot);
         float elapsed = 0f;
@@ -35,6 +35,12 @@ public class CameraAnimation : MonoBehaviour
 
         transform.SetPositionAndRotation(_targetTransform.position, _targetTransform.rotation);
         _isPlaying = false;
+        if (isChanging)
+        {
+            PlayerCardManager.Instance.SetMainHand();
+            PlayerCardManager.Instance.SetCards();
+        }
+           
     }
 
 }

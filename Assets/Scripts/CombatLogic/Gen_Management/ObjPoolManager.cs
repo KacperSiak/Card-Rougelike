@@ -21,6 +21,7 @@ public class ObjPoolManager : MonoBehaviour
 
     private List<GameObject> _enemyPool = new();
     private List<GameObject> _playerPool = new();
+    private List<GameObject> _usedCards = new();
 
     public int PlayerPoolSize { get; private set; } = 0;
     public int EnemyPoolSize { get; private set; } = 0;
@@ -32,9 +33,11 @@ public class ObjPoolManager : MonoBehaviour
         if (Instance == null) Instance = this;
 
         else Destroy(gameObject);
+    }
 
-        RoundManager.OnCombatStart += CreateObjPool;
-
+    private void Start()
+    {
+        CreateObjPool();
     }
 
     private void CreateObjPool()
@@ -71,7 +74,7 @@ public class ObjPoolManager : MonoBehaviour
         GameObject obj;
 
         //think for better later
-        for (int i = 0; i < _playerPool.Count; i++)
+        for (int i = 0; i < PlayerPoolSize; i++)
         {
             obj = _playerPool[i];
             obj.transform.GetPositionAndRotation(out Vector3 startPosP, out Quaternion startRotP);
@@ -88,7 +91,7 @@ public class ObjPoolManager : MonoBehaviour
 
             endPosPlayer += new Vector3(0, 0.001f, 0);
 
-            if (i < _enemyPool.Count)
+            if (i < EnemyPoolSize)
             {
                 obj = _enemyPool[i];
                 obj.transform.GetPositionAndRotation(out Vector3 startPosE, out Quaternion startRotE);
@@ -114,6 +117,7 @@ public class ObjPoolManager : MonoBehaviour
         if (isSenderPlayer)
         {
             GameObject card = _playerPool[^1];
+            card.transform.localScale /= 1.7f; //temp
             _playerPool.Remove(card);
             return card;
         }
@@ -125,13 +129,10 @@ public class ObjPoolManager : MonoBehaviour
         }
     }
 
-    public void ReturnCard(GameObject card, bool isSenderPlayer)
+    public void ReturnCard(GameObject card)
     { 
-        if(isSenderPlayer)
-            _playerPool.Add(card);
-
-        else
-            _enemyPool.Add(card);
+        _usedCards.Add(card);
+        card.SetActive(false);
     }
     
 }

@@ -104,18 +104,22 @@ public class ShopMenager : PersistenSingleton<ShopMenager>
             var slotObject = _slots[i];
             slotObject.SetActive(true);
             var shopSlot = slotObject.GetComponent<ShopSlotUI>();
-            if (item is RelicData relic)
+
+            switch (item)
             {
-                switch (relic.rarity)
-                {
-                    case Rarity.Common: _price = relic.buyPrice; break;
-                    case Rarity.Rare: _price = relic.buyPrice; break;
-                }
-            }
-            else if (item is CardPack cardPack) _price = cardPack.buyPrice;
-            else if (item is ConsumablesData consumable) _price = consumable.buyPrice;
-            else if (item is VaseRelicUpgrade vase) _price = vase.price;
-            else if (item is PotionData potion) _price = potion.buyPrice;
+                case RelicData relic: 
+                    switch (relic.rarity)
+                    {
+                        case Rarity.Common: _price = relic.buyPrice; break;
+                        case Rarity.Rare: _price = relic.buyPrice; break;
+                    }
+                    break;
+
+                case ConsumablesData consumable: _price = consumable.buyPrice; break;
+                case CardPack cardPack: _price = cardPack.buyPrice; break;
+                case VaseRelicUpgrade vase: _price = vase.price; break;
+                case PotionData potion: _price = potion.buyPrice; break;
+            }   
             shopSlot.Setup(item, Mathf.RoundToInt(_price * _priceMultiplier));
         }
     }

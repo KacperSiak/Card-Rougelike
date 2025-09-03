@@ -1,4 +1,4 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,8 +7,13 @@ public class PlayerCardManager : MonoBehaviour
     public static PlayerCardManager Instance { get; private set; }
 
     [SerializeField] private PlayerCardSpawner _spawner;
-    public List<GameObject> CardsInHand { get; private set; }
-    public List<GameObject> SelectedCards { get; private set; }
+    [SerializeField] private BoxCollider _mainHand;
+    [SerializeField] private BoxCollider _subMainHand;
+
+    public static event Action OnViewChanged;
+
+    public List<GameObject> CardsInHand { get; private set; } = new();
+    public List<GameObject> SelectedCards { get; private set; } = new();
     public int SelectedCardsPower { get; private set; }
     public List<CardsSOTest> _playerDeckInGame { get; private set; }
 
@@ -43,17 +48,33 @@ public class PlayerCardManager : MonoBehaviour
     public void StartCombat()
     {
         _playerDeckInGame = new List<CardsSOTest>(RoundManager.Instance.PlayerCards);
-        SelectedCards = new List<GameObject>();
-        CardsInHand = new List<GameObject>();
-        StartCoroutine(WaitForSpawn());
+        SelectedCards.Clear();
+        CardsInHand.Clear();
+        SetMainHand();
+        _spawner.SpawnCards(_playerDeckInGame, CardsInHand, _cardsInHandDefault);
     }
 
-    private IEnumerator WaitForSpawn()
+    public void SetMainHand()
     {
-        while (!ObjPoolManager.Instance.IsDeckReady)
-            yield return null;
-            
-        _spawner.SpawnCards(_playerDeckInGame, CardsInHand, _cardsInHandDefault);
+        if (CamMovementManager.Instance.IsFirstSet)
+        {
+            _spawner.MainHand = _mainHand;
+            _mainHand.gameObject.SetActive(true);
+            _subMainHand.gameObject.SetActive(false);
+        }
+        else
+        {
+            _spawner.MainHand = _subMainHand;
+            _subMainHand.gameObject.SetActive(true);
+            _mainHand.gameObject.SetActive(false);
+        }
+
+        OnViewChanged?.Invoke();
+    }
+
+    public void SetCards()
+    {
+        _spawner.StartPlacement();
     }
 
     public void AddSelectedCards(GameObject card)
@@ -83,7 +104,7 @@ public class PlayerCardManager : MonoBehaviour
             CardsInHand.Remove(card);
         }
 
-        _spawner.SetCardsPosition();
+        SetCards();
         ClearSelectedStorage();
     }
 
@@ -107,7 +128,7 @@ public class PlayerCardManager : MonoBehaviour
     
     private void RefillCards()
     {
-        if(_playerDeckInGame.Count == 0) return;
+        if (_playerDeckInGame.Count == 0) return;
 
         int amount = _currentCardsInHand >= _cardsInHandDefault? 1 : _cardsInHandDefault - _currentCardsInHand;
 
@@ -121,7 +142,7 @@ public class PlayerCardManager : MonoBehaviour
         {
             card.GetComponent<PlayerCardLogic>().ResetCard();
             card.SetActive(false);
-            ObjPoolManager.Instance.ReturnCard(card, isSenderPlayer: true);
+            ObjPoolManager.Instance.ReturnCard(card);
         }
         ClearSelectedStorage();
     }

@@ -41,9 +41,7 @@ public class CardHolderLogic : MonoBehaviour
         {
             gameObject.GetComponent<MeshRenderer>().material = _highlightMaterial;
             CamMovementManager.Instance.enabled = false;
-            CamMovementManager.Instance.ChangeCameraPlacement(targetKey: "Main");
             _isInspected = true;
-            PlayerCardsAnimation.Instance.ActivatePlacementPreviewAnimation();
         }
 
     }
@@ -53,10 +51,8 @@ public class CardHolderLogic : MonoBehaviour
         if (_isInspected)
         {
             gameObject.GetComponent<MeshRenderer>().material = _defaultMaterial;
-            CamMovementManager.Instance.ChangeCameraPlacement(targetKey: "Main");
             CamMovementManager.Instance.enabled = true;
             _isInspected = false;
-            PlayerCardsAnimation.Instance.DeactivatePlacementPreviewAnimation();
         }
         
     }
@@ -112,7 +108,7 @@ public class CardHolderLogic : MonoBehaviour
         {
             card.gameObject.SetActive(false);
             card.ResetCard();
-            ObjPoolManager.Instance.ReturnCard(card.gameObject, isSenderPlayer: true);
+            ObjPoolManager.Instance.ReturnCard(card.gameObject);
         }
 
         PCardScripts.Clear();

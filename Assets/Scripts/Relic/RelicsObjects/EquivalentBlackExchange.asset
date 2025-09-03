@@ -1,30 +1,3 @@
-%YAML 1.1
-%TAG !u! tag:unity3d.com,2011:
---- !u!114 &11400000
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2ac408ffee77df04da26ff85eae270b0, type: 3}
-  m_Name: EquivalentBlackExchange
-  m_EditorClassIdentifier: 
-  <relicID>k__BackingField: SpadesEqualsClubs
-  <relicName>k__BackingField: Equivalent exchange
-  description: Spades and clubs counts as one suit
-  <icon>k__BackingField: {fileID: 0}
-  <rarity>k__BackingField: 1
-  <buyPrice>k__BackingField: 0
-  <sellPrice>k__BackingField: 0
-  <Upgradeable>k__BackingField: 0
-  relicEffets:
-  - rid: 5888606574037696640
-  references:
-    version: 2
-    RefIds:
-    - rid: 5888606574037696640
-      type: {class: EqualBlackSuits, ns: , asm: Assembly-CSharp}
-      data: 
+version https://git-lfs.github.com/spec/v1
+oid sha256:944840e37cd91b3f11fcf9206eb5ae893f872a65dac9b521745ff01289c56622
+size 1002

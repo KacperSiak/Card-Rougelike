@@ -1,17 +1,3 @@
-%YAML 1.1
-%TAG !u! tag:unity3d.com,2011:
---- !u!114 &11400000
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb2929cb26fd4544db1f019e55cdc9e0, type: 3}
-  m_Name: Joker 1
-  m_EditorClassIdentifier: 
-  cardName: Joker 1
-  CardValue: 100
-  face: {fileID: 21300000, guid: fe7914e864b9a2f4fbba40bd8aca1ccd, type: 3}
+version https://git-lfs.github.com/spec/v1
+oid sha256:b6a1375f7d440d19a9e512fc05c873d59ed1c2a111ae76b9fac74ac34a0d717d
+size 526

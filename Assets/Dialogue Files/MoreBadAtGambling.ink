@@ -11,7 +11,7 @@ My... honor?
 #speaker: Athena
 WRONG! BRAIN CELLS! And you’ve excelled at losing those.
 
-#spekaer: Apistos
+#speaker: Apistos
 It’s not like I gambled that much… just {totalGamblingAttempts} times.
 
 #speaker: Athena

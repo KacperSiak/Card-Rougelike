@@ -1,24 +1,3 @@
-%YAML 1.1
-%TAG !u! tag:unity3d.com,2011:
---- !u!114 &11400000
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3d10987bfe49cf245b0aaa2a899a7ae7, type: 3}
-  m_Name: AddTime
-  m_EditorClassIdentifier: 
-  <rewardName>k__BackingField: AddTime
-  rewardEffect:
-  - rid: 2307447610706755708
-  references:
-    version: 2
-    RefIds:
-    - rid: 2307447610706755708
-      type: {class: AddTime, ns: , asm: Assembly-CSharp}
-      data:
-        time: 60
+version https://git-lfs.github.com/spec/v1
+oid sha256:7056c253e395bcd9cd67f9cd8a2b1eb510b04b4935676e9e4842828db6a6e537
+size 662

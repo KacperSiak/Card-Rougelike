@@ -1,17 +1,3 @@
-%YAML 1.1
-%TAG !u! tag:unity3d.com,2011:
---- !u!114 &11400000
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb2929cb26fd4544db1f019e55cdc9e0, type: 3}
-  m_Name: Queen of Spades
-  m_EditorClassIdentifier: 
-  cardName: Queen of Spades
-  CardValue: 12
-  face: {fileID: 1590467722, guid: 28a5df7ffde1bb5408169991d42c3ab0, type: 3}
+version https://git-lfs.github.com/spec/v1
+oid sha256:329fe4f3de6f52f213dd2a693514b9132c8e95f9ce6117e449620b521dbd166e
+size 543

@@ -1,21 +1,24 @@
-using UnityEngine;
-using TMPro;
 using Ink.Runtime;
-using System.Collections.Generic;
 using System.Collections;
+using System.Collections.Generic;
+using TMPro;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class DialogueManager : MonoBehaviour
 {
     public static DialogueManager instance;
-    private EnemyTease _enemyTease;
-    private NewRunDialogue _newRunDialogue;
+    private EnemyTease enemyTease;
+    private NewRunDialogue newRunDialogue;
+    [SerializeField] private DialogueData data;
 
     [Header("Dialogue Panel Components")]
-    [SerializeField] private GameObject _dialoguePanel;
-    [SerializeField] private TextMeshProUGUI _dialogueText;
-    [SerializeField] private TextMeshProUGUI _speakerName;
-    [SerializeField] private Image _speakerImage;
+    [SerializeField] private GameObject dialoguePanel;
+    [SerializeField] private TextMeshProUGUI dialogueText;
+    [SerializeField] private TextMeshProUGUI speakerName;
+    [SerializeField] private Image speakerImage;
+    [SerializeField] private Button skipDialogueButton;
+    [SerializeField] private Button increaseGoodGamblingBTN, increaseBadGamblingBTN;
 
     private const string SPEAKER_TAG = "speaker", PORTRAIT_TAG = "portrait";
 
@@ -25,6 +28,8 @@ public class DialogueManager : MonoBehaviour
     private bool _isTextGenerating;
 
     [SerializeField] private float _textDelay = .003f;
+
+    [SerializeField] private TextAsset TESTINKJSON;
 
     private void Awake()
     {
@@ -38,23 +43,29 @@ public class DialogueManager : MonoBehaviour
 
     private void Start()
     {
-        _enemyTease = GetComponent<EnemyTease>();
-        _newRunDialogue = GetComponent<NewRunDialogue>();
+        data = GetComponent<DialogueData>();
+
+        skipDialogueButton.onClick.AddListener(SkipAll);
+
+        enemyTease = GetComponent<EnemyTease>();
+        newRunDialogue = GetComponent<NewRunDialogue>();
 
         isDialoguePaused = false;
 
         isDialoguePlaying = false;
-        _dialoguePanel.SetActive(false);
+        dialoguePanel.SetActive(false);
+
+        increaseBadGamblingBTN.onClick.AddListener(data.IncreaseBadGambleAttempts);
+        increaseGoodGamblingBTN.onClick.AddListener(data.IncreaseGoodGambleAttempts);
     }
 
     private void Update()
     {
-        if (!isDialoguePlaying) return;
+        if (Input.GetKeyDown(KeyCode.D))
+            EnterDefeatDialogueMode("Minotaur");
 
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            InteractionWithDialogueBox();
-        }
+        if (Input.GetKeyDown(KeyCode.P))
+            EnterDialogueMode(TESTINKJSON);
     }
 
     public void InteractionWithDialogueBox()
@@ -66,7 +77,7 @@ public class DialogueManager : MonoBehaviour
     }
 
     public void EnterDefeatDialogueMode(string defeatedBy)=>
-        _newRunDialogue.DefeatDialogue(defeatedBy);
+        newRunDialogue.DefeatDialogue(defeatedBy);
     
 
     #region Enter dialogue methods
@@ -75,7 +86,18 @@ public class DialogueManager : MonoBehaviour
     {
         _currentStory = new Story(inkJSON.text);
         isDialoguePlaying = true;
-        _dialoguePanel.SetActive(true);
+        dialoguePanel.SetActive(true);
+
+        ContinueStory();
+    }
+
+    // Start dialogue from file, at certain knot
+    public void EnterDialogueMode(TextAsset inkJSON, string knotName)
+    {
+        _currentStory = new Story(inkJSON.text);
+        isDialoguePlaying = true;
+        _currentStory.ChoosePathString(knotName);
+        dialoguePanel.SetActive(true);
 
         ContinueStory();
     }
@@ -87,18 +109,7 @@ public class DialogueManager : MonoBehaviour
 
         _currentStory = new Story(inkJSON.text);
         isDialoguePlaying = true;
-        _dialoguePanel.SetActive(true);
-
-        ContinueStory();
-    }
-
-    // Start dialogue from file, at certain knot
-    public void EnterDialogueMode(TextAsset inkJSON, string knotName)
-    {
-        _currentStory = new Story(inkJSON.text);
-        isDialoguePlaying = true;
-        _currentStory.ChoosePathString(knotName);
-        _dialoguePanel.SetActive(true);
+        dialoguePanel.SetActive(true);
 
         ContinueStory();
     }
@@ -111,7 +122,7 @@ public class DialogueManager : MonoBehaviour
         _currentStory = new Story(inkJSON.text);
         isDialoguePlaying = true;
         _currentStory.ChoosePathString(knotName);
-        _dialoguePanel.SetActive(true);
+        dialoguePanel.SetActive(true);
 
         ContinueStory();
     }
@@ -119,23 +130,24 @@ public class DialogueManager : MonoBehaviour
 
     private void ExitDialogueMode()
     {
-        _dialoguePanel.SetActive(false);
+        dialoguePanel.SetActive(false);
         isDialoguePlaying = false;
         isDialoguePaused = false;
-        _dialogueText.text = "";
+        dialogueText.text = "";
         _currentStory = null;
     }
 
+
     private void ContinueStory()
     {
-        if (_currentStory.canContinue)
+        if (_currentStory.canContinue && !isDialoguePaused)
         {
-            if (!isDialoguePaused)
-            { 
-                StartCoroutine("DialogueDisplay", _currentStory.Continue());
+            string line = _currentStory.Continue();
 
-                HandleTags(_currentStory.currentTags);
-            }
+            HandleTags(_currentStory.currentTags);
+            HandleFunctions(line);
+            
+            StartCoroutine("DialogueDisplay", line);            
         }
         else
             ExitDialogueMode();
@@ -153,22 +165,21 @@ public class DialogueManager : MonoBehaviour
             string tagKey = splitTag[0].Trim();
             string tagValue = splitTag[1].Trim();
 
-            // handle the tag
             switch (tagKey)
             {
                 case SPEAKER_TAG:
-                    _speakerName.text = tagValue;
+                    speakerName.text = tagValue;
                     break;
                 case PORTRAIT_TAG:
                     if (tagValue == "null")
                     {
-                        _speakerImage.enabled = false;
+                        speakerImage.enabled = false;
                         break;
                     }
-                    _speakerImage.enabled = true;
+                    speakerImage.enabled = true;
                     string[] splitPortraitName = tagValue.Split("_");
                     Sprite sprite = Resources.Load<Sprite>($"Dialogue Sprites/{splitPortraitName[0].Trim()}/{splitPortraitName[1].Trim()}");
-                    _speakerImage.sprite = sprite;
+                    speakerImage.sprite = sprite;
                     break;
                 default:
                     Debug.LogWarning("Tag came in but is not currently being handled: " + tag);
@@ -177,16 +188,34 @@ public class DialogueManager : MonoBehaviour
         }
     }
 
+    private void HandleFunctions(string currentLine)
+    {
+        if (currentLine[0] != '>' && currentLine[2] != '>')
+            return;
+
+        string methodName = currentLine.TrimStart('>');
+
+        Debug.LogWarning($"Trying to call method named {methodName}");
+
+        switch (methodName)
+        {
+            default:
+                Debug.LogWarning("There is no method called " + methodName);
+                break;
+        }
+    }
+
+
     IEnumerator DialogueDisplay(string line)
     {
         _isTextGenerating = true;
 
-        _dialogueText.text = line;
-        _dialogueText.maxVisibleCharacters = 0;
+        dialogueText.text = line;
+        dialogueText.maxVisibleCharacters = 0;
 
-        for (int i = 0; i < _dialogueText.text.Length; i++)
+        for (int i = 0; i < dialogueText.text.Length; i++)
         {
-            _dialogueText.maxVisibleCharacters++;
+            dialogueText.maxVisibleCharacters++;
             yield return new WaitForSeconds(_textDelay);
         }
 
@@ -196,7 +225,7 @@ public class DialogueManager : MonoBehaviour
     private void SkipDialogueGeneration()
     {
         StopCoroutine("DialogueDisplay");
-        _dialogueText.maxVisibleCharacters = _dialogueText.text.Length;
+        dialogueText.maxVisibleCharacters = dialogueText.text.Length;
         _isTextGenerating = false;
     }
 
@@ -212,5 +241,5 @@ public class DialogueManager : MonoBehaviour
             _textDelay = ogTextDelay;
     }
 
-    public void ShowEnemyTease() => _enemyTease.Tease();
+    public void ShowEnemyTease() => enemyTease.Tease();
 }
