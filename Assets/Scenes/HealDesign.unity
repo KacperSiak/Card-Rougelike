@@ -180,6 +180,45 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1135276b2db790a48b04e5f7e15583b4, type: 3}
+--- !u!1 &778877322 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: d6e9a8df2e11afe4aac72777ab77eca4, type: 3}
+  m_PrefabInstance: {fileID: 891393683}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &778877323
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 778877322}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd2727dfc855fdb41bab777c13dda08f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _healAmount: 20
+--- !u!65 &778877325
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 778877322}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2.765567, y: 2.62393, z: 1.8274382}
+  m_Center: {x: -0.18347299, y: 0.811965, z: 0.41371912}
 --- !u!1001 &891393683
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -243,7 +282,13 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d6e9a8df2e11afe4aac72777ab77eca4, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 778877323}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d6e9a8df2e11afe4aac72777ab77eca4, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 778877325}
   m_SourcePrefab: {fileID: 100100000, guid: d6e9a8df2e11afe4aac72777ab77eca4, type: 3}
 --- !u!1001 &1099250750
 PrefabInstance:
