@@ -1,29 +1,3 @@
-%YAML 1.1
-%TAG !u! tag:unity3d.com,2011:
---- !u!114 &11400000
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2ac408ffee77df04da26ff85eae270b0, type: 3}
-  m_Name: SlowerMinions
-  m_EditorClassIdentifier: 
-  relicID: SlowerMinions
-  relicName: Aegis PRotection II
-  description: Increase the number of turns of each oponnent's card by one
-  icon: {fileID: 0}
-  rarity: 2
-  buyPrice: 0
-  sellPrice: 150
-  relicEffets:
-  - rid: 5888606579394871305
-  references:
-    version: 2
-    RefIds:
-    - rid: 5888606579394871305
-      type: {class: SlowerMinions, ns: , asm: Assembly-CSharp}
-      data: 
+version https://git-lfs.github.com/spec/v1
+oid sha256:84528da4c48ccf51e197aec86d94a23c46e4c355ab7b17efd9807f52fb87e18b
+size 954

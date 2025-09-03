@@ -1,7 +1,6 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using static UnityEditor.Progress;
 
 public class ShopSlotUI : MonoBehaviour
 {
@@ -24,53 +23,73 @@ public class ShopSlotUI : MonoBehaviour
         _currentPrice = price;
         _basePrice = price;
 
-        if (item is RelicData relic)
+
+        switch (item)
         {
-            _icon.sprite = relic.icon;
+            case RelicData relic:
+                _icon.sprite = relic.icon; break;
+
+            case ConsumablesData consumable:
+                _icon.sprite = consumable.icon; break;
+
+            case NormalCard normal:
+                _icon.sprite = normal.icon; break;
+
+            case VaseRelicUpgrade vase:
+                _icon.sprite = vase.icon; break;
+
+            case PotionData potion:
+                _icon.sprite = potion.potionIcon; break;
         }
-        else if (item is ConsumablesData consumable)
-        {
-            _icon.sprite = consumable.icon;
-        }
-        else if (item is NormalCard normal)
-        {
-            _icon.sprite = normal.face;
-        }
+ 
         _priceText.text = $"{price}";
     }
 
-
-
     public void Buy()
     {
-        if (ShopMenager.instance.IsFreeBuyActive())
+        if (ShopMenager.Instance.IsFreeBuyActive())
         {
             _currentPrice = 0;
-            ShopMenager.instance.ConsumeFreeBuy();
+            ShopMenager.Instance.ConsumeFreeBuy();
         }
-        if (PlayerOverlay.instance.gold >= _currentPrice)
+        if (PlayerOverlay.Instance.gold >= _currentPrice)
         {
-            if (_currentItem is RelicData relic)
+            switch (_currentItem)
             {
-                PlayerOverlay.instance.SpendGold(_currentPrice);
-                RelicEventsSystem.RelicAcquired(relic);
+                case RelicData relic when ConsumablesAndRelicMenager.Instance.RelicSlotCounter():
+                    PlayerOverlay.Instance.SpendGold(_currentPrice);
+                    RelicEventsSystem.RelicAcquired(relic);
+                    gameObject.SetActive(false);
+                    break;
 
+                case ConsumablesData consumable when ConsumablesAndRelicMenager.Instance.SlotChecker():
+                    ConsumablesAndRelicMenager.Instance.AddCard(consumable);
+                    PlayerOverlay.Instance.SpendGold(_currentPrice);
+                    gameObject.SetActive(false);
+                    break;
+
+                case CardPack cardPack:
+                    PlayerOverlay.Instance.SpendGold(_currentPrice);
+                    cardPack.OpenPack();
+                    gameObject.SetActive(false);
+                    break;
+
+                case VaseRelicUpgrade vase:
+                    PlayerOverlay.Instance.SpendGold(_currentPrice);
+                    vase.GotVase();
+                    gameObject.SetActive(false);
+                    break;
+
+                case PotionData potion:
+                    PlayerOverlay.Instance.SpendGold(_currentPrice);
+                    BuffsAndDebuffsManager.Instance.ApplyBuff(potion);
+                    gameObject.SetActive(false);
+                    break;
+
+                default:
+                    Debug.LogWarning("Nieznany typ itemu: " + _currentItem);
+                    break;
             }
-            else if (_currentItem is ConsumablesData consumable)
-            {
-                if(ConsumablesAndRelicMenager.instance.SlotChecker())
-                {
-                    ConsumablesAndRelicMenager.instance.AddCard(consumable);
-                    PlayerOverlay.instance.SpendGold(_currentPrice);
-                }
-            }
-            else if (_currentItem is CardPack cardPack)
-            {
-                PlayerOverlay.instance.SpendGold(_currentPrice);
-                cardPack.OpePack();
-            }
-            Debug.Log("Item bought");
-            gameObject.SetActive(false);
         }
         else
         {
@@ -81,7 +100,11 @@ public class ShopSlotUI : MonoBehaviour
 
     public void RecalculatePrice(float multiplayer, bool basic)
     {
-        if (!basic) _currentPrice = Mathf.RoundToInt(_basePrice * multiplayer);
+        if (!basic)
+        {
+            if (multiplayer == 9999) _currentPrice = 99999;
+            else _currentPrice = Mathf.RoundToInt(_basePrice * multiplayer);
+        }
         else _currentPrice = _basePrice;
 
         _priceText.text = $"{_currentPrice}";

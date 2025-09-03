@@ -344,7 +344,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 16c53c6852a37d84cab8a59107565de3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mapSceneName: Map Generation
+  mapSceneName: MapGeneration
   autoAttachToButton: 1
 --- !u!1 &1047649898
 GameObject:

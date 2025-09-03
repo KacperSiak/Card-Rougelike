@@ -1,23 +1,105 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerCardSpawner : MonoBehaviour
 {
-    public void SpawnCards(List<CardsSOTest> playerCards, int cardsAmount, int startKey)
+    public BoxCollider MainHand { get; set; }
+
+    [SerializeField] private float _spawnDuration = 0.5f;
+
+    private int _cardsNumber = 0;
+    private const int k_maxHandSize = 8; // max without overlay
+    private float _cardSize = 0.06f;
+    private bool isPlaying = false;
+
+    public void SpawnCards(List<CardsSOTest> playerDeck, List<GameObject> playerCards,  int cardsAmount)
     {
-        for (int i = 0, key = startKey; i < cardsAmount; i++, key++)
+        for (int i = 0; i < cardsAmount; i++)
         {
-            if(playerCards.Count == 0) return;
+            if(playerDeck.Count == 0) break;
 
-            GameObject cardObject = PlayerCardManager.Instance.CardObjects[key];
-            CardsSOTest card = playerCards[Random.Range(0, playerCards.Count)];
-            playerCards.Remove(card);
-
-            cardObject.GetComponent<SpriteRenderer>().sprite = card.graphics;
-            cardObject.GetComponent<PlayerCardLogic>().SetCardProperties(card);
-            cardObject.SetActive(true);
+            GameObject cardObject = ObjPoolManager.Instance.GetCardFromPool(isSenderPlayer: true);
+            playerCards.Add(cardObject);
             PlayerCardManager.Instance.IncreaseCardsInHandAmount();
+
+            CardsSOTest card = playerDeck[Random.Range(0, playerDeck.Count)];
+            playerDeck.Remove(card);
+
+            cardObject.GetComponent<PlayerCardLogic>().SetCardProperties(card);
+            CardSetupManager.Instance.SetupCardVisual(cardObject.GetComponent<MeshRenderer>(), card.column, card.row);
+        }
+        StartPlacement();
+    }
+
+    public void StartPlacement()
+    {
+        if (isPlaying)
+        { 
+            StopAllCoroutines();
+            isPlaying = false;
+            MainHand.gameObject.GetComponent<HandAnimationLogic>().EnableAnimations();
         }
 
+        _cardsNumber = PlayerCardManager.Instance.CardsInHand.Count;
+        if (_cardsNumber == 0) return;
+
+        StartCoroutine(SetCardsPosition());
     }
+
+    private IEnumerator SetCardsPosition()
+	{
+        MainHand.gameObject.GetComponent<HandAnimationLogic>().DisableAnimations();
+        isPlaying = true;
+
+        float offset = _cardSize - _cardSize * (Mathf.Max(k_maxHandSize, _cardsNumber) - k_maxHandSize) / Mathf.Max(_cardsNumber - 1, 1);
+
+        //Same as the above
+        //float offset;
+        //if (_cardsNumber <= k_maxHandSize)
+        //    offset = cardSize;
+        //else
+        //    offset = cardSize - cardSize * (_cardsNumber - k_maxHandSize) / (float)(_cardsNumber - 1);
+
+		float start = (_cardsNumber - 1) * -.5f * offset; // second part is the same as /2, we just do * 0.5 instead
+        float z = -0.0006f;
+
+        for (int i = 0; i < _cardsNumber; i++)
+		{
+			GameObject card = PlayerCardManager.Instance.CardsInHand[i];
+            PlayerCardLogic logic = card.GetComponent<PlayerCardLogic>();
+
+            float x = start + i * offset;
+            Vector3 finalPos = new (x, MainHand.gameObject.transform.position.y, MainHand.gameObject.transform.position.z + z);
+            card.SetActive(true);
+
+            if (logic.IsNew)
+            { 
+                float elapsed = 0f; 
+
+                while (elapsed < _spawnDuration)
+                {
+                    elapsed += Time.deltaTime;
+                    float t = Mathf.SmoothStep(0f, 1f, elapsed / _spawnDuration);
+                    Vector3 startPos = card.transform.position;
+                    Quaternion startRot = card.transform.rotation;
+                    card.transform.SetPositionAndRotation(Vector3.Lerp(startPos, finalPos, t), Quaternion.Slerp(startRot, MainHand.transform.rotation, t));
+                    yield return null;
+                }
+
+            }
+            else
+                card.transform.SetPositionAndRotation(finalPos, MainHand.transform.rotation);
+
+            logic.SaveDefaultProperties();
+            logic.RestoreSelectedPosition();
+            z -= 0.0006f;
+            card.transform.SetParent(MainHand.gameObject.transform, true);
+
+		}
+
+        MainHand.gameObject.GetComponent<HandAnimationLogic>().EnableAnimations();
+        isPlaying = false;
+    }
+
 }
