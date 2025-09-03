@@ -1,30 +1,3 @@
-%YAML 1.1
-%TAG !u! tag:unity3d.com,2011:
---- !u!114 &11400000
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2ac408ffee77df04da26ff85eae270b0, type: 3}
-  m_Name: SingleCardDoubleDamage
-  m_EditorClassIdentifier: 
-  <relicID>k__BackingField: SingleCardDoubleDamage
-  <relicName>k__BackingField: Athena's owl pin
-  description: Beating a sequence with a single card deals double damage
-  <icon>k__BackingField: {fileID: 0}
-  <rarity>k__BackingField: 1
-  <buyPrice>k__BackingField: 0
-  <sellPrice>k__BackingField: 0
-  <Upgradeable>k__BackingField: 1
-  relicEffets:
-  - rid: 5888606574037696644
-  references:
-    version: 2
-    RefIds:
-    - rid: 5888606574037696644
-      type: {class: SingleCardDoubleDamage, ns: , asm: Assembly-CSharp}
-      data: 
+version https://git-lfs.github.com/spec/v1
+oid sha256:0a684ed271a4047848eb824683c0b0f5c2301c5e6c31da235412e39b8912009f
+size 976

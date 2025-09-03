@@ -1,17 +1,3 @@
-%YAML 1.1
-%TAG !u! tag:unity3d.com,2011:
---- !u!114 &11400000
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb2929cb26fd4544db1f019e55cdc9e0, type: 3}
-  m_Name: 2 of Spades
-  m_EditorClassIdentifier: 
-  cardName: 2 of Spades
-  CardValue: 2
-  face: {fileID: -1932276052, guid: 28a5df7ffde1bb5408169991d42c3ab0, type: 3}
+version https://git-lfs.github.com/spec/v1
+oid sha256:5daba1cc63ce46561ee4110986867e83eb6d87bbc14d0e8a76b74dff1e076ce9
+size 535

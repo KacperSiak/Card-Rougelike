@@ -671,7 +671,6 @@ MonoBehaviour:
   mapSaveData: {fileID: 11400000, guid: 48ca783d96a91264e85c9eeddbbb238c, type: 2}
   mapGenerator: {fileID: 594651636}
   mapManager: {fileID: 594651637}
-  autoLoadOnStart: 1
 --- !u!1 &967349709
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,18 +1,3 @@
-%YAML 1.1
-%TAG !u! tag:unity3d.com,2011:
---- !u!114 &11400000
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 72c2484d7d1b2b841ae9649c17f11009, type: 3}
-  m_Name: Card 45
-  m_EditorClassIdentifier: 
-  power: 8
-  column: 6
-  row: 2
-  suit: 3
+version https://git-lfs.github.com/spec/v1
+oid sha256:d9f8a5aa7a01fc86e822e3ec8aa1b88125eedee867f2cccf085bee769464bd70
+size 438

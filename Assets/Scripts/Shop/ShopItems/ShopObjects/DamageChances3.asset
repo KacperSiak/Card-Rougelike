@@ -1,29 +1,3 @@
-%YAML 1.1
-%TAG !u! tag:unity3d.com,2011:
---- !u!114 &11400000
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 827ef48bd1529174695e62104b965800, type: 3}
-  m_Name: DamageChances3
-  m_EditorClassIdentifier: 
-  potionName: DamageCahcnes
-  potionDescription: You have 45% chances to deal 25% more damage
-  buyPrice: 50
-  fightsLeft: 2
-  potionIcon: {fileID: 0}
-  potionEffects:
-  - rid: 2307447344931274758
-  references:
-    version: 2
-    RefIds:
-    - rid: 2307447344931274758
-      type: {class: MoreDamage, ns: , asm: Assembly-CSharp}
-      data:
-        chances: 46
-        bonusDamage: 25
+version https://git-lfs.github.com/spec/v1
+oid sha256:6b642b6fd0806667712cd4fbfe028c92e7bdaf24f5a00866b65acece6699cc80
+size 817

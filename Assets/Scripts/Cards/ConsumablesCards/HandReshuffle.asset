@@ -1,29 +1,3 @@
-%YAML 1.1
-%TAG !u! tag:unity3d.com,2011:
---- !u!114 &11400000
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4dce2b1003ba8b94499851aac558fec9, type: 3}
-  m_Name: HandReshuffle
-  m_EditorClassIdentifier: 
-  <cardID>k__BackingField: HandReshuffle
-  <cardName>k__BackingField: 
-  <cardDescription>k__BackingField: Reshuffle your entire hand
-  <icon>k__BackingField: {fileID: 0}
-  <rarity>k__BackingField: 0
-  <buyPrice>k__BackingField: 0
-  <sellPrice>k__BackingField: 0
-  cardEffects:
-  - rid: 2307447727691923533
-  references:
-    version: 2
-    RefIds:
-    - rid: 2307447727691923533
-      type: {class: HandReshuffle, ns: , asm: Assembly-CSharp}
-      data: 
+version https://git-lfs.github.com/spec/v1
+oid sha256:9724e03a102ba8d218a6aa2523bedc00363b8f3fbbfc4defd9ccc238a5b88b35
+size 886
