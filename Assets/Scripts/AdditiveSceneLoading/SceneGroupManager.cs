@@ -14,6 +14,8 @@ namespace Systems.SceneManagement
         public event Action OnSceneGroupLoaded = delegate { };
 
         SceneGroup ActiveSceneGroup;
+    // Scenes preloaded with allowSceneActivation=false (will finalize on ActivateScene)
+    readonly Dictionary<string, AsyncOperation> _deferredPreloads = new Dictionary<string, AsyncOperation>();
 
         public async Task LoadScenes(SceneGroup group, IProgress<float> progress, bool reloadDupScenes = false)
         {
@@ -29,29 +31,52 @@ namespace Systems.SceneManagement
                 loadedScenes.Add(SceneManager.GetSceneAt(i).name);
             }
 
-            var totalScenesToLoad = ActiveSceneGroup.Scenes.Count;
-
-            var operationGroup = new AsyncOperationGroup(totalScenesToLoad);
-
-            for (var i = 0; i < totalScenesToLoad; i++)
+            // Load ONLY the designated ActiveScene from the group to avoid
+            // running scripts (Awake/Start) from other scenes at bootstrap.
+            var activeSceneName = ActiveSceneGroup.FindSceneNameByType(SceneType.ActiveScene);
+            if (string.IsNullOrEmpty(activeSceneName))
             {
-                var SceneData = group.Scenes[i];
-                if (reloadDupScenes == false && loadedScenes.Contains(SceneData.Name)) continue;
-
-                var operation = SceneManager.LoadSceneAsync(SceneData.Reference.Path, LoadSceneMode.Additive);
-
-                operationGroup.Operations.Add(operation);
-
-                OnSceneLoaded.Invoke(SceneData.Name);
+                Debug.LogError("[SceneGroupManager] Active scene name not found in the scene group.");
+                return;
             }
 
-            while (!operationGroup.IsDone)
+            if (reloadDupScenes == false && loadedScenes.Contains(activeSceneName))
             {
-                progress?.Report(operationGroup.Progress);
-                await Task.Delay(100);
+                Debug.Log($"[SceneGroupManager] Active scene '{activeSceneName}' already loaded.");
+            }
+            else
+            {
+                var op = SceneManager.LoadSceneAsync(activeSceneName, LoadSceneMode.Additive);
+                while (!op.isDone)
+                {
+                    progress?.Report(op.progress);
+                    await Task.Delay(50);
+                }
+                OnSceneLoaded.Invoke(activeSceneName);
             }
 
-            Scene activeScene = SceneManager.GetSceneByName(ActiveSceneGroup.FindSceneNameByType(SceneType.ActiveScene));
+            // Preload remaining scenes in the group with deferred activation so their scripts don't run yet
+            foreach (var sceneData in ActiveSceneGroup.Scenes)
+            {
+                var name = sceneData.Name;
+                if (name == activeSceneName) continue;
+                if (loadedScenes.Contains(name)) continue;
+
+                var preloadOp = SceneManager.LoadSceneAsync(sceneData.Reference.Path, LoadSceneMode.Additive);
+                if (preloadOp == null) continue;
+                preloadOp.allowSceneActivation = false;
+                _deferredPreloads[name] = preloadOp;
+
+                // Progress feedback while preloading to 0.9
+                while (preloadOp.progress < 0.9f)
+                {
+                    progress?.Report(preloadOp.progress);
+                    await Task.Delay(50);
+                }
+                // Now it's ready to be activated later; do NOT invoke OnSceneLoaded here
+            }
+
+            Scene activeScene = SceneManager.GetSceneByName(activeSceneName);
 
             if (activeScene.IsValid())
             {
@@ -338,6 +363,19 @@ namespace Systems.SceneManagement
         public async Task ActivateScene(string sceneName, bool loadIfMissing = true)
         {
             var target = SceneManager.GetSceneByName(sceneName);
+            // If we have a deferred preload, finalize it first
+            if (_deferredPreloads.TryGetValue(sceneName, out var deferredOp))
+            {
+                deferredOp.allowSceneActivation = true;
+                while (!deferredOp.isDone)
+                {
+                    await Task.Delay(10);
+                }
+                _deferredPreloads.Remove(sceneName);
+                target = SceneManager.GetSceneByName(sceneName);
+                OnSceneLoaded.Invoke(sceneName);
+            }
+
             if ((!target.IsValid() || !target.isLoaded) && loadIfMissing)
             {
                 var operation = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
@@ -352,6 +390,7 @@ namespace Systems.SceneManagement
                     await Task.Delay(10);
                 }
                 target = SceneManager.GetSceneByName(sceneName);
+                OnSceneLoaded.Invoke(sceneName);
             }
 
             if (!target.IsValid() || !target.isLoaded)

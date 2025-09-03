@@ -275,7 +275,12 @@ public class NodeClickHandler : MonoBehaviour
     {
         if (!string.IsNullOrEmpty(sceneToLoad))
         {
-            CombatManager.NextCombatNodeType = nodeType;
+            // Assign combat type only if this is a combat node or a combat scene
+            if (IsCombatNode(nodeType) || LooksLikeCombatScene(sceneToLoad))
+            {
+                // Ustal typ przeciwnika bezpośrednio
+                CombatManager.ApplyNodeType(nodeType);
+            }
             
             var mapSaveManager = FindObjectOfType<MapSaveManager>();
             if (mapSaveManager != null)
@@ -287,12 +292,27 @@ public class NodeClickHandler : MonoBehaviour
             {
                 Debug.Log("Using additive scene activation for: " + sceneToLoad);
                 SceneLoader.Instance.manager.ActivateScene(sceneToLoad);
+                // Po aktywacji sceny jeszcze raz wymuś typ (na wypadek wyścigów)
+                if (IsCombatNode(nodeType) || LooksLikeCombatScene(sceneToLoad))
+                {
+                    CombatManager.ApplyNodeType(nodeType);
+                }
                 return;
             }
             
             Debug.Log("SceneLoader not found, using normal scene loading for: " + sceneToLoad);
             SceneManager.LoadScene(sceneToLoad);
         }
+    }
+
+    static bool IsCombatNode(NodeType t)
+    {
+        return t == NodeType.Enemy || t.ToString() == "Elite" || t.ToString() == "Boss";
+    }
+
+    static bool LooksLikeCombatScene(string scene)
+    {
+        return !string.IsNullOrEmpty(scene) && (scene.IndexOf("combat", System.StringComparison.OrdinalIgnoreCase) >= 0 || scene.IndexOf("battle", System.StringComparison.OrdinalIgnoreCase) >= 0);
     }
     
     public void TriggerLoadScene()
