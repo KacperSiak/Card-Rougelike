@@ -1,7 +1,8 @@
 fileFormatVersion: 2
-guid: 2241ac7f4af506e468db03b480dabdce
-VisualEffectImporter:
+guid: 4e69b4e7ad777694cb16f03a5185bbaf
+NativeFormatImporter:
   externalObjects: {}
+  mainObjectFileID: 11400000
   userData: 
   assetBundleName: 
   assetBundleVariant: 
@@ -10,5 +11,5 @@ AssetOrigin:
   productId: 213197
   packageName: Unity Terrain - URP Demo Scene
   packageVersion: 1.0.3
-  assetPath: Assets/TerrainDemoScene_URP/VFXGraphs/Fog.vfx
+  assetPath: Assets/TerrainDemoScene_URP/Settings/URP/UniversalRenderPipelineGlobalSettings.asset
   uploadId: 727820
