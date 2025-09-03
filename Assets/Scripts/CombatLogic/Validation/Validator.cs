@@ -1,38 +1,44 @@
 using UnityEngine;
 
+//jocker validation to be improved 
 public class Validator : MonoBehaviour
 {
-    //Refactor to abstract class T_T
+    [SerializeField] protected EnemyAttackManager _enemyAttackManager;
+    protected bool _isValid = false;
+    protected CardHolderLogic _cardHolder;
 
-    [SerializeField] private EnemyAttackManager _enemyAttackManager;
-
-    public void ValidateCards(CardHolderManager cardHolder)
+    public void Validate(CardHolderLogic cardHolder)
     {
-        cardHolder.ValidatorType.ValidateCards(cardHolder, this);
+        _cardHolder = cardHolder;
+        _isValid = true;
+        ValidateCards();
+        ContinueValidation();
     }
 
+    protected virtual void ValidateCards() { }
+
     // Limits for player, can't use cards to get rig of them, if they can't attack enemy
-    public void ContinueValidation(bool valid, CardHolderManager cardHolder)
+    private void ContinueValidation()
     {
-        if (!valid)
+        if (!_isValid)
         {
-            cardHolder.OnValidationFailed();
+            _cardHolder.OnValidationFailed();
             return;
         }
 
-        if(PlayerCardManager.Instance.SelectedCardsPower >= EnemyCardManager.Instance.CardsInGamePower[cardHolder.EnemyComboIndex])
+        if(PlayerCardManager.Instance.SelectedCardsPower >= EnemyCardManager.Instance.CardsInGamePower[_cardHolder.EnemyComboIndex])
         {
-            cardHolder.OnValidated();
+            _cardHolder.OnValidated();
             return;
         }
 
-        if (_enemyAttackManager.RoundsForCards[cardHolder.EnemyComboIndex] > 1)
+        if (_enemyAttackManager.RoundsForCards[_cardHolder.EnemyComboIndex] > 1)
         {
-            cardHolder.OnValidationFailed();
+            _cardHolder.OnValidationFailed();
             return;
         }
 
-        cardHolder.OnValidated();
+        _cardHolder.OnValidated();
  
     }
 }

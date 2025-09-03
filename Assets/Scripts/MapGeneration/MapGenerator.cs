@@ -11,20 +11,22 @@ public struct NodeTypeSettings
     public int maxCount;
     public GameObject prefab;
     public int minLevel;
-    [Tooltip("Rotacja tego typu node'a na osi Y (w stopniach)")]
+    [Tooltip("Y rotation for this node type")]
     public float yRotation;
-    [Tooltip("Podniesienie node'a na osi Y (np. 0 = na ziemi, 0.5 = wyżej)")]
+    [Tooltip("Y offset for this node type")]
     public float yOffset;
 }
 
 public class MapGenerator : MonoBehaviour
 {
+    private const float PLAYER_MARKER_Y_OFFSET = 0.2f;
+    
     [Header("Node Type Configuration")]
     public NodeTypeSettings[] nodeTypes;
 
     [Header("Start Node Configuration")]
     public GameObject startNodePrefab;
-    [Tooltip("Rotacja start node'a na osi Y (w stopniach)")]
+    [Tooltip("Y rotation for start node")]
     public float startNodeYRotation = 0f;
 
     [Header("Player Configuration")]
@@ -35,14 +37,15 @@ public class MapGenerator : MonoBehaviour
 
     [Header("Boss Configuration")]
     public GameObject bossPrefab;
-    [Tooltip("Rotacja boss node'a na osi Y (w stopniach)")]
+    [Tooltip("Y rotation for boss node")]
     public float bossNodeYRotation = 0f;
-    [Tooltip("Podniesienie boss node'a na osi Y (np. 0 = na ziemi, 0.5 = wyżej)")]
+    [Tooltip("Y offset for boss node")]
     public float bossYOffset = 0f;
+    [Tooltip("Distance multiplier for boss node")]
+    public float bossDistanceMultiplier = 1.5f;
 
     [Header("Map Settings")]
     public int numberOfLevels = 8;
-    //[field: SerializeField] public int NumberOfLevels { get; private set; } = 8;
     public int minNodesPerLevel = 2;
     public int maxNodesPerLevel = 4;
     public float horizontalSpacing = 5f;
@@ -79,28 +82,39 @@ public class MapGenerator : MonoBehaviour
     public MapManager mapManager;
     
     [Header("Random Seed")]
-    [Tooltip("Jeśli 0, użyje losowego seed'a. Inaczej użyje tego seed'a dla deterministic generation")]
+    [Tooltip("If 0, uses random seed. Otherwise uses this seed for deterministic generation")]
     public int fixedSeed = 0;
     [HideInInspector]
     public int lastUsedSeed;
 
+    private MapSaveManager cachedMapSaveManager;
+    private Transform startNodeTransform;
+    private Transform bossNodeTransform;
+    private Dictionary<Vector3, Transform> nodeTransformCache = new Dictionary<Vector3, Transform>();
+
     void Start()
     {
         InitializeSettings();
+        InitializeCachedReferences();
         
-        var mapSaveManager = FindFirstObjectByType<MapSaveManager>();
-        bool willLoadFromSave = mapSaveManager != null && mapSaveManager.HasSavedMap();
+        bool willLoadFromSave = cachedMapSaveManager != null && cachedMapSaveManager.HasSavedMap();
         
         if (willLoadFromSave)
         {
-            Debug.Log("[MapGenerator] MapSaveManager wczyta zapisaną mapę");
-            mapSaveManager.LoadSavedMap();
+            Debug.Log("[MapGenerator] MapSaveManager will load saved map");
+            cachedMapSaveManager.LoadSavedMap();
         }
         else
         {
-            Debug.Log("[MapGenerator] Generowanie nowej mapy");
+            Debug.Log("[MapGenerator] Generating new map");
             GenerateMap();
         }
+    }
+    
+    void InitializeCachedReferences()
+    {
+        if (cachedMapSaveManager == null)
+            cachedMapSaveManager = FindFirstObjectByType<MapSaveManager>();
     }
 
     void InitializeSettings()
@@ -133,6 +147,7 @@ public class MapGenerator : MonoBehaviour
         ClearOldNodes();
         ResetMapState();
         GenerateMapStructure();
+        AdjustBossNodePosition();
         ConnectNodes();
         InstantiateMapVisuals();
         SpawnPlayerMarker();
@@ -154,6 +169,10 @@ public class MapGenerator : MonoBehaviour
     {
         bossAssigned = false;
         mapLevels.Clear();
+        
+        startNodeTransform = null;
+        bossNodeTransform = null;
+        nodeTransformCache.Clear();
 
         foreach (var type in currentCounts.Keys.ToList())
         {
@@ -284,6 +303,13 @@ public class MapGenerator : MonoBehaviour
                     Quaternion rotation = Quaternion.Euler(0, yRotation, 0);
                     GameObject instantiatedNode = Instantiate(prefab, pos3D, rotation, transform);
 
+                    nodeTransformCache[pos3D] = instantiatedNode.transform;
+
+                    if (node.Type == NodeType.Start)
+                        startNodeTransform = instantiatedNode.transform;
+                    else if (node.Type == NodeType.Boss)
+                        bossNodeTransform = instantiatedNode.transform;
+
                     var nodeHandler = instantiatedNode.GetComponent<NodeClickHandler>();
                     if (nodeHandler != null)
                     {
@@ -301,7 +327,7 @@ public class MapGenerator : MonoBehaviour
         if (mapLevels[0].Count > 0)
         {
             MapNode startNode = mapLevels[0][0];
-            Vector3 playerPos = new Vector3(startNode.Position.x, 0.2f, startNode.Position.y);
+            Vector3 playerPos = new Vector3(startNode.Position.x, PLAYER_MARKER_Y_OFFSET, startNode.Position.y);
             
             if (currentPlayerMarker == null)
             {
@@ -314,32 +340,30 @@ public class MapGenerator : MonoBehaviour
             }
             
             NodeClickHandler.playerMarker = currentPlayerMarker;
-            NodeClickHandler.currentPlayerNode = GetStartNodeTransform();
+            NodeClickHandler.currentPlayerNode = startNodeTransform;
         }
     }
 
     Transform GetStartNodeTransform()
     {
-        foreach (Transform child in transform)
-        {
-            if (child.name.Contains("Start"))
-            {
-                return child;
-            }
+        if (startNodeTransform != null)
+            return startNodeTransform;
             
-            if (mapLevels.Count > 0)
+        if (mapLevels.Count > 0)
+        {
+            float startNodeYOffset = 0f;
+            if (settingsLookup.ContainsKey(NodeType.Start))
+                startNodeYOffset = settingsLookup[NodeType.Start].yOffset;
+                
+            Vector3 expectedPos = new Vector3(mapLevels[0][0].Position.x, startNodeYOffset, mapLevels[0][0].Position.y);
+            
+            if (nodeTransformCache.TryGetValue(expectedPos, out Transform cachedTransform))
             {
-                float startNodeYOffset = 0f;
-                if (settingsLookup.ContainsKey(NodeType.Start))
-                    startNodeYOffset = settingsLookup[NodeType.Start].yOffset;
-                    
-                Vector3 expectedPos = new Vector3(mapLevels[0][0].Position.x, startNodeYOffset, mapLevels[0][0].Position.y);
-                if (Vector3.Distance(child.position, expectedPos) < 0.1f)
-                {
-                    return child;
-                }
+                startNodeTransform = cachedTransform;
+                return startNodeTransform;
             }
         }
+        
         return null;
     }
 
@@ -431,6 +455,46 @@ public class MapGenerator : MonoBehaviour
 
                 closestPreBossNode.ConnectedNodes.Add(bossNode);
                 bossNode.ConnectedNodes.Add(closestPreBossNode);
+            }
+        }
+    }
+
+    void AdjustBossNodePosition()
+    {
+        if (bossDistanceMultiplier <= 1.0f) return;
+
+        int bossLevel = numberOfLevels - 1;
+        if (bossLevel >= mapLevels.Count) return;
+
+        List<MapNode> bossNodes = mapLevels[bossLevel];
+        if (bossNodes.Count == 0) return;
+
+        foreach (var bossNode in bossNodes)
+        {
+            if (bossNode.Type == NodeType.Boss)
+            {
+                Vector2 centerOfMap = Vector2.zero;
+                
+                int totalNodes = 0;
+                Vector2 sumPositions = Vector2.zero;
+                for (int level = 0; level < mapLevels.Count - 1; level++)
+                {
+                    foreach (var node in mapLevels[level])
+                    {
+                        sumPositions += node.Position;
+                        totalNodes++;
+                    }
+                }
+                
+                if (totalNodes > 0)
+                {
+                    centerOfMap = sumPositions / totalNodes;
+                }
+
+                Vector2 directionFromCenter = (bossNode.Position - centerOfMap).normalized;
+                
+                float additionalDistance = verticalSpacing * (bossDistanceMultiplier - 1.0f);
+                bossNode.Position += directionFromCenter * additionalDistance;
             }
         }
     }
@@ -551,6 +615,9 @@ public class MapGenerator : MonoBehaviour
     
     public Transform GetBossNodeTransform()
     {
+        if (bossNodeTransform != null)
+            return bossNodeTransform;
+            
         if (mapLevels.Count == 0) return null;
         
         var lastLevel = mapLevels[mapLevels.Count - 1];
@@ -558,13 +625,12 @@ public class MapGenerator : MonoBehaviour
         {
             if (node.Type == NodeType.Boss)
             {
-                foreach (Transform child in transform)
+                Vector3 nodePos3D = new Vector3(node.Position.x, bossYOffset, node.Position.y);
+                
+                if (nodeTransformCache.TryGetValue(nodePos3D, out Transform cachedTransform))
                 {
-                    Vector3 nodePos3D = new Vector3(node.Position.x, bossYOffset, node.Position.y);
-                    if (Vector3.Distance(child.position, nodePos3D) < 0.1f)
-                    {
-                        return child;
-                    }
+                    bossNodeTransform = cachedTransform;
+                    return bossNodeTransform;
                 }
             }
         }

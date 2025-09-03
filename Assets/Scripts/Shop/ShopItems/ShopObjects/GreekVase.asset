@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: GreekVase
   m_EditorClassIdentifier: 
   price: 30
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: fe7914e864b9a2f4fbba40bd8aca1ccd, type: 3}

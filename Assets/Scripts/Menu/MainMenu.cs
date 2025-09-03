@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
@@ -7,6 +8,13 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private Button loadGameButton;
     [SerializeField] private Button optionButton;
     [SerializeField] private Button exitButton;
+
+    [SerializeField] private GameObject optionsPanel;
+    private bool isOptionsOpen = false;
+
+    [Header("Game Settings")]
+    [SerializeField] private string gameSceneName = "GameScene";
+    [SerializeField] private MapSaveDataSO defaultSaveTemplate;
 
     private void OnEnable()
     {
@@ -26,7 +34,19 @@ public class MainMenu : MonoBehaviour
     
     private void StartNewGame()
     {
-        return;
+        if (GameSaveManager.Instance != null)
+        {
+            GameSaveManager.Instance.CreateNewGameSave(defaultSaveTemplate);
+        }
+        
+        if (!string.IsNullOrEmpty(gameSceneName))
+        {
+            SceneManager.LoadScene(gameSceneName);
+        }
+        else
+        {
+            Debug.LogWarning("[MainMenu] Game scene name not set!");
+        }
     }
 
     private void ContinueGame()
@@ -36,7 +56,16 @@ public class MainMenu : MonoBehaviour
 
     private void OpenOptions()
     {
-        return;
+        isOptionsOpen = !isOptionsOpen;
+        optionsPanel.SetActive(isOptionsOpen);
+    }
+
+    [Header("List of windows in settings panel")]
+    [SerializeField] private GameObject[] windows;
+    public void HideAllWindows()
+    {
+        foreach(GameObject window in windows)
+            window.SetActive(false);
     }
 
     private void ExitGame()

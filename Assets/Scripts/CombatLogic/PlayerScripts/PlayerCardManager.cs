@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,13 +7,18 @@ public class PlayerCardManager : MonoBehaviour
     public static PlayerCardManager Instance { get; private set; }
 
     [SerializeField] private PlayerCardSpawner _spawner;
-    public List<GameObject> CardObjects;
-    public List<GameObject> SelectedCards { get; private set; }
-    public int SelectedCardsPower { get; private set; }
+    [SerializeField] private BoxCollider _mainHand;
+    [SerializeField] private BoxCollider _subMainHand;
 
-    private List<CardsSOTest> _playerDeckInGame;
-    private int _cardsInHandDefault = 6;
-    private int _currentCardsInHand = 0; // if we need more than 6 cards in hand use it to build logic
+    public static event Action OnViewChanged;
+
+    public List<GameObject> CardsInHand { get; private set; } = new();
+    public List<GameObject> SelectedCards { get; private set; } = new();
+    public int SelectedCardsPower { get; private set; }
+    public List<CardsSOTest> _playerDeckInGame { get; private set; }
+
+    [SerializeField] private int _cardsInHandDefault = 8;
+    private int _currentCardsInHand = 0; 
 
     void Awake()
     {
@@ -25,8 +31,9 @@ public class PlayerCardManager : MonoBehaviour
     private void OnEnable()
     {
         RoundManager.OnCombatEnd += OnCombatEnd;
-        RoundManager.OnRoundEnd += RefillCards;
-        RoundManager.OnRoundStart += StartCombat;
+        RoundManager.OnRoundEnd += RefillCards; 
+        RoundManager.OnRoundEnd += ClearSelectedStorage;
+        RoundManager.OnCombatStart += StartCombat;
     }
 
 
@@ -34,14 +41,40 @@ public class PlayerCardManager : MonoBehaviour
     {
         RoundManager.OnCombatEnd -= OnCombatEnd;
         RoundManager.OnRoundEnd -= RefillCards;
-        RoundManager.OnRoundStart -= StartCombat;
+        RoundManager.OnRoundEnd -= ClearSelectedStorage;
+        RoundManager.OnCombatStart -= StartCombat;
     }
 
     public void StartCombat()
     {
         _playerDeckInGame = new List<CardsSOTest>(RoundManager.Instance.PlayerCards);
-        SelectedCards = new List<GameObject>();
-        _spawner.SpawnCards(_playerDeckInGame, _cardsInHandDefault, startKey: 0);
+        SelectedCards.Clear();
+        CardsInHand.Clear();
+        SetMainHand();
+        _spawner.SpawnCards(_playerDeckInGame, CardsInHand, _cardsInHandDefault);
+    }
+
+    public void SetMainHand()
+    {
+        if (CamMovementManager.Instance.IsFirstSet)
+        {
+            _spawner.MainHand = _mainHand;
+            _mainHand.gameObject.SetActive(true);
+            _subMainHand.gameObject.SetActive(false);
+        }
+        else
+        {
+            _spawner.MainHand = _subMainHand;
+            _subMainHand.gameObject.SetActive(true);
+            _mainHand.gameObject.SetActive(false);
+        }
+
+        OnViewChanged?.Invoke();
+    }
+
+    public void SetCards()
+    {
+        _spawner.StartPlacement();
     }
 
     public void AddSelectedCards(GameObject card)
@@ -56,11 +89,29 @@ public class PlayerCardManager : MonoBehaviour
         SelectedCardsPower -= card.GetComponent<PlayerCardLogic>().Card.power;
     }
 
-    public void ClearSelectedCards()
+    private void ClearSelectedStorage()
     {
-        _currentCardsInHand -= SelectedCards.Count;
         SelectedCards.Clear();
         SelectedCardsPower = 0;
+    }
+
+    public void ClearSelectedCards() 
+    {
+        _currentCardsInHand -= SelectedCards.Count;
+
+        foreach (GameObject card in SelectedCards)
+        { 
+            CardsInHand.Remove(card);
+        }
+
+        SetCards();
+        ClearSelectedStorage();
+    }
+
+    public void UpdateAfterDiscard(int amount)
+    { 
+        ClearSelectedCards();
+        _spawner.SpawnCards(_playerDeckInGame, CardsInHand, cardsAmount: amount);
     }
 
     public void IncreaseCardsInHandAmount()
@@ -74,28 +125,26 @@ public class PlayerCardManager : MonoBehaviour
         
         return true;
     }
-
-    //for now only 6 cards in hand are generally possible, but for more need to negotiate with the team how they see that 
+    
     private void RefillCards()
     {
-        if(_playerDeckInGame.Count == 0) return;
+        if (_playerDeckInGame.Count == 0) return;
 
-        for (int i = 0; i < CardObjects.Count; i++)
-        {
-            if (CardObjects[i].activeSelf) continue;
-            _spawner.SpawnCards(_playerDeckInGame, cardsAmount: 1, startKey: i);
-        }
+        int amount = _currentCardsInHand >= _cardsInHandDefault? 1 : _cardsInHandDefault - _currentCardsInHand;
+
+        _spawner.SpawnCards(_playerDeckInGame, CardsInHand, cardsAmount: amount);
+
     }
 
     private void OnCombatEnd()
     {
-        foreach (var card in CardObjects)
+        foreach (var card in CardsInHand)
         {
             card.GetComponent<PlayerCardLogic>().ResetCard();
             card.SetActive(false);
+            ObjPoolManager.Instance.ReturnCard(card);
         }
-        SelectedCards.Clear();
-        SelectedCardsPower = 0;
+        ClearSelectedStorage();
     }
 
 }

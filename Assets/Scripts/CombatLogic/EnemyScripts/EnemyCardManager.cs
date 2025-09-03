@@ -6,17 +6,18 @@ public class EnemyCardManager : MonoBehaviour
     public static EnemyCardManager Instance { get; private set; }
 
     [SerializeField] private EnemyCardSpawner _spawner;
-    
-    public List<GameObject> cardHolders;
-    public List<GameObject> cardObjects;
+    [SerializeField] private EnemyCardAnimation _animation;
 
-    private Dictionary<int, List<CardsSOTest>> _cardsBySuitDeck = new Dictionary<int, List<CardsSOTest>>();
+    public List<GameObject> cardHolders;
+    public List<Transform> cardObjects;
+
+    private Dictionary<int, List<CardsSOTest>> _cardsBySuitDeck = new();
 
     public Dictionary<int, List<GameObject>> CardsInGame { get; private set;} 
-    public Dictionary<int, int> CardsInGamePower { get; private set; } 
+    public Dictionary<int, int> CardsInGamePower { get; private set; }
 
-    private int _suitsAmount = 4;
-    private int _cardsSameSuit = 5;
+    public int CardsInGameCount { get; private set; } = 0;
+    private int _bittenCards = 0;
 
     void Awake()
     {
@@ -29,7 +30,7 @@ public class EnemyCardManager : MonoBehaviour
     {
         RoundManager.OnCombatEnd += OnCombatEnd;
         RoundManager.OnRoundEnd += RefillCards;
-        RoundManager.OnRoundStart += StartCombat;
+        RoundManager.OnCombatStart += StartCombat;
     }
 
 
@@ -37,30 +38,20 @@ public class EnemyCardManager : MonoBehaviour
     {
         RoundManager.OnCombatEnd -= OnCombatEnd;
         RoundManager.OnRoundEnd -= RefillCards;
-        RoundManager.OnRoundStart -= StartCombat;
+        RoundManager.OnCombatStart -= StartCombat;
     }
 
     public void StartCombat()
     {
-        for (int i = 0, j = 0; i < _suitsAmount; i++)
-        {
-            _cardsBySuitDeck.Add(i, new List<CardsSOTest>());
-            int cardsInSuit = _cardsSameSuit + j;
-
-            for (; j < cardsInSuit; j++)
-            {
-                _cardsBySuitDeck[i].Add(RoundManager.Instance.EnemyCards[j]);
-            }
-
-        }
+        _cardsBySuitDeck.Clear();
+        _cardsBySuitDeck = CombatManager.Instance.GetCurrentDeck();
 
         CardsInGame = new Dictionary<int, List<GameObject>>();
         CardsInGamePower = new Dictionary<int, int>();
 
-        for (int i = 0, j = 0; i < 3; i++)
+        for (int i = 0; i < 3; i++)
         {
-            SetupSpawner(startObjectIndex: j, cardHolderIndex: i);
-            j += 3;
+            SetupSpawner(startObjectIndex: i, cardHolderIndex: i);
         }
     }
 
@@ -73,17 +64,17 @@ public class EnemyCardManager : MonoBehaviour
         switch (isSingle)
         {
             case true:
-                _spawner.SpawnSingle(startObjectIndex + 1, cardHolderIndex, _cardsBySuitDeck);
+                _spawner.SpawnSingle(cardObjects[startObjectIndex], cardHolderIndex, _cardsBySuitDeck);
                 break;
             case false:
-                _spawner.SpawnCombo(startObjectIndex, cardHolderIndex, _cardsBySuitDeck);
+                _spawner.SpawnCombo(cardObjects[startObjectIndex], cardHolderIndex, _cardsBySuitDeck);
                 break;
         }
     }
 
-    public void SetupCardHolder(int index, IValidate validationType)
+    public void SetupCardHolder(int index, Validator validator)
     {
-        cardHolders[index].GetComponent<CardHolderManager>().SetProperties(validationType, index);
+        cardHolders[index].GetComponent<CardHolderLogic>().SetProperties(validator, index);
     }
 
     public void SetupCardsInGame(int key)
@@ -94,12 +85,17 @@ public class EnemyCardManager : MonoBehaviour
     public void UpdateCardsInGame(int key, GameObject cardObject)
     { 
         CardsInGame[key].Add(cardObject);
+        CardsInGameCount++;
     }
 
-    public void RemoveCardFromGame(int key)
+    //?
+    public void RemoveCardFromGame(int key, int amount)
     {
+        _animation.RemoveCard(CardsInGame[key].ConvertAll(card => card.transform).ToArray());
         CardsInGame.Remove(key);
         CardsInGamePower.Remove(key);
+        _bittenCards++; 
+        CardsInGameCount -= amount;
     }
 
     public void SetupPower(int keyCardsIndex, int power)
@@ -112,10 +108,12 @@ public class EnemyCardManager : MonoBehaviour
         CardsInGamePower[keyCardsIndex] -= power;
     }
 
-    public bool CheckRoundReadiness()
+    public bool CheckRoundReadiness() // here improve logic later
     {
-        if(_cardsBySuitDeck.Count == 0 && CardsInGame.Count == 0) return false;
-        
+        if(_cardsBySuitDeck.Count == 0 && CardsInGame.Count == 0) return false; 
+
+        else if (_bittenCards >= RoundManager.Instance.CurrentCombatDetails.key) return false;
+
         return true;
     }
 
@@ -127,22 +125,23 @@ public class EnemyCardManager : MonoBehaviour
 
         foreach (var cardHolder in cardHolders)
         {
-            if (cardHolder.GetComponent<CardHolderManager>().EnemyComboIndex != -1)
+            if (cardHolder.GetComponent<CardHolderLogic>().EnemyComboIndex != -1)
             {
-                startIndex += 3;
+                startIndex++;
                 continue;
             } 
 
             SetupSpawner(startObjectIndex: startIndex, cardHolderIndex: cardHolders.IndexOf(cardHolder));
-            startIndex += 3;
+            startIndex++;
         }
     }
 
-    private void OnCombatEnd()
+    //??
+    private void OnCombatEnd() //here improve
     {
         foreach (var card in cardObjects)
         {
-            card.SetActive(false);
+            card.gameObject.SetActive(false);
         }
         CardsInGame.Clear();
         CardsInGamePower.Clear();

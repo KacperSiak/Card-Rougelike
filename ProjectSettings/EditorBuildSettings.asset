@@ -14,9 +14,18 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Experimental.unity
     guid: c9be718a85113f647a695d05bf1d6373
+  - enabled: 1
+    path: Assets/Scenes/ChallengeScene.unity
+    guid: a9d81ada56ce34e419f1092ba770995d
   - enabled: 0
     path: Assets/Scenes/Bootstrapper.unity
     guid: 12c3104d3516f0043bfe9d6ec3bfefd1
+  - enabled: 0
+    path: Assets/Scenes/CombatTest.unity
+    guid: 627f0c466b9482b4fa25d102ce8dcbc1
+  - enabled: 1
+    path: Assets/Scenes/CombatTestNew.unity
+    guid: 1c5d67bfc39d4a045820c21ff3fc908d
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

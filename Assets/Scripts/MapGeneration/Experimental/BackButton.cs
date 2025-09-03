@@ -29,7 +29,7 @@ public class BackButton : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("No Button component found on BackButton GameObject");
+            Debug.LogWarning("[BackButton] No Button component found!");
         }
     }
     
@@ -37,16 +37,26 @@ public class BackButton : MonoBehaviour
     {
         if (!string.IsNullOrEmpty(mapSceneName))
         {
+            Debug.Log($"[BackButton] Loading map scene: {mapSceneName}");
             SceneManager.LoadScene(mapSceneName);
         }
         else
         {
-            Debug.LogWarning("Map scene name not specified");
+            Debug.LogWarning("[BackButton] Map scene name is empty!");
         }
     }
     
-    public void GoBackToMapEvent()
+    [ContextMenu("Test Go Back")]
+    void TestGoBack()
     {
         GoBackToMap();
+    }
+    
+    void OnDestroy()
+    {
+        if (button != null)
+        {
+            button.onClick.RemoveListener(GoBackToMap);
+        }
     }
 }

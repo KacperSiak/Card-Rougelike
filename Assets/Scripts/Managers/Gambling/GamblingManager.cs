@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Linq;
-
+using System.Collections;
 
 
 public class GamblingManager : PersistenSingleton<GamblingManager>
@@ -16,6 +16,12 @@ public class GamblingManager : PersistenSingleton<GamblingManager>
     [SerializeField] private TextMeshProUGUI joketext;
 
     public float modifier;
+    private float _time = 0.83f;
+
+    [Header("Particles")]
+    [SerializeField] private GameObject _positiveParticles;
+    [SerializeField] private GameObject _neutralParticles;
+    [SerializeField] private GameObject _negativeParticles;
 
     protected override void OnSingletonAwake() { }
 
@@ -39,7 +45,9 @@ public class GamblingManager : PersistenSingleton<GamblingManager>
             else acc += r.weight;
             if (roll < acc)
             {
-                ApplyReward(r.reward);
+                Debug.Log("Rolled " + r.type);
+                ApplyEffect(r.type);
+                StartCoroutine(WaitForChest(_time, r.reward));
                 break;
             }
         }
@@ -68,9 +76,26 @@ public class GamblingManager : PersistenSingleton<GamblingManager>
             joketext.text = joke.joke;
         }
     }
+    
+    private void ApplyEffect(RewardType type)
+    {
+        switch(type)
+        {
+            case RewardType.Positive: _positiveParticles.SetActive(true); break;
+            case RewardType.Negative: _negativeParticles.SetActive(true);break;
+            case RewardType.Neutral: _neutralParticles.SetActive(true); break;
+        }
+           
+    }
 
     public void Modify(float newModifier)
     {
         modifier = newModifier;
-    }    
+    }
+
+    IEnumerator WaitForChest(float time, RewardsData reward)
+    {
+        yield return new WaitForSeconds(time);
+        ApplyReward(reward);
+    }
 }

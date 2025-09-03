@@ -6,11 +6,21 @@ public class RelicUIDisplay : MonoBehaviour
     [SerializeField] private GameObject _iconPrefab;
     [SerializeField] private Transform _iconDisplay;
 
+    [SerializeField] private Button _showFullDisplay;
     private void Start()
     {
         RefreshDisplay();
     }
 
+    private void OnEnable()
+    {
+        _showFullDisplay.onClick.AddListener(ShowFullDisplay);
+    }
+
+    private void OnDisable()
+    {
+        _showFullDisplay.onClick.RemoveAllListeners();
+    }
     private void RefreshDisplay()
     {
         foreach (var relic in ConsumablesAndRelicMenager.Instance.currentRelics)
@@ -27,10 +37,6 @@ public class RelicUIDisplay : MonoBehaviour
         if (img != null)
             img.sprite = relic.icon;
 
-        TooltipTrigger trigger = icon.GetComponent<TooltipTrigger>();
-        if (trigger != null)
-            trigger.relicData = relic;
-
         RelicIconButtonsUI iconUI = icon.GetComponent<RelicIconButtonsUI>();
         if (iconUI != null)
         {
@@ -41,5 +47,10 @@ public class RelicUIDisplay : MonoBehaviour
                 iconUI.ToggleRemoveButton();
             });
         }
+    }
+
+    private void ShowFullDisplay()
+    {
+        return;
     }
 }

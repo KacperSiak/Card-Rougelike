@@ -27,7 +27,6 @@ public class MapSaveDataSO : ScriptableObject
     
     [Header("Save Info")]
     public string saveDate;
-    public bool isValid = false;
     
     public void SaveCurrentMapState(MapGenerator mapGen, MapManager mapMgr)
     {
@@ -60,19 +59,18 @@ public class MapSaveDataSO : ScriptableObject
             currentMapTime = mapMgr.currentMapTime;
         }
         
-        isValid = true;
         saveDate = System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
         
         #if UNITY_EDITOR
         UnityEditor.EditorUtility.SetDirty(this);
         #endif
         
-        Debug.Log($"[MapSaveDataSO] Zapisano mapę z seed: {mapSeed}");
+        Debug.Log($"[MapSaveDataSO] Zapisano mapę z seedem: {mapSeed}");
     }
     
     public bool CanLoadMap()
     {
-        return isValid && mapSeed != 0;
+        return mapSeed != 0;
     }
     
     public void ApplyToMapGenerator(MapGenerator mapGen)
@@ -99,7 +97,6 @@ public class MapSaveDataSO : ScriptableObject
     
     public void ClearSave()
     {
-        isValid = false;
         mapSeed = 0;
         hasPlayerPosition = false;
         saveDate = "";
