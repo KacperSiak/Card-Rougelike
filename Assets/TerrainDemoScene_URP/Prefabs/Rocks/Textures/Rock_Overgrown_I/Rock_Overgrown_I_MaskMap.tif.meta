@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 29988b36784a2f840a5ce2f8704e5c98
+guid: 1a82d66e93bb87c4e9b651999e4266f6
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -53,7 +53,7 @@ TextureImporter:
   alphaUsage: 1
   alphaIsTransparency: 0
   spriteTessellationDetail: -1
-  textureType: 1
+  textureType: 0
   textureShape: 1
   singleChannelComponent: 0
   flipbookRows: 1
@@ -85,7 +85,7 @@ TextureImporter:
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
-    overridden: 1
+    overridden: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
@@ -137,5 +137,5 @@ AssetOrigin:
   productId: 213197
   packageName: Unity Terrain - URP Demo Scene
   packageVersion: 1.0.3
-  assetPath: Assets/TerrainDemoScene_URP/Prefabs/Water/Textures/Moss_B_Normal.tif
+  assetPath: Assets/TerrainDemoScene_URP/Prefabs/Rocks/Textures/Rock_Overgrown_I/Rock_Overgrown_I_MaskMap.tif
   uploadId: 727820

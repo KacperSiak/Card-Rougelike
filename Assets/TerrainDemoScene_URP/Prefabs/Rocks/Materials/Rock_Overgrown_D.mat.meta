@@ -1,7 +1,8 @@
 fileFormatVersion: 2
-guid: f0702830c1970764693293a91df9e61c
-PrefabImporter:
+guid: 799e8ee0a2f8df54892652191374349d
+NativeFormatImporter:
   externalObjects: {}
+  mainObjectFileID: 0
   userData: 
   assetBundleName: 
   assetBundleVariant: 
@@ -10,5 +11,5 @@ AssetOrigin:
   productId: 213197
   packageName: Unity Terrain - URP Demo Scene
   packageVersion: 1.0.3
-  assetPath: Assets/TerrainDemoScene_URP/Prefabs/Water/WaterPlane.prefab
+  assetPath: Assets/TerrainDemoScene_URP/Prefabs/Rocks/Materials/Rock_Overgrown_D.mat
   uploadId: 727820
