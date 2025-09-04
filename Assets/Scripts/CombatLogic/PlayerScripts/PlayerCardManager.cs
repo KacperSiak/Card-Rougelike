@@ -15,7 +15,7 @@ public class PlayerCardManager : MonoBehaviour
     public List<GameObject> CardsInHand { get; private set; } = new();
     public List<GameObject> SelectedCards { get; private set; } = new();
     public int SelectedCardsPower { get; private set; }
-    public List<CardsSOTest> _playerDeckInGame { get; private set; }
+    public List<CardsSOTest> PlayerDeckInGame { get; private set; }
 
     [SerializeField] private int _cardsInHandDefault = 8;
     private int _currentCardsInHand = 0; 
@@ -47,11 +47,11 @@ public class PlayerCardManager : MonoBehaviour
 
     public void StartCombat()
     {
-        _playerDeckInGame = new List<CardsSOTest>(RoundManager.Instance.PlayerCards);
+        PlayerDeckInGame = new List<CardsSOTest>(RoundManager.Instance.PlayerCards);
         SelectedCards.Clear();
         CardsInHand.Clear();
         SetMainHand();
-        _spawner.SpawnCards(_playerDeckInGame, CardsInHand, _cardsInHandDefault);
+        _spawner.SpawnCards(PlayerDeckInGame, CardsInHand, _cardsInHandDefault);
     }
 
     public void SetMainHand()
@@ -111,7 +111,7 @@ public class PlayerCardManager : MonoBehaviour
     public void UpdateAfterDiscard(int amount)
     { 
         ClearSelectedCards();
-        _spawner.SpawnCards(_playerDeckInGame, CardsInHand, cardsAmount: amount);
+        _spawner.SpawnCards(PlayerDeckInGame, CardsInHand, cardsAmount: amount);
     }
 
     public void IncreaseCardsInHandAmount()
@@ -121,18 +121,18 @@ public class PlayerCardManager : MonoBehaviour
 
     public bool CheckRoundReadiness()
     {
-        if(_playerDeckInGame.Count == 0 && _currentCardsInHand == 0) return false;
+        if(PlayerDeckInGame.Count == 0 && _currentCardsInHand == 0) return false;
         
         return true;
     }
     
     private void RefillCards()
     {
-        if (_playerDeckInGame.Count == 0) return;
+        if (PlayerDeckInGame.Count == 0) return;
 
         int amount = _currentCardsInHand >= _cardsInHandDefault? 1 : _cardsInHandDefault - _currentCardsInHand;
 
-        _spawner.SpawnCards(_playerDeckInGame, CardsInHand, cardsAmount: amount);
+        _spawner.SpawnCards(PlayerDeckInGame, CardsInHand, cardsAmount: amount);
 
     }
 

@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class HandAnimationLogic : MonoBehaviour
+public class CardHolderAnimation : MonoBehaviour
 {
     [SerializeField] private float _duration = 0.1f;
     [SerializeField] private Vector3 _idleV;

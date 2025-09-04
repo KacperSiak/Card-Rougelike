@@ -1,13 +1,11 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 //takes cards too early from the deck
 public class EnemyCardSpawner : MonoBehaviour
 {
     [SerializeField] private  EnemyAttackManager _enemyAttackManager;
-    [SerializeField] private EnemyCardAnimation _enemyCardAnimation;
+    [SerializeField] private List<EnemyCardAnimation> _enemyCardAnimations;
     [SerializeField] private ValidateClean _clean;
     [SerializeField] private ValidateDirty _dirty;
     [SerializeField] private ValidateSingle _single;
@@ -73,7 +71,7 @@ public class EnemyCardSpawner : MonoBehaviour
             EnemyCardManager.Instance.SetupCardHolder(key, validator: _clean);
             EnemyCardManager.Instance.SetupPower(key, power);
             _enemyAttackManager.SetRoundAttack(key);
-            _enemyCardAnimation.PlaceCards(indexObject, _cardsInCombo, key);
+            _enemyCardAnimations[key].PlaceCards(indexObject, _cardsInCombo, key);
             return;
         }
 
@@ -131,7 +129,7 @@ public class EnemyCardSpawner : MonoBehaviour
         EnemyCardManager.Instance.SetupCardHolder(key, validator: _dirty);
         EnemyCardManager.Instance.SetupPower(key, power);
         _enemyAttackManager.SetRoundAttack(key);
-        _enemyCardAnimation.PlaceCards(indexObject, _cardsInCombo, key);
+        _enemyCardAnimations[key].PlaceCards(indexObject, _cardsInCombo, key);
     }
 
     public void SpawnSingle(Transform cardObjectIndex, int indexCardHolder, Dictionary<int, List<CardsSOTest>> cardsBySuit)
@@ -159,7 +157,7 @@ public class EnemyCardSpawner : MonoBehaviour
         EnemyCardManager.Instance.SetupPower(keySingle, power);
         _enemyAttackManager.SetRoundAttack(keySingle);
 
-        _enemyCardAnimation.PlaceCards(cardObjectIndex, amount: 1, keySingle);
+        _enemyCardAnimations[keySingle].PlaceCards(cardObjectIndex, amount: 1, keySingle);
     }
 
     private void CheckCardsInDeckAmount(Dictionary<int, List<CardsSOTest>> deck, int key)

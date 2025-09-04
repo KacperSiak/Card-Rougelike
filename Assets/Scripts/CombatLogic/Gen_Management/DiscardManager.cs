@@ -8,7 +8,7 @@ public class DiscardManager : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetMouseButton(1) && PlayerCardManager.Instance.CardsInHand.Count != 0 && PlayerCardManager.Instance._playerDeckInGame.Count != 0)
+        if (Input.GetMouseButton(1) && PlayerCardManager.Instance.CardsInHand.Count != 0 && PlayerCardManager.Instance.PlayerDeckInGame.Count != 0)
         {
             CheckForDiscard();
         }

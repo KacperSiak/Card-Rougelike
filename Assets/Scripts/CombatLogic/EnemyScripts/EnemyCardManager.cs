@@ -6,7 +6,7 @@ public class EnemyCardManager : MonoBehaviour
     public static EnemyCardManager Instance { get; private set; }
 
     [SerializeField] private EnemyCardSpawner _spawner;
-    [SerializeField] private EnemyCardAnimation _animation;
+    [SerializeField] private List<EnemyCardAnimation> _animations; 
 
     public List<GameObject> cardHolders;
     public List<Transform> cardObjects;
@@ -74,14 +74,14 @@ public class EnemyCardManager : MonoBehaviour
 
     public void ControlIdleAnimation()
     {
-        foreach (var cardHolder in cardObjects)
+        foreach (var a in _animations)
         {
-            if (cardHolder.transform.childCount <= 0 || _animation.IsAnimating) return;
+            if (a.IsAnimating) return;
         }
 
         foreach (var cardHolder in cardObjects)
         {
-            cardHolder.GetComponent<HandAnimationLogic>().EnableAnimations(false);
+            cardHolder.GetComponent<CardHolderAnimation>().EnableAnimations(isPHand: false);
         }
     }
 
@@ -103,8 +103,11 @@ public class EnemyCardManager : MonoBehaviour
 
     public void RemoveCardFromGame(int key, int amount)
     {
-        cardObjects[key].GetComponent<HandAnimationLogic>().DisableAnimations();
-        _animation.RemoveCard(CardsInGame[key].ConvertAll(card => card.transform).ToArray());
+        foreach (var cardHolder in cardObjects)
+        {
+            cardHolder.GetComponent<CardHolderAnimation>().DisableAnimations();
+        }
+        _animations[key].RemoveCard(CardsInGame[key].ConvertAll(card => card.transform).ToArray());
         CardsInGame.Remove(key);
         CardsInGamePower.Remove(key);
         _bittenCards++; 
