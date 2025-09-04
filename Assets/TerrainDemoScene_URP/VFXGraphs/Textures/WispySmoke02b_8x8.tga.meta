@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: a10d5970d383f3f40aded99e16e07654
+guid: 90431c7bb0a367c4293b48f1068a12ab
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -115,3 +115,10 @@ TextureImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 213197
+  packageName: Unity Terrain - URP Demo Scene
+  packageVersion: 
+  assetPath: Assets/TerrainDemoScene_URP/VFXGraphs/Textures/WispySmoke02b_8x8.tga
+  uploadId: 0
