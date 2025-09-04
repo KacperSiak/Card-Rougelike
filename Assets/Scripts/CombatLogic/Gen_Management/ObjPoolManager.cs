@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //here changes
-public class ObjPoolManager : MonoBehaviour
+public class ObjPoolManager : PersistenSingleton<ObjPoolManager>
 {
-    public static ObjPoolManager Instance { get; private set; }
-
     [Header("Prefabs")]
     [SerializeField] private GameObject _prefabPlayer;
     [SerializeField] private GameObject _prefabEnemy;
@@ -26,14 +24,6 @@ public class ObjPoolManager : MonoBehaviour
     public int PlayerPoolSize { get; private set; } = 0;
     public int EnemyPoolSize { get; private set; } = 0;
     public bool IsDeckReady { get; private set; } = false;
-
-
-    private void Awake()
-    {
-        if (Instance == null) Instance = this;
-
-        else Destroy(gameObject);
-    }
 
     private void Start()
     {

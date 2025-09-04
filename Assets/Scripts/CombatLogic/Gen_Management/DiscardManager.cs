@@ -1,19 +1,12 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class DiscardManager : MonoBehaviour
+public class DiscardManager : PersistentSingleton<DiscardManager>
 {
     [SerializeField] private GameObject _discardPanel;
     private int discardAvailableAmount = 3;
 
-    public static DiscardManager Instance { get; private set; }
     public bool InUI { get; private set; } = false;
-
-    void Awake()
-    {
-        if (Instance == null) Instance = this;
-        else Destroy(gameObject);
-    }
 
     private void Update()
     {

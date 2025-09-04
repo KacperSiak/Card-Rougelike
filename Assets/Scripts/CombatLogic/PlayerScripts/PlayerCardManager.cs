@@ -2,10 +2,8 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerCardManager : MonoBehaviour
+public class PlayerCardManager : PersistenSingleton<PlayerCardManager>
 {
-    public static PlayerCardManager Instance { get; private set; }
-
     [SerializeField] private PlayerCardSpawner _spawner;
     [SerializeField] private BoxCollider _mainHand;
     [SerializeField] private BoxCollider _subMainHand;
@@ -19,14 +17,6 @@ public class PlayerCardManager : MonoBehaviour
 
     [SerializeField] private int _cardsInHandDefault = 8;
     private int _currentCardsInHand = 0; 
-
-    void Awake()
-    {
-        if (Instance == null) Instance = this;
-
-        else Destroy(gameObject);
-
-    }
 
     private void OnEnable()
     {

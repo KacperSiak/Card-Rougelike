@@ -1,10 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyCardManager : MonoBehaviour
+public class EnemyCardManager : PersistenSingleton<EnemyCardManager>
 {
-    public static EnemyCardManager Instance { get; private set; }
-
     [SerializeField] private EnemyCardSpawner _spawner;
     [SerializeField] private List<EnemyCardAnimation> _animations; 
 
@@ -18,13 +16,6 @@ public class EnemyCardManager : MonoBehaviour
 
     public int CardsInGameCount { get; private set; } = 0;
     private int _bittenCards = 0;
-
-    void Awake()
-    {
-        if (Instance == null) Instance = this;
-
-        else Destroy(gameObject);
-    }
 
     private void OnEnable()
     {

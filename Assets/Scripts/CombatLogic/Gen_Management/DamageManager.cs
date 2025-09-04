@@ -1,20 +1,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DamageManager : MonoBehaviour
+public class DamageManager : PersistenSingleton<DamageManager>
 {
-   public static DamageManager Instance { get; private set; }
    [SerializeField] private EnemyAttackManager _enemyAttackManager;
 
    [SerializeField] private List<CardHolderLogic> _cardHolders;
-
-    void Awake()
-    { 
-        if (Instance == null) Instance = this;
-
-        else Destroy(gameObject);
-
-    }
 
     public void CalculatePlayerImpact()
     {

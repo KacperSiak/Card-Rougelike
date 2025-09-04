@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerCardsAnimation : MonoBehaviour
+public class PlayerCardsAnimation : PersistenSingleton<PlayerCardsAnimation>
 {
     [SerializeField] private Vector3[] _idleVectors;
     [field: SerializeField] public int Interval = 3;
@@ -10,15 +10,7 @@ public class PlayerCardsAnimation : MonoBehaviour
     private Vector3 _idleV = new();
     public bool WaveAnimationActive { get; private set; } = false;
 
-    public static PlayerCardsAnimation Instance { get; private set; }
-
     [SerializeField] private List<Transform> _newPositions;
-
-    void Awake()
-    {
-        if (Instance == null) Instance = this;
-        else Destroy(gameObject);
-    }
 
     private void OnEnable()
     {
