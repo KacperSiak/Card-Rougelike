@@ -6,6 +6,8 @@ public class FinishRound : MonoBehaviour
 
     private void OnMouseDown()
     {
+        if (DiscardManager.Instance.InUI) return;
+        
         _animator.SetTrigger("PlayFinish");
         RoundManager.Instance.EndRound();
     }

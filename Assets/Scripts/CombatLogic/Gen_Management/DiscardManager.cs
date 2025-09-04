@@ -1,10 +1,19 @@
-using NUnit.Framework;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class DiscardManager : MonoBehaviour
 {
     [SerializeField] private GameObject _discardPanel;
     private int discardAvailableAmount = 3;
+
+    public static DiscardManager Instance { get; private set; }
+    public bool InUI { get; private set; } = false;
+
+    void Awake()
+    {
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
+    }
 
     private void Update()
     {
@@ -20,13 +29,14 @@ public class DiscardManager : MonoBehaviour
 
         _discardPanel.SetActive(true);
         Time.timeScale = 0f;
-
+        InUI = true;
     }
 
     public void Cancel()
     {
         _discardPanel.SetActive(false);
         Time.timeScale = 1f;
+        InUI = false;
     }
 
     public void Discard()
@@ -35,6 +45,7 @@ public class DiscardManager : MonoBehaviour
 
         _discardPanel.SetActive(false);
         Time.timeScale = 1f;
+        InUI = false;
 
         discardAvailableAmount -= PlayerCardManager.Instance.SelectedCards.Count;
 

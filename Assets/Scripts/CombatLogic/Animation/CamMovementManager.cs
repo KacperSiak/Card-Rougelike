@@ -45,7 +45,7 @@ public class CamMovementManager : MonoBehaviour
     {     
         if (Input.anyKey)
         {
-            if (InProgress) return;
+            if (InProgress || DiscardManager.Instance.InUI) return;
 
             CheckKeyAndActivateAnimation();
             return;

@@ -73,25 +73,4 @@ public class PlayerCardsAnimation : MonoBehaviour
         WaveAnimationActive = false;
     }
 
-    public void ActivatePlacementPreviewAnimation()
-    {
-        enabled = false;
-
-        foreach (var card in PlayerCardManager.Instance.SelectedCards)
-        {
-            var pos = _newPositions[PlayerCardManager.Instance.SelectedCards.IndexOf(card)];
-            card.GetComponent<PlayerCardLogic>().SetAnimationPlacement(newPosition: pos.position, newRotation: pos.rotation);
-        }
-    }
-
-    public void DeactivatePlacementPreviewAnimation()
-    {
-        foreach (var card in PlayerCardManager.Instance.SelectedCards)
-        {
-            //card.GetComponent<PlayerCardLogic>().ResetLastPlacement();
-        }
-
-        enabled = true;
-    }
-
 }

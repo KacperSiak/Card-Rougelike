@@ -72,6 +72,11 @@ public class PlayerCardManager : MonoBehaviour
         OnViewChanged?.Invoke();
     }
 
+    public GameObject GetMainHand()
+    {
+        return CamMovementManager.Instance.IsFirstSet? _mainHand.gameObject : _subMainHand.gameObject;
+    }
+
     public void SetCards()
     {
         _spawner.StartPlacement();
