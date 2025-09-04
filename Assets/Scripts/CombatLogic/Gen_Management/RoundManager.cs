@@ -15,6 +15,8 @@ public class RoundManager : MonoBehaviour
     public StructForDictionary<int, int> CurrentCombatDetails { get; private set; } 
     private bool _alreadyFinished = false; // to prevent double calls of the end of combat
 
+    public bool damageBlock; // Kacper Added
+
     public static event Action OnHPChanged;
     public static event Action OnCombatEnd; // logic is mostly temporary, to mark the end of combat and enable any interactions, but later it will be modified to be built in the whole game logic
     public static event Action OnCombatStart;
@@ -49,6 +51,8 @@ public class RoundManager : MonoBehaviour
         get => _playerHP;
         set
         {
+            if (damageBlock) return; // Kacper Added
+
             _playerHP = value;
             OnHPChanged?.Invoke();
         }
@@ -132,4 +136,5 @@ public class RoundManager : MonoBehaviour
         _alreadyFinished = true; 
         OnCombatEnd?.Invoke();
     }
+
 }

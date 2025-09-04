@@ -2835,6 +2835,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 7ea4db60211e2d74382e87d26fcd63f8, type: 2}
   - {fileID: 11400000, guid: daf810cc0cb56e0448832c724ab057c7, type: 2}
   - {fileID: 11400000, guid: ec11779e485037140842ab1360f523cb, type: 2}
+  damageBlock: 0
 --- !u!4 &937618206
 Transform:
   m_ObjectHideFlags: 0
@@ -3483,6 +3484,57 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1200006531}
   m_CullTransparentMesh: 1
+--- !u!1 &1228109534
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1228109536}
+  - component: {fileID: 1228109535}
+  m_Layer: 0
+  m_Name: PlayerVoerlay
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1228109535
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1228109534}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 553e36bd34a4bda4e92083da743b0b05, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gold: 0
+  maxHP: 0
+  currentHP: 0
+  addDamage: 0
+  rollTickets: 0
+  discardCount: 3
+  _text: {fileID: 0}
+--- !u!4 &1228109536
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1228109534}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.10046668, y: 1.75702, z: -5.719066}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1312136503
 GameObject:
   m_ObjectHideFlags: 0
@@ -6876,3 +6928,4 @@ SceneRoots:
   - {fileID: 898028767}
   - {fileID: 1869415168}
   - {fileID: 204435726}
+  - {fileID: 1228109536}

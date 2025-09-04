@@ -29,11 +29,17 @@ public class RelicContext
 {
     public PlayerOverlay player;
     public MapManager mapManager;
+    public RoundManager roundManager;
+    public GamblingManager gambler;
 
+
+    public bool CleanSequenceBeatEverythingEnable { get; set; }
     public RelicContext()
     {
         player = PlayerOverlay.Instance;
         mapManager = MapManager.instance;
+        roundManager = RoundManager.Instance;
+        gambler = GamblingManager.Instance;
     }
 }
 
