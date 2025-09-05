@@ -5,11 +5,11 @@ public class EqualRedSuits : RelicEffects
 {
     public override void Register(RelicContext ctx)
     {
-        // hearths = diamonds
+        SuitRules.CombineRedSuits = true;
     }
 
     public override void Unregister(RelicContext ctx)
     {
-        // hearths != diamonds
+        SuitRules.CombineRedSuits = false;
     }
 }

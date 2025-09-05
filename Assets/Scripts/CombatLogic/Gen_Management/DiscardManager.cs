@@ -50,7 +50,5 @@ public class DiscardManager : PersistentSingleton<DiscardManager>
         }
 
         PlayerCardManager.Instance.UpdateAfterDiscard(amount: PlayerCardManager.Instance.SelectedCards.Count);
-
     }
-
 }
