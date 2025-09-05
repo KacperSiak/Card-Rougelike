@@ -63,6 +63,17 @@ public class MapGenerator : MonoBehaviour
     public float connectionWidth = 0.1f;
     [Tooltip("Y offset for connection lines (lower = lines are drawn lower)")]
     public float connectionYOffset = 0.1f;
+    [Range(4, 64)]
+    [Tooltip("Number of segments used to draw curved connections (higher = smoother but more cost)")]
+    public int connectionSegments = 24;
+    [Range(0f, 1f)]
+    [Tooltip("Curvature factor for Bezier connections (0 = straight line, 1 = very curved)")]
+    public float connectionCurvature = 0.35f;
+    [Header("Pulse Animation")]    
+    [Tooltip("Speed of the subtle pulse animation for reachable edges")]
+    public float pulseSpeed = 2.5f;
+    [Tooltip("Width amplitude of the pulse animation, added on top of base width")]
+    [Range(0f, 0.5f)] public float pulseWidthAmplitude = 0.02f;
 
     [Header("Node Connections")]
     public int minConnectionsPerNode = 1;
@@ -674,45 +685,64 @@ public class MapGenerator : MonoBehaviour
 
     public void DrawConnections()
     {
-        HashSet<string> drawnConnections = new HashSet<string>();
+        HashSet<ulong> drawnConnections = new HashSet<ulong>();
 
         foreach (var level in mapLevels)
         {
             foreach (var node in level)
             {
-                Vector3 startPos = new Vector3(node.Position.x, connectionYOffset, node.Position.y);
+                Transform startTf = GetTransformForMapNode(node);
+                if (startTf == null) continue;
 
                 foreach (var connectedNode in node.ConnectedNodes)
                 {
-                    Vector3 endPos = new Vector3(connectedNode.Position.x, connectionYOffset, connectedNode.Position.y);
+                    Transform endTf = GetTransformForMapNode(connectedNode);
+                    if (endTf == null) continue;
 
-                    string connectionKey = $"{Mathf.Min(startPos.x, endPos.x)}_{Mathf.Min(startPos.z, endPos.z)}_{Mathf.Max(startPos.x, endPos.x)}_{Mathf.Max(startPos.z, endPos.z)}";
+                    // Deduplicate undirected edges via sorted pair of instance IDs
+                    int a = startTf.GetInstanceID();
+                    int b = endTf.GetInstanceID();
+                    ulong key = a < b ? ((ulong)(uint)a << 32) | (uint)b : ((ulong)(uint)b << 32) | (uint)a;
+                    if (drawnConnections.Contains(key)) continue;
+                    drawnConnections.Add(key);
 
-                    if (!drawnConnections.Contains(connectionKey))
-                    {
-                        CreateConnectionLine(startPos, endPos, $"Connection_{connectionKey}");
-                        drawnConnections.Add(connectionKey);
-                    }
+                    CreateCurvedConnection(startTf, endTf);
                 }
             }
         }
     }
 
-    void CreateConnectionLine(Vector3 startPos, Vector3 endPos, string name)
+    // Create a curved, animated connection between two node transforms
+    void CreateCurvedConnection(Transform startTf, Transform endTf)
     {
+        string name = $"Connection_{startTf.name}_to_{endTf.name}";
         GameObject lineObj = new GameObject(name);
         lineObj.transform.SetParent(transform);
 
-        LineRenderer line = lineObj.AddComponent<LineRenderer>();
-        line.material = connectionMaterial;
-        line.startWidth = connectionWidth;
-        line.endWidth = connectionWidth;
-        line.positionCount = 2;
-        line.useWorldSpace = true;
-        line.sortingOrder = -1;
+        var curved = lineObj.AddComponent<CurvedConnectionLine>();
+        curved.Initialize(new CurvedConnectionLine.Config
+        {
+            start = startTf,
+            end = endTf,
+            yOffset = connectionYOffset,
+            width = connectionWidth,
+            segments = Mathf.Max(4, connectionSegments),
+            curvature = connectionCurvature,
+            material = connectionMaterial,
+            pulseSpeed = pulseSpeed,
+            pulseWidthAmp = pulseWidthAmplitude,
+            pulseOnlyWhenReachable = true,
+        });
+    }
 
-        line.SetPosition(0, startPos);
-        line.SetPosition(1, endPos);
+    Transform GetTransformForMapNode(MapNode node)
+    {
+        float nodeYOffset = 0f;
+        if (node.Type == NodeType.Boss) nodeYOffset = bossYOffset;
+        else if (settingsLookup.ContainsKey(node.Type)) nodeYOffset = settingsLookup[node.Type].yOffset;
+        Vector3 pos3D = new Vector3(node.Position.x, nodeYOffset, node.Position.y);
+        nodeTransformCache.TryGetValue(pos3D, out var tf);
+        return tf;
     }
 
     GameObject GetPrefabForNodeType(NodeType type)

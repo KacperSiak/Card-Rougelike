@@ -62,7 +62,6 @@ public class HoverHighlighter : MonoBehaviour
             return;
         }
 
-        // Jeśli węzeł jest zajęty przez gracza, wyłącz highlight i pomiń logikę hover
         if (disableWhenOccupied && NodeClickHandler.currentPlayerNode != null && NodeClickHandler.currentPlayerNode == this.transform)
         {
             if (isHighlighted)
