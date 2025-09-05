@@ -1,15 +1,16 @@
 ﻿using System;
+using UnityEngine.Events;
 
 [Serializable]
 public class CleanSequenceBeatsEverything : RelicEffects
 {
     public override void Register(RelicContext ctx)
     {
-        // Clean sequence can beat every minion
+        ctx.CleanSequenceBeatEverythingEnable = true;
     }
 
     public override void Unregister(RelicContext ctx)
     {
-        // no more ultrasequence
+        ctx.CleanSequenceBeatEverythingEnable = false;
     }
 }

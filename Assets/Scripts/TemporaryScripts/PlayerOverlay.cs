@@ -9,6 +9,7 @@ public class PlayerOverlay : PersistenSingleton<PlayerOverlay>
     public float currentHP;
     public float addDamage;
     public int rollTickets;
+    public int discardCount = 3;
     [SerializeField] private TextMeshProUGUI _text;
 
     protected override void OnSingletonAwake() { }
