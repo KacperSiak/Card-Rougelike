@@ -16,6 +16,10 @@ public class NodeClickHandler : MonoBehaviour
     [Header("References")]
     public MapGenerator mapGenerator;
     public MapManager mapManager;
+    [Header("Optional (injected)")]
+    public CameraController cameraController;
+    public NodeInfoUI nodeInfoUI;
+    public MapSaveManager mapSaveManager;
 
     [Header("Player Movement")]
     public float moveSpeed = 3f;
@@ -31,18 +35,6 @@ public class NodeClickHandler : MonoBehaviour
 
     void Start()
     {
-        // tymczasowe
-        if (mapGenerator == null)
-        {
-            mapGenerator = FindFirstObjectByType<MapGenerator>();
-        }
-        
-        if (mapManager == null)
-        {
-            mapManager = FindFirstObjectByType<MapManager>();
-        }
-        
-        
         if (GetComponent<Collider>() == null)
         {
             gameObject.AddComponent<BoxCollider>();
@@ -275,14 +267,11 @@ public class NodeClickHandler : MonoBehaviour
     {
         if (!string.IsNullOrEmpty(sceneToLoad))
         {
-            // Assign combat type only if this is a combat node or a combat scene
             if (IsCombatNode(nodeType) || LooksLikeCombatScene(sceneToLoad))
             {
-                // Ustal typ przeciwnika bezpośrednio
                 CombatManager.ApplyNodeType(nodeType);
             }
             
-            var mapSaveManager = FindObjectOfType<MapSaveManager>();
             if (mapSaveManager != null)
             {
                 mapSaveManager.SaveCurrentMap();
@@ -292,7 +281,6 @@ public class NodeClickHandler : MonoBehaviour
             {
                 Debug.Log("Using additive scene activation for: " + sceneToLoad);
                 SceneLoader.Instance.manager.ActivateScene(sceneToLoad);
-                // Po aktywacji sceny jeszcze raz wymuś typ (na wypadek wyścigów)
                 if (IsCombatNode(nodeType) || LooksLikeCombatScene(sceneToLoad))
                 {
                     CombatManager.ApplyNodeType(nodeType);
@@ -322,14 +310,12 @@ public class NodeClickHandler : MonoBehaviour
     
     private void ShowNodeInfo()
     {
-        CameraController cameraController = FindFirstObjectByType<CameraController>();
-        if (cameraController != null)
+    if (cameraController != null)
         {
             cameraController.CenterOnPosition(transform.position);
         }
         
-        NodeInfoUI nodeInfoUI = FindFirstObjectByType<NodeInfoUI>();
-        if (nodeInfoUI != null)
+    if (nodeInfoUI != null)
         {
             nodeInfoUI.ShowInfo(GetNodeName(), GetNodeDescription(), transform.position);
         }
