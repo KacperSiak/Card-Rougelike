@@ -13,6 +13,8 @@ public class HoverHighlighter : MonoBehaviour
     
     [Header("Settings")]
     public LayerMask raycastLayer = -1;
+    [Tooltip("Gdy true, wyłącza efekt hover, jeśli gracz stoi na tym polu")]
+    public bool disableWhenOccupied = true;
     
     private Renderer objectRenderer;
     private Collider objectCollider;
@@ -57,6 +59,17 @@ public class HoverHighlighter : MonoBehaviour
     {
         if (Camera.main == null)
         {
+            return;
+        }
+
+        // Jeśli węzeł jest zajęty przez gracza, wyłącz highlight i pomiń logikę hover
+        if (disableWhenOccupied && NodeClickHandler.currentPlayerNode != null && NodeClickHandler.currentPlayerNode == this.transform)
+        {
+            if (isHighlighted)
+            {
+                SetHighlight(false);
+            }
+            AnimateIcon();
             return;
         }
 
