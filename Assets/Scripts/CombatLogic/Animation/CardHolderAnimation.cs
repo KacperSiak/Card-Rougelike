@@ -4,6 +4,7 @@ using UnityEngine;
 public class CardHolderAnimation : MonoBehaviour
 {
     [SerializeField] private float _duration = 0.1f;
+    [SerializeField] private PlayerCardsAnimation playerCardsAnimation;
     [SerializeField] private Vector3 _idleV;
     private Vector3 _objectPosition;
     private Vector3 _idlePosition;
@@ -26,8 +27,8 @@ public class CardHolderAnimation : MonoBehaviour
     {
         StopAllCoroutines();
 
-        if(_isPlayerHand && PlayerCardsAnimation.Instance)
-           PlayerCardsAnimation.Instance.StopWaveAnimation();
+        if(_isPlayerHand && playerCardsAnimation)
+            playerCardsAnimation.StopWaveAnimation();
 
         transform.position = _objectPosition;
         interval = 0;
@@ -44,7 +45,7 @@ public class CardHolderAnimation : MonoBehaviour
     {
         if (_isPlayerHand)
         {
-            while (PlayerCardsAnimation.Instance.WaveAnimationActive)
+            while (playerCardsAnimation.WaveAnimationActive)
                 yield return null;
         }
 
@@ -75,9 +76,9 @@ public class CardHolderAnimation : MonoBehaviour
             yield return null;
         }
 
-        if (_isPlayerHand && ++interval == PlayerCardsAnimation.Instance.Interval && PlayerCardManager.Instance.CardsInHand != null)
+        if (_isPlayerHand && ++interval == playerCardsAnimation.Interval && PlayerCardManager.Instance.CardsInHand != null)
         {
-            PlayerCardsAnimation.Instance.StartWaveAnimation();
+            playerCardsAnimation.StartWaveAnimation();
             interval = 0;
         }
 

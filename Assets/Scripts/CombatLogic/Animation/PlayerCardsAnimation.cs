@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerCardsAnimation : PersistenSingleton<PlayerCardsAnimation>
+public class PlayerCardsAnimation : CardsAnimation
 {
     [SerializeField] private Vector3[] _idleVectors;
     [field: SerializeField] public int Interval = 3;

@@ -30,7 +30,6 @@ public class PlayerCardLogic : MonoBehaviour
             transform.position += _hoverOffset;
     }
 
-    //? 
     private void OnViewChanged()
     { 
         _hoverOffset = CamMovementManager.Instance.IsFirstSet ? _hoverVectors[0] : _hoverVectors[1];
@@ -116,23 +115,10 @@ public class PlayerCardLogic : MonoBehaviour
 
     }
 
-    //probably i won't need that itf
     public void MakeReusable()
     {
         _isSelected = false;
         IsUsed = false;
-        IsNew = true;
     }
 
-    public void ResetCard()
-    {
-        transform.position = Vector3.zero;
-        transform.localScale = _defaultSize;
-        transform.rotation = Quaternion.identity;
-        Card = null; 
-        _isAvailable = false;
-        MakeReusable();
-        RoundManager.OnRoundEnd -= MakeReusable;
-        PlayerCardManager.OnViewChanged -= OnViewChanged;
-    }
 }

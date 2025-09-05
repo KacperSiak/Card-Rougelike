@@ -7,6 +7,7 @@ public class CardHolderLogic : MonoBehaviour
     [SerializeField] private Material _highlightMaterial;
     [SerializeField] private Material _defaultMaterial;
     [SerializeField] private CardHolderAnimation _cardHolderAnimation;
+    [SerializeField] private PlayerCardsAnimation _playerCardsAnimation;
     [SerializeField] private float _duration;
     private bool _isOccupied = false;
     private bool _isInspected = false;
@@ -128,12 +129,7 @@ public class CardHolderLogic : MonoBehaviour
         ValidatedPlayerCardsPower = 0;
         _cardHolderAnimation.DisableAnimations();
 
-        foreach (var card in PCardScripts)
-        {
-            card.gameObject.SetActive(false);
-            card.ResetCard();
-            ObjPoolManager.Instance.ReturnCard(card.gameObject);
-        }
+        _playerCardsAnimation.RemoveCard(PCardScripts.ConvertAll(card => card.transform).ToArray());
 
         PCardScripts.Clear();
     }

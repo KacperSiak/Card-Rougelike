@@ -1531,6 +1531,7 @@ MonoBehaviour:
   _highlightMaterial: {fileID: 2100000, guid: 446f6a4d26d8ca946ae7bcdfe856d1d2, type: 2}
   _defaultMaterial: {fileID: -876546973899608171, guid: 6f75183e23fd43d4b8efa18f2611253b, type: 3}
   _cardHolderAnimation: {fileID: 546319114}
+  _playerCardsAnimation: {fileID: 1794805949}
   _duration: 0.5
 --- !u!65 &546319111
 BoxCollider:
@@ -1619,6 +1620,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _duration: 1.8
+  playerCardsAnimation: {fileID: 1794805949}
   _idleV: {x: 0, y: 0.008, z: 0}
 --- !u!1 &585412720
 GameObject:
@@ -2033,6 +2035,77 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 135, z: 0}
+--- !u!1 &722714111
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 722714113}
+  - component: {fileID: 722714112}
+  m_Layer: 0
+  m_Name: CardsAnimation
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &722714112
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 722714111}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a47d2182ef4f28a419c2fcdc0f2ec1b6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _removedCardPosition: {fileID: 840463061}
+  _removalDuration: 0.7
+  _height: 0.25
+  _curve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!4 &722714113
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 722714111}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.7070286, y: 0.72495437, z: 4.1794424}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &779380582
 GameObject:
   m_ObjectHideFlags: 0
@@ -2784,6 +2857,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _discardPanel: {fileID: 245370518}
+  _playerCardsAnimation: {fileID: 1794805949}
 --- !u!4 &893021690
 Transform:
   m_ObjectHideFlags: 0
@@ -3395,6 +3469,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _duration: 2
+  playerCardsAnimation: {fileID: 1794805949}
   _idleV: {x: 0, y: 0.008, z: 0}
 --- !u!1 &1078547777
 GameObject:
@@ -3715,7 +3790,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _removedCardPosition: {fileID: 840463061}
-  _placementDuration: 0.9
   _removalDuration: 0.7
   _height: 0.25
   _curve:
@@ -3742,6 +3816,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  _placementDuration: 0.9
 --- !u!1 &1181143057
 GameObject:
   m_ObjectHideFlags: 0
@@ -4105,6 +4180,113 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 46.364, y: 23.619, z: 0.372}
+--- !u!1 &1278511601
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1278511602}
+  - component: {fileID: 1278511605}
+  - component: {fileID: 1278511604}
+  - component: {fileID: 1278511603}
+  m_Layer: 0
+  m_Name: PlayerUsed
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1278511602
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1278511601}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.5858528, y: -0.39595026, z: 0.39595023, w: -0.5858527}
+  m_LocalPosition: {x: 0.507, y: 0.407, z: 0.912}
+  m_LocalScale: {x: 0.144912, y: 0.019025736, z: 0.22452414}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1938594642}
+  m_LocalEulerAnglesHint: {x: 90, y: 180, z: -248.106}
+--- !u!65 &1278511603
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1278511601}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!23 &1278511604
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1278511601}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials: []
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &1278511605
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1278511601}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1 &1300867336
 GameObject:
   m_ObjectHideFlags: 0
@@ -4749,7 +4931,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _removedCardPosition: {fileID: 840463061}
-  _placementDuration: 0.9
   _removalDuration: 0.7
   _height: 0.25
   _curve:
@@ -4776,6 +4957,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  _placementDuration: 0.9
 --- !u!1 &1438507854
 GameObject:
   m_ObjectHideFlags: 0
@@ -5086,6 +5268,7 @@ MonoBehaviour:
   _highlightMaterial: {fileID: 2100000, guid: 446f6a4d26d8ca946ae7bcdfe856d1d2, type: 2}
   _defaultMaterial: {fileID: -876546973899608171, guid: 6f75183e23fd43d4b8efa18f2611253b, type: 3}
   _cardHolderAnimation: {fileID: 1612053568}
+  _playerCardsAnimation: {fileID: 1794805949}
   _duration: 0.5
 --- !u!114 &1612053568
 MonoBehaviour:
@@ -5100,6 +5283,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _duration: 1.8
+  playerCardsAnimation: {fileID: 1794805949}
   _idleV: {x: 0, y: 0.008, z: 0}
 --- !u!1 &1617492256
 GameObject:
@@ -5359,6 +5543,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _duration: 1.5
+  playerCardsAnimation: {fileID: 1794805949}
   _idleV: {x: 0, y: 0.008, z: 0.008}
 --- !u!1 &1713059490
 GameObject:
@@ -5800,6 +5985,33 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb1d20e55982d5944a9c2e9425723397, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _removedCardPosition: {fileID: 1278511602}
+  _removalDuration: 0.7
+  _height: 0.25
+  _curve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   _idleVectors:
   - {x: 0, y: 0.002, z: 0.002}
   - {x: 0, y: 0.002, z: 0.002}
@@ -6117,6 +6329,7 @@ MonoBehaviour:
   _highlightMaterial: {fileID: 2100000, guid: 446f6a4d26d8ca946ae7bcdfe856d1d2, type: 2}
   _defaultMaterial: {fileID: -876546973899608171, guid: 6f75183e23fd43d4b8efa18f2611253b, type: 3}
   _cardHolderAnimation: {fileID: 1849157071}
+  _playerCardsAnimation: {fileID: 1794805949}
   _duration: 0.5
 --- !u!65 &1849157068
 BoxCollider:
@@ -6205,6 +6418,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _duration: 1.8
+  playerCardsAnimation: {fileID: 1794805949}
   _idleV: {x: 0, y: 0.008, z: 0}
 --- !u!1 &1858937633
 GameObject:
@@ -6553,6 +6767,7 @@ Transform:
   - {fileID: 1955518877}
   - {fileID: 1114681898}
   - {fileID: 840463061}
+  - {fileID: 1278511602}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1952126771
@@ -6896,6 +7111,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _duration: 1.5
+  playerCardsAnimation: {fileID: 1794805949}
   _idleV: {x: 0, y: 0.008, z: 0.008}
 --- !u!1 &2060069868
 GameObject:
@@ -7050,6 +7266,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _duration: 2
+  playerCardsAnimation: {fileID: 1794805949}
   _idleV: {x: 0, y: 0.008, z: 0}
 --- !u!1 &2068487407
 GameObject:
@@ -7173,6 +7390,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _duration: 2
+  playerCardsAnimation: {fileID: 1794805949}
   _idleV: {x: 0, y: 0.008, z: 0}
 --- !u!1 &2095126429
 GameObject:
@@ -7294,7 +7512,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _removedCardPosition: {fileID: 840463061}
-  _placementDuration: 0.9
   _removalDuration: 0.7
   _height: 0.25
   _curve:
@@ -7321,6 +7538,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  _placementDuration: 0.9
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -7350,6 +7568,7 @@ SceneRoots:
   - {fileID: 882474608}
   - {fileID: 608131326}
   - {fileID: 305940404}
+  - {fileID: 722714113}
   - {fileID: 2095126431}
   - {fileID: 447553077}
   - {fileID: 134750701}
