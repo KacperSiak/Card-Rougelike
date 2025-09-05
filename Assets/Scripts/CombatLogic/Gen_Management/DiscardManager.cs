@@ -10,7 +10,7 @@ public class DiscardManager : PersistenSingleton<DiscardManager>
 
     protected override void OnSingletonAwake()
     {
-        discardAvailableAmount = PlayerManager.Instance.availableDiscards;
+        //discardAvailableAmount = PlayerManager.Instance.availableDiscards;
     }
 
     protected override void OnDestroy()
