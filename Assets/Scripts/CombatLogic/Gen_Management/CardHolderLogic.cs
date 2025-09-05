@@ -80,7 +80,8 @@ public class CardHolderLogic : MonoBehaviour
 
     public void OnValidated()
     {
-        
+        ValidatedPlayerCardsPower = PlayerCardManager.Instance.SelectedCardsPower;
+        PlayerCardManager.Instance.ClearSelectedCards();
         StartCoroutine(PlaceCards());
     }
 
@@ -89,9 +90,9 @@ public class CardHolderLogic : MonoBehaviour
         PlayerCardManager.Instance.GetMainHand().GetComponent<CardHolderAnimation>().DisableAnimations();
         _isOccupied = true;
 
-        Vector3 _finalSpawnPosition = (PlayerCardManager.Instance.SelectedCards.Count == 1) ? transform.position : transform.position + new Vector3(-0.05f, 0.001f, 0);
+        Vector3 _finalSpawnPosition = (PCardScripts.Count == 1) ? transform.position : transform.position + new Vector3(-0.05f, 0.001f, 0);
 
-        foreach (GameObject card in PlayerCardManager.Instance.SelectedCards)
+        foreach (PlayerCardLogic card in PCardScripts)
         {
             float elapsed = 0f;
             
@@ -108,14 +109,12 @@ public class CardHolderLogic : MonoBehaviour
             }
 
             card.transform.SetParent(transform);
-            card.GetComponent<PlayerCardLogic>().IsUsed = true;
+            card.IsUsed = true;
 
             _finalSpawnPosition += new Vector3(0.05f, 0.001f, 0);
         }
 
         _cardHolderAnimation.EnableAnimations(isPHand: false);
-        ValidatedPlayerCardsPower = PlayerCardManager.Instance.SelectedCardsPower;
-        PlayerCardManager.Instance.ClearSelectedCards();
     }
 
     public void OnValidationFailed()

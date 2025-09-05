@@ -33,9 +33,7 @@ public class PlayerCardLogic : MonoBehaviour
     private void OnViewChanged()
     { 
         _hoverOffset = CamMovementManager.Instance.IsFirstSet ? _hoverVectors[0] : _hoverVectors[1];
-        Debug.Log(_hoverOffset + "camera changed" + CamMovementManager.Instance.IsFirstSet);
         _pressedOffset = CamMovementManager.Instance.IsFirstSet ? _pressedVectors[0] : _pressedVectors[1];
-        Debug.Log(_pressedOffset + "camera changed" + CamMovementManager.Instance.IsFirstSet);
     }
 
     public void SaveDefaultProperties()
@@ -73,7 +71,6 @@ public class PlayerCardLogic : MonoBehaviour
     {
         if (_isSelected || !_isAvailable || DiscardManager.Instance.InUI) return;
         transform.position += _hoverOffset;
-        Debug.Log(_hoverOffset);
         _isHovered = true;
     }
 
@@ -98,7 +95,6 @@ public class PlayerCardLogic : MonoBehaviour
                 return; // Prevent selecting more than 3 cards
 
             transform.position += _pressedOffset;
-            Debug.Log(_pressedOffset);
             PlayerCardManager.Instance.AddSelectedCards(gameObject);
             _isSelected = true;
 
