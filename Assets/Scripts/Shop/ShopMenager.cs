@@ -128,10 +128,10 @@ public class ShopMenager : PersistenSingleton<ShopMenager>
     {
         foreach (var slotObj in cardslots)
             slotObj.SetActive(false);
-        if (PlayerOverlay.Instance.gold >= _goldForRerol)
+        if (PlayerManager.Instance.gold >= _goldForRerol)
         {
             RerollShop();
-            PlayerOverlay.Instance.SpendGold(_goldForRerol);
+            PlayerManager.Instance.GoldChange(_goldForRerol, false);
             _goldForRerol += 1;
             _rerollText.text = "Reroll: " + _goldForRerol;
             _lutterPanel.SetActive(false);

@@ -43,7 +43,7 @@ public class CardSlotUI : MonoBehaviour
     {
         var ctx = new ConsumableContext
         {
-            player = PlayerOverlay.Instance
+            player = PlayerManager.Instance
         };
         foreach (var effect in _cardData.cardEffects)
         {
@@ -58,7 +58,7 @@ public class CardSlotUI : MonoBehaviour
     {
         if (ShopMenager.Instance.inSellingMode)
         {
-            PlayerOverlay.Instance.AddGold(_cardData.sellPrice);
+            PlayerManager.Instance.GoldChange(_cardData.sellPrice, true);
         }
         ConsumablesAndRelicMenager.Instance.currentConsums.Remove(_cardData);
         ConsumablesAndRelicMenager.Instance.slotCounter--;
