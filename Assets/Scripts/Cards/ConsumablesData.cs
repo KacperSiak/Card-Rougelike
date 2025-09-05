@@ -23,13 +23,13 @@ public class ConsumablesData : ShopItem
 
 public class ConsumableContext
 {
-    public PlayerOverlay player;
+    public PlayerManager player;
     public ShopMenager shop;
     public ConsumablesAndRelicMenager consAndRel;
 
     public ConsumableContext()
     {
-        player = PlayerOverlay.Instance;
+        player = PlayerManager.Instance;
         shop = ShopMenager.Instance;
         consAndRel = ConsumablesAndRelicMenager.Instance;
     }

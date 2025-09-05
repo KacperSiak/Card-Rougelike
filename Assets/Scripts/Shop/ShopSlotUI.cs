@@ -52,36 +52,36 @@ public class ShopSlotUI : MonoBehaviour
             _currentPrice = 0;
             ShopMenager.Instance.ConsumeFreeBuy();
         }
-        if (PlayerOverlay.Instance.gold >= _currentPrice)
+        if (PlayerManager.Instance.gold >= _currentPrice)
         {
             switch (_currentItem)
             {
                 case RelicData relic when ConsumablesAndRelicMenager.Instance.RelicSlotCounter():
-                    PlayerOverlay.Instance.SpendGold(_currentPrice);
+                    PlayerManager.Instance.GoldChange(_currentPrice, false);
                     RelicEventsSystem.RelicAcquired(relic);
                     gameObject.SetActive(false);
                     break;
 
                 case ConsumablesData consumable when ConsumablesAndRelicMenager.Instance.SlotChecker():
                     ConsumablesAndRelicMenager.Instance.AddCard(consumable);
-                    PlayerOverlay.Instance.SpendGold(_currentPrice);
+                    PlayerManager.Instance.GoldChange(_currentPrice, false);
                     gameObject.SetActive(false);
                     break;
 
                 case CardPack cardPack:
-                    PlayerOverlay.Instance.SpendGold(_currentPrice);
+                    PlayerManager.Instance.GoldChange(_currentPrice, false);
                     cardPack.OpenPack();
                     gameObject.SetActive(false);
                     break;
 
                 case VaseRelicUpgrade vase:
-                    PlayerOverlay.Instance.SpendGold(_currentPrice);
+                    PlayerManager.Instance.GoldChange(_currentPrice, false);
                     vase.GotVase();
                     gameObject.SetActive(false);
                     break;
 
                 case PotionData potion:
-                    PlayerOverlay.Instance.SpendGold(_currentPrice);
+                    PlayerManager.Instance.GoldChange(_currentPrice, false);
                     BuffsAndDebuffsManager.Instance.ApplyBuff(potion);
                     gameObject.SetActive(false);
                     break;

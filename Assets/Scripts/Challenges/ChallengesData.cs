@@ -21,13 +21,13 @@ public class ChallengesData : ScriptableObject
 
 public class ChallengeContext
 {
-    public PlayerOverlay player;
+    public PlayerManager player;
     public MapManager mapManager;
     public ChallengesMenager challengesMenager;
 
     public ChallengeContext()
     {
-        player = PlayerOverlay.Instance;
+        player = PlayerManager.Instance;
         mapManager = MapManager.instance;
         challengesMenager = ChallengesMenager.Instance;
     }

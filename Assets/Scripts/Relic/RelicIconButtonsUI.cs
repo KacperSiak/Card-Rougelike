@@ -46,7 +46,7 @@ public class RelicIconButtonsUI : MonoBehaviour
     {
         if (ShopMenager.Instance.inSellingMode)
         {
-            PlayerOverlay.Instance.AddGold(_relic.sellPrice);
+            PlayerManager.Instance.GoldChange(_relic.sellPrice, true);
         }
         RelicEventsSystem.RelicRemoved(_relic);
         Destroy(gameObject);

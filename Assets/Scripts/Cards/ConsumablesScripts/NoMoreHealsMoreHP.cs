@@ -7,7 +7,7 @@ public class NoMoreHealsMoreHP: CardEffect
     public override void ApplyEffect(ConsumableContext ctx)
     {
         // block fountains
-        ctx.player.maxHP += bonusHealth;
-        ctx.player.AddHealth(bonusHealth);
+        ctx.player.MaxHPCHange(bonusHealth);
+        ctx.player.HealthChange(bonusHealth, true);
     }
 }

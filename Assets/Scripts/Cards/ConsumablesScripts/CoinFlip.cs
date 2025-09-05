@@ -9,7 +9,7 @@ public class CoinFlip : CardEffect
         int coin = UnityEngine.Random.Range(0, 2);
         if (coin == 0)
         {
-            ctx.player.AddGold(gold);
+            ctx.player.HealthChange(gold, true);
         }
     }
 }

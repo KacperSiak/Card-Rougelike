@@ -27,7 +27,7 @@ public class RelicData : ShopItem
 
 public class RelicContext
 {
-    public PlayerOverlay player;
+    public PlayerManager player;
     public MapManager mapManager;
     public RoundManager roundManager;
     public GamblingManager gambler;
@@ -36,7 +36,7 @@ public class RelicContext
     public bool CleanSequenceBeatEverythingEnable { get; set; }
     public RelicContext()
     {
-        player = PlayerOverlay.Instance;
+        player = PlayerManager.Instance;
         mapManager = MapManager.instance;
         roundManager = RoundManager.Instance;
         gambler = GamblingManager.Instance;

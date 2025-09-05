@@ -29,6 +29,6 @@ public class RestoreHPAfterRoom : PotionEffects
 
     private void RestoreHP()
     {
-        PlayerOverlay.Instance.LoseHealth(healthToRestore);
+        PlayerManager.Instance.HealthChange(healthToRestore, false);
     }
 }

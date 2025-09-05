@@ -28,7 +28,7 @@ public class CardShopSlotUI : MonoBehaviour
             DeckManager.instance.RemmoveCard(_cardToSell);
         }
 
-        PlayerOverlay.Instance.AddGold(price);
+        PlayerManager.Instance.GoldChange(price, true);
         ShopMenager.Instance.cardslots.Remove(gameObject);
         Destroy(gameObject);
     }
