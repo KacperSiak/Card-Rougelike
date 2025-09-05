@@ -16,8 +16,12 @@ public class PlayerCardManager : PersistenSingleton<PlayerCardManager>
     public List<CardsSOTest> PlayerDeckInGame { get; private set; }
 
     [SerializeField] private int _cardsInHandDefault = 8;
-    private int _currentCardsInHand = 0; 
+    private int _currentCardsInHand = 0;
 
+    protected override void OnSingletonAwake()
+    {
+        //_cardsInHandDefault = PlayerManager.Instance.handsize;
+    }
     private void OnEnable()
     {
         RoundManager.OnCombatEnd += OnCombatEnd;
