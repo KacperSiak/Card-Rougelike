@@ -71,7 +71,7 @@ public class RoundManager : PersistenSingleton<RoundManager>
 
     private IEnumerator CheckCombatReadiness()
     {
-        while (!ObjPoolManager.Instance.IsDeckReady)
+        while (!DeckAnimation.Instance.IsDeckReady)
             yield return null;
 
         OnCombatStart?.Invoke();

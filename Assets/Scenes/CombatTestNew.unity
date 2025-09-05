@@ -658,6 +658,53 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 245370518}
   m_CullTransparentMesh: 1
+--- !u!1 &305940402
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 305940404}
+  - component: {fileID: 305940403}
+  m_Layer: 0
+  m_Name: DeckAnimation
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &305940403
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 305940402}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c101926ca5e80f42abf3767b44ee17a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _endPlayer: {fileID: 390661189}
+  _endEnemy: {fileID: 1114681898}
+  _duration: 0.04
+--- !u!4 &305940404
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 305940402}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.7070286, y: 0.72495437, z: 4.1794424}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &326232541
 GameObject:
   m_ObjectHideFlags: 0
@@ -1816,10 +1863,7 @@ MonoBehaviour:
   _prefabPlayer: {fileID: 4593480156492007087, guid: 333ad8f17c6190b469561a27fb465e63, type: 3}
   _prefabEnemy: {fileID: 4593480156492007087, guid: e4a8033eae46cc54d9fff1b975e4976d, type: 3}
   _startPlayer: {fileID: 1414719323}
-  _endPlayer: {fileID: 390661189}
   _startEnemy: {fileID: 1955518877}
-  _endEnemy: {fileID: 1114681898}
-  _duration: 0.05
 --- !u!4 &608131326
 Transform:
   m_ObjectHideFlags: 0
@@ -5742,6 +5786,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9f2a3d68b3182a4d962751270fbb0ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gold: 0
+  availableDiscards: 3
 --- !u!114 &1794805949
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7303,6 +7349,7 @@ SceneRoots:
   - {fileID: 893021690}
   - {fileID: 882474608}
   - {fileID: 608131326}
+  - {fileID: 305940404}
   - {fileID: 2095126431}
   - {fileID: 447553077}
   - {fileID: 134750701}
@@ -7319,4 +7366,3 @@ SceneRoots:
   - {fileID: 898028767}
   - {fileID: 1869415168}
   - {fileID: 204435726}
-  - {fileID: 1228109536}
