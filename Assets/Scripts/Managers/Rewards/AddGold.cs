@@ -7,6 +7,6 @@ public class AddGold : Rewards
     public int goldAmount;
     public override void AddReward(RewardContext ctx)
     {
-        ctx.player.AddGold(goldAmount);
+        ctx.player.GoldChange(goldAmount, true);
     }
 }

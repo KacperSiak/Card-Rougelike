@@ -1,12 +1,22 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class DiscardManager : PersistentSingleton<DiscardManager>
+public class DiscardManager : PersistenSingleton<DiscardManager>
 {
     [SerializeField] private GameObject _discardPanel;
     private int discardAvailableAmount = 3;
 
     public bool InUI { get; private set; } = false;
+
+    protected override void OnSingletonAwake()
+    {
+        discardAvailableAmount = PlayerManager.Instance.availableDiscards;
+    }
+
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
+    }
 
     private void Update()
     {

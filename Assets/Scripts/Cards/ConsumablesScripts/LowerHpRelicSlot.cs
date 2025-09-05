@@ -6,8 +6,8 @@ public class LowerHpRelicSlot : CardEffect
     public float hpModifier;
     public override void ApplyEffect(ConsumableContext ctx)
     {
-        float newHP = (float)Math.Round(PlayerOverlay.Instance.maxHP * hpModifier);
-        ctx.player.SetMaxHP(newHP);
+        int newHP = (int)Math.Round(PlayerManager.Instance.PlayerHP * hpModifier);
+        ctx.player.MaxHPCHange(newHP);
         ctx.consAndRel.maxRelics += 1;
     }
 }
