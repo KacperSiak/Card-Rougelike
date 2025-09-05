@@ -21,7 +21,6 @@ public class PlayerCardLogic : MonoBehaviour
 
     public CardsSOTest Card { get; private set; }
 
-
     private void OnEnable() 
     {
         RoundManager.OnRoundEnd += MakeReusable;
@@ -79,22 +78,26 @@ public class PlayerCardLogic : MonoBehaviour
 
     private void OnMouseEnter()
     {
-        if (_isSelected || !_isAvailable) return;
+        if (_isSelected || !_isAvailable || DiscardManager.Instance.InUI) return;
         transform.position += _hoverOffset;
         _isHovered = true;
     }
 
     private void OnMouseExit()
     {
-        if (_isSelected || !_isAvailable) return; 
+        if (_isSelected || !_isAvailable) return;
 
-        if (_isHovered) transform.position -= _hoverOffset;
+        if (_isHovered)
+        {
+            _isHovered = false;
+            transform.position -= _hoverOffset;
+        } 
 
-        _isHovered = false;
     }
-
     private void OnMouseDown()
     {
+        if (DiscardManager.Instance.InUI) return;
+
         if (!_isSelected && _isAvailable)
         {
             if (PlayerCardManager.Instance.SelectedCards.Count == 3)

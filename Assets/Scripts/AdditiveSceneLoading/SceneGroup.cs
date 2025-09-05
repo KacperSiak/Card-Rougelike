@@ -26,5 +26,19 @@ namespace Systems.SceneManagement
         public SceneType SceneType;
     }
 
-    public enum SceneType{ActiveScene, MainMenu, UI, HUD, Map, Enemy, Shop}
+    // Extendable set of scene roles used by SceneGroupManager
+    public enum SceneType
+    {
+        ActiveScene,
+        MainMenu,
+        UI,
+        HUD,
+        Map,
+        Enemy,
+        Shop,
+        Treasure,
+        Heal,
+        Gambling,
+        Challenge
+    }
 }

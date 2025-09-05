@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using MapSystem;
+using Systems.SceneManagement;
 
 public class NodeClickHandler : MonoBehaviour
 {
@@ -100,7 +101,6 @@ public class NodeClickHandler : MonoBehaviour
             if (CanMoveToThisNode())
             {
                 MovePlayerHere();
-                LoadScene();
             }
         }
     }
@@ -229,7 +229,9 @@ public class NodeClickHandler : MonoBehaviour
 
         playerMarker.transform.position = toPos;
         currentPlayerNode = transform;
-        isPlayerMoving = false;
+    isPlayerMoving = false;
+        
+    LoadScene();
     }
     
     void MovePlayerInstant()
@@ -265,22 +267,52 @@ public class NodeClickHandler : MonoBehaviour
             
             playerMarker.SetActive(true);
         }
+
+    LoadScene();
     }
 
     void LoadScene()
     {
         if (!string.IsNullOrEmpty(sceneToLoad))
         {
-            CombatManager.NextCombatNodeType = nodeType;
+            // Assign combat type only if this is a combat node or a combat scene
+            if (IsCombatNode(nodeType) || LooksLikeCombatScene(sceneToLoad))
+            {
+                // Ustal typ przeciwnika bezpośrednio
+                CombatManager.ApplyNodeType(nodeType);
+            }
             
-            var mapSaveManager = FindFirstObjectByType<MapSaveManager>();
+            var mapSaveManager = FindObjectOfType<MapSaveManager>();
             if (mapSaveManager != null)
             {
                 mapSaveManager.SaveCurrentMap();
             }
             
+            if (SceneLoader.Instance != null)
+            {
+                Debug.Log("Using additive scene activation for: " + sceneToLoad);
+                SceneLoader.Instance.manager.ActivateScene(sceneToLoad);
+                // Po aktywacji sceny jeszcze raz wymuś typ (na wypadek wyścigów)
+                if (IsCombatNode(nodeType) || LooksLikeCombatScene(sceneToLoad))
+                {
+                    CombatManager.ApplyNodeType(nodeType);
+                }
+                return;
+            }
+            
+            Debug.Log("SceneLoader not found, using normal scene loading for: " + sceneToLoad);
             SceneManager.LoadScene(sceneToLoad);
         }
+    }
+
+    static bool IsCombatNode(NodeType t)
+    {
+        return t == NodeType.Enemy || t.ToString() == "Elite" || t.ToString() == "Boss";
+    }
+
+    static bool LooksLikeCombatScene(string scene)
+    {
+        return !string.IsNullOrEmpty(scene) && (scene.IndexOf("combat", System.StringComparison.OrdinalIgnoreCase) >= 0 || scene.IndexOf("battle", System.StringComparison.OrdinalIgnoreCase) >= 0);
     }
     
     public void TriggerLoadScene()

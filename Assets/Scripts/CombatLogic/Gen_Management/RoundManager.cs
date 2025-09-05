@@ -5,11 +5,9 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 
-public class RoundManager : MonoBehaviour
+public class RoundManager : PersistenSingleton<RoundManager>
 {
     // I think I need to do Global Combat Manager in the nearest future, to take care of some global logic, like cursor, unload the scene, end the combat, but for now I will keep it here
-
-    public static RoundManager Instance { get; private set; }
 
     [field: SerializeField] public List<CardsSOTest> PlayerCards { get; private set; }
     public StructForDictionary<int, int> CurrentCombatDetails { get; private set; } 
@@ -21,13 +19,6 @@ public class RoundManager : MonoBehaviour
     public static event Action OnCombatEnd; // logic is mostly temporary, to mark the end of combat and enable any interactions, but later it will be modified to be built in the whole game logic
     public static event Action OnCombatStart;
     public static event Action OnRoundEnd;
-
-    void Awake()
-    {
-        if (Instance == null) Instance = this;
-
-        else Destroy(gameObject);
-    }
 
     private void OnEnable()
     {

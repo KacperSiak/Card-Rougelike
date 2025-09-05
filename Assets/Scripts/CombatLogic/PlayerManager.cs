@@ -1,17 +1,7 @@
 using UnityEngine;
 
-public class PlayerManager : MonoBehaviour
+public class PlayerManager : PersistenSingleton<PlayerManager>
 {
-    // Like that for now, but for future extension, and modification, we also need manager for the decks and kinda a game manager, to take care of things like cursor, etc.
-
-    public static PlayerManager Instance { get; private set; }
-    void Awake()
-    {
-        if (Instance == null) Instance = this;
-
-        else Destroy(gameObject);
-    }
-    
     private int _playerHP = 50; //temp 
 
     public int PlayerHP
