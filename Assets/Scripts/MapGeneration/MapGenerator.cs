@@ -699,7 +699,6 @@ public class MapGenerator : MonoBehaviour
                     Transform endTf = GetTransformForMapNode(connectedNode);
                     if (endTf == null) continue;
 
-                    // Deduplicate undirected edges via sorted pair of instance IDs
                     int a = startTf.GetInstanceID();
                     int b = endTf.GetInstanceID();
                     ulong key = a < b ? ((ulong)(uint)a << 32) | (uint)b : ((ulong)(uint)b << 32) | (uint)a;
@@ -712,7 +711,6 @@ public class MapGenerator : MonoBehaviour
         }
     }
 
-    // Create a curved, animated connection between two node transforms
     void CreateCurvedConnection(Transform startTf, Transform endTf)
     {
         string name = $"Connection_{startTf.name}_to_{endTf.name}";

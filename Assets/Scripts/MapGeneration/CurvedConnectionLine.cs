@@ -1,6 +1,6 @@
 using UnityEngine;
 
-// Draws a curved Bezier connection between two nodes with gradient color and optional pulse animation
+
 [ExecuteAlways]
 public class CurvedConnectionLine : MonoBehaviour
 {
@@ -83,16 +83,14 @@ public class CurvedConnectionLine : MonoBehaviour
             return;
         }
 
-        // Determine reachability
         bool reachable = (NodeClickHandler.currentPlayerNode != null 
                           && (NodeClickHandler.currentPlayerNode == start 
                               || NodeClickHandler.currentPlayerNode == end));
 
-    // Subtle pulse: width only (no color/alpha changes)
     float effWidthAmp = (pulseOnlyWhenReachable && !reachable) ? 0f : pulseWidthAmplitude;
     if (Application.isPlaying && effWidthAmp > 0f)
         {
-            float t = Mathf.PingPong(Time.time * pulseSpeed, 1f); // 0..1
+            float t = Mathf.PingPong(Time.time * pulseSpeed, 1f);
             float baseW = Mathf.Max(0.001f, width);
             float wPulse = baseW + effWidthAmp * (0.5f - Mathf.Abs(t - 0.5f)) * 2f;
             lr.startWidth = wPulse;
@@ -134,7 +132,6 @@ public class CurvedConnectionLine : MonoBehaviour
     {
         if (lr == null) Setup();
 
-    // Re-apply base visual props (no color/gradient manipulation)
         lr.material = material;
         lr.positionCount = Mathf.Max(2, segments + 1);
 
@@ -144,7 +141,6 @@ public class CurvedConnectionLine : MonoBehaviour
         var p0 = GetStart();
         var p3 = GetEnd();
 
-        // Compute control points: bias horizontally towards the direction and gently arc upward/downward
         Vector3 dir = (p3 - p0);
         Vector3 mid = (p0 + p3) * 0.5f;
         Vector3 ortho = Vector3.Cross(dir.normalized, Vector3.up);
