@@ -16,6 +16,10 @@ public class NodeClickHandler : MonoBehaviour
     [Header("References")]
     public MapGenerator mapGenerator;
     public MapManager mapManager;
+    [Header("Optional (injected)")]
+    public CameraController cameraController;
+    public NodeInfoUI nodeInfoUI;
+    public MapSaveManager mapSaveManager;
 
     [Header("Player Movement")]
     public float moveSpeed = 3f;
@@ -31,33 +35,9 @@ public class NodeClickHandler : MonoBehaviour
 
     void Start()
     {
-        // tymczasowe
-        if (mapGenerator == null)
-        {
-            mapGenerator = FindFirstObjectByType<MapGenerator>();
-        }
-        
-        if (mapManager == null)
-        {
-            mapManager = FindFirstObjectByType<MapManager>();
-        }
-        
-        
         if (GetComponent<Collider>() == null)
         {
             gameObject.AddComponent<BoxCollider>();
-        }
-    }
-    
-    void InitializePlayerMarker()
-    {
-        if (playerMarker == null)
-        {
-            if (playerMarkerPrefab != null)
-            {
-                playerMarker = Instantiate(playerMarkerPrefab);
-                playerMarker.name = "PlayerMarker";
-            }
         }
     }
 
@@ -229,9 +209,13 @@ public class NodeClickHandler : MonoBehaviour
 
         playerMarker.transform.position = toPos;
         currentPlayerNode = transform;
-    isPlayerMoving = false;
+        if (mapSaveManager != null)
+        {
+            mapSaveManager.SaveCurrentMap();
+        }
+        isPlayerMoving = false;
         
-    LoadScene();
+        LoadScene();
     }
     
     void MovePlayerInstant()
@@ -251,7 +235,7 @@ public class NodeClickHandler : MonoBehaviour
         
         currentPlayerNode = transform;
         
-        if (playerMarker != null)
+    if (playerMarker != null)
         {
             playerMarker.transform.position = toPos3D;
             
@@ -268,21 +252,23 @@ public class NodeClickHandler : MonoBehaviour
             playerMarker.SetActive(true);
         }
 
-    LoadScene();
+        if (mapSaveManager != null)
+        {
+            mapSaveManager.SaveCurrentMap();
+        }
+
+        LoadScene();
     }
 
     void LoadScene()
     {
         if (!string.IsNullOrEmpty(sceneToLoad))
         {
-            // Assign combat type only if this is a combat node or a combat scene
-            if (IsCombatNode(nodeType) || LooksLikeCombatScene(sceneToLoad))
+            if (IsCombatNode(nodeType))
             {
-                // Ustal typ przeciwnika bezpośrednio
                 CombatManager.ApplyNodeType(nodeType);
             }
             
-            var mapSaveManager = FindObjectOfType<MapSaveManager>();
             if (mapSaveManager != null)
             {
                 mapSaveManager.SaveCurrentMap();
@@ -292,8 +278,7 @@ public class NodeClickHandler : MonoBehaviour
             {
                 Debug.Log("Using additive scene activation for: " + sceneToLoad);
                 SceneLoader.Instance.manager.ActivateScene(sceneToLoad);
-                // Po aktywacji sceny jeszcze raz wymuś typ (na wypadek wyścigów)
-                if (IsCombatNode(nodeType) || LooksLikeCombatScene(sceneToLoad))
+                if (IsCombatNode(nodeType))
                 {
                     CombatManager.ApplyNodeType(nodeType);
                 }
@@ -307,12 +292,7 @@ public class NodeClickHandler : MonoBehaviour
 
     static bool IsCombatNode(NodeType t)
     {
-        return t == NodeType.Enemy || t.ToString() == "Elite" || t.ToString() == "Boss";
-    }
-
-    static bool LooksLikeCombatScene(string scene)
-    {
-        return !string.IsNullOrEmpty(scene) && (scene.IndexOf("combat", System.StringComparison.OrdinalIgnoreCase) >= 0 || scene.IndexOf("battle", System.StringComparison.OrdinalIgnoreCase) >= 0);
+        return t == NodeType.Enemy || t == NodeType.Elite || t == NodeType.Boss;
     }
     
     public void TriggerLoadScene()
@@ -322,14 +302,12 @@ public class NodeClickHandler : MonoBehaviour
     
     private void ShowNodeInfo()
     {
-        CameraController cameraController = FindFirstObjectByType<CameraController>();
-        if (cameraController != null)
+    if (cameraController != null)
         {
             cameraController.CenterOnPosition(transform.position);
         }
         
-        NodeInfoUI nodeInfoUI = FindFirstObjectByType<NodeInfoUI>();
-        if (nodeInfoUI != null)
+    if (nodeInfoUI != null)
         {
             nodeInfoUI.ShowInfo(GetNodeName(), GetNodeDescription(), transform.position);
         }

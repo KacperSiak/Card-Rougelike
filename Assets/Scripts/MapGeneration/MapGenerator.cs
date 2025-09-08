@@ -63,6 +63,17 @@ public class MapGenerator : MonoBehaviour
     public float connectionWidth = 0.1f;
     [Tooltip("Y offset for connection lines (lower = lines are drawn lower)")]
     public float connectionYOffset = 0.1f;
+    [Range(4, 64)]
+    [Tooltip("Number of segments used to draw curved connections (higher = smoother but more cost)")]
+    public int connectionSegments = 24;
+    [Range(0f, 1f)]
+    [Tooltip("Curvature factor for Bezier connections (0 = straight line, 1 = very curved)")]
+    public float connectionCurvature = 0.35f;
+    [Header("Pulse Animation")]    
+    [Tooltip("Speed of the subtle pulse animation for reachable edges")]
+    public float pulseSpeed = 2.5f;
+    [Tooltip("Width amplitude of the pulse animation, added on top of base width")]
+    [Range(0f, 0.5f)] public float pulseWidthAmplitude = 0.02f;
 
     [Header("Node Connections")]
     public int minConnectionsPerNode = 1;
@@ -71,6 +82,8 @@ public class MapGenerator : MonoBehaviour
 
     [Header("Camera")]
     public CameraController cameraController;
+    [Header("UI / Info Panels")]
+    public NodeInfoUI nodeInfoUI;
 
     public List<List<MapNode>> mapLevels = new List<List<MapNode>>();
 
@@ -80,6 +93,7 @@ public class MapGenerator : MonoBehaviour
 
     [Header("References")]
     public MapManager mapManager;
+    [SerializeField] private MapSaveManager mapSaveManager;
     
     [Header("Random Seed")]
     [Tooltip("If 0, uses random seed. Otherwise uses this seed for deterministic generation")]
@@ -87,7 +101,6 @@ public class MapGenerator : MonoBehaviour
     [HideInInspector]
     public int lastUsedSeed;
 
-    private MapSaveManager cachedMapSaveManager;
     private Transform startNodeTransform;
     private Transform bossNodeTransform;
     private Dictionary<Vector3, Transform> nodeTransformCache = new Dictionary<Vector3, Transform>();
@@ -95,14 +108,13 @@ public class MapGenerator : MonoBehaviour
     void Start()
     {
         InitializeSettings();
-        InitializeCachedReferences();
         
-        bool willLoadFromSave = cachedMapSaveManager != null && cachedMapSaveManager.HasSavedMap();
+        bool willLoadFromSave = mapSaveManager != null && mapSaveManager.HasSavedMap();
         
         if (willLoadFromSave)
         {
             Debug.Log("[MapGenerator] MapSaveManager will load saved map");
-            cachedMapSaveManager.LoadSavedMap();
+            mapSaveManager.LoadSavedMap();
         }
         else
         {
@@ -110,11 +122,24 @@ public class MapGenerator : MonoBehaviour
             GenerateMap();
         }
     }
-    
-    void InitializeCachedReferences()
+
+    void OnValidate()
     {
-        if (cachedMapSaveManager == null)
-            cachedMapSaveManager = FindFirstObjectByType<MapSaveManager>();
+        if (nodeTypes == null) return;
+
+        var seen = new HashSet<NodeType>();
+        for (int i = 0; i < nodeTypes.Length; i++)
+        {
+            var nt = nodeTypes[i];
+            if (nt.minCount < 0) nt.minCount = 0;
+            if (nt.maxCount < nt.minCount) nt.maxCount = nt.minCount;
+            if (nt.minLevel < 0) nt.minLevel = 0;
+            if (!seen.Add(nt.type))
+            {
+                Debug.LogWarning($"[MapGenerator] Duplicate NodeType in configuration: {nt.type}");
+            }
+            nodeTypes[i] = nt;
+        }
     }
 
     void InitializeSettings()
@@ -314,6 +339,11 @@ public class MapGenerator : MonoBehaviour
                     if (nodeHandler != null)
                     {
                         nodeHandler.nodeType = node.Type;
+                        if (nodeHandler.mapGenerator == null) nodeHandler.mapGenerator = this;
+                        if (nodeHandler.mapManager == null) nodeHandler.mapManager = mapManager;
+                        if (nodeHandler.cameraController == null) nodeHandler.cameraController = cameraController;
+                        if (nodeHandler.nodeInfoUI == null) nodeHandler.nodeInfoUI = nodeInfoUI;
+                        if (nodeHandler.mapSaveManager == null) nodeHandler.mapSaveManager = mapSaveManager;
                     }
                 }
             }
@@ -367,6 +397,32 @@ public class MapGenerator : MonoBehaviour
         return null;
     }
 
+    // Returns the node Transform closest to a given 2D map position (x,z)
+    public Transform GetClosestNodeTransform2D(Vector2 target)
+    {
+        Transform best = null;
+        float bestDist = float.MaxValue;
+        for (int level = 0; level < mapLevels.Count; level++)
+        {
+            foreach (var node in mapLevels[level])
+            {
+                float yOff = 0f;
+                if (node.Type == NodeType.Boss) yOff = bossYOffset;
+                else if (settingsLookup.ContainsKey(node.Type)) yOff = settingsLookup[node.Type].yOffset;
+                Vector3 pos3D = new Vector3(node.Position.x, yOff, node.Position.y);
+                if (!nodeTransformCache.TryGetValue(pos3D, out var tf) || tf == null) continue;
+                Vector2 node2D = new Vector2(pos3D.x, pos3D.z);
+                float d = Vector2.Distance(node2D, target);
+                if (d < bestDist)
+                {
+                    bestDist = d;
+                    best = tf;
+                }
+            }
+        }
+        return best;
+    }
+
     NodeType GetRandomNodeType(int level, List<NodeType> availableTypes)
     {
         if (level == numberOfLevels - 1 && !bossAssigned)
@@ -387,38 +443,102 @@ public class MapGenerator : MonoBehaviour
     {
         for (int level = 0; level < mapLevels.Count - 1; level++)
         {
-            List<MapNode> currentLevel = mapLevels[level];
-            List<MapNode> nextLevel = mapLevels[level + 1];
+            List<MapNode> curr = mapLevels[level];
+            List<MapNode> next = mapLevels[level + 1];
+            if (curr.Count == 0 || next.Count == 0) continue;
 
-            foreach (var node in currentLevel)
+            List<int> currOrder = new List<int>(curr.Count);
+            for (int i = 0; i < curr.Count; i++) currOrder.Add(i);
+            currOrder.Sort((a, b) => curr[a].Position.x.CompareTo(curr[b].Position.x));
+
+            List<int> nextOrder = new List<int>(next.Count);
+            for (int j = 0; j < next.Count; j++) nextOrder.Add(j);
+            nextOrder.Sort((a, b) => next[a].Position.x.CompareTo(next[b].Position.x));
+
+            int[] degCurr = new int[curr.Count];
+            int[] degNext = new int[next.Count];
+
+            List<(Vector2, Vector2)> edges = new List<(Vector2, Vector2)>(curr.Count * 2);
+
+            for (int idx = 0; idx < nextOrder.Count; idx++)
             {
-                var sortedNextNodes = nextLevel
-                    .Select((n, index) => new { Node = n, Index = index, Distance = Vector2.Distance(node.Position, n.Position) })
-                    .Where(x => x.Distance <= maxConnectionDistance)
-                    .OrderBy(x => x.Distance)
-                    .ToList();
+                int j = nextOrder[idx];
+                Vector2 targetPos = next[j].Position;
+                float bestDist = float.MaxValue;
+                int bestI = -1;
 
-                if (sortedNextNodes.Count == 0)
+                for (int ii = 0; ii < currOrder.Count; ii++)
                 {
-                    sortedNextNodes = nextLevel
-                        .Select((n, index) => new { Node = n, Index = index, Distance = Vector2.Distance(node.Position, n.Position) })
-                        .OrderBy(x => x.Distance)
-                        .Take(1)
-                        .ToList();
+                    int i = currOrder[ii];
+                    if (degCurr[i] >= maxConnectionsPerNode) continue;
+                    float d = Vector2.Distance(curr[i].Position, targetPos);
+                    if (maxConnectionDistance > 0 && d > maxConnectionDistance) continue;
+                    if (d < bestDist)
+                    {
+                        bestDist = d;
+                        bestI = i;
+                    }
                 }
 
-                bool isNextLevelBoss = (level + 1) == numberOfLevels - 1;
-                int connectionsToMake = isNextLevelBoss ? 1 : Mathf.Min(2, sortedNextNodes.Count);
-
-                for (int i = 0; i < connectionsToMake; i++)
+                if (bestI == -1)
                 {
-                    var targetInfo = sortedNextNodes[i];
-                    MapNode targetNode = targetInfo.Node;
+                    for (int ii = 0; ii < currOrder.Count; ii++)
+                    {
+                        int i = currOrder[ii];
+                        if (degCurr[i] >= maxConnectionsPerNode) continue;
+                        float d = Vector2.Distance(curr[i].Position, targetPos);
+                        if (d < bestDist)
+                        {
+                            bestDist = d;
+                            bestI = i;
+                        }
+                    }
+                }
 
-                    if (!node.ConnectedNodes.Contains(targetNode))
-                        node.ConnectedNodes.Add(targetNode);
-                    if (!targetNode.ConnectedNodes.Contains(node))
-                        targetNode.ConnectedNodes.Add(node);
+                if (bestI != -1)
+                {
+                    TryAddConnection(curr[bestI], next[j], degCurr, degNext, bestI, j, edges);
+                }
+            }
+
+            for (int ci = 0; ci < currOrder.Count; ci++)
+            {
+                int i = currOrder[ci];
+                while (degCurr[i] < minConnectionsPerNode)
+                {
+                    int bestJ = -1;
+                    float bestDist2 = float.MaxValue;
+                    for (int nj = 0; nj < next.Count; nj++)
+                    {
+                        if (curr[i].ConnectedNodes.Contains(next[nj])) continue;
+                        float d = Vector2.Distance(curr[i].Position, next[nj].Position);
+                        if (maxConnectionDistance > 0 && d > maxConnectionDistance) continue;
+                        if (WouldCross(curr[i].Position, next[nj].Position, edges)) continue;
+                        if (d < bestDist2)
+                        {
+                            bestDist2 = d;
+                            bestJ = nj;
+                        }
+                    }
+
+                    if (bestJ == -1)
+                    {
+                        for (int nj = 0; nj < next.Count; nj++)
+                        {
+                            if (degNext[nj] >= Mathf.Max(1, maxConnectionsPerNode)) continue;
+                            if (curr[i].ConnectedNodes.Contains(next[nj])) continue;
+                            float d = Vector2.Distance(curr[i].Position, next[nj].Position);
+                            if (maxConnectionDistance > 0 && d > maxConnectionDistance) continue;
+                            if (d < bestDist2)
+                            {
+                                bestDist2 = d;
+                                bestJ = nj;
+                            }
+                        }
+                    }
+
+                    if (bestJ == -1) break;
+                    TryAddConnection(curr[i], next[bestJ], degCurr, degNext, i, bestJ, edges);
                 }
             }
         }
@@ -429,6 +549,57 @@ public class MapGenerator : MonoBehaviour
         }
 
         EnsureAllNodesConnected();
+    }
+
+    bool WouldCross(Vector2 a, Vector2 b, List<(Vector2, Vector2)> edges)
+    {
+        for (int k = 0; k < edges.Count; k++)
+        {
+            var (c, d) = edges[k];
+            if (SegmentsCross(a, b, c, d)) return true;
+        }
+        return false;
+    }
+
+    bool SegmentsCross(Vector2 p1, Vector2 q1, Vector2 p2, Vector2 q2)
+    {
+        if ((p1 == p2 && q1 == q2) || (p1 == q2 && q1 == p2)) return false;
+
+        int o1 = Orientation(p1, q1, p2);
+        int o2 = Orientation(p1, q1, q2);
+        int o3 = Orientation(p2, q2, p1);
+        int o4 = Orientation(p2, q2, q1);
+
+        if (o1 != o2 && o3 != o4) return true;
+
+        if (o1 == 0 && OnSegment(p1, p2, q1)) return true;
+        if (o2 == 0 && OnSegment(p1, q2, q1)) return true;
+        if (o3 == 0 && OnSegment(p2, p1, q2)) return true;
+        if (o4 == 0 && OnSegment(p2, q1, q2)) return true;
+
+        return false;
+    }
+
+    int Orientation(Vector2 p, Vector2 q, Vector2 r)
+    {
+        float val = (q.y - p.y) * (r.x - q.x) - (q.x - p.x) * (r.y - q.y);
+        if (Mathf.Approximately(val, 0f)) return 0;
+        return (val > 0) ? 1 : 2;
+    }
+
+    bool OnSegment(Vector2 p, Vector2 q, Vector2 r)
+    {
+        return q.x <= Mathf.Max(p.x, r.x) + 1e-4f && q.x + 1e-4f >= Mathf.Min(p.x, r.x)
+            && q.y <= Mathf.Max(p.y, r.y) + 1e-4f && q.y + 1e-4f >= Mathf.Min(p.y, r.y);
+    }
+
+    void TryAddConnection(MapNode from, MapNode to, int[] degCurr, int[] degNext, int iIdx, int jIdx, List<(Vector2, Vector2)> edges)
+    {
+        if (!from.ConnectedNodes.Contains(to)) from.ConnectedNodes.Add(to);
+        if (!to.ConnectedNodes.Contains(from)) to.ConnectedNodes.Add(from);
+        degCurr[iIdx]++;
+        degNext[jIdx]++;
+        edges.Add((from.Position, to.Position));
     }
 
     void EnsureBossSingleConnection()
@@ -540,45 +711,62 @@ public class MapGenerator : MonoBehaviour
 
     public void DrawConnections()
     {
-        HashSet<string> drawnConnections = new HashSet<string>();
+        HashSet<ulong> drawnConnections = new HashSet<ulong>();
 
         foreach (var level in mapLevels)
         {
             foreach (var node in level)
             {
-                Vector3 startPos = new Vector3(node.Position.x, connectionYOffset, node.Position.y);
+                Transform startTf = GetTransformForMapNode(node);
+                if (startTf == null) continue;
 
                 foreach (var connectedNode in node.ConnectedNodes)
                 {
-                    Vector3 endPos = new Vector3(connectedNode.Position.x, connectionYOffset, connectedNode.Position.y);
+                    Transform endTf = GetTransformForMapNode(connectedNode);
+                    if (endTf == null) continue;
 
-                    string connectionKey = $"{Mathf.Min(startPos.x, endPos.x)}_{Mathf.Min(startPos.z, endPos.z)}_{Mathf.Max(startPos.x, endPos.x)}_{Mathf.Max(startPos.z, endPos.z)}";
+                    int a = startTf.GetInstanceID();
+                    int b = endTf.GetInstanceID();
+                    ulong key = a < b ? ((ulong)(uint)a << 32) | (uint)b : ((ulong)(uint)b << 32) | (uint)a;
+                    if (drawnConnections.Contains(key)) continue;
+                    drawnConnections.Add(key);
 
-                    if (!drawnConnections.Contains(connectionKey))
-                    {
-                        CreateConnectionLine(startPos, endPos, $"Connection_{connectionKey}");
-                        drawnConnections.Add(connectionKey);
-                    }
+                    CreateCurvedConnection(startTf, endTf);
                 }
             }
         }
     }
 
-    void CreateConnectionLine(Vector3 startPos, Vector3 endPos, string name)
+    void CreateCurvedConnection(Transform startTf, Transform endTf)
     {
+        string name = $"Connection_{startTf.name}_to_{endTf.name}";
         GameObject lineObj = new GameObject(name);
         lineObj.transform.SetParent(transform);
 
-        LineRenderer line = lineObj.AddComponent<LineRenderer>();
-        line.material = connectionMaterial;
-        line.startWidth = connectionWidth;
-        line.endWidth = connectionWidth;
-        line.positionCount = 2;
-        line.useWorldSpace = true;
-        line.sortingOrder = -1;
+        var curved = lineObj.AddComponent<CurvedConnectionLine>();
+        curved.Initialize(new CurvedConnectionLine.Config
+        {
+            start = startTf,
+            end = endTf,
+            yOffset = connectionYOffset,
+            width = connectionWidth,
+            segments = Mathf.Max(4, connectionSegments),
+            curvature = connectionCurvature,
+            material = connectionMaterial,
+            pulseSpeed = pulseSpeed,
+            pulseWidthAmp = pulseWidthAmplitude,
+            pulseOnlyWhenReachable = true,
+        });
+    }
 
-        line.SetPosition(0, startPos);
-        line.SetPosition(1, endPos);
+    Transform GetTransformForMapNode(MapNode node)
+    {
+        float nodeYOffset = 0f;
+        if (node.Type == NodeType.Boss) nodeYOffset = bossYOffset;
+        else if (settingsLookup.ContainsKey(node.Type)) nodeYOffset = settingsLookup[node.Type].yOffset;
+        Vector3 pos3D = new Vector3(node.Position.x, nodeYOffset, node.Position.y);
+        nodeTransformCache.TryGetValue(pos3D, out var tf);
+        return tf;
     }
 
     GameObject GetPrefabForNodeType(NodeType type)
