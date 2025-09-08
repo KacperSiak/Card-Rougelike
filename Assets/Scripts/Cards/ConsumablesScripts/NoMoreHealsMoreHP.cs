@@ -5,10 +5,10 @@ using UnityEngine.Events;
 public class NoMoreHealsMoreHP: CardEffect
 {
     public int bonusHealth;
-    public static UnityEvent<string> OnShopBlock = new UnityEvent<string>();
+    
     public override void ApplyEffect(ConsumableContext ctx)
     {
-        OnShopBlock?.Invoke("Heal");
+        ConsumablesEventSystem.SceneBlock("heal");
         ctx.player.MaxHPCHange(bonusHealth);
     }
 }

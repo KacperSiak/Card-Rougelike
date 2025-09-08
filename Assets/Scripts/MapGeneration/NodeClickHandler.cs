@@ -42,7 +42,7 @@ public class NodeClickHandler : MonoBehaviour
             gameObject.AddComponent<BoxCollider>();
         }
 
-        NoMoreHealsMoreHP.OnShopBlock.AddListener(BlockScene);
+        ConsumablesEventSystem.OnSceneBlock.AddListener(BlockScene);
     }
 
     void Update()
@@ -362,6 +362,6 @@ public class NodeClickHandler : MonoBehaviour
     private void BlockScene(string scene)
     {
         if(scene == "Shop") _shopBlock = true;
-        if (scene == "Heal") _healBlock = true;
+        if(scene == "Heal") _healBlock = true;
     }
 }

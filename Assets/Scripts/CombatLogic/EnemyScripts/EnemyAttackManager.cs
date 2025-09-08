@@ -9,7 +9,7 @@ public class EnemyAttackManager : MonoBehaviour
     private const int k_minRound = 1;
     private const int k_maxRound = 5;
     private const int k_limit = 3;
-
+    private ConsumableContext _consContext;
     private void OnEnable()
     {
         RoundManager.OnCombatEnd += OnCombatEnd;
@@ -62,7 +62,10 @@ public class EnemyAttackManager : MonoBehaviour
 
             if (RoundsForCards[i] > 0) continue;
 
-            RoundManager.Instance.PlayerHP -= EnemyCardManager.Instance.CardsInGamePower[i];
+            if(_consContext.immune) RoundManager.Instance.PlayerHP -= EnemyCardManager.Instance.CardsInGamePower[i] * 0;
+            else if (_consContext.vulnerable) RoundManager.Instance.PlayerHP -= EnemyCardManager.Instance.CardsInGamePower[i] * 2;
+            else RoundManager.Instance.PlayerHP -= EnemyCardManager.Instance.CardsInGamePower[i];
+
 
             if (RoundManager.Instance.PlayerHP <= 0) return;
 
