@@ -4,6 +4,7 @@ public class KnifeAndPaper : MonoBehaviour
 {
     [SerializeField]
     private Animator anim;
+
     private bool isClose;
     private bool debounce;
 
