@@ -221,9 +221,14 @@ public class NodeClickHandler : MonoBehaviour
 
         playerMarker.transform.position = toPos;
         currentPlayerNode = transform;
-    isPlayerMoving = false;
+        // Save player position on every completed move
+        if (mapSaveManager != null)
+        {
+            mapSaveManager.SaveCurrentMap();
+        }
+        isPlayerMoving = false;
         
-    LoadScene();
+        LoadScene();
     }
     
     void MovePlayerInstant()
@@ -243,7 +248,7 @@ public class NodeClickHandler : MonoBehaviour
         
         currentPlayerNode = transform;
         
-        if (playerMarker != null)
+    if (playerMarker != null)
         {
             playerMarker.transform.position = toPos3D;
             
@@ -260,7 +265,13 @@ public class NodeClickHandler : MonoBehaviour
             playerMarker.SetActive(true);
         }
 
-    LoadScene();
+        // Save player position on every completed move
+        if (mapSaveManager != null)
+        {
+            mapSaveManager.SaveCurrentMap();
+        }
+
+        LoadScene();
     }
 
     void LoadScene()

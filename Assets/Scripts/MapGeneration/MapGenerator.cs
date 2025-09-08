@@ -397,6 +397,32 @@ public class MapGenerator : MonoBehaviour
         return null;
     }
 
+    // Returns the node Transform closest to a given 2D map position (x,z)
+    public Transform GetClosestNodeTransform2D(Vector2 target)
+    {
+        Transform best = null;
+        float bestDist = float.MaxValue;
+        for (int level = 0; level < mapLevels.Count; level++)
+        {
+            foreach (var node in mapLevels[level])
+            {
+                float yOff = 0f;
+                if (node.Type == NodeType.Boss) yOff = bossYOffset;
+                else if (settingsLookup.ContainsKey(node.Type)) yOff = settingsLookup[node.Type].yOffset;
+                Vector3 pos3D = new Vector3(node.Position.x, yOff, node.Position.y);
+                if (!nodeTransformCache.TryGetValue(pos3D, out var tf) || tf == null) continue;
+                Vector2 node2D = new Vector2(pos3D.x, pos3D.z);
+                float d = Vector2.Distance(node2D, target);
+                if (d < bestDist)
+                {
+                    bestDist = d;
+                    best = tf;
+                }
+            }
+        }
+        return best;
+    }
+
     NodeType GetRandomNodeType(int level, List<NodeType> availableTypes)
     {
         if (level == numberOfLevels - 1 && !bossAssigned)

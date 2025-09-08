@@ -12,10 +12,11 @@ public class MapSaveManager : MonoBehaviour
     
     void Start()
     {
+        // References should be assigned in the Inspector (no runtime searches)
         if (mapGenerator == null)
-            mapGenerator = FindFirstObjectByType<MapGenerator>();
+            Debug.LogWarning("[MapSaveManager] MapGenerator not assigned (Inspector)");
         if (mapManager == null)
-            mapManager = FindFirstObjectByType<MapManager>(); //tymczasowe
+            Debug.LogWarning("[MapSaveManager] MapManager not assigned (Inspector)");
         
         if (GameSaveManager.Instance != null && GameSaveManager.Instance.HasActiveSave())
         {
@@ -37,6 +38,16 @@ public class MapSaveManager : MonoBehaviour
             Debug.Log("[MapSaveManager] No save found or creating new map");
         }
     }
+
+    void OnEnable()
+    {
+        // When the map scene re-activates (additive loading), try to reapply player position quickly
+        if (mapSaveData != null && mapSaveData.hasPlayerPosition)
+        {
+            // Use a short delay to allow map visuals to spawn
+            StartCoroutine(RestorePlayerPositionDelayed());
+        }
+    }
     
     public void SaveCurrentMap()
     {
@@ -54,6 +65,23 @@ public class MapSaveManager : MonoBehaviour
         
         mapSaveData.SaveCurrentMapState(mapGenerator, mapManager);
         Debug.Log("[MapSaveManager] Map saved to ScriptableObject");
+    }
+
+    // Convenience API to update only player position/time without regenerating anything else
+    public void SavePlayerPositionOnly()
+    {
+        if (mapSaveData == null || mapManager == null) return;
+        if (NodeClickHandler.currentPlayerNode != null)
+        {
+            Vector3 pos = NodeClickHandler.currentPlayerNode.position;
+            mapSaveData.playerPosition = new Vector2(pos.x, pos.z);
+            mapSaveData.hasPlayerPosition = true;
+            mapSaveData.currentMapTime = mapManager.currentMapTime;
+            mapSaveData.maxMapTime = mapManager.maxMapTime;
+            #if UNITY_EDITOR
+            UnityEditor.EditorUtility.SetDirty(mapSaveData);
+            #endif
+        }
     }
     
     public void LoadSavedMap()
@@ -92,20 +120,9 @@ public class MapSaveManager : MonoBehaviour
         yield return new WaitForSeconds(0.2f);
         
         Transform closestNode = null;
-        float closestDistance = float.MaxValue;
-        
-        var allNodes = FindObjectsByType<NodeClickHandler>(FindObjectsSortMode.None);
-        
-        foreach (var nodeHandler in allNodes)
+        if (mapGenerator != null)
         {
-            Vector2 nodePos = new Vector2(nodeHandler.transform.position.x, nodeHandler.transform.position.z);
-            float distance = Vector2.Distance(nodePos, mapSaveData.playerPosition);
-            
-            if (distance < closestDistance)
-            {
-                closestDistance = distance;
-                closestNode = nodeHandler.transform;
-            }
+            closestNode = mapGenerator.GetClosestNodeTransform2D(mapSaveData.playerPosition);
         }
         
         if (closestNode != null)
