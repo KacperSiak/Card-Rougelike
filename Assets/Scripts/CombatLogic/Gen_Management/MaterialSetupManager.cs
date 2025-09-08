@@ -1,21 +1,15 @@
 using UnityEngine;
 
-public class CardSetupManager : MonoBehaviour
+public class MaterialSetupManager : PersistenSingleton<MaterialSetupManager>
 {
-    public static CardSetupManager Instance { get; private set; }
-
     private MaterialPropertyBlock _block;
 
-    void Awake()
+    void Start()
     {
-        if (Instance == null) Instance = this;
-
-        else Destroy(gameObject);
-
         _block = new();
     }
 
-    public void SetupCardVisual(MeshRenderer card, int col, int row)
+    public void SetupVisual(MeshRenderer card, int col, int row)
     {
         _block.SetFloat("_ColIndex", col);
         _block.SetFloat("_RowIndex", row);

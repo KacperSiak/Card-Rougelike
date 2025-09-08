@@ -3,7 +3,8 @@ using UnityEngine;
 
 public class EnemyAttackManager : MonoBehaviour
 {
-    [SerializeField] public Dictionary<int, int> RoundsForCards { get; private set; } = new();
+    public Dictionary<int, int> RoundsForCards { get; private set; } = new(); 
+    [SerializeField] private List<DiceLogic> _diceLogic;
     private int _round;
     private const int k_powerIndex = 6; 
     private const int k_minRound = 1;
@@ -36,7 +37,8 @@ public class EnemyAttackManager : MonoBehaviour
 
         RoundsForCards.Add(key, _round);
 
-        UIManager.Instance.SetRoundForEnemyUI(key);
+        _diceLogic[key].UpdateRounds(_round); 
+
     }
 
     private int CalculateRound(int totalPower)
@@ -53,12 +55,12 @@ public class EnemyAttackManager : MonoBehaviour
         {
             if (!RoundsForCards.ContainsKey(i))
             {
-                UIManager.Instance.SetRoundForEnemyUI(key: i);
+                _diceLogic[i].UpdateRounds(key: 0);
                 continue;
             } 
 
             RoundsForCards[i]--;
-            UIManager.Instance.SetRoundForEnemyUI(key: i);
+            _diceLogic[i].UpdateRounds(RoundsForCards[i]);
 
             if (RoundsForCards[i] > 0) continue;
 

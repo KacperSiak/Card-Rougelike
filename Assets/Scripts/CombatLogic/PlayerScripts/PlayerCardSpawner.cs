@@ -27,7 +27,7 @@ public class PlayerCardSpawner : MonoBehaviour
             playerDeck.Remove(card);
 
             cardObject.GetComponent<PlayerCardLogic>().SetCardProperties(card);
-            CardSetupManager.Instance.SetupCardVisual(cardObject.GetComponent<MeshRenderer>(), card.column, card.row);
+            MaterialSetupManager.Instance.SetupVisual(cardObject.GetComponent<MeshRenderer>(), card.column, card.row);
         }
         StartPlacement();
     }
