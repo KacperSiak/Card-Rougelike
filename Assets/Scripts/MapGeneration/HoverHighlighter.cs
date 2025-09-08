@@ -136,12 +136,6 @@ public class HoverHighlighter : MonoBehaviour
         }
     }
     
-    [ContextMenu("Toggle Highlight")]
-    public void ToggleHighlight()
-    {
-        SetHighlight(!isHighlighted);
-    }
-    
     public void ForceHighlight(bool highlight)
     {
         SetHighlight(highlight);

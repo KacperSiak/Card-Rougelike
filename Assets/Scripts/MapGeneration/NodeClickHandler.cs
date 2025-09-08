@@ -41,17 +41,7 @@ public class NodeClickHandler : MonoBehaviour
         }
     }
     
-    void InitializePlayerMarker()
-    {
-        if (playerMarker == null)
-        {
-            if (playerMarkerPrefab != null)
-            {
-                playerMarker = Instantiate(playerMarkerPrefab);
-                playerMarker.name = "PlayerMarker";
-            }
-        }
-    }
+    // Removed unused InitializePlayerMarker (marker is spawned by MapGenerator)
 
     void Update()
     {
@@ -276,7 +266,7 @@ public class NodeClickHandler : MonoBehaviour
     {
         if (!string.IsNullOrEmpty(sceneToLoad))
         {
-            if (IsCombatNode(nodeType) || LooksLikeCombatScene(sceneToLoad))
+            if (IsCombatNode(nodeType))
             {
                 CombatManager.ApplyNodeType(nodeType);
             }
@@ -290,7 +280,7 @@ public class NodeClickHandler : MonoBehaviour
             {
                 Debug.Log("Using additive scene activation for: " + sceneToLoad);
                 SceneLoader.Instance.manager.ActivateScene(sceneToLoad);
-                if (IsCombatNode(nodeType) || LooksLikeCombatScene(sceneToLoad))
+                if (IsCombatNode(nodeType))
                 {
                     CombatManager.ApplyNodeType(nodeType);
                 }
@@ -304,12 +294,7 @@ public class NodeClickHandler : MonoBehaviour
 
     static bool IsCombatNode(NodeType t)
     {
-        return t == NodeType.Enemy || t.ToString() == "Elite" || t.ToString() == "Boss";
-    }
-
-    static bool LooksLikeCombatScene(string scene)
-    {
-        return !string.IsNullOrEmpty(scene) && (scene.IndexOf("combat", System.StringComparison.OrdinalIgnoreCase) >= 0 || scene.IndexOf("battle", System.StringComparison.OrdinalIgnoreCase) >= 0);
+        return t == NodeType.Enemy || t == NodeType.Elite || t == NodeType.Boss;
     }
     
     public void TriggerLoadScene()

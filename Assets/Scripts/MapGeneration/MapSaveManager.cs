@@ -42,7 +42,13 @@ public class MapSaveManager : MonoBehaviour
     {
         if (mapSaveData != null && mapSaveData.hasPlayerPosition)
         {
-            StartCoroutine(RestorePlayerPositionDelayed());
+            if (NodeClickHandler.playerMarker != null)
+                NodeClickHandler.playerMarker.SetActive(false);
+
+            if (!TryRestorePlayerPositionImmediate())
+            {
+                StartCoroutine(RestoreWhenReady());
+            }
         }
     }
     
@@ -95,7 +101,10 @@ public class MapSaveManager : MonoBehaviour
         }
         
         mapSaveData.ApplyToMapGenerator(mapGenerator);
-        
+
+        if (NodeClickHandler.playerMarker != null)
+            NodeClickHandler.playerMarker.SetActive(false);
+
         mapGenerator.GenerateMap();
         
         if (mapManager != null)
@@ -105,35 +114,40 @@ public class MapSaveManager : MonoBehaviour
         
         if (mapSaveData.hasPlayerPosition)
         {
-            StartCoroutine(RestorePlayerPositionDelayed());
+            TryRestorePlayerPositionImmediate();
         }
         
         Debug.Log($"[MapSaveManager] Map loaded from: {mapSaveData.saveDate}");
     }
     
-    IEnumerator RestorePlayerPositionDelayed()
+    bool TryRestorePlayerPositionImmediate()
     {
-        yield return new WaitForSeconds(0.2f);
-        
-        Transform closestNode = null;
-        if (mapGenerator != null)
+        if (mapSaveData == null || mapGenerator == null) return false;
+
+        Transform closestNode = mapGenerator.GetClosestNodeTransform2D(mapSaveData.playerPosition);
+        if (closestNode == null) return false;
+
+        NodeClickHandler.currentPlayerNode = closestNode;
+
+        if (NodeClickHandler.playerMarker != null)
         {
-            closestNode = mapGenerator.GetClosestNodeTransform2D(mapSaveData.playerPosition);
+            Vector3 newPos = closestNode.position;
+            newPos.y = 0.2f;
+            NodeClickHandler.playerMarker.transform.position = newPos;
+            NodeClickHandler.playerMarker.SetActive(true);
         }
-        
-        if (closestNode != null)
+
+        Debug.Log($"[MapSaveManager] Player restored to position: {closestNode.position}");
+        return true;
+    }
+
+    IEnumerator RestoreWhenReady()
+    {
+        while (mapGenerator != null && mapSaveData != null)
         {
-            NodeClickHandler.currentPlayerNode = closestNode;
-            
-            if (NodeClickHandler.playerMarker != null)
-            {
-                Vector3 newPos = closestNode.position;
-                newPos.y = 0.2f;
-                NodeClickHandler.playerMarker.transform.position = newPos;
-                NodeClickHandler.playerMarker.SetActive(true);
-            }
-            
-            Debug.Log($"[MapSaveManager] Player restored to position: {closestNode.position}");
+            if (TryRestorePlayerPositionImmediate())
+                yield break;
+            yield return null;
         }
     }
     
