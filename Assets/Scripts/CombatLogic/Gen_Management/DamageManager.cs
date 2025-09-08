@@ -1,21 +1,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DamageManager : MonoBehaviour
+public class DamageManager : PersistenSingleton<DamageManager>
 {
-   public static DamageManager Instance { get; private set; }
    [SerializeField] private EnemyAttackManager _enemyAttackManager;
 
    [SerializeField] private List<CardHolderLogic> _cardHolders;
 
-    void Awake()
-    { 
-        if (Instance == null) Instance = this;
+    private int _bonusDamage = 0;
 
-        else Destroy(gameObject);
+    protected override void OnSingletonAwake() { }
 
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
     }
-
     public void CalculatePlayerImpact()
     {
         foreach (var ch in _cardHolders)
@@ -35,7 +34,7 @@ public class DamageManager : MonoBehaviour
         { 
             if (!EnemyCardManager.Instance.CardsInGamePower.ContainsKey(i) || EnemyCardManager.Instance.CardsInGamePower[i] > 0) continue; 
 
-            RoundManager.Instance.EnemyHP -= -EnemyCardManager.Instance.CardsInGamePower[i]; // cuz number in the list will be negative after we will implement player impact
+            RoundManager.Instance.EnemyHP -= -(EnemyCardManager.Instance.CardsInGamePower[i] - _bonusDamage); // cuz number in the list will be negative after we will implement player impact
 
             if (RoundManager.Instance.EnemyHP <= 0) return;
 
@@ -46,5 +45,11 @@ public class DamageManager : MonoBehaviour
         }
 
         _enemyAttackManager.UpdateRounds();
+    }
+
+    public void BonusDamageChange(int amount, bool add)
+    {
+        if (add) _bonusDamage += amount;
+        else _bonusDamage -= amount;
     }
 }

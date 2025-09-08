@@ -38,7 +38,7 @@ public class PlayerCardSpawner : MonoBehaviour
         { 
             StopAllCoroutines();
             isPlaying = false;
-            MainHand.gameObject.GetComponent<HandAnimationLogic>().EnableAnimations();
+            MainHand.gameObject.GetComponent<CardHolderAnimation>().EnableAnimations(true);
         }
 
         _cardsNumber = PlayerCardManager.Instance.CardsInHand.Count;
@@ -49,7 +49,7 @@ public class PlayerCardSpawner : MonoBehaviour
 
     private IEnumerator SetCardsPosition()
 	{
-        MainHand.gameObject.GetComponent<HandAnimationLogic>().DisableAnimations();
+        MainHand.gameObject.GetComponent<CardHolderAnimation>().DisableAnimations();
         isPlaying = true;
 
         float offset = _cardSize - _cardSize * (Mathf.Max(k_maxHandSize, _cardsNumber) - k_maxHandSize) / Mathf.Max(_cardsNumber - 1, 1);
@@ -98,7 +98,7 @@ public class PlayerCardSpawner : MonoBehaviour
 
 		}
 
-        MainHand.gameObject.GetComponent<HandAnimationLogic>().EnableAnimations();
+        MainHand.gameObject.GetComponent<CardHolderAnimation>().EnableAnimations(true);
         isPlaying = false;
     }
 

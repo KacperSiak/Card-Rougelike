@@ -27,14 +27,14 @@ public class RewardsData : ScriptableObject
 
 public class RewardContext
 {
-    public PlayerOverlay player;
+    public PlayerManager player;
     public ConsumablesAndRelicMenager consAndRelic;
     public MapManager mapManager;
     public GamblingManager gambling;
 
     public RewardContext()
     {
-        player = PlayerOverlay.Instance;
+        player = PlayerManager.Instance;
         consAndRelic = ConsumablesAndRelicMenager.Instance;
         mapManager = MapManager.instance;
         gambling = GamblingManager.Instance;

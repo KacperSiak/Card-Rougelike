@@ -14,12 +14,12 @@ public class DebuffData : ScriptableObject
 
 public class DebuffContext
 {
-    public PlayerOverlay player;
+    public PlayerManager player;
     public ShopMenager shopManager;
 
     public DebuffContext()
     {
-        player = PlayerOverlay.Instance;
+        player = PlayerManager.Instance;
         shopManager = ShopMenager.Instance;
     }
 }

@@ -6,7 +6,7 @@ public class HealForCoins : CardEffect
     public override void ApplyEffect(ConsumableContext ctx)
     {
         int gold = ctx.player.gold;
-        ctx.player.SpendGold(gold);
-        ctx.player.AddHealth(gold);
+        ctx.player.GoldChange(gold, false);
+        ctx.player.HealthChange(gold, true);
     }
 }

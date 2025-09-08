@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //to be improved
-public class CamMovementManager : MonoBehaviour
+public class CamMovementManager : PersistenSingleton<CamMovementManager>
 {
-    public static CamMovementManager Instance { get; private set; }
-
     //mb incapsulate more later 
     public bool InProgress { get; set; } = false;
     public bool IsFirstSet { get; private set; } = true;
@@ -18,13 +16,6 @@ public class CamMovementManager : MonoBehaviour
     private Dictionary<string, Transform> _camPositionsFirstSet = new();
     private Dictionary<string, Transform> _camPositionsSecondSet = new();
     private Dictionary<string, Transform> _currentCamPositionsSet = new();
-    
-
-    void Awake()
-    {
-        if (Instance == null) Instance = this;
-        else Destroy(gameObject);
-    }
 
     void Start()
     {
@@ -45,7 +36,7 @@ public class CamMovementManager : MonoBehaviour
     {     
         if (Input.anyKey)
         {
-            if (InProgress) return;
+            if (InProgress || DiscardManager.Instance.InUI) return;
 
             CheckKeyAndActivateAnimation();
             return;

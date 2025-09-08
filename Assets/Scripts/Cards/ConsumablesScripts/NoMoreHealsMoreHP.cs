@@ -1,13 +1,14 @@
 ﻿using System;
+using UnityEngine.Events;
 
 [Serializable]
 public class NoMoreHealsMoreHP: CardEffect
 {
     public int bonusHealth;
+    public static UnityEvent<string> OnShopBlock = new UnityEvent<string>();
     public override void ApplyEffect(ConsumableContext ctx)
     {
-        // block fountains
-        ctx.player.maxHP += bonusHealth;
-        ctx.player.AddHealth(bonusHealth);
+        OnShopBlock?.Invoke("Heal");
+        ctx.player.MaxHPCHange(bonusHealth);
     }
 }

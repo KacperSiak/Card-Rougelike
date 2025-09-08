@@ -1,4 +1,4 @@
-using UnityEngine;
+    using UnityEngine;
 using UnityEngine.SceneManagement;
 using MapSystem;
 using Systems.SceneManagement;
@@ -31,6 +31,8 @@ public class NodeClickHandler : MonoBehaviour
     public NodeType nodeType = NodeType.Enemy;
     
     private static bool isPlayerMoving = false;
+    private bool _shopBlock = false;
+    private bool _healBlock = false;
     
 
     void Start()
@@ -39,6 +41,8 @@ public class NodeClickHandler : MonoBehaviour
         {
             gameObject.AddComponent<BoxCollider>();
         }
+
+        NoMoreHealsMoreHP.OnShopBlock.AddListener(BlockScene);
     }
 
     void Update()
@@ -262,7 +266,7 @@ public class NodeClickHandler : MonoBehaviour
 
     void LoadScene()
     {
-        if (!string.IsNullOrEmpty(sceneToLoad))
+        if (!string.IsNullOrEmpty(sceneToLoad) && IsSceneBlocked(sceneToLoad))
         {
             if (IsCombatNode(nodeType))
             {
@@ -345,5 +349,19 @@ public class NodeClickHandler : MonoBehaviour
             case NodeType.Boss: return "Final boss";
             default: return "Unknown location";
         }
+    }
+
+    private bool IsSceneBlocked(string sceneName)
+    {
+        if(_healBlock && sceneName == "HealingDesign") return false;
+        if(_shopBlock && sceneName == "ShopScene") return false;
+
+        return true;
+    }
+
+    private void BlockScene(string scene)
+    {
+        if(scene == "Shop") _shopBlock = true;
+        if (scene == "Heal") _healBlock = true;
     }
 }
