@@ -4,33 +4,30 @@ using UnityEngine.UI;
 
 public class HorseOpen : MonoBehaviour
 {
-    [SerializeField] private Button _openButton;
-    [SerializeField] private ChestOpen _chest;
+    [SerializeField] private Animator chestAnimator, decreaseAnimator;
+    private GamblingSceneManager manager;
     private Animator anim;
-    private bool _canOpen;
-    private float time = 0.833f;
 
+    float time;
     void Awake()
     {
         anim = GetComponent<Animator>();
-        _openButton.onClick.AddListener(Open);
-        _canOpen = true;
     }
+
+    private void Start()
+    {
+        manager = GamblingSceneManager.Instance;
+    }
+
+    private void OnMouseDown() => Open();
 
     private void Open()
     {
-        if (_canOpen)
-        {
-            _canOpen = false;
-            anim.SetTrigger("HorseOpen");
-            StartCoroutine(WaitForHorse(time));
-        }
-    }
+        if (!manager.canRoll) return;
 
-    IEnumerator WaitForHorse(float time)
-    {
-        yield return new WaitForSeconds(time);
-        _chest.ChestOpening();
+        manager.canRoll = false;
+        anim.SetTrigger("HorseOpen");
+        chestAnimator.SetTrigger("RollChest");
+        decreaseAnimator.SetTrigger("Decrease");
     }
-  
 }

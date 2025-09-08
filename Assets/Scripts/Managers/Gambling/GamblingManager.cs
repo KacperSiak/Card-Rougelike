@@ -88,6 +88,13 @@ public class GamblingManager : PersistenSingleton<GamblingManager>
            
     }
 
+    public void HideParticles()
+    {
+        _positiveParticles.SetActive(false);
+        _negativeParticles.SetActive(false);
+        _neutralParticles.SetActive(false);
+    }
+
     public void Modify(float newModifier)
     {
         modifier = newModifier;

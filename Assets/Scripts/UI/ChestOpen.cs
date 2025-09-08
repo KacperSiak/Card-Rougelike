@@ -3,35 +3,19 @@ using System.Collections;
 
 public class ChestOpen : MonoBehaviour
 {
-    [SerializeField] private Vector3 _startPos;
-    [SerializeField] private Vector3 _endPos;
-    [SerializeField] private float _duration;
-
-    private float _elapsed = 0f;
     private Animator _anim;
     private bool _canOpen;
-    private bool _opening;
-    
+    private bool rewardGranted;
+
+    float timer;
+    bool timerStarted;
     private void Awake()
     {
-        _anim = GetComponentInChildren<Animator>();
-        
-    }
-
-    private void Update()
-    {
-        if (_opening && _elapsed < _duration)
-        {
-            _elapsed += Time.deltaTime;
-            float t = _elapsed / _duration;
-            transform.position = Vector3.Lerp(_startPos, _endPos, t);
-
-            if (_elapsed >= _duration)
-            {
-                _opening = false;
-                _canOpen = true;
-            }
-        }
+        _anim = GetComponent<Animator>();
+        _canOpen = false;
+        rewardGranted = false;
+    
+        timer = 0;
     }
 
     private void OnMouseDown()
@@ -40,12 +24,42 @@ public class ChestOpen : MonoBehaviour
         {
             _canOpen = false;
             _anim.SetTrigger("ChestOpen");
-            GamblingManager.Instance.Roll();
+            timerStarted = true;
+        }
+        if (rewardGranted)
+        {
+            GamblingSceneManager.Instance.OnRewardGranted();
         }
     }
 
-    public void ChestOpening()
+    private void Update()
     {
-        _opening = true;
+        if (!timerStarted) return;
+
+        timer += Time.deltaTime;
+        if(timer >= 4)
+        {
+            rewardGranted = true;
+            timerStarted = false;
+            timer = 0;
+        }
+    }
+
+    public void ResetState()
+    {
+        _anim.SetTrigger("ChestHide");
+        DisableOpening();
+        rewardGranted = false;
+    }
+
+    public void EnableOpening() => _canOpen = true;
+    public void DisableOpening() => _canOpen = false;
+
+    public void RollReward()
+    {
+        if (GamblingManager.Instance)
+            GamblingManager.Instance.Roll();
+        else
+            Debug.LogWarning("There's no Gambling Manager on this scene");
     }
 }
