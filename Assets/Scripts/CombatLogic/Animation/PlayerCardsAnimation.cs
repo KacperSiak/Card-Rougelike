@@ -8,7 +8,6 @@ public class PlayerCardsAnimation : CardsAnimation
     [field: SerializeField] public int Interval = 3;
     [SerializeField] private float _duration = 0.1f;
     private Vector3 _idleV = new();
-    public bool WaveAnimationActive { get; private set; } = false;
 
     [SerializeField] private List<Transform> _newPositions;
 
@@ -33,13 +32,13 @@ public class PlayerCardsAnimation : CardsAnimation
         if(PlayerCardManager.Instance.CardsInHand.Count == 0)
             return;
 
-        WaveAnimationActive = true;
+        IsAnimating = true;
         StartCoroutine(IdleAnimation());
     }
 
     public void StopWaveAnimation()
     {
-        WaveAnimationActive = false;
+        IsAnimating = false;
         StopCoroutine(IdleAnimation());
     }
 
@@ -62,7 +61,7 @@ public class PlayerCardsAnimation : CardsAnimation
         
         card = PlayerCardManager.Instance.CardsInHand[^1];
         card.GetComponent<PlayerCardLogic>().ResetLastPlacement(_idleV);
-        WaveAnimationActive = false;
+        IsAnimating = false;
     }
 
 }

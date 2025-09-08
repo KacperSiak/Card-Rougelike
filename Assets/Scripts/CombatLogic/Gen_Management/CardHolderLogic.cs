@@ -6,7 +6,7 @@ public class CardHolderLogic : MonoBehaviour
 {
     [SerializeField] private Material _highlightMaterial;
     [SerializeField] private Material _defaultMaterial;
-    [SerializeField] private CardHolderAnimation _cardHolderAnimation;
+    [field: SerializeField] public CardHolderAnimation CardHolderAnimation { get; private set; }
     [SerializeField] private PlayerCardsAnimation _playerCardsAnimation;
     [SerializeField] private float _duration;
     private bool _isOccupied = false;
@@ -72,10 +72,15 @@ public class CardHolderLogic : MonoBehaviour
 
         if (PCardScripts.Count > 0)
         {
-            _cardHolderAnimation.DisableAnimations();
+            CardHolderAnimation.DisableAnimations();
             ValidatorType.Validate(this);
         }
 
+    }
+
+    public void Attack()
+    {
+        //_playerCardsAnimation.Attack(EnemyCardManager.Instance.cardObjects[EnemyComboIndex], PCardScripts.ConvertAll(card => card.transform).ToArray());
     }
 
     public void OnValidated()
@@ -114,7 +119,7 @@ public class CardHolderLogic : MonoBehaviour
             _finalSpawnPosition += new Vector3(0.05f, 0.001f, 0);
         }
 
-        _cardHolderAnimation.EnableAnimations(isPHand: false);
+        CardHolderAnimation.EnableAnimations(isPHand: false);
     }
 
     public void OnValidationFailed()
@@ -126,7 +131,7 @@ public class CardHolderLogic : MonoBehaviour
     { 
         _isOccupied = false;
         ValidatedPlayerCardsPower = 0;
-        _cardHolderAnimation.DisableAnimations();
+        CardHolderAnimation.DisableAnimations();
 
         _playerCardsAnimation.RemoveCard(PCardScripts.ConvertAll(card => card.transform).ToArray());
 

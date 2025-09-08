@@ -4,8 +4,6 @@ using UnityEngine;
 public class EnemyCardAnimation : CardsAnimation
 {
     [SerializeField] private float _placementDuration = 1f;
-    
-    public bool IsAnimating { get; private set; } = false;
 
     public void PlaceCards(Transform parentPosition, int amount, int key)
     {

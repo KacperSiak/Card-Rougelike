@@ -1530,7 +1530,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _highlightMaterial: {fileID: 2100000, guid: 446f6a4d26d8ca946ae7bcdfe856d1d2, type: 2}
   _defaultMaterial: {fileID: -876546973899608171, guid: 6f75183e23fd43d4b8efa18f2611253b, type: 3}
-  _cardHolderAnimation: {fileID: 546319114}
+  <CardHolderAnimation>k__BackingField: {fileID: 546319114}
   _playerCardsAnimation: {fileID: 1794805949}
   _duration: 0.5
 --- !u!65 &546319111
@@ -2070,6 +2070,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _removedCardPosition: {fileID: 840463061}
+  _attackDuration: 1
+  _attackRotation: {x: 0, y: 0, z: 0, w: 0}
   _removalDuration: 0.7
   _height: 0.25
   _curve:
@@ -3795,6 +3797,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _removedCardPosition: {fileID: 840463061}
+  _attackDuration: 1
+  _attackRotation: {x: -0.00000004371139, y: 0, z: 0, w: 1}
   _removalDuration: 0.7
   _height: 0.25
   _curve:
@@ -4927,6 +4931,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _removedCardPosition: {fileID: 840463061}
+  _attackDuration: 1
+  _attackRotation: {x: -0.00000004371139, y: 0, z: 0, w: 1}
   _removalDuration: 0.7
   _height: 0.25
   _curve:
@@ -5263,7 +5269,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _highlightMaterial: {fileID: 2100000, guid: 446f6a4d26d8ca946ae7bcdfe856d1d2, type: 2}
   _defaultMaterial: {fileID: -876546973899608171, guid: 6f75183e23fd43d4b8efa18f2611253b, type: 3}
-  _cardHolderAnimation: {fileID: 1612053568}
+  <CardHolderAnimation>k__BackingField: {fileID: 1612053568}
   _playerCardsAnimation: {fileID: 1794805949}
   _duration: 0.5
 --- !u!114 &1612053568
@@ -5982,6 +5988,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _removedCardPosition: {fileID: 1278511602}
+  _attackDuration: 1
+  _attackRotation: {x: -0.00000004371139, y: 0, z: 0, w: 1}
   _removalDuration: 0.7
   _height: 0.25
   _curve:
@@ -6324,7 +6332,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _highlightMaterial: {fileID: 2100000, guid: 446f6a4d26d8ca946ae7bcdfe856d1d2, type: 2}
   _defaultMaterial: {fileID: -876546973899608171, guid: 6f75183e23fd43d4b8efa18f2611253b, type: 3}
-  _cardHolderAnimation: {fileID: 1849157071}
+  <CardHolderAnimation>k__BackingField: {fileID: 1849157071}
   _playerCardsAnimation: {fileID: 1794805949}
   _duration: 0.5
 --- !u!65 &1849157068
@@ -7508,6 +7516,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _removedCardPosition: {fileID: 840463061}
+  _attackDuration: 1
+  _attackRotation: {x: -0.00000004371139, y: 0, z: 0, w: 1}
   _removalDuration: 0.7
   _height: 0.25
   _curve:

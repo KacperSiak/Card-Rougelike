@@ -13,6 +13,8 @@ public class DamageManager : PersistenSingleton<DamageManager>
         {
             if (ch.ValidatedPlayerCardsPower == 0) continue;
 
+            //ch.CardHolderAnimation.DisableAnimations();
+            //ch.Attack();
             EnemyCardManager.Instance.UpdatePower(ch.EnemyComboIndex, ch.ValidatedPlayerCardsPower);
             ch.ResetCardHolderPlayerCards();
         }

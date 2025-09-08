@@ -45,7 +45,7 @@ public class CardHolderAnimation : MonoBehaviour
     {
         if (_isPlayerHand)
         {
-            while (playerCardsAnimation.WaveAnimationActive)
+            while (playerCardsAnimation.IsAnimating)
                 yield return null;
         }
 
