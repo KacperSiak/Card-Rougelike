@@ -40,8 +40,6 @@ public class NodeClickHandler : MonoBehaviour
             gameObject.AddComponent<BoxCollider>();
         }
     }
-    
-    // Removed unused InitializePlayerMarker (marker is spawned by MapGenerator)
 
     void Update()
     {
