@@ -221,7 +221,6 @@ public class NodeClickHandler : MonoBehaviour
 
         playerMarker.transform.position = toPos;
         currentPlayerNode = transform;
-        // Save player position on every completed move
         if (mapSaveManager != null)
         {
             mapSaveManager.SaveCurrentMap();
@@ -265,7 +264,6 @@ public class NodeClickHandler : MonoBehaviour
             playerMarker.SetActive(true);
         }
 
-        // Save player position on every completed move
         if (mapSaveManager != null)
         {
             mapSaveManager.SaveCurrentMap();

@@ -12,7 +12,6 @@ public class MapSaveManager : MonoBehaviour
     
     void Start()
     {
-        // References should be assigned in the Inspector (no runtime searches)
         if (mapGenerator == null)
             Debug.LogWarning("[MapSaveManager] MapGenerator not assigned (Inspector)");
         if (mapManager == null)
@@ -41,10 +40,8 @@ public class MapSaveManager : MonoBehaviour
 
     void OnEnable()
     {
-        // When the map scene re-activates (additive loading), try to reapply player position quickly
         if (mapSaveData != null && mapSaveData.hasPlayerPosition)
         {
-            // Use a short delay to allow map visuals to spawn
             StartCoroutine(RestorePlayerPositionDelayed());
         }
     }
@@ -67,7 +64,6 @@ public class MapSaveManager : MonoBehaviour
         Debug.Log("[MapSaveManager] Map saved to ScriptableObject");
     }
 
-    // Convenience API to update only player position/time without regenerating anything else
     public void SavePlayerPositionOnly()
     {
         if (mapSaveData == null || mapManager == null) return;
