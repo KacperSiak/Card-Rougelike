@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -34,8 +35,8 @@ public class RelicUIDisplay : MonoBehaviour
         GameObject icon = Instantiate(_iconPrefab, _iconDisplay);
         Image img = icon.GetComponent<Image>();
         //warnings
-        if (img != null)
-            img.sprite = relic.icon;
+        if (img != null) img.sprite = relic.icon;
+        else Debug.Log("There is no icon");
 
         RelicIconButtonsUI iconUI = icon.GetComponent<RelicIconButtonsUI>();
         if (iconUI != null)
@@ -48,7 +49,6 @@ public class RelicUIDisplay : MonoBehaviour
             });
         }
     }
-
     private void ShowFullDisplay()
     {
         return;

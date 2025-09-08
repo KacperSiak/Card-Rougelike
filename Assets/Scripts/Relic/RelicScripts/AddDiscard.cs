@@ -5,12 +5,12 @@ public class AddDiscard : RelicEffects
 {
     public override void Register(RelicContext ctx)
     {
-        // PlayerOverlay.Instance.discardCount++;
+        PlayerManager.Instance.availableDiscards++;
 
     }
     public override void Unregister(RelicContext ctx)
     {
-        // PlayerOverlay.Instance.discardCount--;
+        PlayerManager.Instance.availableDiscards--;
     }
 }
 

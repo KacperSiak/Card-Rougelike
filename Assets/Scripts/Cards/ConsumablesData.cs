@@ -26,12 +26,16 @@ public class ConsumableContext
     public PlayerManager player;
     public ShopMenager shop;
     public ConsumablesAndRelicMenager consAndRel;
+    public DamageManager damageManager;
 
+    public bool immune;
+    public bool vulnerable;
     public ConsumableContext()
     {
         player = PlayerManager.Instance;
         shop = ShopMenager.Instance;
         consAndRel = ConsumablesAndRelicMenager.Instance;
+        damageManager = DamageManager.Instance;
     }
 }
 

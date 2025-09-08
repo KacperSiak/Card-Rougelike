@@ -31,15 +31,17 @@ public class RelicContext
     public MapManager mapManager;
     public RoundManager roundManager;
     public GamblingManager gambler;
+    public DamageManager damageManager;
 
-
-    public bool CleanSequenceBeatEverythingEnable { get; set; }
+    public bool CleanSequenceBeatEverythingEnable = false;
+    public bool Gaps = false;
     public RelicContext()
     {
         player = PlayerManager.Instance;
         mapManager = MapManager.instance;
         roundManager = RoundManager.Instance;
         gambler = GamblingManager.Instance;
+        damageManager = DamageManager.Instance;
     }
 }
 

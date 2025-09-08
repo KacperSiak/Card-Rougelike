@@ -634,11 +634,17 @@ MonoBehaviour:
   connectionMaterial: {fileID: 2100000, guid: 48a306c2c149cec4ba5543902c74ce82, type: 2}
   connectionWidth: 0.1
   connectionYOffset: 0
+  connectionSegments: 24
+  connectionCurvature: 0.6
+  pulseSpeed: 2.5
+  pulseWidthAmplitude: 0.09
   minConnectionsPerNode: 2
   maxConnectionsPerNode: 4
   maxConnectionDistance: 5
   cameraController: {fileID: 1665362199}
+  nodeInfoUI: {fileID: 967349714}
   mapManager: {fileID: 594651637}
+  mapSaveManager: {fileID: 594651638}
   fixedSeed: 0
   lastUsedSeed: 401670215
 --- !u!114 &594651637
@@ -1737,7 +1743,7 @@ MonoBehaviour:
   boundsObject: {fileID: 1383819851}
   cameraHeight: 15
   xOffset: -10
-  minZoom: -20
+  minZoom: 20
   maxZoom: 60
 --- !u!1 &1681245142
 GameObject:
