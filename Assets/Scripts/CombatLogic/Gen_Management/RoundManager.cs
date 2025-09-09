@@ -2,8 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.SceneManagement;
+using static UnityEngine.EventSystems.EventTrigger;
 
 public class RoundManager : PersistenSingleton<RoundManager>
 {
@@ -12,12 +12,13 @@ public class RoundManager : PersistenSingleton<RoundManager>
     [field: SerializeField] public List<CardsSOTest> PlayerCards { get; private set; }
     [SerializeField] private AthenaAnimationLogic _athenaAnimationLogic; 
     public StructForDictionary<int, int> CurrentCombatDetails { get; private set; } 
+    public Suits TrumpSuit { get; private set; } 
     private bool _alreadyFinished = false; // to prevent double calls of the end of combat
 
     public bool damageBlock; // Kacper Added
 
     public static event Action OnHPChanged;
-    public static event Action OnCombatEnd; // logic is mostly temporary, to mark the end of combat and enable any interactions, but later it will be modified to be built in the whole game logic
+    public static event Action OnCombatEnd; 
     public static event Action OnCombatStart;
     public static event Action OnRoundEnd;
 
@@ -68,6 +69,8 @@ public class RoundManager : PersistenSingleton<RoundManager>
         _playerHP = PlayerManager.Instance.PlayerHP;
         CurrentCombatDetails = CombatManager.Instance.GetCurrentCombatDetails();
         StartCoroutine(CheckCombatReadiness());
+        TrumpSuit = (Suits)UnityEngine.Random.Range(0, Enum.GetValues(typeof(Suits)).Length - 1);
+        Debug.Log("Trump suit is: " + TrumpSuit);
     }
 
     private IEnumerator CheckCombatReadiness()
