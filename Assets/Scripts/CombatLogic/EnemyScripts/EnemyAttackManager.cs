@@ -46,7 +46,6 @@ public class EnemyAttackManager : MonoBehaviour
         int amount = Mathf.CeilToInt(totalPower / (float)k_powerIndex); 
 
         return Mathf.Clamp(amount, k_minRound, k_maxRound);
-        //return 100;
     }
 
     public void UpdateRounds()
@@ -66,8 +65,7 @@ public class EnemyAttackManager : MonoBehaviour
 
             //if(_consContext.immune) RoundManager.Instance.PlayerHP -= EnemyCardManager.Instance.CardsInGamePower[i] * 0;
             //else if (_consContext.vulnerable) RoundManager.Instance.PlayerHP -= EnemyCardManager.Instance.CardsInGamePower[i] * 2;
-            //else RoundManager.Instance.PlayerHP -= EnemyCardManager.Instance.CardsInGamePower[i];
-
+            else RoundManager.Instance.PlayerHP -= EnemyCardManager.Instance.CardsInGamePower[i];
 
             if (RoundManager.Instance.PlayerHP <= 0) return;
 

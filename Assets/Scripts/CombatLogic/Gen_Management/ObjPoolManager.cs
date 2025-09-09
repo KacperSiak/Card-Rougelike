@@ -58,7 +58,6 @@ public class ObjPoolManager : PersistenSingleton<ObjPoolManager>
         if (isSenderPlayer)
         {
             GameObject card = _playerPool[^1];
-            card.transform.localScale /= 1.7f; //temp
             _playerPool.Remove(card);
             card.transform.SetParent(null, true);
             return card;
