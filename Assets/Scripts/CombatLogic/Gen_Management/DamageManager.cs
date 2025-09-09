@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,6 +9,8 @@ public class DamageManager : PersistenSingleton<DamageManager>
    [SerializeField] private List<CardHolderLogic> _cardHolders;
 
     private int _bonusDamage = 0;
+    private int multiply = 1;
+    private ConsumableContext _consContext;
 
     protected override void OnSingletonAwake() { }
 
@@ -32,10 +35,15 @@ public class DamageManager : PersistenSingleton<DamageManager>
     {
         for (int i = 0; i < _cardHolders.Count; i++)
         { 
-            if (!EnemyCardManager.Instance.CardsInGamePower.ContainsKey(i) || EnemyCardManager.Instance.CardsInGamePower[i] > 0) continue; 
+            if (!EnemyCardManager.Instance.CardsInGamePower.ContainsKey(i) || EnemyCardManager.Instance.CardsInGamePower[i] > 0) continue;
+            int dmg = -((EnemyCardManager.Instance.CardsInGamePower[i] - _bonusDamage) * multiply);
+            RoundManager.Instance.EnemyHP -= dmg; // cuz number in the list will be negative after we will implement player impact
 
-            RoundManager.Instance.EnemyHP -= -(EnemyCardManager.Instance.CardsInGamePower[i] - _bonusDamage); // cuz number in the list will be negative after we will implement player impact
-
+            if(_consContext.selfHit)
+            {
+                int health = (int)System.Math.Round(dmg * 0.1f, MidpointRounding.AwayFromZero);
+                RoundManager.Instance.PlayerHP -= health; 
+            } 
             if (RoundManager.Instance.EnemyHP <= 0) return;
 
             _cardHolders[i].ResetCardHolderEnemyCards();
@@ -51,5 +59,11 @@ public class DamageManager : PersistenSingleton<DamageManager>
     {
         if (add) _bonusDamage += amount;
         else _bonusDamage -= amount;
+    }
+
+    public void MultiplyDamage(int amount, bool add)
+    {
+        if (add) multiply *= amount;
+        else multiply /= amount;
     }
 }

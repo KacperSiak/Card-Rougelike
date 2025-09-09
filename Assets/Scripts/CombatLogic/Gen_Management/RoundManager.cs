@@ -20,11 +20,14 @@ public class RoundManager : PersistenSingleton<RoundManager>
     public static event Action OnCombatStart;
     public static event Action OnRoundEnd;
 
+    private ConsumableContext _context;
+
     private void OnEnable()
     {
         OnHPChanged += CheckHPState;
         OnCombatEnd += ReturnHealthValueAfterCombat;
         OnCombatEnd += SwitchToMainScene;
+        ConsumablesEventSystem.OnInstaWin.AddListener(CombatEndCard);
     } 
     
     
@@ -33,6 +36,7 @@ public class RoundManager : PersistenSingleton<RoundManager>
         OnHPChanged -= CheckHPState;
         OnCombatEnd -= ReturnHealthValueAfterCombat;
         OnCombatEnd -= SwitchToMainScene;
+        ConsumablesEventSystem.OnInstaWin.RemoveListener(CombatEndCard);
     }
 
     private int _playerHP;
@@ -110,7 +114,8 @@ public class RoundManager : PersistenSingleton<RoundManager>
             return;
         }
 
-        MoveToNextRound();
+        if(!_context.bonusRound) MoveToNextRound();
+        else _context.bonusRound = false;
 
     }
 
@@ -121,10 +126,16 @@ public class RoundManager : PersistenSingleton<RoundManager>
 
     private void CheckHPState()
     {
-        if(_playerHP > 0 && _enemyHP > 0) return;
+
+        if (_playerHP > 0 && _enemyHP > 0) return;
 
         UIManager.Instance.Winner = _playerHP > 0 ? "Player" : "Enemy";
-        _alreadyFinished = true; 
+        _alreadyFinished = true;
+        OnCombatEnd?.Invoke();
+    }
+
+    private void CombatEndCard()
+    {
         OnCombatEnd?.Invoke();
     }
 
