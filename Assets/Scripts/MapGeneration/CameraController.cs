@@ -14,12 +14,25 @@ public class CameraController : MonoBehaviour
     public float cameraHeight = 15f;
     
     [Header("Centering Settings")]
-    public float xOffset = 0f;    [Header("Zoom Settings")]
+    public float xOffset = 0f;
+
+    [Header("Zoom Settings")]
     public float minZoom = 5f;
     public float maxZoom = 20f;
+    public float zoomSpeed = 10f;
+    [Tooltip("Smoothing for zoom transitions (seconds), lower = snappier")] public float zoomSmoothTime = 0.12f;
 
-    private Vector3 lastMousePosition;
+    // Dragging and inertia removed per request
+
+    [Header("Ground Plane")]
+    [Tooltip("Y height of the ground plane used for mouse-to-world")] public float groundY = 0f;
+
     private Camera cam;
+    private float targetOrthoSize;
+    private float orthoVel; // ref for SmoothDamp
+    private float targetFov;
+    private float fovVel; // ref for SmoothDamp
+    private Vector3 lastMousePosition;
     
     void Start()
     {
@@ -27,6 +40,19 @@ public class CameraController : MonoBehaviour
         if (cam == null)
         {
             enabled = false;
+        }
+        else
+        {
+            if (cam.orthographic)
+            {
+                cam.orthographicSize = Mathf.Clamp(cam.orthographicSize, minZoom, maxZoom);
+                targetOrthoSize = cam.orthographicSize;
+            }
+            else
+            {
+                cam.fieldOfView = Mathf.Clamp(cam.fieldOfView, minZoom, maxZoom);
+                targetFov = cam.fieldOfView;
+            }
         }
         
         SetBoundsFromObject();
@@ -38,34 +64,16 @@ public class CameraController : MonoBehaviour
         HandleZoom();
     }
     
-    void HandleDragging()
-    {
-        if (Input.GetMouseButtonDown(0))
-        {
-            Vector3 mouseWorldPos = GetMouseWorldPosition();
-            lastMousePosition = mouseWorldPos;
-        }
-        
-        if (Input.GetMouseButton(0))
-        {
-            Vector3 currentMouseWorld = GetMouseWorldPosition();
-            Vector3 deltaWorld = lastMousePosition - currentMouseWorld;
-            
-            Vector3 newPosition = transform.position;
-            newPosition.x += deltaWorld.x;
-            newPosition.z += deltaWorld.z;
-            
-            newPosition = ClampToBounds(newPosition);
-            
-            transform.position = newPosition;
-        }
-    }
-    
     Vector3 GetMouseWorldPosition()
     {
-        Vector3 mousePos = Input.mousePosition;
-        mousePos.z = transform.position.y;
-        return cam.ScreenToWorldPoint(mousePos);
+        if (cam == null) return transform.position;
+        Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+        Plane plane = new Plane(Vector3.up, new Vector3(0f, groundY, 0f));
+        if (plane.Raycast(ray, out float enter))
+        {
+            return ray.GetPoint(enter);
+        }
+        return transform.position;
     }
     
     Vector3 ClampToBounds(Vector3 position)
@@ -94,24 +102,77 @@ public class CameraController : MonoBehaviour
         return position;
     }
     
+    void HandleDragging()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            Vector3 mouseWorldPos = GetMouseWorldPosition();
+            lastMousePosition = mouseWorldPos;
+        }
+        
+        if (Input.GetMouseButton(0))
+        {
+            Vector3 currentMouseWorld = GetMouseWorldPosition();
+            Vector3 deltaWorld = lastMousePosition - currentMouseWorld;
+            
+            Vector3 newPosition = transform.position;
+            newPosition.x += deltaWorld.x;
+            newPosition.z += deltaWorld.z;
+            
+            newPosition = ClampToBounds(newPosition);
+            
+            transform.position = newPosition;
+        }
+    }
+    
     void HandleZoom()
     {
-        float scroll = Input.GetAxis("Mouse ScrollWheel");
+        if (cam == null) return;
+        float scroll = Input.mouseScrollDelta.y;
+
+        // Capture mouse world ref before changing zoom
+        Vector3 mouseWorldRef = GetMouseWorldPosition();
         
-        if (scroll != 0)
+        if (Mathf.Abs(scroll) > 1e-4f)
         {
             if (cam.orthographic)
             {
-                cam.orthographicSize = Mathf.Clamp(cam.orthographicSize - scroll * 2f, minZoom, maxZoom);
+                targetOrthoSize = Mathf.Clamp(targetOrthoSize - scroll * zoomSpeed, minZoom, maxZoom);
             }
             else
             {
-                cam.fieldOfView = Mathf.Clamp(cam.fieldOfView - scroll * 20f, minZoom, maxZoom);
+                targetFov = Mathf.Clamp(targetFov - scroll * (zoomSpeed * 2f), minZoom, maxZoom);
             }
-            
-            transform.position = ClampToBounds(transform.position);
+        }
+
+        if (cam.orthographic)
+        {
+            float prev = cam.orthographicSize;
+            float next = Mathf.SmoothDamp(prev, targetOrthoSize, ref orthoVel, zoomSmoothTime);
+            if (!Mathf.Approximately(prev, next))
+            {
+                cam.orthographicSize = next;
+                // keep mouse pivot stable in ortho
+                Vector3 toMouse = mouseWorldRef - transform.position;
+                float factor = 1f - (prev / Mathf.Max(1e-4f, next));
+                Vector3 pos = transform.position + new Vector3(toMouse.x, 0f, toMouse.z) * factor;
+                transform.position = ClampToBounds(pos);
+            }
+        }
+        else
+        {
+            float prev = cam.fieldOfView;
+            float next = Mathf.SmoothDamp(prev, targetFov, ref fovVel, zoomSmoothTime);
+            if (!Mathf.Approximately(prev, next))
+            {
+                cam.fieldOfView = next;
+                // optional: we could approximate pivot preservation for perspective, but smoothing alone usually suffices
+                transform.position = ClampToBounds(transform.position);
+            }
         }
     }
+
+    // Inertia removed
     
     public void SetBoundsFromObject()
     {

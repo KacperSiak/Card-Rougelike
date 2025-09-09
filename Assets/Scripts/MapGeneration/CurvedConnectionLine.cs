@@ -46,7 +46,7 @@ public class CurvedConnectionLine : MonoBehaviour
         material = cfg.material;
         pulseSpeed = cfg.pulseSpeed;
         pulseWidthAmplitude = cfg.pulseWidthAmp;
-    pulseOnlyWhenReachable = cfg.pulseOnlyWhenReachable;
+        pulseOnlyWhenReachable = cfg.pulseOnlyWhenReachable;
 
         Setup();
         Rebuild();
@@ -69,11 +69,11 @@ public class CurvedConnectionLine : MonoBehaviour
         lr.alignment = LineAlignment.View;
         lr.numCapVertices = 4;
         lr.numCornerVertices = 2;
-    lr.sharedMaterial = material;
+        lr.sharedMaterial = material;
         lr.textureMode = LineTextureMode.Stretch;
         lr.sortingOrder = -1;
-    lr.receiveShadows = false;
-    lr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+        lr.receiveShadows = false;
+        lr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
     }
 
     void Update()

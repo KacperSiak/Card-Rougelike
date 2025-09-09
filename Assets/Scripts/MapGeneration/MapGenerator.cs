@@ -339,6 +339,7 @@ public class MapGenerator : MonoBehaviour
                     if (nodeHandler != null)
                     {
                         nodeHandler.nodeType = node.Type;
+                        nodeHandler.mapNode = node;
                         if (nodeHandler.mapGenerator == null) nodeHandler.mapGenerator = this;
                         if (nodeHandler.mapManager == null) nodeHandler.mapManager = mapManager;
                         if (nodeHandler.cameraController == null) nodeHandler.cameraController = cameraController;
