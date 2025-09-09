@@ -22,16 +22,15 @@ public class CameraController : MonoBehaviour
     public float zoomSpeed = 10f;
     [Tooltip("Smoothing for zoom transitions (seconds), lower = snappier")] public float zoomSmoothTime = 0.12f;
 
-    // Dragging and inertia removed per request
 
     [Header("Ground Plane")]
     [Tooltip("Y height of the ground plane used for mouse-to-world")] public float groundY = 0f;
 
     private Camera cam;
     private float targetOrthoSize;
-    private float orthoVel; // ref for SmoothDamp
+    private float orthoVel;
     private float targetFov;
-    private float fovVel; // ref for SmoothDamp
+    private float fovVel;
     private Vector3 lastMousePosition;
     
     void Start()
@@ -130,7 +129,6 @@ public class CameraController : MonoBehaviour
         if (cam == null) return;
         float scroll = Input.mouseScrollDelta.y;
 
-        // Capture mouse world ref before changing zoom
         Vector3 mouseWorldRef = GetMouseWorldPosition();
         
         if (Mathf.Abs(scroll) > 1e-4f)
@@ -152,7 +150,6 @@ public class CameraController : MonoBehaviour
             if (!Mathf.Approximately(prev, next))
             {
                 cam.orthographicSize = next;
-                // keep mouse pivot stable in ortho
                 Vector3 toMouse = mouseWorldRef - transform.position;
                 float factor = 1f - (prev / Mathf.Max(1e-4f, next));
                 Vector3 pos = transform.position + new Vector3(toMouse.x, 0f, toMouse.z) * factor;
@@ -166,13 +163,13 @@ public class CameraController : MonoBehaviour
             if (!Mathf.Approximately(prev, next))
             {
                 cam.fieldOfView = next;
-                // optional: we could approximate pivot preservation for perspective, but smoothing alone usually suffices
-                transform.position = ClampToBounds(transform.position);
+                Vector3 mouseWorldAfter = GetMouseWorldPosition();
+                Vector3 pivotDelta = mouseWorldRef - mouseWorldAfter;
+                Vector3 pos = transform.position + new Vector3(pivotDelta.x, 0f, pivotDelta.z);
+                transform.position = ClampToBounds(pos);
             }
         }
     }
-
-    // Inertia removed
     
     public void SetBoundsFromObject()
     {
