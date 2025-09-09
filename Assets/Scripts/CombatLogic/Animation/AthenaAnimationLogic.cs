@@ -6,7 +6,7 @@ public class AthenaAnimationLogic : MonoBehaviour
     [SerializeField] private float _changeLimit = 2f;
     [SerializeField] private Animator _animator;
     [SerializeField] private List<string> _idleOptions;
-    [SerializeField] private List<string> _roundFinishOptions;
+    [SerializeField] private string _roundFinishOption;
     private float _currentTime = 0f;
 
     void Update()
@@ -24,7 +24,7 @@ public class AthenaAnimationLogic : MonoBehaviour
 
     public void RoundFinishAnimation()
     {
-        _animator.SetTrigger(_roundFinishOptions[Random.Range(0, _roundFinishOptions.Count)]);
+        _animator.SetTrigger(_roundFinishOption);
         _currentTime = 0f;
     }
 
