@@ -2,13 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerCardsAnimation : PersistenSingleton<PlayerCardsAnimation>
+public class PlayerCardsAnimation : CardsAnimation
 {
     [SerializeField] private Vector3[] _idleVectors;
     [field: SerializeField] public int Interval = 3;
     [SerializeField] private float _duration = 0.1f;
     private Vector3 _idleV = new();
-    public bool WaveAnimationActive { get; private set; } = false;
 
     [SerializeField] private List<Transform> _newPositions;
 
@@ -33,13 +32,13 @@ public class PlayerCardsAnimation : PersistenSingleton<PlayerCardsAnimation>
         if(PlayerCardManager.Instance.CardsInHand.Count == 0)
             return;
 
-        WaveAnimationActive = true;
+        IsAnimating = true;
         StartCoroutine(IdleAnimation());
     }
 
     public void StopWaveAnimation()
     {
-        WaveAnimationActive = false;
+        IsAnimating = false;
         StopCoroutine(IdleAnimation());
     }
 
@@ -62,7 +61,7 @@ public class PlayerCardsAnimation : PersistenSingleton<PlayerCardsAnimation>
         
         card = PlayerCardManager.Instance.CardsInHand[^1];
         card.GetComponent<PlayerCardLogic>().ResetLastPlacement(_idleV);
-        WaveAnimationActive = false;
+        IsAnimating = false;
     }
 
 }

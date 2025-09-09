@@ -3,13 +3,14 @@ using UnityEngine;
 
 public class EnemyAttackManager : MonoBehaviour
 {
-    [SerializeField] public Dictionary<int, int> RoundsForCards { get; private set; } = new();
+    public Dictionary<int, int> RoundsForCards { get; private set; } = new(); 
+    [SerializeField] private List<DiceLogic> _diceLogic;
     private int _round;
     private const int k_powerIndex = 6; 
     private const int k_minRound = 1;
     private const int k_maxRound = 5;
     private const int k_limit = 3;
-
+    private ConsumableContext _consContext;
     private void OnEnable()
     {
         RoundManager.OnCombatEnd += OnCombatEnd;
@@ -36,7 +37,8 @@ public class EnemyAttackManager : MonoBehaviour
 
         RoundsForCards.Add(key, _round);
 
-        UIManager.Instance.SetRoundForEnemyUI(key);
+        _diceLogic[key].UpdateRounds(_round); 
+
     }
 
     private int CalculateRound(int totalPower)
@@ -53,16 +55,19 @@ public class EnemyAttackManager : MonoBehaviour
         {
             if (!RoundsForCards.ContainsKey(i))
             {
-                UIManager.Instance.SetRoundForEnemyUI(key: i);
+                _diceLogic[i].UpdateRounds(key: 0);
                 continue;
             } 
 
             RoundsForCards[i]--;
-            UIManager.Instance.SetRoundForEnemyUI(key: i);
+            _diceLogic[i].UpdateRounds(RoundsForCards[i]);
 
             if (RoundsForCards[i] > 0) continue;
 
-            RoundManager.Instance.PlayerHP -= EnemyCardManager.Instance.CardsInGamePower[i];
+            if(_consContext.immune) RoundManager.Instance.PlayerHP -= EnemyCardManager.Instance.CardsInGamePower[i] * 0;
+            else if (_consContext.vulnerable) RoundManager.Instance.PlayerHP -= EnemyCardManager.Instance.CardsInGamePower[i] * 2;
+            else RoundManager.Instance.PlayerHP -= EnemyCardManager.Instance.CardsInGamePower[i];
+
 
             if (RoundManager.Instance.PlayerHP <= 0) return;
 

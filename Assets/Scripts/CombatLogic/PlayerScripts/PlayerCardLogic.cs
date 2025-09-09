@@ -30,13 +30,10 @@ public class PlayerCardLogic : MonoBehaviour
             transform.position += _hoverOffset;
     }
 
-    //? 
     private void OnViewChanged()
     { 
         _hoverOffset = CamMovementManager.Instance.IsFirstSet ? _hoverVectors[0] : _hoverVectors[1];
-        Debug.Log(_hoverOffset + "camera changed" + CamMovementManager.Instance.IsFirstSet);
         _pressedOffset = CamMovementManager.Instance.IsFirstSet ? _pressedVectors[0] : _pressedVectors[1];
-        Debug.Log(_pressedOffset + "camera changed" + CamMovementManager.Instance.IsFirstSet);
     }
 
     public void SaveDefaultProperties()
@@ -74,7 +71,6 @@ public class PlayerCardLogic : MonoBehaviour
     {
         if (_isSelected || !_isAvailable || DiscardManager.Instance.InUI) return;
         transform.position += _hoverOffset;
-        Debug.Log(_hoverOffset);
         _isHovered = true;
     }
 
@@ -99,7 +95,6 @@ public class PlayerCardLogic : MonoBehaviour
                 return; // Prevent selecting more than 3 cards
 
             transform.position += _pressedOffset;
-            Debug.Log(_pressedOffset);
             PlayerCardManager.Instance.AddSelectedCards(gameObject);
             _isSelected = true;
 
@@ -116,23 +111,10 @@ public class PlayerCardLogic : MonoBehaviour
 
     }
 
-    //probably i won't need that itf
     public void MakeReusable()
     {
         _isSelected = false;
         IsUsed = false;
-        IsNew = true;
     }
 
-    public void ResetCard()
-    {
-        transform.position = Vector3.zero;
-        transform.localScale = _defaultSize;
-        transform.rotation = Quaternion.identity;
-        Card = null; 
-        _isAvailable = false;
-        MakeReusable();
-        RoundManager.OnRoundEnd -= MakeReusable;
-        PlayerCardManager.OnViewChanged -= OnViewChanged;
-    }
 }

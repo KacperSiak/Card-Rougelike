@@ -47,8 +47,6 @@ public class CamMovementManager : PersistenSingleton<CamMovementManager>
             _currentCamPositionsSet = IsFirstSet ? _camPositionsFirstSet : _camPositionsSecondSet;
             _cameraAnimation.ChangeCameraPlacement(target: _currentCamPositionsSet["Main"], duration: _duration, isChanging: false);
             InProgress = false;
-            //temp
-            UIManager.Instance.TurnRoundOn();
         }
     }
 

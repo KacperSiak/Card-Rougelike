@@ -18,9 +18,12 @@ public class PlayerCardManager : PersistenSingleton<PlayerCardManager>
     [SerializeField] private int _cardsInHandDefault = 8;
     private int _currentCardsInHand = 0;
 
+    protected override void OnSingletonAwake()
+    {
+        //_cardsInHandDefault = PlayerManager.Instance.handsize;
+    }
     private void OnEnable()
     {
-        RoundManager.OnCombatEnd += OnCombatEnd;
         RoundManager.OnRoundEnd += RefillCards; 
         RoundManager.OnRoundEnd += ClearSelectedStorage;
         RoundManager.OnCombatStart += StartCombat;
@@ -29,7 +32,6 @@ public class PlayerCardManager : PersistenSingleton<PlayerCardManager>
 
     private void OnDisable()
     {
-        RoundManager.OnCombatEnd -= OnCombatEnd;
         RoundManager.OnRoundEnd -= RefillCards;
         RoundManager.OnRoundEnd -= ClearSelectedStorage;
         RoundManager.OnCombatStart -= StartCombat;
@@ -129,17 +131,6 @@ public class PlayerCardManager : PersistenSingleton<PlayerCardManager>
 
         _spawner.SpawnCards(PlayerDeckInGame, CardsInHand, cardsAmount: amount);
 
-    }
-
-    private void OnCombatEnd()
-    {
-        foreach (var card in CardsInHand)
-        {
-            card.GetComponent<PlayerCardLogic>().ResetCard();
-            card.SetActive(false);
-            ObjPoolManager.Instance.ReturnCard(card);
-        }
-        ClearSelectedStorage();
     }
 
 }

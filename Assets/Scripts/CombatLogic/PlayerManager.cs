@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 public class PlayerManager : PersistenSingleton<PlayerManager>
 {
@@ -8,6 +9,9 @@ public class PlayerManager : PersistenSingleton<PlayerManager>
     private int _maxPlayerHP = 50;
 
     public int availableDiscards = 3;
+    public int handsize = 8;
+
+    public static UnityEvent OnHpChange = new UnityEvent();
     public int PlayerHP
     {
         get => _currentPlayerHP;
@@ -15,6 +19,15 @@ public class PlayerManager : PersistenSingleton<PlayerManager>
         {
             _currentPlayerHP = value;
             // Later here can be like event activation to check if we need to finish the whole game or not
+        }
+    }
+
+    public int MaxHP
+    {
+        get => _maxPlayerHP;
+        set
+        {
+            _maxPlayerHP = value;
         }
     }
 
@@ -45,6 +58,7 @@ public class PlayerManager : PersistenSingleton<PlayerManager>
 
         }
         else _currentPlayerHP -= amount;
+        OnHpChange?.Invoke();
     }
 
     public void MaxHPCHange(int amount)
