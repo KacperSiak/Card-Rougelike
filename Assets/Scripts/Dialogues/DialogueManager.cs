@@ -5,9 +5,8 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class DialogueManager : MonoBehaviour
+public class DialogueManager : PersistenSingleton<DialogueManager>
 {
-    public static DialogueManager instance;
     private EnemyTease enemyTease;
     private NewRunDialogue newRunDialogue;
     [SerializeField] private DialogueData data;
@@ -30,16 +29,6 @@ public class DialogueManager : MonoBehaviour
     [SerializeField] private float _textDelay = .003f;
 
     [SerializeField] private TextAsset TESTINKJSON;
-
-    private void Awake()
-    {
-        if (instance != null)
-            Debug.LogWarning("[DialogueManager] Found more than one Dialogue Manager in the scene!");
-        else
-            instance = this;
-    }
-
-    public static DialogueManager GetInstance() => instance;
 
     private void Start()
     {

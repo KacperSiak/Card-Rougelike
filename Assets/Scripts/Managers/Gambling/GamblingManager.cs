@@ -94,7 +94,14 @@ public class GamblingManager : PersistenSingleton<GamblingManager>
            
     }
 
-    public void Modify(float newModifier, bool potion, bool reset)
+    public void HideParticles()
+    {
+        _positiveParticles.SetActive(false);
+        _negativeParticles.SetActive(false);
+        _neutralParticles.SetActive(false);
+    }
+
+    public void Modify(float newModifier)
     {
         if (potion)
         {
