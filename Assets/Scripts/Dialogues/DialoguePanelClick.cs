@@ -8,7 +8,7 @@ public class DialoguePanelClick : MonoBehaviour
 
     private void Start()
     {
-        dialogueManager = DialogueManager.instance;
+        dialogueManager = DialogueManager.Instance;
         button.onClick.AddListener(()=>dialogueManager.InteractionWithDialogueBox());
     }
 }

@@ -28,7 +28,6 @@ public class MaterialPropBlock : MonoBehaviour
 	{
 		_block = new();
 		//_block.SetColor("_Color", _color);
-		_block.SetTexture("_Texture2D", _tex);
 		_renderer.SetPropertyBlock(_block);
 	}
 }

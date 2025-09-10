@@ -29,6 +29,8 @@ public class NodeClickHandler : MonoBehaviour
     
     [Header("Node Info")]
     public NodeType nodeType = NodeType.Enemy;
+    [Tooltip("Backing MapNode for this instance, set by MapGenerator during instantiation")]
+    public MapNode mapNode;
     
     private static bool isPlayerMoving = false;
     private bool _shopBlock = false;
@@ -101,10 +103,7 @@ public class NodeClickHandler : MonoBehaviour
             return true;
         }
         
-        if (mapGenerator == null || mapGenerator.mapLevels == null) 
-        {
-            return false;
-        }
+    if (mapGenerator == null || mapGenerator.mapLevels == null) return false;
         
         if (mapManager != null && !mapManager.HasTimeLeft())
         {
@@ -112,44 +111,12 @@ public class NodeClickHandler : MonoBehaviour
             return false;
         }
         
-        Vector2 currentPos = new Vector2(currentPlayerNode.position.x, currentPlayerNode.position.z);
-        Vector2 targetPos = new Vector2(transform.position.x, transform.position.z);
-        
-        MapNode currentMapNode = null;
-        
-        foreach (var level in mapGenerator.mapLevels)
-        {
-            foreach (var node in level)
-            {
-                Vector2 nodePos = new Vector2(node.Position.x, node.Position.y);
-                float distanceToCurrent = Vector2.Distance(nodePos, currentPos);
-                
-                if (distanceToCurrent < 0.5f)
-                {
-                    currentMapNode = node;
-                    break;
-                }
-            }
-            if (currentMapNode != null) break;
-        }
-        
-        if (currentMapNode == null)
-        {
-            return false;
-        }
-        
-        foreach (var connectedNode in currentMapNode.ConnectedNodes)
-        {
-            Vector2 connectedPos = new Vector2(connectedNode.Position.x, connectedNode.Position.y);
-            float distanceToTarget = Vector2.Distance(connectedPos, targetPos);
-            
-            if (distanceToTarget < 0.5f)
-            {
-                return true;
-            }
-        }
-        
-        return false;
+    // Fast path: use MapNode references instead of scanning the whole map
+    var currentHandler = currentPlayerNode.GetComponent<NodeClickHandler>();
+    if (currentHandler == null || currentHandler.mapNode == null || mapNode == null) return false;
+
+    // Adjacent if the target's MapNode is in the current node's connection list
+    return currentHandler.mapNode.ConnectedNodes.Contains(mapNode);
     }
     
     void MovePlayerHere()

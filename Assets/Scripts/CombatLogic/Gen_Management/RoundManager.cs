@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using static UnityEngine.EventSystems.EventTrigger;
+using Systems.SceneManagement;
 
 public class RoundManager : PersistenSingleton<RoundManager>
 {
@@ -88,7 +89,10 @@ public class RoundManager : PersistenSingleton<RoundManager>
 
     private void SwitchToMainScene()
     {
-        SceneManager.LoadScene("MapGeneration"); // for now like that, for future improvement
+        if (SceneLoader.Instance != null)
+        {
+            _ = SceneLoader.Instance.manager.ActivateScene("MapGeneration");
+        }
     }
 
     public void EndRound()
