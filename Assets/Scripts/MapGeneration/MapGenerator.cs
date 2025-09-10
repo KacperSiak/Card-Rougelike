@@ -372,6 +372,10 @@ public class MapGenerator : MonoBehaviour
             
             NodeClickHandler.playerMarker = currentPlayerMarker;
             NodeClickHandler.currentPlayerNode = startNodeTransform;
+            if (mapLevels[0].Count > 0)
+            {
+                NodeClickHandler.currentPlayerMapNode = mapLevels[0][0];
+            }
         }
     }
 
