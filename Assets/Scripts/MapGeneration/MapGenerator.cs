@@ -109,9 +109,9 @@ public class MapGenerator : MonoBehaviour
     {
         InitializeSettings();
         
-        bool willLoadFromSave = mapSaveManager != null && mapSaveManager.HasSavedMap();
+    bool willLoadFromSave = mapSaveManager != null && mapSaveManager.HasSavedMap();
         
-        if (willLoadFromSave)
+    if (willLoadFromSave)
         {
             Debug.Log("[MapGenerator] MapSaveManager will load saved map");
             mapSaveManager.LoadSavedMap();
