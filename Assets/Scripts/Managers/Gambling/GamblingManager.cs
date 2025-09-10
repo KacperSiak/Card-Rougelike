@@ -103,14 +103,14 @@ public class GamblingManager : PersistenSingleton<GamblingManager>
 
     public void Modify(float newModifier)
     {
-        if (potion)
-        {
-            potionModifier = newModifier;
-            potionModified = true;
-        }
+        //if (potion)
+        //{
+        //    potionModifier = newModifier;
+        //    potionModified = true;
+        //}
 
-        if (reset) modifier /= newModifier;
-        else modifier *= newModifier;
+        //if (reset) modifier /= newModifier;
+        //else modifier *= newModifier;
 
     }
 
