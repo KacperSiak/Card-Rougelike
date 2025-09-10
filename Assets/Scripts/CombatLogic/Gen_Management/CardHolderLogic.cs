@@ -6,7 +6,8 @@ public class CardHolderLogic : MonoBehaviour
 {
     [SerializeField] private Material _highlightMaterial;
     [SerializeField] private Material _defaultMaterial;
-    [SerializeField] private CardHolderAnimation _cardHolderAnimation;
+    [field: SerializeField] public CardHolderAnimation CardHolderAnimation { get; private set; }
+    [SerializeField] private PlayerCardsAnimation _playerCardsAnimation;
     [SerializeField] private float _duration;
     private bool _isOccupied = false;
     private bool _isInspected = false;
@@ -71,15 +72,21 @@ public class CardHolderLogic : MonoBehaviour
 
         if (PCardScripts.Count > 0)
         {
-            _cardHolderAnimation.DisableAnimations();
+            CardHolderAnimation.DisableAnimations();
             ValidatorType.Validate(this);
         }
 
     }
 
+    public void Attack()
+    {
+        //_playerCardsAnimation.Attack(EnemyCardManager.Instance.cardObjects[EnemyComboIndex], PCardScripts.ConvertAll(card => card.transform).ToArray());
+    }
+
     public void OnValidated()
     {
-        
+        ValidatedPlayerCardsPower = PlayerCardManager.Instance.SelectedCardsPower;
+        PlayerCardManager.Instance.ClearSelectedCards();
         StartCoroutine(PlaceCards());
     }
 
@@ -88,9 +95,9 @@ public class CardHolderLogic : MonoBehaviour
         PlayerCardManager.Instance.GetMainHand().GetComponent<CardHolderAnimation>().DisableAnimations();
         _isOccupied = true;
 
-        Vector3 _finalSpawnPosition = (PlayerCardManager.Instance.SelectedCards.Count == 1) ? transform.position : transform.position + new Vector3(-0.05f, 0.001f, 0);
+        Vector3 _finalSpawnPosition = (PCardScripts.Count == 1) ? transform.position : transform.position + new Vector3(-0.05f, 0.001f, 0);
 
-        foreach (GameObject card in PlayerCardManager.Instance.SelectedCards)
+        foreach (PlayerCardLogic card in PCardScripts)
         {
             float elapsed = 0f;
             
@@ -107,14 +114,12 @@ public class CardHolderLogic : MonoBehaviour
             }
 
             card.transform.SetParent(transform);
-            card.GetComponent<PlayerCardLogic>().IsUsed = true;
+            card.IsUsed = true;
 
             _finalSpawnPosition += new Vector3(0.05f, 0.001f, 0);
         }
 
-        _cardHolderAnimation.EnableAnimations(isPHand: false);
-        ValidatedPlayerCardsPower = PlayerCardManager.Instance.SelectedCardsPower;
-        PlayerCardManager.Instance.ClearSelectedCards();
+        CardHolderAnimation.EnableAnimations(isPHand: false);
     }
 
     public void OnValidationFailed()
@@ -126,14 +131,9 @@ public class CardHolderLogic : MonoBehaviour
     { 
         _isOccupied = false;
         ValidatedPlayerCardsPower = 0;
-        _cardHolderAnimation.DisableAnimations();
+        CardHolderAnimation.DisableAnimations();
 
-        foreach (var card in PCardScripts)
-        {
-            card.gameObject.SetActive(false);
-            card.ResetCard();
-            ObjPoolManager.Instance.ReturnCard(card.gameObject);
-        }
+        _playerCardsAnimation.RemoveCard(PCardScripts.ConvertAll(card => card.transform).ToArray());
 
         PCardScripts.Clear();
     }

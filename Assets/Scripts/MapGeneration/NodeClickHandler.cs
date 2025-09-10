@@ -1,4 +1,4 @@
-    using UnityEngine;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 using MapSystem;
 using Systems.SceneManagement;
@@ -361,7 +361,7 @@ public class NodeClickHandler : MonoBehaviour
 
     private void BlockScene(string scene)
     {
-        if(scene == "Shop") _shopBlock = true;
-        if(scene == "Heal") _healBlock = true;
+        if (scene == "Shop") _shopBlock = true;
+        if (scene == "Heal") _healBlock = true;
     }
 }

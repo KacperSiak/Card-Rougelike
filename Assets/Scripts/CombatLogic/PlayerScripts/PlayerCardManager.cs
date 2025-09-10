@@ -26,7 +26,6 @@ public class PlayerCardManager : PersistenSingleton<PlayerCardManager>
     }
     private void OnEnable()
     {
-        RoundManager.OnCombatEnd += OnCombatEnd;
         RoundManager.OnRoundEnd += RefillCards; 
         RoundManager.OnRoundEnd += ClearSelectedStorage;
         RoundManager.OnCombatStart += StartCombat;
@@ -35,7 +34,6 @@ public class PlayerCardManager : PersistenSingleton<PlayerCardManager>
 
     private void OnDisable()
     {
-        RoundManager.OnCombatEnd -= OnCombatEnd;
         RoundManager.OnRoundEnd -= RefillCards;
         RoundManager.OnRoundEnd -= ClearSelectedStorage;
         RoundManager.OnCombatStart -= StartCombat;

@@ -125,7 +125,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _hoverVectors:
   - {x: 0, y: 0.01, z: 0.01}
-  - {x: 0, y: 0.0125, z: -0.00088}
+  - {x: 0, y: 0.0125, z: 0.00088}
   _pressedVectors:
   - {x: 0, y: 0.01, z: 0.01}
-  - {x: 0, y: 0.0125, z: -0.00088}
+  - {x: 0, y: 0.0125, z: 0.00088}

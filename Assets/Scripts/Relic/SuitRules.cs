@@ -8,6 +8,7 @@ public static class SuitRules
     public static bool AreEqual(Suits a, Suits b)
     {
         if (a == Suits.Joker || b == Suits.Joker) return true;
+        if(a == RoundManager.Instance.TrumpSuit || b == RoundManager.Instance.TrumpSuit) return true; //trump suit logic 
 
         if (CombineBlackSuits)
         {

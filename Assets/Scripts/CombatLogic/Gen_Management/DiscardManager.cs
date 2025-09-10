@@ -4,13 +4,14 @@ using UnityEngine.EventSystems;
 public class DiscardManager : PersistenSingleton<DiscardManager>
 {
     [SerializeField] private GameObject _discardPanel;
+    [SerializeField] private PlayerCardsAnimation _playerCardsAnimation;
     private int discardAvailableAmount = 3;
 
     public bool InUI { get; private set; } = false;
 
     protected override void OnSingletonAwake()
     {
-        discardAvailableAmount = PlayerManager.Instance.availableDiscards;
+        //discardAvailableAmount = PlayerManager.Instance.availableDiscards;
     }
 
     protected override void OnDestroy()
@@ -52,12 +53,7 @@ public class DiscardManager : PersistenSingleton<DiscardManager>
 
         discardAvailableAmount -= PlayerCardManager.Instance.SelectedCards.Count;
 
-        foreach (var card in PlayerCardManager.Instance.SelectedCards)
-        {
-            card.GetComponent<PlayerCardLogic>().ResetCard();
-            card.SetActive(false);
-            ObjPoolManager.Instance.ReturnCard(card);
-        }
+        _playerCardsAnimation.RemoveCard(PlayerCardManager.Instance.SelectedCards.ConvertAll(card => card.transform).ToArray());
 
         PlayerCardManager.Instance.UpdateAfterDiscard(amount: PlayerCardManager.Instance.SelectedCards.Count);
     }

@@ -69,9 +69,11 @@ public class CurvedConnectionLine : MonoBehaviour
         lr.alignment = LineAlignment.View;
         lr.numCapVertices = 4;
         lr.numCornerVertices = 2;
-        lr.material = material;
+    lr.sharedMaterial = material;
         lr.textureMode = LineTextureMode.Stretch;
         lr.sortingOrder = -1;
+    lr.receiveShadows = false;
+    lr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
     }
 
     void Update()
@@ -132,7 +134,7 @@ public class CurvedConnectionLine : MonoBehaviour
     {
         if (lr == null) Setup();
 
-        lr.material = material;
+    if (lr.sharedMaterial != material) lr.sharedMaterial = material;
         lr.positionCount = Mathf.Max(2, segments + 1);
 
         lr.startWidth = width;

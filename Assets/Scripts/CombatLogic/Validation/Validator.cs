@@ -11,13 +11,28 @@ public class Validator : MonoBehaviour
     {
         _cardHolder = cardHolder;
         _isValid = true;
+        SortBeforeValidation();
         ValidateCards();
         ContinueValidation();
     }
 
+    private void SortBeforeValidation()
+    {
+        for (int i = 0; i < _cardHolder.PCardScripts.Count; i++)
+        {
+            for (int j = i + 1; j < _cardHolder.PCardScripts.Count; j++)
+            {
+                if (_cardHolder.PCardScripts[i].Card.power > _cardHolder.PCardScripts[j].Card.power)
+                {
+                    (_cardHolder.PCardScripts[i], _cardHolder.PCardScripts[j]) = (_cardHolder.PCardScripts[j], _cardHolder.PCardScripts[i]);
+                }
+            }
+        }
+    }
+
     protected virtual void ValidateCards() { }
 
-    // Limits for player, can't use cards to get rig of them, if they can't attack enemy
+    // Limits for player, can't use cards to get rid of them, if they can't attack enemy
     private void ContinueValidation()
     {
         if (!_isValid)
