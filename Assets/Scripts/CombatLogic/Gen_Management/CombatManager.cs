@@ -13,13 +13,16 @@ public class CombatManager : MonoBehaviour
 
     [SerializeField] private List<StructForDictionary<NodeType, List<StructForDictionary<int, List<CardsSOTest>>>>> _listDifferentTypes;
 
-    [SerializeField] private List<StructForDictionary<NodeType, StructForDictionary<int, int>>> _listCombatDetails; 
+    [SerializeField] private List<StructForDictionary<NodeType, StructForDictionary<int, int>>> _listCombatDetails;
+
+    [SerializeField] private List<StructForDictionary<int, StructForDictionary<int, int>>> diceInfo;
 
     private StructForDictionary<int, List<CardsSOTest>> _innerDeck = new();
 
     private Dictionary<NodeType, Dictionary<int, List<CardsSOTest>>> _decksForDifferentTypes = new();
     private Dictionary<NodeType, StructForDictionary<int, int>> _combatDetails = new();
     private Dictionary<NodeType, int> _deckSize = new();
+    public Dictionary<int, StructForDictionary<int, int>> _diceDictionary { get; private set; } = new();
 
     private void Awake()
     {
@@ -72,6 +75,7 @@ public class CombatManager : MonoBehaviour
         _decksForDifferentTypes.Clear();
         _combatDetails.Clear();
         _deckSize.Clear();
+        _diceDictionary.Clear();
 
         foreach (var enemyType in _listDifferentTypes)
         {
@@ -88,6 +92,11 @@ public class CombatManager : MonoBehaviour
         foreach (var detail in _listCombatDetails)
         {
             _combatDetails.Add(detail.key, detail.value);
+        }
+
+        foreach (var dice in diceInfo)
+        {
+            _diceDictionary.Add(dice.key, dice.value);
         }
     }
 

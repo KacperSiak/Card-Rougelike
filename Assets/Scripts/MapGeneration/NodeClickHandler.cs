@@ -44,7 +44,7 @@ public class NodeClickHandler : MonoBehaviour
             gameObject.AddComponent<BoxCollider>();
         }
 
-        NoMoreHealsMoreHP.OnShopBlock.AddListener(BlockScene);
+        ConsumablesEventSystem.OnSceneBlock.AddListener(BlockScene);
     }
 
     void Update()

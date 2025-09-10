@@ -13,7 +13,6 @@ public class ValidateDirty : Validator
         }
 
         _isValid = SuitRules.AreEqual(_cardHolder.PCardScripts[0].Card.suit, _cardHolder.PCardScripts[_cardHolder.PCardScripts.Count - 1].Card.suit); // changed == for SuitRules. It works the same way as "==" but let relics easly change logic
-        if (_cardHolder.PCardScripts[_cardHolder.PCardScripts.Count - 1].Card.suit == Suits.Joker) _isValid = true;
         Debug.Log("valid or not: " + _isValid);
 
         for (int i = 0; i < _cardHolder.PCardScripts.Count - 1; i++)
@@ -27,7 +26,6 @@ public class ValidateDirty : Validator
             if (!_isValid) break;
 
             _isValid = SuitRules.AreEqual(_cardHolder.PCardScripts[i].Card.suit, _cardHolder.PCardScripts[i + 1].Card.suit); // changed == for SuitRules. It works the same way as "==" but let relics easly change logic
-            if (_cardHolder.PCardScripts[i + 1].Card.suit == Suits.Joker) _isValid = true;
 
             if (!_isValid) break;
 

@@ -16,8 +16,6 @@ public class CameraAnimation : MonoBehaviour
         StartCoroutine(MoveToTarget(isChanging));
         _isPlaying = true;
         CamMovementManager.Instance.InProgress = true;
-        //temp
-        UIManager.Instance.TurnRoundOff();
     }
 
     private IEnumerator MoveToTarget(bool isChanging)

@@ -59,7 +59,7 @@ public class EnemyCardSpawner : MonoBehaviour
                 CardsSOTest card = cardsBySuit[randomCleanSuit][randomCleanCard];
                 cardsBySuit[randomCleanSuit].RemoveAt(randomCleanCard);
 
-                CardSetupManager.Instance.SetupCardVisual(cardObject.GetComponent<MeshRenderer>(), card.column, card.row);
+                MaterialSetupManager.Instance.SetupVisual(cardObject.GetComponent<MeshRenderer>(), card.column, card.row);
                 cardObject.GetComponent<EnemyCardLogic>().SetCardProperties(card);
                 power += card.power;
 
@@ -119,7 +119,7 @@ public class EnemyCardSpawner : MonoBehaviour
 
             randomDirtySuit++;
 
-            CardSetupManager.Instance.SetupCardVisual(cardObject.GetComponent<MeshRenderer>(), card.column, card.row);
+            MaterialSetupManager.Instance.SetupVisual(cardObject.GetComponent<MeshRenderer>(), card.column, card.row);
             cardObject.GetComponent<EnemyCardLogic>().SetCardProperties(card);
             power += card.power;
 
@@ -144,7 +144,7 @@ public class EnemyCardSpawner : MonoBehaviour
 
         CheckCardsInDeckAmount(cardsBySuit, randomSuit);
 
-        CardSetupManager.Instance.SetupCardVisual(cardObject.GetComponent<MeshRenderer>(), card.column, card.row);
+        MaterialSetupManager.Instance.SetupVisual(cardObject.GetComponent<MeshRenderer>(), card.column, card.row);
         cardObject.GetComponent<EnemyCardLogic>().SetCardProperties(card);
         power += card.power;
             
