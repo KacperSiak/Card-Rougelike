@@ -38,7 +38,7 @@ public class RelicContext
     public RelicContext()
     {
         player = PlayerManager.Instance;
-        mapManager = MapManager.instance;
+        mapManager = MapManager.Instance;
         roundManager = RoundManager.Instance;
         gambler = GamblingManager.Instance;
         damageManager = DamageManager.Instance;
