@@ -1,9 +1,11 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class DamageManager : PersistenSingleton<DamageManager>
 {
    [SerializeField] private EnemyAttackManager _enemyAttackManager;
+   [SerializeField] private PlayerCardsAnimation _playerCardsAnimation;
 
    [SerializeField] private List<CardHolderLogic> _cardHolders;
 
@@ -15,19 +17,30 @@ public class DamageManager : PersistenSingleton<DamageManager>
     {
         base.OnDestroy();
     }
+
+    //here  
     public void CalculatePlayerImpact()
     {
-        foreach (var ch in _cardHolders)
-        {
-            if (ch.ValidatedPlayerCardsPower == 0) continue;
+        StartCoroutine(Animated());
+    }
 
-            //ch.CardHolderAnimation.DisableAnimations();
-            //ch.Attack();
-            EnemyCardManager.Instance.UpdatePower(ch.EnemyComboIndex, ch.ValidatedPlayerCardsPower);
-            ch.ResetCardHolderPlayerCards();
-        }
+    private IEnumerator Animated()
+    { 
+       foreach (var ch in _cardHolders)
+       {
+           if (ch.ValidatedPlayerCardsPower == 0) continue;
 
-        ImplementPlayerImpact();
+           ch.CardHolderAnimation.DisableAnimations();
+           ch.Attack();
+
+            while(_playerCardsAnimation.IsAnimating)
+                yield return null;
+
+           EnemyCardManager.Instance.UpdatePower(ch.EnemyComboIndex, ch.ValidatedPlayerCardsPower);
+           ch.ResetCardHolderPlayerCards();
+       }
+
+       ImplementPlayerImpact();
     }
 
     private void ImplementPlayerImpact()

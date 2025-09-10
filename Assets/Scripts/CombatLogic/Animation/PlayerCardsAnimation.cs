@@ -45,7 +45,7 @@ public class PlayerCardsAnimation : CardsAnimation
     private IEnumerator IdleAnimation()
     {
         var card = PlayerCardManager.Instance.CardsInHand[0];
-        card.GetComponent<PlayerCardLogic>().SetAnimationPlacement(newPosition: _idleV, newRotation: card.transform.rotation);
+        card.GetComponent<PlayerCardLogic>().SetAnimationPlacement(newPosition: _idleV);
 
         yield return new WaitForSeconds(_duration);
 
@@ -54,7 +54,7 @@ public class PlayerCardsAnimation : CardsAnimation
             var previousCard = card;
             card = PlayerCardManager.Instance.CardsInHand[i];
 
-            card.GetComponent<PlayerCardLogic>().SetAnimationPlacement(newPosition: _idleV, newRotation: card.transform.rotation);
+            card.GetComponent<PlayerCardLogic>().SetAnimationPlacement(newPosition: _idleV);
             previousCard.GetComponent<PlayerCardLogic>().ResetLastPlacement(_idleV);
             yield return new WaitForSeconds(_duration);
         }
