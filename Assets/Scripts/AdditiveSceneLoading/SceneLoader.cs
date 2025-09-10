@@ -36,6 +36,8 @@ namespace Systems.SceneManagement
 
         async void Start()
         {
+            // Register all configured groups so manager can detect cross-group activations
+            manager.RegisterSceneGroups(sceneGroups);
             await LoadSceneGroup(0);
         }
 
