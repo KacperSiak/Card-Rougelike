@@ -17,6 +17,6 @@ public class PassiveHeal : RelicEffects
 
     void Heal()
     {
-        contex.player.AddHealth(healAmount);
+        contex.player.HealthChange(healAmount, true);
     }
 }

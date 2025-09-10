@@ -2,23 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerCardsAnimation : MonoBehaviour
+public class PlayerCardsAnimation : CardsAnimation
 {
     [SerializeField] private Vector3[] _idleVectors;
     [field: SerializeField] public int Interval = 3;
     [SerializeField] private float _duration = 0.1f;
     private Vector3 _idleV = new();
-    public bool WaveAnimationActive { get; private set; } = false;
-
-    public static PlayerCardsAnimation Instance { get; private set; }
 
     [SerializeField] private List<Transform> _newPositions;
-
-    void Awake()
-    {
-        if (Instance == null) Instance = this;
-        else Destroy(gameObject);
-    }
 
     private void OnEnable()
     {
@@ -41,13 +32,13 @@ public class PlayerCardsAnimation : MonoBehaviour
         if(PlayerCardManager.Instance.CardsInHand.Count == 0)
             return;
 
-        WaveAnimationActive = true;
+        IsAnimating = true;
         StartCoroutine(IdleAnimation());
     }
 
     public void StopWaveAnimation()
     {
-        WaveAnimationActive = false;
+        IsAnimating = false;
         StopCoroutine(IdleAnimation());
     }
 
@@ -70,28 +61,7 @@ public class PlayerCardsAnimation : MonoBehaviour
         
         card = PlayerCardManager.Instance.CardsInHand[^1];
         card.GetComponent<PlayerCardLogic>().ResetLastPlacement(_idleV);
-        WaveAnimationActive = false;
-    }
-
-    public void ActivatePlacementPreviewAnimation()
-    {
-        enabled = false;
-
-        foreach (var card in PlayerCardManager.Instance.SelectedCards)
-        {
-            var pos = _newPositions[PlayerCardManager.Instance.SelectedCards.IndexOf(card)];
-            card.GetComponent<PlayerCardLogic>().SetAnimationPlacement(newPosition: pos.position, newRotation: pos.rotation);
-        }
-    }
-
-    public void DeactivatePlacementPreviewAnimation()
-    {
-        foreach (var card in PlayerCardManager.Instance.SelectedCards)
-        {
-            //card.GetComponent<PlayerCardLogic>().ResetLastPlacement();
-        }
-
-        enabled = true;
+        IsAnimating = false;
     }
 
 }

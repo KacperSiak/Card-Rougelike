@@ -6,6 +6,6 @@ public class Heal : Rewards
     private int healAmount; 
     public override void AddReward(RewardContext ctx)
     {
-        ctx.player.AddHealth(healAmount);
+        ctx.player.HealthChange(healAmount, true);
     }
 }

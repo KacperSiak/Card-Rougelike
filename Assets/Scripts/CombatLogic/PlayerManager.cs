@@ -1,26 +1,71 @@
 using UnityEngine;
+using UnityEngine.Events;
 
-public class PlayerManager : MonoBehaviour
+public class PlayerManager : PersistenSingleton<PlayerManager>
 {
-    // Like that for now, but for future extension, and modification, we also need manager for the decks and kinda a game manager, to take care of things like cursor, etc.
+    public int gold;
 
-    public static PlayerManager Instance { get; private set; }
-    void Awake()
-    {
-        if (Instance == null) Instance = this;
+    private int _currentPlayerHP = 50; //temp 
+    private int _maxPlayerHP = 50;
 
-        else Destroy(gameObject);
-    }
-    
-    private int _playerHP = 50; //temp 
+    public int availableDiscards = 3;
+    public int handsize = 8;
 
+    public static UnityEvent OnHpChange = new UnityEvent();
     public int PlayerHP
     {
-        get => _playerHP;
+        get => _currentPlayerHP;
         set
         {
-            _playerHP = value;
+            _currentPlayerHP = value;
             // Later here can be like event activation to check if we need to finish the whole game or not
         }
+    }
+
+    public int MaxHP
+    {
+        get => _maxPlayerHP;
+        set
+        {
+            _maxPlayerHP = value;
+        }
+    }
+
+    protected override void OnSingletonAwake() { }
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
+    }
+
+    public void GoldChange(int amount, bool add)
+    {
+        if(add) gold += amount;
+        else gold -= amount;
+    }
+
+    public void HealthChange(int amount, bool add)
+    {
+        if (add)
+        {
+            if((PlayerHP += amount) > _maxPlayerHP)
+            {
+                _currentPlayerHP = _maxPlayerHP;
+            }
+            else
+            {
+                _currentPlayerHP += amount;
+            }
+
+        }
+        else _currentPlayerHP -= amount;
+        OnHpChange?.Invoke();
+    }
+
+    public void MaxHPCHange(int amount)
+    {
+        int percentege = Mathf.RoundToInt((float)_currentPlayerHP / _maxPlayerHP * 100f);
+        _maxPlayerHP = amount;
+        _currentPlayerHP = amount * percentege;
+        //show it on screen
     }
 }

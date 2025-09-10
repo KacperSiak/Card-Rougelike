@@ -5,11 +5,11 @@ public class EqualBlackSuits : RelicEffects
 {
     public override void Register(RelicContext ctx)
     {
-    // spades = clubs
+        SuitRules.CombineBlackSuits = true;
     }
 
     public override void Unregister(RelicContext ctx)
     {
-    // spades != clubs
+        SuitRules.CombineBlackSuits = false;
     }
 }

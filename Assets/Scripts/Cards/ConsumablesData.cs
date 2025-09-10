@@ -23,15 +23,19 @@ public class ConsumablesData : ShopItem
 
 public class ConsumableContext
 {
-    public PlayerOverlay player;
+    public PlayerManager player;
     public ShopMenager shop;
     public ConsumablesAndRelicMenager consAndRel;
+    public DamageManager damageManager;
 
+    public bool immune;
+    public bool vulnerable;
     public ConsumableContext()
     {
-        player = PlayerOverlay.Instance;
+        player = PlayerManager.Instance;
         shop = ShopMenager.Instance;
         consAndRel = ConsumablesAndRelicMenager.Instance;
+        damageManager = DamageManager.Instance;
     }
 }
 

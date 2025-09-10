@@ -1,10 +1,11 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 //mb separate saving properties and card logic
 public class PlayerCardLogic : MonoBehaviour
 {
-    [SerializeField] private Vector3[] _hoverVectors;
-    [SerializeField] private Vector3[] _pressedVectors;
+    [SerializeField] private List<Vector3> _hoverVectors;
+    [SerializeField] private List<Vector3> _pressedVectors;
 
     private Vector3 _hoverOffset = new();
     private Vector3 _pressedOffset = new();
@@ -21,13 +22,6 @@ public class PlayerCardLogic : MonoBehaviour
 
     public CardsSOTest Card { get; private set; }
 
-
-    private void OnEnable() 
-    {
-        RoundManager.OnRoundEnd += MakeReusable;
-        PlayerCardManager.OnViewChanged += OnViewChanged;
-    }
-
     public void RestoreSelectedPosition()
     { 
         if(_isSelected)
@@ -36,16 +30,10 @@ public class PlayerCardLogic : MonoBehaviour
             transform.position += _hoverOffset;
     }
 
-    private void OnDisable()
-    { 
-        RoundManager.OnRoundEnd -= MakeReusable;
-        PlayerCardManager.OnViewChanged -= OnViewChanged;
-    }
-
     private void OnViewChanged()
     { 
-       _hoverOffset = CamMovementManager.Instance.IsFirstSet ? _hoverVectors[0] : _hoverVectors[1];
-       _pressedOffset = CamMovementManager.Instance.IsFirstSet ? _pressedVectors[0] : _pressedVectors[1];
+        _hoverOffset = CamMovementManager.Instance.IsFirstSet ? _hoverVectors[0] : _hoverVectors[1];
+        _pressedOffset = CamMovementManager.Instance.IsFirstSet ? _pressedVectors[0] : _pressedVectors[1];
     }
 
     public void SaveDefaultProperties()
@@ -63,6 +51,8 @@ public class PlayerCardLogic : MonoBehaviour
         Card = card;
         _isAvailable = true;
         OnViewChanged();
+        RoundManager.OnRoundEnd += MakeReusable;
+        PlayerCardManager.OnViewChanged += OnViewChanged;
     }
 
     public void SetAnimationPlacement(Vector3 newPosition, Quaternion newRotation)
@@ -79,22 +69,26 @@ public class PlayerCardLogic : MonoBehaviour
 
     private void OnMouseEnter()
     {
-        if (_isSelected || !_isAvailable) return;
+        if (_isSelected || !_isAvailable || DiscardManager.Instance.InUI) return;
         transform.position += _hoverOffset;
         _isHovered = true;
     }
 
     private void OnMouseExit()
     {
-        if (_isSelected || !_isAvailable) return; 
+        if (_isSelected || !_isAvailable) return;
 
-        if (_isHovered) transform.position -= _hoverOffset;
+        if (_isHovered)
+        {
+            _isHovered = false;
+            transform.position -= _hoverOffset;
+        } 
 
-        _isHovered = false;
     }
-
     private void OnMouseDown()
     {
+        if (DiscardManager.Instance.InUI) return;
+
         if (!_isSelected && _isAvailable)
         {
             if (PlayerCardManager.Instance.SelectedCards.Count == 3)
@@ -117,21 +111,10 @@ public class PlayerCardLogic : MonoBehaviour
 
     }
 
-    //probably i won't need that itf
     public void MakeReusable()
     {
         _isSelected = false;
         IsUsed = false;
-        IsNew = true;
     }
 
-    public void ResetCard()
-    {
-        transform.position = Vector3.zero;
-        transform.localScale = _defaultSize;
-        transform.rotation = Quaternion.identity;
-        Card = null; 
-        _isAvailable = false;
-        MakeReusable();
-    }
 }

@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using MapSystem;
+using Systems.SceneManagement;
 
 public class NodeClickHandler : MonoBehaviour
 {
@@ -15,6 +16,10 @@ public class NodeClickHandler : MonoBehaviour
     [Header("References")]
     public MapGenerator mapGenerator;
     public MapManager mapManager;
+    [Header("Optional (injected)")]
+    public CameraController cameraController;
+    public NodeInfoUI nodeInfoUI;
+    public MapSaveManager mapSaveManager;
 
     [Header("Player Movement")]
     public float moveSpeed = 3f;
@@ -26,38 +31,18 @@ public class NodeClickHandler : MonoBehaviour
     public NodeType nodeType = NodeType.Enemy;
     
     private static bool isPlayerMoving = false;
+    private bool _shopBlock = false;
+    private bool _healBlock = false;
     
 
     void Start()
     {
-        // tymczasowe
-        if (mapGenerator == null)
-        {
-            mapGenerator = FindFirstObjectByType<MapGenerator>();
-        }
-        
-        if (mapManager == null)
-        {
-            mapManager = FindFirstObjectByType<MapManager>();
-        }
-        
-        
         if (GetComponent<Collider>() == null)
         {
             gameObject.AddComponent<BoxCollider>();
         }
-    }
-    
-    void InitializePlayerMarker()
-    {
-        if (playerMarker == null)
-        {
-            if (playerMarkerPrefab != null)
-            {
-                playerMarker = Instantiate(playerMarkerPrefab);
-                playerMarker.name = "PlayerMarker";
-            }
-        }
+
+        ConsumablesEventSystem.OnSceneBlock.AddListener(BlockScene);
     }
 
     void Update()
@@ -100,7 +85,6 @@ public class NodeClickHandler : MonoBehaviour
             if (CanMoveToThisNode())
             {
                 MovePlayerHere();
-                LoadScene();
             }
         }
     }
@@ -229,7 +213,13 @@ public class NodeClickHandler : MonoBehaviour
 
         playerMarker.transform.position = toPos;
         currentPlayerNode = transform;
+        if (mapSaveManager != null)
+        {
+            mapSaveManager.SaveCurrentMap();
+        }
         isPlayerMoving = false;
+        
+        LoadScene();
     }
     
     void MovePlayerInstant()
@@ -249,7 +239,7 @@ public class NodeClickHandler : MonoBehaviour
         
         currentPlayerNode = transform;
         
-        if (playerMarker != null)
+    if (playerMarker != null)
         {
             playerMarker.transform.position = toPos3D;
             
@@ -265,22 +255,48 @@ public class NodeClickHandler : MonoBehaviour
             
             playerMarker.SetActive(true);
         }
+
+        if (mapSaveManager != null)
+        {
+            mapSaveManager.SaveCurrentMap();
+        }
+
+        LoadScene();
     }
 
     void LoadScene()
     {
-        if (!string.IsNullOrEmpty(sceneToLoad))
+        if (!string.IsNullOrEmpty(sceneToLoad) && IsSceneBlocked(sceneToLoad))
         {
-            CombatManager.NextCombatNodeType = nodeType;
+            if (IsCombatNode(nodeType))
+            {
+                CombatManager.ApplyNodeType(nodeType);
+            }
             
-            var mapSaveManager = FindFirstObjectByType<MapSaveManager>();
             if (mapSaveManager != null)
             {
                 mapSaveManager.SaveCurrentMap();
             }
             
+            if (SceneLoader.Instance != null)
+            {
+                Debug.Log("Using additive scene activation for: " + sceneToLoad);
+                SceneLoader.Instance.manager.ActivateScene(sceneToLoad);
+                if (IsCombatNode(nodeType))
+                {
+                    CombatManager.ApplyNodeType(nodeType);
+                }
+                return;
+            }
+            
+            Debug.Log("SceneLoader not found, using normal scene loading for: " + sceneToLoad);
             SceneManager.LoadScene(sceneToLoad);
         }
+    }
+
+    static bool IsCombatNode(NodeType t)
+    {
+        return t == NodeType.Enemy || t == NodeType.Elite || t == NodeType.Boss;
     }
     
     public void TriggerLoadScene()
@@ -290,14 +306,12 @@ public class NodeClickHandler : MonoBehaviour
     
     private void ShowNodeInfo()
     {
-        CameraController cameraController = FindFirstObjectByType<CameraController>();
-        if (cameraController != null)
+    if (cameraController != null)
         {
             cameraController.CenterOnPosition(transform.position);
         }
         
-        NodeInfoUI nodeInfoUI = FindFirstObjectByType<NodeInfoUI>();
-        if (nodeInfoUI != null)
+    if (nodeInfoUI != null)
         {
             nodeInfoUI.ShowInfo(GetNodeName(), GetNodeDescription(), transform.position);
         }
@@ -335,5 +349,19 @@ public class NodeClickHandler : MonoBehaviour
             case NodeType.Boss: return "Final boss";
             default: return "Unknown location";
         }
+    }
+
+    private bool IsSceneBlocked(string sceneName)
+    {
+        if(_healBlock && sceneName == "HealingDesign") return false;
+        if(_shopBlock && sceneName == "ShopScene") return false;
+
+        return true;
+    }
+
+    private void BlockScene(string scene)
+    {
+        if (scene == "Shop") _shopBlock = true;
+        if (scene == "Heal") _healBlock = true;
     }
 }

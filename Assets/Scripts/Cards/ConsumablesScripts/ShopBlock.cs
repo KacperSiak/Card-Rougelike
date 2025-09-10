@@ -6,7 +6,7 @@ public class ShopBlock : CardEffect
     public int relicCount;
     public override void ApplyEffect(ConsumableContext ctx)
     {
-        // blocks the shop
+        ConsumablesEventSystem.SceneBlock("Shop");
         for (int i = 0; i < relicCount; i++)
         {
             RelicData relic = ctx.consAndRel.RollRandomRelic();

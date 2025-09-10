@@ -13,34 +13,69 @@ public class CombatManager : MonoBehaviour
 
     [SerializeField] private List<StructForDictionary<NodeType, List<StructForDictionary<int, List<CardsSOTest>>>>> _listDifferentTypes;
 
-    [SerializeField] private List<StructForDictionary<NodeType, StructForDictionary<int, int>>> _listCombatDetails; 
+    [SerializeField] private List<StructForDictionary<NodeType, StructForDictionary<int, int>>> _listCombatDetails;
+
+    [SerializeField] private List<StructForDictionary<int, StructForDictionary<int, int>>> diceInfo;
 
     private StructForDictionary<int, List<CardsSOTest>> _innerDeck = new();
 
     private Dictionary<NodeType, Dictionary<int, List<CardsSOTest>>> _decksForDifferentTypes = new();
     private Dictionary<NodeType, StructForDictionary<int, int>> _combatDetails = new();
     private Dictionary<NodeType, int> _deckSize = new();
+    public Dictionary<int, StructForDictionary<int, int>> _diceDictionary { get; private set; } = new();
 
     private void Awake()
     {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
 
-        CurrentNodeType = NextCombatNodeType;
+    CurrentNodeType = NextCombatNodeType;
         
         SetProperties();
     }
-    
-    void OnGUI()
+
+    private void OnEnable()
     {
-        GUI.Label(new Rect(10, Screen.height - 40, 300, 50), $"Combat Type: {CurrentNodeType}", new GUIStyle() { fontSize = 20, normal = new GUIStyleState() { textColor = Color.white } });
+        CurrentNodeType = NextCombatNodeType;
     }
+
+    public static void ApplyNodeType(NodeType type)
+    {
+        NextCombatNodeType = type;
+        if (Instance != null)
+        {
+            Instance.CurrentNodeType = type;
+        }
+    }
+
+    private void OnGUI()
+    {
+        var text = $"Enemy Type: {GetCurrentEnemyTypeName()}";
+        var style = new GUIStyle(GUI.skin.label)
+        {
+            fontSize = 18,
+            normal = { textColor = Color.white }
+        };
+        GUI.Label(new Rect(10, Screen.height - 30, 320, 28), text, style);
+    }
+
+    private string GetCurrentEnemyTypeName()
+    {
+        switch (CurrentNodeType)
+        {
+            case NodeType.Enemy: return "Enemy";
+            case NodeType.Boss: return "Boss";
+            default: return CurrentNodeType.ToString();
+        }
+    }
+
 
     private void SetProperties()
     {
         _decksForDifferentTypes.Clear();
         _combatDetails.Clear();
         _deckSize.Clear();
+        _diceDictionary.Clear();
 
         foreach (var enemyType in _listDifferentTypes)
         {
@@ -58,20 +93,31 @@ public class CombatManager : MonoBehaviour
         {
             _combatDetails.Add(detail.key, detail.value);
         }
+
+        foreach (var dice in diceInfo)
+        {
+            _diceDictionary.Add(dice.key, dice.value);
+        }
     }
 
    public StructForDictionary<int, int> GetCurrentCombatDetails()
     {
-        return _combatDetails[CurrentNodeType];
+    if (_combatDetails.TryGetValue(CurrentNodeType, out var details)) return details;
+    Debug.LogWarning($"[CombatManager] Missing combat details for {CurrentNodeType}. Using Enemy.");
+    return _combatDetails.ContainsKey(NodeType.Enemy) ? _combatDetails[NodeType.Enemy] : new StructForDictionary<int, int>();
     }
 
     public int GetCurrentDeckSize()
     {
-        return _deckSize[CurrentNodeType];
+    if (_deckSize.TryGetValue(CurrentNodeType, out var size)) return size;
+    Debug.LogWarning($"[CombatManager] Missing deck size for {CurrentNodeType}. Using Enemy size if available.");
+    return _deckSize.ContainsKey(NodeType.Enemy) ? _deckSize[NodeType.Enemy] : 0;
     }
 
     public Dictionary<int, List<CardsSOTest>> GetCurrentDeck()
     {
-        return _decksForDifferentTypes[CurrentNodeType];
+    if (_decksForDifferentTypes.TryGetValue(CurrentNodeType, out var deck)) return deck;
+    Debug.LogWarning($"[CombatManager] Missing deck for {CurrentNodeType}. Using Enemy deck if available.");
+    return _decksForDifferentTypes.ContainsKey(NodeType.Enemy) ? _decksForDifferentTypes[NodeType.Enemy] : new Dictionary<int, List<CardsSOTest>>();
     }
 }

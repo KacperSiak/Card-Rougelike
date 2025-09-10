@@ -5,11 +5,11 @@ public class GapsInSequences : RelicEffects
 {
     public override void Register(RelicContext ctx)
     {
-        // sequences gap
+        ctx.Gaps = true;
     }
 
     public override void Unregister(RelicContext ctx)
     {
-        // no more sequences gap
+        ctx.Gaps = false;
     }
 }
