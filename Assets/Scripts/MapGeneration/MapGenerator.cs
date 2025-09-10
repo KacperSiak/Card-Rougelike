@@ -109,9 +109,9 @@ public class MapGenerator : MonoBehaviour
     {
         InitializeSettings();
         
-        bool willLoadFromSave = mapSaveManager != null && mapSaveManager.HasSavedMap();
+    bool willLoadFromSave = mapSaveManager != null && mapSaveManager.HasSavedMap();
         
-        if (willLoadFromSave)
+    if (willLoadFromSave)
         {
             Debug.Log("[MapGenerator] MapSaveManager will load saved map");
             mapSaveManager.LoadSavedMap();
@@ -339,6 +339,7 @@ public class MapGenerator : MonoBehaviour
                     if (nodeHandler != null)
                     {
                         nodeHandler.nodeType = node.Type;
+                        nodeHandler.mapNode = node;
                         if (nodeHandler.mapGenerator == null) nodeHandler.mapGenerator = this;
                         if (nodeHandler.mapManager == null) nodeHandler.mapManager = mapManager;
                         if (nodeHandler.cameraController == null) nodeHandler.cameraController = cameraController;

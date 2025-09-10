@@ -1745,6 +1745,9 @@ MonoBehaviour:
   xOffset: -10
   minZoom: 20
   maxZoom: 60
+  zoomSpeed: 4
+  zoomSmoothTime: 0.12
+  groundY: 0
 --- !u!1 &1681245142
 GameObject:
   m_ObjectHideFlags: 0
