@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -48,7 +49,13 @@ public class EnemyAttackManager : MonoBehaviour
         return Mathf.Clamp(amount, k_minRound, k_maxRound);
     }
 
+    //here 
     public void UpdateRounds()
+    {
+        StartCoroutine(Animated());
+    }
+
+    private IEnumerator Animated()
     {
         for (int i = 0; i < k_limit; i++)
         {
@@ -56,7 +63,7 @@ public class EnemyAttackManager : MonoBehaviour
             {
                 _diceLogic[i].UpdateRounds(key: 0);
                 continue;
-            } 
+            }
 
             RoundsForCards[i]--;
             _diceLogic[i].UpdateRounds(RoundsForCards[i]);
@@ -65,14 +72,24 @@ public class EnemyAttackManager : MonoBehaviour
 
             //if(_consContext.immune) RoundManager.Instance.PlayerHP -= EnemyCardManager.Instance.CardsInGamePower[i] * 0;
             //else if (_consContext.vulnerable) RoundManager.Instance.PlayerHP -= EnemyCardManager.Instance.CardsInGamePower[i] * 2;
-            else RoundManager.Instance.PlayerHP -= EnemyCardManager.Instance.CardsInGamePower[i];
+            else
+            {
+                EnemyCardManager.Instance.Attack(i);
+                
+                while(EnemyCardManager.Instance.GetCurrentAnimationManager(i).IsAnimating)
+                yield return null;
 
-            if (RoundManager.Instance.PlayerHP <= 0) return;
+                RoundManager.Instance.PlayerHP -= EnemyCardManager.Instance.CardsInGamePower[i];
+            }
+
+            if (RoundManager.Instance.PlayerHP <= 0) break;
 
             RemoveKey(i);
             EnemyCardManager.Instance.RemoveCardFromGame(i, EnemyCardManager.Instance.CardsInGame[i].Count);
             EnemyCardManager.Instance.cardHolders[i].GetComponent<CardHolderLogic>().ResetCardHolderEnemyCards();
         }
+
+        RoundManager.Instance.CheckRoundReadiness();
     }
 
     public void RemoveKey(int key)

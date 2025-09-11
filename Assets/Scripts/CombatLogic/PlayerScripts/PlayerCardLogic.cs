@@ -11,8 +11,6 @@ public class PlayerCardLogic : MonoBehaviour
     private Vector3 _pressedOffset = new();
 
     private Vector3 _defaultPosition;
-    private Quaternion _defaultRotation;
-    private Vector3 _defaultSize;
     private bool _isSelected = false;
     private bool _isHovered = false;
     private bool _isAvailable = false;
@@ -23,10 +21,10 @@ public class PlayerCardLogic : MonoBehaviour
     public CardsSOTest Card { get; private set; }
 
     public void RestoreSelectedPosition()
-    { 
-        if(_isSelected)
-            transform.position += _pressedOffset;
-        else if(_isHovered)
+    {
+        if (_isSelected)
+            transform.position += _pressedOffset + _hoverOffset;
+        else if (_isHovered)
             transform.position += _hoverOffset;
     }
 
@@ -39,8 +37,6 @@ public class PlayerCardLogic : MonoBehaviour
     public void SaveDefaultProperties()
     {
         _defaultPosition = transform.position;
-        _defaultSize = transform.localScale;
-        _defaultRotation = transform.rotation;
 
         if (IsNew)
             IsNew = false;
@@ -55,16 +51,14 @@ public class PlayerCardLogic : MonoBehaviour
         PlayerCardManager.OnViewChanged += OnViewChanged;
     }
 
-    public void SetAnimationPlacement(Vector3 newPosition, Quaternion newRotation)
+    public void SetAnimationPlacement(Vector3 newPosition)
     {
         transform.position += newPosition;
-        transform.rotation = newRotation;
     }
 
     public void ResetLastPlacement(Vector3 newPosition)
     {
         transform.position -= newPosition;
-        transform.rotation = _defaultRotation;
     }
 
     private void OnMouseEnter()
