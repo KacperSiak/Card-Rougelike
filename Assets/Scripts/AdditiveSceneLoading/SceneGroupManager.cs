@@ -14,9 +14,7 @@ namespace Systems.SceneManagement
         public event Action OnSceneGroupLoaded = delegate { };
 
         SceneGroup ActiveSceneGroup;
-    // Scenes preloaded with allowSceneActivation=false (will finalize on ActivateScene)
     readonly Dictionary<string, AsyncOperation> _deferredPreloads = new Dictionary<string, AsyncOperation>();
-        // All known groups (optional) so we can detect cross-group scene activation
         readonly List<SceneGroup> _registeredGroups = new List<SceneGroup>();
 
         public void RegisterSceneGroups(IEnumerable<SceneGroup> groups)
@@ -28,7 +26,6 @@ namespace Systems.SceneManagement
 
         public async Task LoadScenes(SceneGroup group, IProgress<float> progress, bool reloadDupScenes = false)
         {
-            // Clear old deferred operations when loading a fresh group
             _deferredPreloads.Clear();
             ActiveSceneGroup = group;
             var loadedScenes = new List<string>();
@@ -42,8 +39,6 @@ namespace Systems.SceneManagement
                 loadedScenes.Add(SceneManager.GetSceneAt(i).name);
             }
 
-            // Load ONLY the designated ActiveScene from the group to avoid
-            // running scripts (Awake/Start) from other scenes at bootstrap.
             var activeSceneName = ActiveSceneGroup.FindSceneNameByType(SceneType.ActiveScene);
             if (string.IsNullOrEmpty(activeSceneName))
             {
@@ -66,7 +61,6 @@ namespace Systems.SceneManagement
                 OnSceneLoaded.Invoke(activeSceneName);
             }
 
-            // Preload remaining scenes in the group with deferred activation so their scripts don't run yet
             foreach (var sceneData in ActiveSceneGroup.Scenes)
             {
                 var name = sceneData.Name;
@@ -77,14 +71,11 @@ namespace Systems.SceneManagement
                 if (preloadOp == null) continue;
                 preloadOp.allowSceneActivation = false;
                 _deferredPreloads[name] = preloadOp;
-
-                // Progress feedback while preloading to 0.9
                 while (preloadOp.progress < 0.9f)
                 {
                     progress?.Report(preloadOp.progress);
                     await Task.Delay(50);
                 }
-                // Now it's ready to be activated later; do NOT invoke OnSceneLoaded here
             }
 
             Scene activeScene = SceneManager.GetSceneByName(activeSceneName);
@@ -373,7 +364,6 @@ namespace Systems.SceneManagement
 
         public async Task ActivateScene(string sceneName, bool loadIfMissing = true)
         {
-            // Detect if target scene belongs to another registered group; if so switch groups first
             SceneGroup targetGroup = null;
             if (_registeredGroups.Count > 0)
             {
@@ -388,17 +378,14 @@ namespace Systems.SceneManagement
                 }
             }
 
-            if (targetGroup != null && targetGroup != ActiveSceneGroup)
+        if (targetGroup != null && targetGroup != ActiveSceneGroup)
             {
-                // Load the new group (unloads previous internally)
                 await LoadScenes(targetGroup, null);
-                // If the group's ActiveScene is the requested one, we're done.
                 var groupActive = targetGroup.FindSceneNameByType(SceneType.ActiveScene);
                 if (groupActive == sceneName)
                 {
-                    return; // Already active after group load
+            return;
                 }
-                // Otherwise continue to finalize/activate the specific scene (likely preloaded now)
             }
 
             var target = SceneManager.GetSceneByName(sceneName);

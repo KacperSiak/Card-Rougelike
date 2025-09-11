@@ -624,7 +624,7 @@ MonoBehaviour:
         asset: {fileID: 102900000, guid: 688c1fd6238f5414896758621fb92deb, type: 3}
         guid: 688c1fd6238f5414896758621fb92deb
       SceneType: 0
-  - GroupName: Combat
+  - GroupName: Nodes
     Scenes:
     - Reference:
         asset: {fileID: 102900000, guid: 1c5d67bfc39d4a045820c21ff3fc908d, type: 3}
