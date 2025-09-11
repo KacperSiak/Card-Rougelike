@@ -12,6 +12,8 @@ public class NodeClickHandler : MonoBehaviour
     public static Transform currentPlayerNode;
     public static GameObject playerMarker;
     public GameObject playerMarkerPrefab;
+    // Logical backing MapNode of the player's current position (used if the Transform has no NodeClickHandler, e.g. Start node prefab without handler)
+    public static MapNode currentPlayerMapNode;
     
     [Header("References")]
     public MapGenerator mapGenerator;
@@ -36,6 +38,13 @@ public class NodeClickHandler : MonoBehaviour
     private bool _shopBlock = false;
     private bool _healBlock = false;
     
+    [Header("Debug")]
+    [Tooltip("Enable verbose debug logs for movement / adjacency checks.")]
+    public bool enableDebugLogs = false;
+    
+    // Global emergency debug switch (user requested always-on logs)
+    public static bool forceDebugLogs = true;
+    
 
     void Start()
     {
@@ -45,6 +54,12 @@ public class NodeClickHandler : MonoBehaviour
         }
 
         ConsumablesEventSystem.OnSceneBlock.AddListener(BlockScene);
+
+        // Warn early if the generator failed to assign the backing MapNode reference.
+        if (mapNode == null)
+        {
+            Debug.LogWarning($"[NodeClickHandler] mapNode reference is NULL on '{name}'. Movement adjacency will fail for this node.");
+        }
     }
 
     void Update()
@@ -84,26 +99,24 @@ public class NodeClickHandler : MonoBehaviour
         
         if (dragDistance < dragThreshold)
         {
-            if (CanMoveToThisNode())
+            bool allowed = CanMoveToThisNode();
+            if (forceDebugLogs || enableDebugLogs)
             {
-                MovePlayerHere();
+                Debug.Log($"[NodeClickHandler][CLICK] Attempt move from '{(currentPlayerNode? currentPlayerNode.name : "<none>")}' to '{name}' | allowed={allowed}");
             }
+            if (allowed) MovePlayerHere();
         }
     }
 
     bool CanMoveToThisNode()
     {
         if (isPlayerMoving)
-        {
-            return false;
-        }
+        { LogMoveBlock("Already moving"); return false; }
         
         if (currentPlayerNode == null) 
-        {
-            return true;
-        }
+        { LogMoveInfo("No current player node (first placement)"); return true; }
         
-    if (mapGenerator == null || mapGenerator.mapLevels == null) return false;
+    if (mapGenerator == null || mapGenerator.mapLevels == null) { LogMoveBlock("MapGenerator/mapLevels null"); return false; }
         
         if (mapManager != null && !mapManager.HasTimeLeft())
         {
@@ -113,10 +126,68 @@ public class NodeClickHandler : MonoBehaviour
         
     // Fast path: use MapNode references instead of scanning the whole map
     var currentHandler = currentPlayerNode.GetComponent<NodeClickHandler>();
-    if (currentHandler == null || currentHandler.mapNode == null || mapNode == null) return false;
+    MapNode sourceMapNode = null;
+    if (currentHandler != null && currentHandler.mapNode != null)
+    {
+        sourceMapNode = currentHandler.mapNode;
+    }
+    else
+    {
+        if (currentPlayerMapNode != null)
+        {
+            sourceMapNode = currentPlayerMapNode;
+            if (enableDebugLogs) Debug.Log("[NodeClickHandler] Using cached currentPlayerMapNode fallback");
+        }
+        else if (mapGenerator != null && mapGenerator.mapLevels != null)
+        {
+            Vector2 currPos2D = new Vector2(currentPlayerNode.position.x, currentPlayerNode.position.z);
+            const float EPS = 0.05f;
+            foreach (var level in mapGenerator.mapLevels)
+            {
+                foreach (var n in level)
+                {
+                    if (Vector2.Distance(n.Position, currPos2D) <= EPS)
+                    {
+                        sourceMapNode = n;
+                        currentPlayerMapNode = n;
+                        if (enableDebugLogs) Debug.Log("[NodeClickHandler] Resolved current player MapNode by position search");
+                        break;
+                    }
+                }
+                if (sourceMapNode != null) break;
+            }
+        }
+    }
+    if (sourceMapNode == null) { LogMoveBlock("Cannot resolve current MapNode"); return false; }
+    if (mapNode == null) { LogMoveBlock("Target mapNode null"); return false; }
 
     // Adjacent if the target's MapNode is in the current node's connection list
-    return currentHandler.mapNode.ConnectedNodes.Contains(mapNode);
+    bool reachable = sourceMapNode.ConnectedNodes.Contains(mapNode);
+    if (enableDebugLogs)
+    {
+        int currentConn = sourceMapNode.ConnectedNodes != null ? sourceMapNode.ConnectedNodes.Count : -1;
+        Debug.Log($"[NodeClickHandler] Adjacency check: from '{currentPlayerNode.name}' -> '{name}' ({nodeType}) | currentConnections={currentConn} | reachable={reachable}");
+        if (!reachable)
+        {
+            // Optional deeper dump once per failed attempt
+            string list = string.Join(", ", sourceMapNode.ConnectedNodes.ConvertAll(n => n.Type + "@" + n.Position));
+            Debug.Log($"[NodeClickHandler] ConnectedNodes of current: {list}");
+        }
+    }
+    if (!reachable) LogMoveBlock("Target not in ConnectedNodes list of current node"); else LogMoveInfo("Reachable OK");
+    return reachable;
+    }
+
+    void LogMoveBlock(string reason)
+    {
+        if (forceDebugLogs || enableDebugLogs)
+            Debug.Log($"[NodeClickHandler][BLOCK] '{name}' reason={reason} current='{(currentPlayerNode? currentPlayerNode.name : "<none>")}'");
+    }
+
+    void LogMoveInfo(string msg)
+    {
+        if (forceDebugLogs || enableDebugLogs)
+            Debug.Log($"[NodeClickHandler][INFO] '{name}' {msg}");
     }
     
     void MovePlayerHere()
@@ -180,6 +251,7 @@ public class NodeClickHandler : MonoBehaviour
 
         playerMarker.transform.position = toPos;
         currentPlayerNode = transform;
+    currentPlayerMapNode = mapNode; // keep logical map node in sync
         if (mapSaveManager != null)
         {
             mapSaveManager.SaveCurrentMap();
@@ -205,6 +277,7 @@ public class NodeClickHandler : MonoBehaviour
         }
         
         currentPlayerNode = transform;
+    currentPlayerMapNode = mapNode;
         
     if (playerMarker != null)
         {
