@@ -2,8 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using static UnityEngine.EventSystems.EventTrigger;
 using Systems.SceneManagement;
 
 public class RoundManager : PersistenSingleton<RoundManager>
@@ -39,8 +37,8 @@ public class RoundManager : PersistenSingleton<RoundManager>
         OnHPChanged -= CheckHPState;
         OnCombatEnd -= ReturnHealthValueAfterCombat;
         OnCombatEnd -= SwitchToMainScene;
-    OnCombatEnd -= LogCombatResult;
-    PlayerManager.OnHpChange.RemoveListener(SyncFromPlayerManager);
+        OnCombatEnd -= LogCombatResult;
+        PlayerManager.OnHpChange.RemoveListener(SyncFromPlayerManager);
     }
 
     private int _playerHP;
@@ -109,10 +107,10 @@ public class RoundManager : PersistenSingleton<RoundManager>
         if (SceneLoader.Instance != null)
         {
             StartCoroutine(SwitchToMainSceneFlow());
-    }
+        }
     }
 
-    private System.Collections.IEnumerator SwitchToMainSceneFlow()
+    private IEnumerator SwitchToMainSceneFlow()
     {
         bool playerWon = UIManager.Instance.Winner == "Player";
 
@@ -169,11 +167,15 @@ public class RoundManager : PersistenSingleton<RoundManager>
 
         if (!PlayerCardManager.Instance.CheckRoundReadiness())
         {
+            UIManager.Instance.Winner = "Enemy";
+            _alreadyFinished = true;
             OnCombatEnd?.Invoke();
             return;
         }
         else if (!EnemyCardManager.Instance.CheckRoundReadiness())
         {
+            UIManager.Instance.Winner = "Player";
+            _alreadyFinished = true;
             OnCombatEnd?.Invoke();
             return;
         }
@@ -189,13 +191,13 @@ public class RoundManager : PersistenSingleton<RoundManager>
 
     private void CheckHPState()
     {
-    if(_alreadyFinished) return;
-    if(_playerHP > 0 && _enemyHP > 0) return;
+        if(_alreadyFinished) return;
+        if(_playerHP > 0 && _enemyHP > 0) return;
 
-    Debug.Log($"[RoundManager] Combat end trigger: playerHP={_playerHP} enemyHP={_enemyHP} winner={( _playerHP>0 ? "Player" : "Enemy")}");
-    UIManager.Instance.Winner = _playerHP > 0 ? "Player" : "Enemy";
-    _alreadyFinished = true; 
-    OnCombatEnd?.Invoke();
+        Debug.Log($"[RoundManager] Combat end trigger: playerHP={_playerHP} enemyHP={_enemyHP} winner={( _playerHP>0 ? "Player" : "Enemy")}");
+        UIManager.Instance.Winner = _playerHP > 0 ? "Player" : "Enemy";
+        _alreadyFinished = true; 
+        OnCombatEnd?.Invoke();
     }
 
     private void LogCombatResult()
