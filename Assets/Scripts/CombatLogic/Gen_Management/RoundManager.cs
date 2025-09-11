@@ -39,8 +39,6 @@ public class RoundManager : PersistenSingleton<RoundManager>
         OnHPChanged -= CheckHPState;
         OnCombatEnd -= ReturnHealthValueAfterCombat;
         OnCombatEnd -= SwitchToMainScene;
-    OnCombatEnd -= LogCombatResult;
-    PlayerManager.OnHpChange.RemoveListener(SyncFromPlayerManager);
     }
 
     private int _playerHP;
@@ -151,7 +149,6 @@ public class RoundManager : PersistenSingleton<RoundManager>
 
     Debug.Log($"[RoundManager] Combat end trigger: playerHP={_playerHP} enemyHP={_enemyHP} winner={( _playerHP>0 ? "Player" : "Enemy")}");
     UIManager.Instance.Winner = _playerHP > 0 ? "Player" : "Enemy";
-    // Nie generuj tu od razu – scena mapy może jeszcze nie być aktywowana.
     if (_playerHP <= 0)
     {
         StartDeathRegenDeferred(); // odpalimy po aktywacji sceny / gdy generator będzie dostępny
