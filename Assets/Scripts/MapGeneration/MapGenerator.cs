@@ -182,7 +182,7 @@ public class MapGenerator : MonoBehaviour
             mapManager.CalculateMaxMapTime();
     }
 
-    public void SetupCameraBounds()
+    public void SetupCameraBounds() 
     {
         if (cameraController != null)
         {

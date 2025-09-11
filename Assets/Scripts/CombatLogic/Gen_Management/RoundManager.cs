@@ -15,7 +15,6 @@ public class RoundManager : PersistenSingleton<RoundManager>
     public StructForDictionary<int, int> CurrentCombatDetails { get; private set; } 
     public Suits TrumpSuit { get; private set; } 
     private bool _alreadyFinished = false; // to prevent double calls of the end of combat
-    private bool _deathRegenStarted = false; // guard for map regeneration on death
 
     public bool damageBlock; // Kacper Added
 
@@ -39,6 +38,8 @@ public class RoundManager : PersistenSingleton<RoundManager>
         OnHPChanged -= CheckHPState;
         OnCombatEnd -= ReturnHealthValueAfterCombat;
         OnCombatEnd -= SwitchToMainScene;
+    OnCombatEnd -= LogCombatResult;
+    PlayerManager.OnHpChange.RemoveListener(SyncFromPlayerManager);
     }
 
     private int _playerHP;
@@ -105,7 +106,51 @@ public class RoundManager : PersistenSingleton<RoundManager>
     {
         if (SceneLoader.Instance != null)
         {
-            _ = SceneLoader.Instance.manager.ActivateScene("MapGeneration");
+            StartCoroutine(SwitchToMainSceneFlow());
+    }
+    }
+
+    private System.Collections.IEnumerator SwitchToMainSceneFlow()
+    {
+        bool playerWon = UIManager.Instance.Winner == "Player";
+
+        var task = SceneLoader.Instance.manager.ActivateScene("MapGeneration");
+        while (task != null && !task.IsCompleted)
+            yield return null;
+
+        if (!playerWon)
+        {
+            // Player lost: reset the map to a fresh one (seed=0 => random)
+            var saveMgr = GameObject.FindObjectOfType<MapSaveManager>(includeInactive: true);
+            if (saveMgr != null)
+            {
+                saveMgr.DeleteSavedMap();
+            }
+
+            var gen = GameObject.FindObjectOfType<MapGenerator>(includeInactive: true);
+            if (gen != null)
+            {
+                // Clear player marker/current node to avoid dependencies on current position
+                if (NodeClickHandler.playerMarker != null)
+                {
+                    NodeClickHandler.playerMarker.SetActive(false);
+                }
+                NodeClickHandler.currentPlayerNode = null;
+                NodeClickHandler.currentPlayerMapNode = null;
+                NodeClickHandler.ClearClearedNodes();
+
+                gen.fixedSeed = 0;
+                gen.GenerateMap();
+                if (saveMgr != null)
+                {
+                    saveMgr.SaveCurrentMap();
+                }
+            }
+        }
+        else
+        {
+            // Player won: mark the last entered combat node as cleared so revisiting doesn't load scene
+            NodeClickHandler.MarkLastCombatNodeClearedIfAny();
         }
     }
 
@@ -123,12 +168,14 @@ public class RoundManager : PersistenSingleton<RoundManager>
         if (!PlayerCardManager.Instance.CheckRoundReadiness())
         {
             UIManager.Instance.Winner = "Enemy";
+            _alreadyFinished = true;
             OnCombatEnd?.Invoke();
             return;
         }
         else if (!EnemyCardManager.Instance.CheckRoundReadiness())
         {
             UIManager.Instance.Winner = "Player";
+            _alreadyFinished = true;
             OnCombatEnd?.Invoke();
             return;
         }
@@ -149,10 +196,6 @@ public class RoundManager : PersistenSingleton<RoundManager>
 
     Debug.Log($"[RoundManager] Combat end trigger: playerHP={_playerHP} enemyHP={_enemyHP} winner={( _playerHP>0 ? "Player" : "Enemy")}");
     UIManager.Instance.Winner = _playerHP > 0 ? "Player" : "Enemy";
-    if (_playerHP <= 0)
-    {
-        StartDeathRegenDeferred(); // odpalimy po aktywacji sceny / gdy generator będzie dostępny
-    }
     _alreadyFinished = true; 
     OnCombatEnd?.Invoke();
     }
@@ -161,74 +204,4 @@ public class RoundManager : PersistenSingleton<RoundManager>
     {
         Debug.Log($"[RoundManager][Result] Winner={UIManager.Instance.Winner} PlayerHP={_playerHP} EnemyHP={_enemyHP}");
     }
-
-    private void TryRegenerateMapOnPlayerDeath()
-    {
-        var gen = FindActiveOrInactiveMapGenerator();
-        if (gen == null)
-        {
-            Debug.Log("[RoundManager] MapGenerator still not present; will keep waiting...");
-            return; // coroutine caller will retry
-        }
-        var saveMgr = FindActiveOrInactive<MapSaveManager>();
-        if (saveMgr != null)
-        {
-            saveMgr.DeleteSavedMap();
-        }
-        gen.fixedSeed = 0; // losowy seed
-        gen.GenerateMap();
-        Debug.Log("[RoundManager] Player death -> map regenerated (final)");
-        _deathRegenStarted = false; // allow future deaths
-    }
-
-    private void StartDeathRegenDeferred()
-    {
-        if (_deathRegenStarted) return;
-        _deathRegenStarted = true;
-        StartCoroutine(DeathRegenRoutine());
-    }
-
-    private IEnumerator DeathRegenRoutine()
-    {
-        Debug.Log("[RoundManager] DeathRegenRoutine started (waiting for MapGenerator)");
-        // czekaj kilka klatek na aktywację sceny mapy
-        for (int frame = 0; frame < 60; frame++)
-        {
-            var gen = FindActiveOrInactiveMapGenerator();
-            if (gen != null)
-            {
-                TryRegenerateMapOnPlayerDeath();
-                yield break;
-            }
-            yield return null;
-        }
-        Debug.LogWarning("[RoundManager] DeathRegenRoutine timeout (MapGenerator not found in 60 frames)");
-        _deathRegenStarted = false;
-    }
-
-    private MapGenerator FindActiveOrInactiveMapGenerator()
-    {
-        var gen = FindObjectOfType<MapGenerator>();
-        if (gen != null) return gen;
-        // Spróbuj także w nieaktywnych (Resources.FindObjectsOfTypeAll)
-        foreach (var g in Resources.FindObjectsOfTypeAll<MapGenerator>())
-        {
-            if (g.hideFlags == HideFlags.None)
-                return g;
-        }
-        return null;
-    }
-
-    private T FindActiveOrInactive<T>() where T : UnityEngine.Object
-    {
-        var obj = FindObjectOfType<T>();
-        if (obj != null) return obj;
-        foreach (var o in Resources.FindObjectsOfTypeAll<T>())
-        {
-            if (o.hideFlags == HideFlags.None)
-                return o;
-        }
-        return null;
-    }
-
 }

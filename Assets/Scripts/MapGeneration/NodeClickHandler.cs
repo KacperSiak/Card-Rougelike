@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using MapSystem;
 using Systems.SceneManagement;
+using System.Collections.Generic;
 
 public class NodeClickHandler : MonoBehaviour
 {
@@ -37,6 +38,11 @@ public class NodeClickHandler : MonoBehaviour
     private static bool isPlayerMoving = false;
     private bool _shopBlock = false;
     private bool _healBlock = false;
+
+    // Track cleared combat nodes so revisiting doesn't reload scenes
+    private static readonly HashSet<NodeClickHandler> _clearedCombatNodes = new HashSet<NodeClickHandler>();
+    // Remember which combat node we entered last to mark it cleared on win
+    public static NodeClickHandler lastEnteredCombatNode;
     
     [Header("Debug")]
     [Tooltip("Enable verbose debug logs for movement / adjacency checks.")]
@@ -306,6 +312,14 @@ public class NodeClickHandler : MonoBehaviour
 
     void LoadScene()
     {
+        // If this is a combat node that was already cleared by a previous win,
+        // allow entering the tile but do not load any scene (stay on map)
+        if (IsCombatNode(nodeType) && _clearedCombatNodes.Contains(this))
+        {
+            Debug.Log($"[NodeClickHandler] Node '{name}' already cleared. Staying on map.");
+            return;
+        }
+
         if (!string.IsNullOrEmpty(sceneToLoad) && IsSceneBlocked(sceneToLoad))
         {
             if (IsCombatNode(nodeType))
@@ -320,6 +334,10 @@ public class NodeClickHandler : MonoBehaviour
             
             if (SceneLoader.Instance != null)
             {
+                if (IsCombatNode(nodeType))
+                {
+                    lastEnteredCombatNode = this;
+                }
                 Debug.Log("Using additive scene activation for: " + sceneToLoad);
                 SceneLoader.Instance.manager.ActivateScene(sceneToLoad);
                 if (IsCombatNode(nodeType))
@@ -330,6 +348,10 @@ public class NodeClickHandler : MonoBehaviour
             }
             
             Debug.Log("SceneLoader not found, using normal scene loading for: " + sceneToLoad);
+            if (IsCombatNode(nodeType))
+            {
+                lastEnteredCombatNode = this;
+            }
             SceneManager.LoadScene(sceneToLoad);
         }
     }
@@ -342,6 +364,24 @@ public class NodeClickHandler : MonoBehaviour
     public void TriggerLoadScene()
     {
         LoadScene();
+    }
+
+    // Called by RoundManager when player wins a combat
+    public static void MarkLastCombatNodeClearedIfAny()
+    {
+        if (lastEnteredCombatNode != null)
+        {
+            _clearedCombatNodes.Add(lastEnteredCombatNode);
+            Debug.Log($"[NodeClickHandler] Marked node '{lastEnteredCombatNode.name}' as cleared");
+            lastEnteredCombatNode = null;
+        }
+    }
+
+    // Called when regenerating a new map (e.g., on defeat)
+    public static void ClearClearedNodes()
+    {
+        _clearedCombatNodes.Clear();
+        lastEnteredCombatNode = null;
     }
     
     private void ShowNodeInfo()
@@ -362,14 +402,14 @@ public class NodeClickHandler : MonoBehaviour
         switch (nodeType)
         {
             case NodeType.Start: return "Start";
-            case NodeType.Enemy: return "Enemy";
-            case NodeType.Elite: return "Elite Enemy";
-            case NodeType.Shop: return "Shop";
-            case NodeType.Treasure: return "Treasure";
-            case NodeType.Heal: return "Rest Site";
-            case NodeType.Gambling: return "Gambling";
+            case NodeType.Enemy: return "Griffon";
+            case NodeType.Elite: return "Minotaur";
+            case NodeType.Shop: return "Aeolus Wind Shop";
+            case NodeType.Treasure: return "Treasure Chest";
+            case NodeType.Heal: return "Asclepius Fountain";
+            case NodeType.Gambling: return "Lottery";
             case NodeType.Challenge: return "Challenge";
-            case NodeType.Boss: return "Boss";
+            case NodeType.Boss: return "Athena";
             default: return "Unknown";
         }
     }
@@ -379,14 +419,15 @@ public class NodeClickHandler : MonoBehaviour
         switch (nodeType)
         {
             case NodeType.Start: return "Your starting point";
-            case NodeType.Enemy: return "Fight enemies";
-            case NodeType.Elite: return "Fight elite enemies for better rewards";
-            case NodeType.Shop: return "Buy items and cards";
-            case NodeType.Treasure: return "Find treasure";
-            case NodeType.Heal: return "Rest and heal";
-            case NodeType.Gambling: return "Take risks for rewards";
+            case NodeType.Enemy: return "Half-eagle, half-lion. Proud and narcissistic, confident in both his strength and his beauty.";
+            case NodeType.Elite: return "A serious figure with the head of a bull, struggling with a crisis of self-identity.";
+            case NodeType.Shop: return "Here, amidst the whispering winds, are kept the gifts of the Lord of the Air himself. Come in and see what the wind has brought you!";
+            case NodeType.Treasure: return "Someone left a chest full of drachma here.";
+
+            case NodeType.Heal: return "Fountain of Asclepius. Taste its waters and gain new strength for your travels!";
+            case NodeType.Gambling: return "In a world where the gods play with the fates of humans, even Dionysus smiles upon those who love risk and surprises.Open your bag because a gift from the gods may be waiting there!";
             case NodeType.Challenge: return "Special challenges";
-            case NodeType.Boss: return "Final boss";
+            case NodeType.Boss: return "Goddess of Wisdom – always one step ahead. Watch your remaining turns carefully.";
             default: return "Unknown location";
         }
     }
