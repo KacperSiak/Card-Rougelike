@@ -14835,6 +14835,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c04e9ca1f3c4b5439d390925adbe7ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  persistAcrossScenes: 0
   _cameraTransform: {fileID: 333617528}
   _cameraAnimation: {fileID: 333617531}
   _duration: 0.7
@@ -20567,6 +20568,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c101926ca5e80f42abf3767b44ee17a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  persistAcrossScenes: 0
   _endPlayer: {fileID: 390661189}
   _endEnemy: {fileID: 1114681898}
   _duration: 0.04
@@ -31460,6 +31462,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b93eb4ab5bfff646bd6af6d6b5f25ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  persistAcrossScenes: 0
   _prefabPlayer: {fileID: 4593480156492007087, guid: 333ad8f17c6190b469561a27fb465e63, type: 3}
   _prefabEnemy: {fileID: 4593480156492007087, guid: e4a8033eae46cc54d9fff1b975e4976d, type: 3}
   _startPlayer: {fileID: 1414719323}
@@ -31669,8 +31672,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _removedCardPosition: {fileID: 840463061}
   _attackDuration: 0.4
-  _removalDuration: 0.7
-  _damageDuration: 0.5
+  _removalDuration: 0.6
   _height: 0.25
   _curve:
     serializedVersion: 2
@@ -42201,6 +42203,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9edfa2b03c3e4e4ab8f0878d0039dfc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  persistAcrossScenes: 0
   _discardPanel: {fileID: 245370518}
   _playerCardsAnimation: {fileID: 1794805949}
 --- !u!4 &893021690
@@ -42355,6 +42358,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a38c75192c4d93242b41c62aee494af5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  persistAcrossScenes: 0
   <PlayerCards>k__BackingField:
   - {fileID: 11400000, guid: bd7fe8880e6fee14bbe7114d73dcdfef, type: 2}
   - {fileID: 11400000, guid: 2945b418c27b0c2418ca65413aa38c12, type: 2}
@@ -52397,6 +52401,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0e017c71053ae749903f10fdedd8f3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  persistAcrossScenes: 0
   _enemyAttackManager: {fileID: 1312136505}
   _playerCardsAnimation: {fileID: 1794805949}
   _cardHolders:
@@ -52674,8 +52679,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _removedCardPosition: {fileID: 840463061}
   _attackDuration: 0.4
-  _removalDuration: 0.7
-  _damageDuration: 0.5
+  _removalDuration: 0.6
   _height: 0.25
   _curve:
     serializedVersion: 2
@@ -52701,7 +52705,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  _placementDuration: 0.9
+  _placementDuration: 0.75
 --- !u!1 &1181143057
 GameObject:
   m_ObjectHideFlags: 0
@@ -57630,6 +57634,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8f490f22a7e5cc845950e8289e4871c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  persistAcrossScenes: 0
   _roundSetter: {fileID: 707237229}
   _animationDuration: 0.8
 --- !u!1 &1245328466
@@ -63040,6 +63045,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 882734c3000835e48acf2b08c13a2acc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  persistAcrossScenes: 0
   _spawner: {fileID: 1781399644}
   _mainHand: {fileID: 2054619129}
   _subMainHand: {fileID: 1666196484}
@@ -63459,8 +63465,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _removedCardPosition: {fileID: 840463061}
   _attackDuration: 0.4
-  _removalDuration: 0.7
-  _damageDuration: 0.5
+  _removalDuration: 0.6
   _height: 0.25
   _curve:
     serializedVersion: 2
@@ -63486,7 +63491,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  _placementDuration: 0.9
+  _placementDuration: 0.75
 --- !u!1 &1438507854
 GameObject:
   m_ObjectHideFlags: 0
@@ -64504,6 +64509,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9f2a3d68b3182a4d962751270fbb0ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  persistAcrossScenes: 0
   gold: 0
   availableDiscards: 3
   handsize: 8
@@ -64521,8 +64527,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _removedCardPosition: {fileID: 1278511602}
   _attackDuration: 0.4
-  _removalDuration: 0.7
-  _damageDuration: 0.5
+  _removalDuration: 0.6
   _height: 0.25
   _curve:
     serializedVersion: 2
@@ -65121,6 +65126,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b144739014696d4287090ac1be9b7a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  persistAcrossScenes: 0
   _spawner: {fileID: 74725265}
   _animations:
   - {fileID: 2099828615}
@@ -65941,6 +65947,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d31ebdc43e45e1e41b2393acea75e575, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  persistAcrossScenes: 0
 --- !u!4 &2095126431
 Transform:
   m_ObjectHideFlags: 0
@@ -66033,8 +66040,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _removedCardPosition: {fileID: 840463061}
   _attackDuration: 0.4
-  _removalDuration: 0.7
-  _damageDuration: 0.5
+  _removalDuration: 0.6
   _height: 0.25
   _curve:
     serializedVersion: 2
@@ -66060,7 +66066,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  _placementDuration: 0.9
+  _placementDuration: 0.75
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
