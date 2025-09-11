@@ -36,7 +36,7 @@ public class RewardContext
     {
         player = PlayerManager.Instance;
         consAndRelic = ConsumablesAndRelicMenager.Instance;
-        mapManager = MapManager.instance;
+        mapManager = MapManager.Instance;
         gambling = GamblingManager.Instance;
     }
 }
