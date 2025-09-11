@@ -13,7 +13,6 @@ public class NodeClickHandler : MonoBehaviour
     public static Transform currentPlayerNode;
     public static GameObject playerMarker;
     public GameObject playerMarkerPrefab;
-    // Logical backing MapNode of the player's current position (used if the Transform has no NodeClickHandler, e.g. Start node prefab without handler)
     public static MapNode currentPlayerMapNode;
     
     [Header("References")]
@@ -39,16 +38,13 @@ public class NodeClickHandler : MonoBehaviour
     private bool _shopBlock = false;
     private bool _healBlock = false;
 
-    // Track cleared combat nodes so revisiting doesn't reload scenes
     private static readonly HashSet<NodeClickHandler> _clearedCombatNodes = new HashSet<NodeClickHandler>();
-    // Remember which combat node we entered last to mark it cleared on win
     public static NodeClickHandler lastEnteredCombatNode;
     
     [Header("Debug")]
     [Tooltip("Enable verbose debug logs for movement / adjacency checks.")]
     public bool enableDebugLogs = false;
     
-    // Global emergency debug switch (user requested always-on logs)
     public static bool forceDebugLogs = true;
     
 
@@ -61,7 +57,6 @@ public class NodeClickHandler : MonoBehaviour
 
         ConsumablesEventSystem.OnSceneBlock.AddListener(BlockScene);
 
-        // Warn early if the generator failed to assign the backing MapNode reference.
         if (mapNode == null)
         {
             Debug.LogWarning($"[NodeClickHandler] mapNode reference is NULL on '{name}'. Movement adjacency will fail for this node.");
@@ -130,7 +125,6 @@ public class NodeClickHandler : MonoBehaviour
             return false;
         }
         
-    // Fast path: use MapNode references instead of scanning the whole map
     var currentHandler = currentPlayerNode.GetComponent<NodeClickHandler>();
     MapNode sourceMapNode = null;
     if (currentHandler != null && currentHandler.mapNode != null)
@@ -167,7 +161,6 @@ public class NodeClickHandler : MonoBehaviour
     if (sourceMapNode == null) { LogMoveBlock("Cannot resolve current MapNode"); return false; }
     if (mapNode == null) { LogMoveBlock("Target mapNode null"); return false; }
 
-    // Adjacent if the target's MapNode is in the current node's connection list
     bool reachable = sourceMapNode.ConnectedNodes.Contains(mapNode);
     if (enableDebugLogs)
     {
@@ -175,7 +168,6 @@ public class NodeClickHandler : MonoBehaviour
         Debug.Log($"[NodeClickHandler] Adjacency check: from '{currentPlayerNode.name}' -> '{name}' ({nodeType}) | currentConnections={currentConn} | reachable={reachable}");
         if (!reachable)
         {
-            // Optional deeper dump once per failed attempt
             string list = string.Join(", ", sourceMapNode.ConnectedNodes.ConvertAll(n => n.Type + "@" + n.Position));
             Debug.Log($"[NodeClickHandler] ConnectedNodes of current: {list}");
         }
@@ -257,7 +249,7 @@ public class NodeClickHandler : MonoBehaviour
 
         playerMarker.transform.position = toPos;
         currentPlayerNode = transform;
-    currentPlayerMapNode = mapNode; // keep logical map node in sync
+    currentPlayerMapNode = mapNode;
         if (mapSaveManager != null)
         {
             mapSaveManager.SaveCurrentMap();
@@ -312,8 +304,6 @@ public class NodeClickHandler : MonoBehaviour
 
     void LoadScene()
     {
-        // If this is a combat node that was already cleared by a previous win,
-        // allow entering the tile but do not load any scene (stay on map)
         if (IsCombatNode(nodeType) && _clearedCombatNodes.Contains(this))
         {
             Debug.Log($"[NodeClickHandler] Node '{name}' already cleared. Staying on map.");
@@ -366,7 +356,6 @@ public class NodeClickHandler : MonoBehaviour
         LoadScene();
     }
 
-    // Called by RoundManager when player wins a combat
     public static void MarkLastCombatNodeClearedIfAny()
     {
         if (lastEnteredCombatNode != null)
@@ -377,7 +366,6 @@ public class NodeClickHandler : MonoBehaviour
         }
     }
 
-    // Called when regenerating a new map (e.g., on defeat)
     public static void ClearClearedNodes()
     {
         _clearedCombatNodes.Clear();

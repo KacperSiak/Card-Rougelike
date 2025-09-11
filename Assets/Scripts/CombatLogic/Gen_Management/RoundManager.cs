@@ -29,7 +29,7 @@ public class RoundManager : PersistenSingleton<RoundManager>
         OnCombatEnd += ReturnHealthValueAfterCombat;
         OnCombatEnd += SwitchToMainScene;
     OnCombatEnd += LogCombatResult;
-    PlayerManager.OnHpChange.AddListener(SyncFromPlayerManager); // keep local copy in sync
+    PlayerManager.OnHpChange.AddListener(SyncFromPlayerManager);
     } 
     
     
@@ -120,7 +120,6 @@ public class RoundManager : PersistenSingleton<RoundManager>
 
         if (!playerWon)
         {
-            // Player lost: reset the map to a fresh one (seed=0 => random)
             var saveMgr = GameObject.FindObjectOfType<MapSaveManager>(includeInactive: true);
             if (saveMgr != null)
             {
@@ -130,7 +129,6 @@ public class RoundManager : PersistenSingleton<RoundManager>
             var gen = GameObject.FindObjectOfType<MapGenerator>(includeInactive: true);
             if (gen != null)
             {
-                // Clear player marker/current node to avoid dependencies on current position
                 if (NodeClickHandler.playerMarker != null)
                 {
                     NodeClickHandler.playerMarker.SetActive(false);
@@ -149,7 +147,6 @@ public class RoundManager : PersistenSingleton<RoundManager>
         }
         else
         {
-            // Player won: mark the last entered combat node as cleared so revisiting doesn't load scene
             NodeClickHandler.MarkLastCombatNodeClearedIfAny();
         }
     }
