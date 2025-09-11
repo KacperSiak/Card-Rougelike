@@ -58,7 +58,16 @@ public class ShopSlotUI : MonoBehaviour
                 break;
 
             case ConsumablesData consumable:
-                _icon.sprite = consumable.icon; 
+                Sprite sp = AtlasHelper.Cutoff(
+                    consumable.atlasTexture,
+                    consumable.rows,
+                    consumable.cols,
+                    consumable.row,
+                    consumable.col,
+                    rowZeroTop: true
+                );
+                _icon.sprite = sp;
+                _icon.rectTransform.rotation = Quaternion.Euler(0, 0, 180f);
                 _descritpion.text = consumable.cardDescription;
                 break;
 
