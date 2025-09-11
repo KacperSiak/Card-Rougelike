@@ -1,30 +1,30 @@
 using System.Collections;
-using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class CardsAnimation : MonoBehaviour
 {
     [SerializeField] protected Transform _removedCardPosition;
     [SerializeField] private float _attackDuration = 1f;
-    [SerializeField] protected Quaternion _attackRotation;
     [SerializeField] private float _removalDuration = 1f;
+    [SerializeField] private float _damageDuration = 1f;
     [SerializeField] protected float _height = 0.4f;
     [SerializeField] protected AnimationCurve _curve;
     public bool IsAnimating { get; protected set; } = false;
 
-    public void Attack(Transform attackPosition, Transform[] cards)
+    public void Attack(Transform attackPosition, Transform[] cards, bool isPlayer, int key)
     {
-        StartCoroutine(AnimatedAttack(attackPosition, cards));
+        StartCoroutine(AnimatedAttack(attackPosition, cards, isPlayer, key));
     }
 
-    private IEnumerator AnimatedAttack(Transform attackPosition, Transform[] cards)
+    private IEnumerator AnimatedAttack(Transform attackPosition, Transform[] cards, bool isPlayer, int key)
     {
         IsAnimating = true;
+        Quaternion _attackRotation = isPlayer ? Quaternion.Euler(340f, 0f, 0f) : Quaternion.Euler(-170f, 0f, 0f);
 
         foreach (var c in cards)
         {
             c.transform.GetPositionAndRotation(out Vector3 startPos, out Quaternion startRot);
+            c.transform.SetParent(null);
 
             float elapsed = 0f;
 
@@ -44,6 +44,12 @@ public class CardsAnimation : MonoBehaviour
 
                 c.transform.SetPositionAndRotation(arcPos, rot);
                 yield return null;
+            }
+
+            if (isPlayer)
+            {
+                StartCoroutine(AnimatedDamage(attackPosition, key));
+                yield return new WaitForSeconds(_damageDuration * attackPosition.childCount);
             }
 
             elapsed = 0f;
@@ -68,17 +74,48 @@ public class CardsAnimation : MonoBehaviour
 
             c.transform.SetPositionAndRotation(startPos,startRot);
 
-            if (attackPosition.childCount != 0)
-            { 
-               //foreach (Transform child in attackPosition)
-               //     child.AddComponent<Animator>().SetTrigger("Attack");
-            }
-
-            //cardObject.transform.SetParent(attackPosition, true);
         }
 
         IsAnimating = false;
-        //EnemyCardManager.Instance.ControlIdleAnimation();
+        RemoveCard(cards);
+    }
+
+    private IEnumerator AnimatedDamage(Transform parent, int key)
+    {
+        parent.gameObject.GetComponent<CardHolderAnimation>().DisableAnimations();
+
+        foreach (GameObject card in EnemyCardManager.Instance.CardsInGame[key])
+        {
+            Vector3 startPos = card.transform.position;
+            Vector3 endPos = card.transform.position + new Vector3(0f, 0.1f, 0.1f);
+            card.transform.SetParent(null);
+
+            float elapsed = 0f;
+
+            while (elapsed < _attackDuration)
+            {
+                elapsed += Time.deltaTime;
+                card.transform.position = Vector3.Lerp(startPos, endPos, elapsed / _attackDuration);
+
+                yield return null;
+            }
+
+            card.transform.position = endPos;
+            elapsed = 0f;
+
+            while (elapsed < _attackDuration)
+            {
+                elapsed += Time.deltaTime;
+                card.transform.position = Vector3.Lerp(endPos, startPos, elapsed / _attackDuration);
+
+                yield return null;
+            }
+
+            card.transform.position = startPos;
+            card.transform.SetParent(parent);
+        }
+
+        //parent.gameObject.GetComponent<CardHolderAnimation>().EnableAnimations(isPHand: false);
     }
 
 
