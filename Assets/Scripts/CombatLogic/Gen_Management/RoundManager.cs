@@ -2,8 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using static UnityEngine.EventSystems.EventTrigger;
 using Systems.SceneManagement;
 
 public class RoundManager : PersistenSingleton<RoundManager>
@@ -11,7 +9,8 @@ public class RoundManager : PersistenSingleton<RoundManager>
     // I think I need to do Global Combat Manager in the nearest future, to take care of some global logic, like cursor, unload the scene, end the combat, but for now I will keep it here
 
     [field: SerializeField] public List<CardsSOTest> PlayerCards { get; private set; }
-    [SerializeField] private AthenaAnimationLogic _athenaAnimationLogic; 
+    [SerializeField] private AthenaAnimationLogic _athenaAnimationLogic;
+    [SerializeField] private TrumpSuitSetup _trumpSuitSetup;
     public StructForDictionary<int, int> CurrentCombatDetails { get; private set; } 
     public Suits TrumpSuit { get; private set; } 
     private bool _alreadyFinished = false; // to prevent double calls of the end of combat
@@ -28,8 +27,8 @@ public class RoundManager : PersistenSingleton<RoundManager>
         OnHPChanged += CheckHPState;
         OnCombatEnd += ReturnHealthValueAfterCombat;
         OnCombatEnd += SwitchToMainScene;
-    OnCombatEnd += LogCombatResult;
-    PlayerManager.OnHpChange.AddListener(SyncFromPlayerManager);
+        OnCombatEnd += LogCombatResult;
+        PlayerManager.OnHpChange.AddListener(SyncFromPlayerManager); // keep local copy in sync
     } 
     
     
@@ -38,8 +37,8 @@ public class RoundManager : PersistenSingleton<RoundManager>
         OnHPChanged -= CheckHPState;
         OnCombatEnd -= ReturnHealthValueAfterCombat;
         OnCombatEnd -= SwitchToMainScene;
-    OnCombatEnd -= LogCombatResult;
-    PlayerManager.OnHpChange.RemoveListener(SyncFromPlayerManager);
+        OnCombatEnd -= LogCombatResult;
+        PlayerManager.OnHpChange.RemoveListener(SyncFromPlayerManager);
     }
 
     private int _playerHP;
@@ -74,7 +73,7 @@ public class RoundManager : PersistenSingleton<RoundManager>
         _playerHP = PlayerManager.Instance.PlayerHP;
         CurrentCombatDetails = CombatManager.Instance.GetCurrentCombatDetails();
         StartCoroutine(CheckCombatReadiness());
-        TrumpSuit = (Suits)UnityEngine.Random.Range(0, Enum.GetValues(typeof(Suits)).Length - 1);
+        TrumpSuit = _trumpSuitSetup.ChooseSuit();
         Debug.Log("Trump suit is: " + TrumpSuit);
     }
 
@@ -84,6 +83,7 @@ public class RoundManager : PersistenSingleton<RoundManager>
             yield return null;
 
         OnCombatStart?.Invoke();
+        _trumpSuitSetup.SetUpTrumpCard((int)TrumpSuit);
     }
 
     private void ReturnHealthValueAfterCombat()
@@ -110,7 +110,7 @@ public class RoundManager : PersistenSingleton<RoundManager>
         }
     }
 
-    private System.Collections.IEnumerator SwitchToMainSceneFlow()
+    private IEnumerator SwitchToMainSceneFlow()
     {
         bool playerWon = UIManager.Instance.Winner == "Player";
 
@@ -191,13 +191,13 @@ public class RoundManager : PersistenSingleton<RoundManager>
 
     private void CheckHPState()
     {
-    if(_alreadyFinished) return;
-    if(_playerHP > 0 && _enemyHP > 0) return;
+        if(_alreadyFinished) return;
+        if(_playerHP > 0 && _enemyHP > 0) return;
 
-    Debug.Log($"[RoundManager] Combat end trigger: playerHP={_playerHP} enemyHP={_enemyHP} winner={( _playerHP>0 ? "Player" : "Enemy")}");
-    UIManager.Instance.Winner = _playerHP > 0 ? "Player" : "Enemy";
-    _alreadyFinished = true; 
-    OnCombatEnd?.Invoke();
+        Debug.Log($"[RoundManager] Combat end trigger: playerHP={_playerHP} enemyHP={_enemyHP} winner={( _playerHP>0 ? "Player" : "Enemy")}");
+        UIManager.Instance.Winner = _playerHP > 0 ? "Player" : "Enemy";
+        _alreadyFinished = true; 
+        OnCombatEnd?.Invoke();
     }
 
     private void LogCombatResult()

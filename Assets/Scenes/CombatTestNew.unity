@@ -14794,7 +14794,7 @@ Transform:
   m_GameObject: {fileID: 102529242}
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0.841, y: 2.549, z: -6.645}
+  m_LocalPosition: {x: 0.8364, y: 2.549, z: -6.6465}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -14835,6 +14835,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c04e9ca1f3c4b5439d390925adbe7ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  persistAcrossScenes: 0
   _cameraTransform: {fileID: 333617528}
   _cameraAnimation: {fileID: 333617531}
   _duration: 0.7
@@ -15509,7 +15510,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &230911700
 RectTransform:
   m_ObjectHideFlags: 0
@@ -20567,6 +20568,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c101926ca5e80f42abf3767b44ee17a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  persistAcrossScenes: 0
   _endPlayer: {fileID: 390661189}
   _endEnemy: {fileID: 1114681898}
   _duration: 0.04
@@ -20602,7 +20604,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &326232542
 RectTransform:
   m_ObjectHideFlags: 0
@@ -31460,6 +31462,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b93eb4ab5bfff646bd6af6d6b5f25ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  persistAcrossScenes: 0
   _prefabPlayer: {fileID: 4593480156492007087, guid: 333ad8f17c6190b469561a27fb465e63, type: 3}
   _prefabEnemy: {fileID: 4593480156492007087, guid: e4a8033eae46cc54d9fff1b975e4976d, type: 3}
   _startPlayer: {fileID: 1414719323}
@@ -31669,8 +31672,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _removedCardPosition: {fileID: 840463061}
   _attackDuration: 0.4
-  _removalDuration: 0.7
-  _damageDuration: 0.5
+  _removalDuration: 0.6
   _height: 0.25
   _curve:
     serializedVersion: 2
@@ -42201,6 +42203,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9edfa2b03c3e4e4ab8f0878d0039dfc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  persistAcrossScenes: 0
   _discardPanel: {fileID: 245370518}
   _playerCardsAnimation: {fileID: 1794805949}
 --- !u!4 &893021690
@@ -42355,6 +42358,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a38c75192c4d93242b41c62aee494af5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  persistAcrossScenes: 0
   <PlayerCards>k__BackingField:
   - {fileID: 11400000, guid: bd7fe8880e6fee14bbe7114d73dcdfef, type: 2}
   - {fileID: 11400000, guid: 2945b418c27b0c2418ca65413aa38c12, type: 2}
@@ -42411,6 +42415,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: daf810cc0cb56e0448832c724ab057c7, type: 2}
   - {fileID: 11400000, guid: ec11779e485037140842ab1360f523cb, type: 2}
   _athenaAnimationLogic: {fileID: 1521154801}
+  _trumpSuitSetup: {fileID: 1310623760}
   damageBlock: 0
 --- !u!4 &937618206
 Transform:
@@ -47520,6 +47525,60 @@ MonoBehaviour:
   _duration: 2
   playerCardsAnimation: {fileID: 1794805949}
   _idleV: {x: 0, y: 0.008, z: 0}
+--- !u!1 &1001220511
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1001220513}
+  - component: {fileID: 1001220512}
+  m_Layer: 0
+  m_Name: HPManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1001220512
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1001220511}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 116f83f08b553094f911023f9e202dbe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _playerFire:
+  - {fileID: 788874176}
+  - {fileID: 1245328466}
+  - {fileID: 1221034949}
+  _enemyFire:
+  - {fileID: 259533246}
+  - {fileID: 784920016}
+  - {fileID: 1011246937}
+  _midHealthLevel: 30
+  _criticalHealthLevel: 12
+--- !u!4 &1001220513
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1001220511}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.7070286, y: 0.72495437, z: 4.1794424}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1011246937
 GameObject:
   m_ObjectHideFlags: 0
@@ -52397,6 +52456,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0e017c71053ae749903f10fdedd8f3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  persistAcrossScenes: 0
   _enemyAttackManager: {fileID: 1312136505}
   _playerCardsAnimation: {fileID: 1794805949}
   _cardHolders:
@@ -52674,8 +52734,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _removedCardPosition: {fileID: 840463061}
   _attackDuration: 0.4
-  _removalDuration: 0.7
-  _damageDuration: 0.5
+  _removalDuration: 0.6
   _height: 0.25
   _curve:
     serializedVersion: 2
@@ -52701,7 +52760,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  _placementDuration: 0.9
+  _placementDuration: 0.75
 --- !u!1 &1181143057
 GameObject:
   m_ObjectHideFlags: 0
@@ -57630,6 +57689,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8f490f22a7e5cc845950e8289e4871c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  persistAcrossScenes: 0
   _roundSetter: {fileID: 707237229}
   _animationDuration: 0.8
 --- !u!1 &1245328466
@@ -62835,6 +62895,100 @@ MonoBehaviour:
   blendDistance: 0
   weight: 1
   sharedProfile: {fileID: 11400000, guid: 1c296da5ded7a044b9cc17cc7fd4d53a, type: 2}
+--- !u!1001 &1310623759
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2600148576151814698, guid: 7bde9ed1f6d1061429b686620e2ddce6, type: 3}
+      propertyPath: _animator
+      value: 
+      objectReference: {fileID: 1310623761}
+    - target: {fileID: 2653688549575663195, guid: 7bde9ed1f6d1061429b686620e2ddce6, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3444135209972115885, guid: 7bde9ed1f6d1061429b686620e2ddce6, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 5.85
+      objectReference: {fileID: 0}
+    - target: {fileID: 3444135209972115885, guid: 7bde9ed1f6d1061429b686620e2ddce6, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 3444135209972115885, guid: 7bde9ed1f6d1061429b686620e2ddce6, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.6331
+      objectReference: {fileID: 0}
+    - target: {fileID: 3444135209972115885, guid: 7bde9ed1f6d1061429b686620e2ddce6, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 2.2589
+      objectReference: {fileID: 0}
+    - target: {fileID: 3444135209972115885, guid: 7bde9ed1f6d1061429b686620e2ddce6, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -6.8767
+      objectReference: {fileID: 0}
+    - target: {fileID: 3444135209972115885, guid: 7bde9ed1f6d1061429b686620e2ddce6, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3444135209972115885, guid: 7bde9ed1f6d1061429b686620e2ddce6, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3444135209972115885, guid: 7bde9ed1f6d1061429b686620e2ddce6, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.70710677
+      objectReference: {fileID: 0}
+    - target: {fileID: 3444135209972115885, guid: 7bde9ed1f6d1061429b686620e2ddce6, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.70710677
+      objectReference: {fileID: 0}
+    - target: {fileID: 3444135209972115885, guid: 7bde9ed1f6d1061429b686620e2ddce6, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 3444135209972115885, guid: 7bde9ed1f6d1061429b686620e2ddce6, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 3444135209972115885, guid: 7bde9ed1f6d1061429b686620e2ddce6, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: -90
+      objectReference: {fileID: 0}
+    - target: {fileID: 4593480156492007087, guid: 7bde9ed1f6d1061429b686620e2ddce6, type: 3}
+      propertyPath: m_Name
+      value: TrumpSuitCard
+      objectReference: {fileID: 0}
+    - target: {fileID: 4593480156492007087, guid: 7bde9ed1f6d1061429b686620e2ddce6, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 2776230106667304145, guid: 7bde9ed1f6d1061429b686620e2ddce6, type: 3}
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 7bde9ed1f6d1061429b686620e2ddce6, type: 3}
+--- !u!114 &1310623760 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2600148576151814698, guid: 7bde9ed1f6d1061429b686620e2ddce6, type: 3}
+  m_PrefabInstance: {fileID: 1310623759}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 033265352f0345c49a2ab034975f23a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!95 &1310623761 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 1728259301258463644, guid: 7bde9ed1f6d1061429b686620e2ddce6, type: 3}
+  m_PrefabInstance: {fileID: 1310623759}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1312136503
 GameObject:
   m_ObjectHideFlags: 0
@@ -63040,6 +63194,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 882734c3000835e48acf2b08c13a2acc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  persistAcrossScenes: 0
   _spawner: {fileID: 1781399644}
   _mainHand: {fileID: 2054619129}
   _subMainHand: {fileID: 1666196484}
@@ -63459,8 +63614,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _removedCardPosition: {fileID: 840463061}
   _attackDuration: 0.4
-  _removalDuration: 0.7
-  _damageDuration: 0.5
+  _removalDuration: 0.6
   _height: 0.25
   _curve:
     serializedVersion: 2
@@ -63486,7 +63640,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  _placementDuration: 0.9
+  _placementDuration: 0.75
 --- !u!1 &1438507854
 GameObject:
   m_ObjectHideFlags: 0
@@ -64504,6 +64658,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9f2a3d68b3182a4d962751270fbb0ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  persistAcrossScenes: 0
   gold: 0
   availableDiscards: 3
   handsize: 8
@@ -64521,8 +64676,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _removedCardPosition: {fileID: 1278511602}
   _attackDuration: 0.4
-  _removalDuration: 0.7
-  _damageDuration: 0.5
+  _removalDuration: 0.6
   _height: 0.25
   _curve:
     serializedVersion: 2
@@ -65121,6 +65275,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b144739014696d4287090ac1be9b7a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  persistAcrossScenes: 0
   _spawner: {fileID: 74725265}
   _animations:
   - {fileID: 2099828615}
@@ -65941,6 +66096,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d31ebdc43e45e1e41b2393acea75e575, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  persistAcrossScenes: 0
 --- !u!4 &2095126431
 Transform:
   m_ObjectHideFlags: 0
@@ -66033,8 +66189,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _removedCardPosition: {fileID: 840463061}
   _attackDuration: 0.4
-  _removalDuration: 0.7
-  _damageDuration: 0.5
+  _removalDuration: 0.6
   _height: 0.25
   _curve:
     serializedVersion: 2
@@ -66060,7 +66215,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  _placementDuration: 0.9
+  _placementDuration: 0.75
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -66093,6 +66248,7 @@ SceneRoots:
   - {fileID: 722714113}
   - {fileID: 2095126431}
   - {fileID: 447553077}
+  - {fileID: 1001220513}
   - {fileID: 134750701}
   - {fileID: 1116582772}
   - {fileID: 1794805947}
@@ -66112,3 +66268,4 @@ SceneRoots:
   - {fileID: 102529245}
   - {fileID: 989035608}
   - {fileID: 1633856639}
+  - {fileID: 1310623759}
