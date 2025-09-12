@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using Systems.SceneManagement;
 
 public class ChallengesMenager : PersistenSingleton<ChallengesMenager>
 {
@@ -40,11 +41,11 @@ public class ChallengesMenager : PersistenSingleton<ChallengesMenager>
         base.OnDestroy();
     }
 
-    private void DisplayEasy() => Display(_easyChallenges);
-    private void DisplayNormal() => Display(_normalChallenges);
-    private void DisplayHard() => Display(_hardChallenges);
+    private void DisplayEasy() => Display(_easyChallenges, 0);
+    private void DisplayNormal() => Display(_normalChallenges, 1);
+    private void DisplayHard() => Display(_hardChallenges, 2);
 
-    private void Display(List<ChallengesData> list)
+    private void Display(List<ChallengesData> list, int back)
     {
         List<ChallengesData> _temporaryList;
         _temporaryList = new List<ChallengesData>(list);
@@ -55,11 +56,13 @@ public class ChallengesMenager : PersistenSingleton<ChallengesMenager>
         {
             slot.gameObject.SetActive(true);
             int index = Random.Range(0, _temporaryList.Count);
-            var slotUI = slot.GetComponent<ChallengesUITile>();
+            var slotUI = slot.GetComponent<ChallengeCardVisual>();
             if (slotUI != null)
             {
-                slotUI.Setup(_temporaryList[index]);
+                slotUI.SetupChalss(_temporaryList[index].col, _temporaryList[index].row);
                 _temporaryList.Remove(_temporaryList[index]);
+                slotUI.SetupBack(back);
+                slotUI.StartAnims();
             }
         }
     }
@@ -69,7 +72,7 @@ public class ChallengesMenager : PersistenSingleton<ChallengesMenager>
         switch (_currentChallenge.difficulty)
         {
             case Difficulty.Easy:
-                AddRewardByDifficulty( _easyRewards);
+                AddRewardByDifficulty(_easyRewards);
                 break;
 
             case Difficulty.Normal:
@@ -85,13 +88,13 @@ public class ChallengesMenager : PersistenSingleton<ChallengesMenager>
     public void AddRewardByDifficulty(RewardStruct diffRewards)
     {
         var ctx = new RewardContext();
-        
+
         foreach (var reward in diffRewards.reward.rewardEffect)
         {
             reward.AddReward(ctx);
         }
-        
-        
+
+
     }
 
     public void ChallengeAccepted(ChallengesData challenge)
