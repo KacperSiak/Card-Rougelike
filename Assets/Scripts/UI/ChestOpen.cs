@@ -28,7 +28,7 @@ public class ChestOpen : MonoBehaviour
         }
         if (rewardGranted)
         {
-            GamblingSceneManager.Instance.OnRewardGranted();
+            GamblingSceneManager.Instance.CompleteTransaction();
         }
     }
 
@@ -57,8 +57,11 @@ public class ChestOpen : MonoBehaviour
 
     public void RollReward()
     {
-        if (GamblingManager.Instance)
+        if (GamblingManager.Instance) 
+        { 
             GamblingManager.Instance.Roll();
+            GamblingSceneManager.Instance.isIdle = false;    
+        }
         else
             Debug.LogWarning("There's no Gambling Manager on this scene");
     }

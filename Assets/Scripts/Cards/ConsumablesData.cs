@@ -35,15 +35,22 @@ public class ConsumableContext
     public ShopMenager shop;
     public ConsumablesAndRelicMenager consAndRel;
     public DamageManager damageManager;
+    public PlayerCardManager playerCardManager;
+    public CombatManager combbatManager;
 
     public bool immune;
     public bool vulnerable;
+    public bool bonusRound;
+    public bool drawBlock;
+    public bool selfHit;
     public ConsumableContext()
     {
         player = PlayerManager.Instance;
         shop = ShopMenager.Instance;
         consAndRel = ConsumablesAndRelicMenager.Instance;
         damageManager = DamageManager.Instance;
+        playerCardManager = PlayerCardManager.Instance;
+        combbatManager = CombatManager.Instance;
     }
 }
 
