@@ -59,7 +59,7 @@ public class ChallengesMenager : PersistenSingleton<ChallengesMenager>
             var slotUI = slot.GetComponent<ChallengeCardVisual>();
             if (slotUI != null)
             {
-                slotUI.SetupChalss(_temporaryList[index].col, _temporaryList[index].row);
+                slotUI.SetupChalss(_temporaryList[index].col, _temporaryList[index].row, _temporaryList[index]);
                 _temporaryList.Remove(_temporaryList[index]);
                 slotUI.SetupBack(back);
                 slotUI.StartAnims();
@@ -93,8 +93,6 @@ public class ChallengesMenager : PersistenSingleton<ChallengesMenager>
         {
             reward.AddReward(ctx);
         }
-
-
     }
 
     public void ChallengeAccepted(ChallengesData challenge)

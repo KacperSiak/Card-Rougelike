@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 365083538957156022}
   - component: {fileID: 7092345338069372166}
   - component: {fileID: 1861608824458135902}
-  - component: {fileID: 6844530592641135467}
+  - component: {fileID: 4943750358830659271}
   m_Layer: 0
   m_Name: front
   m_TagString: Untagged
@@ -87,7 +87,7 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &6844530592641135467
+--- !u!64 &4943750358830659271
 MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -228,6 +228,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2916520349929737474}
   - component: {fileID: 2591720323221358022}
+  - component: {fileID: 4903929659204844387}
   m_Layer: 0
   m_Name: ChallengeDisplay
   m_TagString: Untagged
@@ -269,11 +270,33 @@ MonoBehaviour:
   _easy: {fileID: 2800000, guid: f53d377e1e69b87479d6dfe09371f325, type: 3}
   _normal: {fileID: 2800000, guid: 2668e98645a2ac849866c237c1e850e7, type: 3}
   _hard: {fileID: 2800000, guid: 981d35dab02a80f4ab588c2feb954552, type: 3}
-  _frontColl: {fileID: 6844530592641135467}
+  _frontColl: {fileID: 4943750358830659271}
   _backColl: {fileID: 8874511817809870208}
+  _allColl: {fileID: 4903929659204844387}
   _startPos: {x: 0, y: 0, z: 0}
   _endPos: {x: 0, y: 0, z: 0}
   _moveDuration: 0
   _startRot: {x: 0, y: 0, z: 0}
   _endRot: {x: 0, y: 0, z: 0}
   _rotDuration: 0
+--- !u!65 &4903929659204844387
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6526226532472120972}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 0.17176779}
+  m_Center: {x: 0, y: 0, z: 0.015606888}
