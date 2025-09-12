@@ -59,7 +59,6 @@ public class DialogueData : MonoBehaviour
 
     public void IncreaseDeathCount(string defeatedBy)
     {
-        
         var oppoonent = OverallDialogueInformation.opponentInformation.FirstOrDefault(c => c.opponentName == defeatedBy);
         oppoonent.numberOfDefeatsByOpponent++;
         OverallDialogueInformation.numberOfDeaths++;
