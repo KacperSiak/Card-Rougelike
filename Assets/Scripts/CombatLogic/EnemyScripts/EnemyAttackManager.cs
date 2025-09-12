@@ -69,6 +69,7 @@ public class EnemyAttackManager : MonoBehaviour
             _diceLogic[i].UpdateRounds(RoundsForCards[i]);
 
             if (RoundsForCards[i] > 0) continue;
+         
 
             //if(_consContext.immune) RoundManager.Instance.PlayerHP -= EnemyCardManager.Instance.CardsInGamePower[i] * 0;
             //else if (_consContext.vulnerable) RoundManager.Instance.PlayerHP -= EnemyCardManager.Instance.CardsInGamePower[i] * 2;
