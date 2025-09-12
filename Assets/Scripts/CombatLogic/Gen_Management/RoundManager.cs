@@ -107,7 +107,7 @@ public class RoundManager : PersistenSingleton<RoundManager>
         if (SceneLoader.Instance != null)
         {
             StartCoroutine(SwitchToMainSceneFlow());
-    }
+        }
     }
 
     private System.Collections.IEnumerator SwitchToMainSceneFlow()
