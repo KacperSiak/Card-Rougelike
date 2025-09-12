@@ -63,4 +63,3 @@ As if you’re any different. As I say you hate those who resemble you the most.
 
 #speaker: Apistos
 Wait—no! Apistos does not mean fish!!!
-(But Athena was already gone.)
