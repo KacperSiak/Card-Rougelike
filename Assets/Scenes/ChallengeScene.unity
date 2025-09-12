@@ -131,6 +131,7 @@ GameObject:
   - component: {fileID: 101981568}
   - component: {fileID: 101981567}
   - component: {fileID: 101981566}
+  - component: {fileID: 101981569}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -201,7 +202,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 101981567}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 11500000, guid: 6f07d45d82df3d045a0d10ffc984ca5d, type: 3}
+        m_TargetAssemblyTypeName: 
+        m_MethodName: 
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &101981567
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -240,6 +253,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 101981564}
   m_CullTransparentMesh: 1
+--- !u!114 &101981569
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 101981564}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6f07d45d82df3d045a0d10ffc984ca5d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetSceneName: MapGeneration
 --- !u!1001 &439107638
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -982,6 +1008,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c754d5e3b09669f449f08481c62fa329, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  persistAcrossScenes: 0
   _easyButton: {fileID: 1808580908}
   _normalButton: {fileID: 876753074}
   _hardButton: {fileID: 2144265191}
@@ -1038,6 +1065,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d31ebdc43e45e1e41b2393acea75e575, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  persistAcrossScenes: 0
 --- !u!1 &1401649739
 GameObject:
   m_ObjectHideFlags: 0
