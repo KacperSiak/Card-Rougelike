@@ -1447,12 +1447,16 @@ MonoBehaviour:
       goodGambleDialoguePlayedLessThanFive: 0
       badGambleDialoguePlayedMoreThanFive: 0
       badGambleDialoguePlayedLessThanFive: 0
+      equalGambleDialoguePlayed: 0
+      neutralDialoguePlayed: 0
     - opponentName: Arachne
       numberOfDefeatsByOpponent: 0
       goodGambleDialoguePlayedMoreThanFive: 0
       goodGambleDialoguePlayedLessThanFive: 0
       badGambleDialoguePlayedMoreThanFive: 0
       badGambleDialoguePlayedLessThanFive: 0
+      equalGambleDialoguePlayed: 0
+      neutralDialoguePlayed: 0
   dialogueVariablesInkFile: {fileID: 4900000, guid: 206822eb6b1f23e4f99235686fb7e17a, type: 3}
 --- !u!1001 &924796108187843030
 PrefabInstance:
@@ -1552,7 +1556,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5758216421339458074, guid: fe5766970c6ab5441b5f5b3e06dc1e8b, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8792418479655038411, guid: fe5766970c6ab5441b5f5b3e06dc1e8b, type: 3}
       propertyPath: m_Pivot.x

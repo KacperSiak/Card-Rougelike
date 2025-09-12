@@ -7,54 +7,46 @@ using UnityEngine.UI;
 
 public class DialogueManager : PersistenSingleton<DialogueManager>
 {
-    private EnemyTease enemyTease;
-    private NewRunDialogue newRunDialogue;
-    [SerializeField] private DialogueData data;
+    private EnemyTease _enemyTease;
+    private NewRunDialogue _newRunDialogue;
+    [SerializeField] private DialogueData _data;
 
-    [Header("Dialogue Panel Components")]
-    [SerializeField] private GameObject dialoguePanel;
-    [SerializeField] private TextMeshProUGUI dialogueText;
-    [SerializeField] private TextMeshProUGUI speakerName;
-    [SerializeField] private Image speakerImage;
-    [SerializeField] private Button skipDialogueButton;
-    [SerializeField] private Button increaseGoodGamblingBTN, increaseBadGamblingBTN;
+    [Header("Dialogue Panel Components")][Space]
+    [SerializeField] private GameObject _dialoguePanel;
+    [SerializeField] private TextMeshProUGUI _dialogueText;
+    [SerializeField] private TextMeshProUGUI _speakerName;
+    [SerializeField] private Image _speakerImage;
+    [SerializeField] private Button _skipDialogueButton;
+    [SerializeField] private Button _increaseGoodGamblingBTN, _increaseBadGamblingBTN;
 
     private const string SPEAKER_TAG = "speaker", PORTRAIT_TAG = "portrait";
 
-    private Story _currentStory;
-    public bool isDialoguePlaying; 
-    public bool isDialoguePaused;  // true when some event started and dialogue has to pause
+    [Header("Flags")][Space]
+    public bool IsDialoguePlaying; 
+    public bool IsDialoguePaused;  // true when some event started and dialogue has to pause
     private bool _isTextGenerating;
+    private Story _currentStory;
 
+
+    [Header("Text Generating Properties")][Space]
     [SerializeField] private float _textDelay = .003f;
-
-    [SerializeField] private TextAsset TESTINKJSON;
 
     private void Start()
     {
-        data = GetComponent<DialogueData>();
+        _data = GetComponent<DialogueData>();
 
-        skipDialogueButton.onClick.AddListener(SkipAll);
+        _skipDialogueButton.onClick.AddListener(SkipAll);
 
-        enemyTease = GetComponent<EnemyTease>();
-        newRunDialogue = GetComponent<NewRunDialogue>();
+        _enemyTease = GetComponent<EnemyTease>();
+        _newRunDialogue = GetComponent<NewRunDialogue>();
 
-        isDialoguePaused = false;
+        IsDialoguePaused = false;
 
-        isDialoguePlaying = false;
-        dialoguePanel.SetActive(false);
+        IsDialoguePlaying = false;
+        _dialoguePanel.SetActive(false);
 
-        increaseBadGamblingBTN.onClick.AddListener(data.IncreaseBadGambleAttempts);
-        increaseGoodGamblingBTN.onClick.AddListener(data.IncreaseGoodGambleAttempts);
-    }
-
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.D))
-            EnterDefeatDialogueMode("Minotaur");
-
-        if (Input.GetKeyDown(KeyCode.P))
-            EnterDialogueMode(TESTINKJSON);
+        _increaseBadGamblingBTN.onClick.AddListener(_data.IncreaseBadGambleAttempts);
+        _increaseGoodGamblingBTN.onClick.AddListener(_data.IncreaseGoodGambleAttempts);
     }
 
     public void InteractionWithDialogueBox()
@@ -66,52 +58,35 @@ public class DialogueManager : PersistenSingleton<DialogueManager>
     }
 
     public void EnterDefeatDialogueMode(string defeatedBy)=>
-        newRunDialogue.DefeatDialogue(defeatedBy);
+        _newRunDialogue.DefeatDialogue(defeatedBy);
     
 
     #region Enter dialogue methods
     // Start dialogue from file
-    public void EnterDialogueMode(TextAsset inkJSON)
+    public void EnterDialogueMode(TextAsset inkJSON, string knotName = null)
     {
         _currentStory = new Story(inkJSON.text);
-        isDialoguePlaying = true;
-        dialoguePanel.SetActive(true);
+        IsDialoguePlaying = true;
 
-        ContinueStory();
-    }
+        if(knotName != null)
+            _currentStory.ChoosePathString(knotName);
 
-    // Start dialogue from file, at certain knot
-    public void EnterDialogueMode(TextAsset inkJSON, string knotName)
-    {
-        _currentStory = new Story(inkJSON.text);
-        isDialoguePlaying = true;
-        _currentStory.ChoosePathString(knotName);
-        dialoguePanel.SetActive(true);
+        _dialoguePanel.SetActive(true);
 
         ContinueStory();
     }
 
     // Start dialogue from path
-    public void EnterDialogueMode(string path)
+    public void EnterDialogueMode(string path, string knotName = null)
     {
         TextAsset inkJSON = Resources.Load<TextAsset>(path);
 
-        _currentStory = new Story(inkJSON.text);
-        isDialoguePlaying = true;
-        dialoguePanel.SetActive(true);
-
-        ContinueStory();
-    }
-
-    // Start dialogue from path, at certain knot
-    public void EnterDialogueMode(string path, string knotName)
-    {
-        TextAsset inkJSON = Resources.Load<TextAsset>(path);
+        if (knotName != null)
+            _currentStory.ChoosePathString(knotName);
 
         _currentStory = new Story(inkJSON.text);
-        isDialoguePlaying = true;
-        _currentStory.ChoosePathString(knotName);
-        dialoguePanel.SetActive(true);
+        _dialoguePanel.SetActive(true);
+        IsDialoguePlaying = true;
 
         ContinueStory();
     }
@@ -119,17 +94,17 @@ public class DialogueManager : PersistenSingleton<DialogueManager>
 
     private void ExitDialogueMode()
     {
-        dialoguePanel.SetActive(false);
-        isDialoguePlaying = false;
-        isDialoguePaused = false;
-        dialogueText.text = "";
+        _dialoguePanel.SetActive(false);
+        IsDialoguePlaying = false;
+        IsDialoguePaused = false;
+        _dialogueText.text = "";
         _currentStory = null;
     }
 
 
     private void ContinueStory()
     {
-        if (_currentStory.canContinue && !isDialoguePaused)
+        if (_currentStory.canContinue && !IsDialoguePaused)
         {
             string line = _currentStory.Continue();
 
@@ -157,18 +132,18 @@ public class DialogueManager : PersistenSingleton<DialogueManager>
             switch (tagKey)
             {
                 case SPEAKER_TAG:
-                    speakerName.text = tagValue;
+                    _speakerName.text = tagValue;
                     break;
                 case PORTRAIT_TAG:
                     if (tagValue == "null")
                     {
-                        speakerImage.enabled = false;
+                        _speakerImage.enabled = false;
                         break;
                     }
-                    speakerImage.enabled = true;
+                    _speakerImage.enabled = true;
                     string[] splitPortraitName = tagValue.Split("_");
                     Sprite sprite = Resources.Load<Sprite>($"Dialogue Sprites/{splitPortraitName[0].Trim()}/{splitPortraitName[1].Trim()}");
-                    speakerImage.sprite = sprite;
+                    _speakerImage.sprite = sprite;
                     break;
                 default:
                     Debug.LogWarning("Tag came in but is not currently being handled: " + tag);
@@ -199,12 +174,12 @@ public class DialogueManager : PersistenSingleton<DialogueManager>
     {
         _isTextGenerating = true;
 
-        dialogueText.text = line;
-        dialogueText.maxVisibleCharacters = 0;
+        _dialogueText.text = line;
+        _dialogueText.maxVisibleCharacters = 0;
 
-        for (int i = 0; i < dialogueText.text.Length; i++)
+        for (int i = 0; i < _dialogueText.text.Length; i++)
         {
-            dialogueText.maxVisibleCharacters++;
+            _dialogueText.maxVisibleCharacters++;
             yield return new WaitForSeconds(_textDelay);
         }
 
@@ -214,7 +189,7 @@ public class DialogueManager : PersistenSingleton<DialogueManager>
     private void SkipDialogueGeneration()
     {
         StopCoroutine("DialogueDisplay");
-        dialogueText.maxVisibleCharacters = dialogueText.text.Length;
+        _dialogueText.maxVisibleCharacters = _dialogueText.text.Length;
         _isTextGenerating = false;
     }
 
@@ -230,5 +205,5 @@ public class DialogueManager : PersistenSingleton<DialogueManager>
             _textDelay = ogTextDelay;
     }
 
-    public void ShowEnemyTease() => enemyTease.Tease();
+    public void ShowEnemyTease() => _enemyTease.Tease();
 }

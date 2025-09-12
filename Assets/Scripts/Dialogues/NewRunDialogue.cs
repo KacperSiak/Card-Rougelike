@@ -33,7 +33,7 @@ public class NewRunDialogue : MonoBehaviour
 
     public void DefeatDialogue(string defeatedBy)
     {
-        if (dialogueManager.isDialoguePlaying) return;
+        if (dialogueManager.IsDialoguePlaying) return;
 
         data.IncreaseDeathCount(defeatedBy);
 
