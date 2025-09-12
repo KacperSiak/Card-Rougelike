@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -53,11 +54,11 @@ public class DamageManager : PersistenSingleton<DamageManager>
             int dmg = -((EnemyCardManager.Instance.CardsInGamePower[i] - _bonusDamage) * multiply);
             RoundManager.Instance.EnemyHP -= dmg; // cuz number in the list will be negative after we will implement player impact
 
-            if(_consContext.selfHit)
-            {
-                int health = (int)System.Math.Round(dmg * 0.1f, MidpointRounding.AwayFromZero);
-                RoundManager.Instance.PlayerHP -= health; 
-            } 
+            //if(_consContext.selfHit)
+            //{
+            //    int health = (int)System.Math.Round(dmg * 0.1f, MidpointRounding.AwayFromZero);
+            //    RoundManager.Instance.PlayerHP -= health; 
+            //} 
             if (RoundManager.Instance.EnemyHP <= 0) return;
 
             _cardHolders[i].ResetCardHolderEnemyCards();

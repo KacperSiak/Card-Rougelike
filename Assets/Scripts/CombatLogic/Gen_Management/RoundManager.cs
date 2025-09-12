@@ -22,7 +22,7 @@ public class RoundManager : PersistenSingleton<RoundManager>
     public static event Action OnCombatStart;
     public static event Action OnRoundEnd;
 
-    private ConsumableContext _context;
+    //private ConsumableContext _context;
 
     private void OnEnable()
     {
@@ -180,8 +180,9 @@ public class RoundManager : PersistenSingleton<RoundManager>
             return;
         }
 
-        if(!_context.bonusRound) MoveToNextRound();
-        else _context.bonusRound = false;
+        MoveToNextRound();
+        //if(!_context.bonusRound) MoveToNextRound();
+        //else _context.bonusRound = false;
 
     }
 

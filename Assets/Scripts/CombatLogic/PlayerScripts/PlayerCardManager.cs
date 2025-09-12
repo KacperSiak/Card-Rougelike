@@ -127,27 +127,16 @@ public class PlayerCardManager : PersistenSingleton<PlayerCardManager>
     
     private void RefillCards()
     {
-        if (!_consContext.drawBlock)
-        {
-            if (PlayerDeckInGame.Count == 0) return;
+        //if (!_consContext.drawBlock)
+        //{
+        if (PlayerDeckInGame.Count == 0) return;
 
-            int amount = _currentCardsInHand >= _cardsInHandDefault ? 1 : _cardsInHandDefault - _currentCardsInHand;
+        int amount = _currentCardsInHand >= _cardsInHandDefault ? 1 : _cardsInHandDefault - _currentCardsInHand;
 
-            _spawner.SpawnCards(PlayerDeckInGame, CardsInHand, cardsAmount: amount);
-        }
-        else return;
+        _spawner.SpawnCards(PlayerDeckInGame, CardsInHand, cardsAmount: amount);
+        //}
+        //else return;
 
-    }
-
-    private void OnCombatEnd()
-    {
-        foreach (var card in CardsInHand)
-        {
-            card.GetComponent<PlayerCardLogic>().ResetCard();
-            card.SetActive(false);
-            ObjPoolManager.Instance.ReturnCard(card);
-        }
-        ClearSelectedStorage();
     }
 
     public void Draw3Cards(int amount)
@@ -166,7 +155,6 @@ public class PlayerCardManager : PersistenSingleton<PlayerCardManager>
                 PlayerDeckInGame.Add(logic.Card);
             }
 
-            logic?.ResetCard();
             ObjPoolManager.Instance.ReturnCard(go);
             cards++;
         }
