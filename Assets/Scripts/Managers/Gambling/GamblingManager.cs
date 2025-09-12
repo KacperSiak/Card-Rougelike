@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using TMPro;
 using System.Linq;
 using System.Collections;
+using System.Runtime.CompilerServices;
 
 
 public class GamblingManager : PersistenSingleton<GamblingManager>
@@ -16,6 +17,8 @@ public class GamblingManager : PersistenSingleton<GamblingManager>
     [SerializeField] private TextMeshProUGUI joketext;
 
     public float modifier;
+    private float potionModifier;
+    private bool potionModified;
     private float _time = 0.83f;
 
     [Header("Particles")]
@@ -45,13 +48,16 @@ public class GamblingManager : PersistenSingleton<GamblingManager>
             else acc += r.weight;
             if (roll < acc)
             {
-                Debug.Log("Rolled " + r.type);
                 ApplyEffect(r.type);
                 StartCoroutine(WaitForChest(_time, r.reward));
                 break;
             }
         }
-        modifier = 1;
+        if (potionModified)
+        {
+            modifier /= potionModifier;
+            potionModified = false;
+        }
     }
 
     private void ApplyReward(RewardsData reward)
@@ -97,7 +103,15 @@ public class GamblingManager : PersistenSingleton<GamblingManager>
 
     public void Modify(float newModifier)
     {
-        modifier = newModifier;
+        //if (potion)
+        //{
+        //    potionModifier = newModifier;
+        //    potionModified = true;
+        //}
+
+        //if (reset) modifier /= newModifier;
+        //else modifier *= newModifier;
+
     }
 
     IEnumerator WaitForChest(float time, RewardsData reward)

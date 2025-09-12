@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using MapSystem;
+using Systems.SceneManagement;
+using System.Collections.Generic;
 
 public class NodeClickHandler : MonoBehaviour
 {
@@ -11,10 +13,15 @@ public class NodeClickHandler : MonoBehaviour
     public static Transform currentPlayerNode;
     public static GameObject playerMarker;
     public GameObject playerMarkerPrefab;
+    public static MapNode currentPlayerMapNode;
     
     [Header("References")]
     public MapGenerator mapGenerator;
     public MapManager mapManager;
+    [Header("Optional (injected)")]
+    public CameraController cameraController;
+    public NodeInfoUI nodeInfoUI;
+    public MapSaveManager mapSaveManager;
 
     [Header("Player Movement")]
     public float moveSpeed = 3f;
@@ -24,39 +31,35 @@ public class NodeClickHandler : MonoBehaviour
     
     [Header("Node Info")]
     public NodeType nodeType = NodeType.Enemy;
+    [Tooltip("Backing MapNode for this instance, set by MapGenerator during instantiation")]
+    public MapNode mapNode;
     
     private static bool isPlayerMoving = false;
+    private bool _shopBlock = false;
+    private bool _healBlock = false;
+
+    private static readonly HashSet<NodeClickHandler> _clearedCombatNodes = new HashSet<NodeClickHandler>();
+    public static NodeClickHandler lastEnteredCombatNode;
+    
+    [Header("Debug")]
+    [Tooltip("Enable verbose debug logs for movement / adjacency checks.")]
+    public bool enableDebugLogs = false;
+    
+    public static bool forceDebugLogs = true;
     
 
     void Start()
     {
-        // tymczasowe
-        if (mapGenerator == null)
-        {
-            mapGenerator = FindFirstObjectByType<MapGenerator>();
-        }
-        
-        if (mapManager == null)
-        {
-            mapManager = FindFirstObjectByType<MapManager>();
-        }
-        
-        
         if (GetComponent<Collider>() == null)
         {
             gameObject.AddComponent<BoxCollider>();
         }
-    }
-    
-    void InitializePlayerMarker()
-    {
-        if (playerMarker == null)
+
+        ConsumablesEventSystem.OnSceneBlock.AddListener(BlockScene);
+
+        if (mapNode == null)
         {
-            if (playerMarkerPrefab != null)
-            {
-                playerMarker = Instantiate(playerMarkerPrefab);
-                playerMarker.name = "PlayerMarker";
-            }
+            Debug.LogWarning($"[NodeClickHandler] mapNode reference is NULL on '{name}'. Movement adjacency will fail for this node.");
         }
     }
 
@@ -97,30 +100,24 @@ public class NodeClickHandler : MonoBehaviour
         
         if (dragDistance < dragThreshold)
         {
-            if (CanMoveToThisNode())
+            bool allowed = CanMoveToThisNode();
+            if (forceDebugLogs || enableDebugLogs)
             {
-                MovePlayerHere();
-                LoadScene();
+                Debug.Log($"[NodeClickHandler][CLICK] Attempt move from '{(currentPlayerNode? currentPlayerNode.name : "<none>")}' to '{name}' | allowed={allowed}");
             }
+            if (allowed) MovePlayerHere();
         }
     }
 
     bool CanMoveToThisNode()
     {
         if (isPlayerMoving)
-        {
-            return false;
-        }
+        { LogMoveBlock("Already moving"); return false; }
         
         if (currentPlayerNode == null) 
-        {
-            return true;
-        }
+        { LogMoveInfo("No current player node (first placement)"); return true; }
         
-        if (mapGenerator == null || mapGenerator.mapLevels == null) 
-        {
-            return false;
-        }
+    if (mapGenerator == null || mapGenerator.mapLevels == null) { LogMoveBlock("MapGenerator/mapLevels null"); return false; }
         
         if (mapManager != null && !mapManager.HasTimeLeft())
         {
@@ -128,44 +125,67 @@ public class NodeClickHandler : MonoBehaviour
             return false;
         }
         
-        Vector2 currentPos = new Vector2(currentPlayerNode.position.x, currentPlayerNode.position.z);
-        Vector2 targetPos = new Vector2(transform.position.x, transform.position.z);
-        
-        MapNode currentMapNode = null;
-        
-        foreach (var level in mapGenerator.mapLevels)
+    var currentHandler = currentPlayerNode.GetComponent<NodeClickHandler>();
+    MapNode sourceMapNode = null;
+    if (currentHandler != null && currentHandler.mapNode != null)
+    {
+        sourceMapNode = currentHandler.mapNode;
+    }
+    else
+    {
+        if (currentPlayerMapNode != null)
         {
-            foreach (var node in level)
+            sourceMapNode = currentPlayerMapNode;
+            if (enableDebugLogs) Debug.Log("[NodeClickHandler] Using cached currentPlayerMapNode fallback");
+        }
+        else if (mapGenerator != null && mapGenerator.mapLevels != null)
+        {
+            Vector2 currPos2D = new Vector2(currentPlayerNode.position.x, currentPlayerNode.position.z);
+            const float EPS = 0.05f;
+            foreach (var level in mapGenerator.mapLevels)
             {
-                Vector2 nodePos = new Vector2(node.Position.x, node.Position.y);
-                float distanceToCurrent = Vector2.Distance(nodePos, currentPos);
-                
-                if (distanceToCurrent < 0.5f)
+                foreach (var n in level)
                 {
-                    currentMapNode = node;
-                    break;
+                    if (Vector2.Distance(n.Position, currPos2D) <= EPS)
+                    {
+                        sourceMapNode = n;
+                        currentPlayerMapNode = n;
+                        if (enableDebugLogs) Debug.Log("[NodeClickHandler] Resolved current player MapNode by position search");
+                        break;
+                    }
                 }
-            }
-            if (currentMapNode != null) break;
-        }
-        
-        if (currentMapNode == null)
-        {
-            return false;
-        }
-        
-        foreach (var connectedNode in currentMapNode.ConnectedNodes)
-        {
-            Vector2 connectedPos = new Vector2(connectedNode.Position.x, connectedNode.Position.y);
-            float distanceToTarget = Vector2.Distance(connectedPos, targetPos);
-            
-            if (distanceToTarget < 0.5f)
-            {
-                return true;
+                if (sourceMapNode != null) break;
             }
         }
-        
-        return false;
+    }
+    if (sourceMapNode == null) { LogMoveBlock("Cannot resolve current MapNode"); return false; }
+    if (mapNode == null) { LogMoveBlock("Target mapNode null"); return false; }
+
+    bool reachable = sourceMapNode.ConnectedNodes.Contains(mapNode);
+    if (enableDebugLogs)
+    {
+        int currentConn = sourceMapNode.ConnectedNodes != null ? sourceMapNode.ConnectedNodes.Count : -1;
+        Debug.Log($"[NodeClickHandler] Adjacency check: from '{currentPlayerNode.name}' -> '{name}' ({nodeType}) | currentConnections={currentConn} | reachable={reachable}");
+        if (!reachable)
+        {
+            string list = string.Join(", ", sourceMapNode.ConnectedNodes.ConvertAll(n => n.Type + "@" + n.Position));
+            Debug.Log($"[NodeClickHandler] ConnectedNodes of current: {list}");
+        }
+    }
+    if (!reachable) LogMoveBlock("Target not in ConnectedNodes list of current node"); else LogMoveInfo("Reachable OK");
+    return reachable;
+    }
+
+    void LogMoveBlock(string reason)
+    {
+        if (forceDebugLogs || enableDebugLogs)
+            Debug.Log($"[NodeClickHandler][BLOCK] '{name}' reason={reason} current='{(currentPlayerNode? currentPlayerNode.name : "<none>")}'");
+    }
+
+    void LogMoveInfo(string msg)
+    {
+        if (forceDebugLogs || enableDebugLogs)
+            Debug.Log($"[NodeClickHandler][INFO] '{name}' {msg}");
     }
     
     void MovePlayerHere()
@@ -229,7 +249,14 @@ public class NodeClickHandler : MonoBehaviour
 
         playerMarker.transform.position = toPos;
         currentPlayerNode = transform;
+    currentPlayerMapNode = mapNode;
+        if (mapSaveManager != null)
+        {
+            mapSaveManager.SaveCurrentMap();
+        }
         isPlayerMoving = false;
+        
+        LoadScene();
     }
     
     void MovePlayerInstant()
@@ -248,8 +275,9 @@ public class NodeClickHandler : MonoBehaviour
         }
         
         currentPlayerNode = transform;
+    currentPlayerMapNode = mapNode;
         
-        if (playerMarker != null)
+    if (playerMarker != null)
         {
             playerMarker.transform.position = toPos3D;
             
@@ -265,39 +293,93 @@ public class NodeClickHandler : MonoBehaviour
             
             playerMarker.SetActive(true);
         }
+
+        if (mapSaveManager != null)
+        {
+            mapSaveManager.SaveCurrentMap();
+        }
+
+        LoadScene();
     }
 
     void LoadScene()
     {
-        if (!string.IsNullOrEmpty(sceneToLoad))
+        if (IsCombatNode(nodeType) && _clearedCombatNodes.Contains(this))
         {
-            CombatManager.NextCombatNodeType = nodeType;
+            Debug.Log($"[NodeClickHandler] Node '{name}' already cleared. Staying on map.");
+            return;
+        }
+
+        if (!string.IsNullOrEmpty(sceneToLoad) && IsSceneBlocked(sceneToLoad))
+        {
+            if (IsCombatNode(nodeType))
+            {
+                CombatManager.ApplyNodeType(nodeType);
+            }
             
-            var mapSaveManager = FindFirstObjectByType<MapSaveManager>();
             if (mapSaveManager != null)
             {
                 mapSaveManager.SaveCurrentMap();
             }
             
+            if (SceneLoader.Instance != null)
+            {
+                if (IsCombatNode(nodeType))
+                {
+                    lastEnteredCombatNode = this;
+                }
+                Debug.Log("Using additive scene activation for: " + sceneToLoad);
+                SceneLoader.Instance.manager.ActivateScene(sceneToLoad);
+                if (IsCombatNode(nodeType))
+                {
+                    CombatManager.ApplyNodeType(nodeType);
+                }
+                return;
+            }
+            
+            Debug.Log("SceneLoader not found, using normal scene loading for: " + sceneToLoad);
+            if (IsCombatNode(nodeType))
+            {
+                lastEnteredCombatNode = this;
+            }
             SceneManager.LoadScene(sceneToLoad);
         }
+    }
+
+    static bool IsCombatNode(NodeType t)
+    {
+        return t == NodeType.Enemy || t == NodeType.Elite || t == NodeType.Boss;
     }
     
     public void TriggerLoadScene()
     {
         LoadScene();
     }
+
+    public static void MarkLastCombatNodeClearedIfAny()
+    {
+        if (lastEnteredCombatNode != null)
+        {
+            _clearedCombatNodes.Add(lastEnteredCombatNode);
+            Debug.Log($"[NodeClickHandler] Marked node '{lastEnteredCombatNode.name}' as cleared");
+            lastEnteredCombatNode = null;
+        }
+    }
+
+    public static void ClearClearedNodes()
+    {
+        _clearedCombatNodes.Clear();
+        lastEnteredCombatNode = null;
+    }
     
     private void ShowNodeInfo()
     {
-        CameraController cameraController = FindFirstObjectByType<CameraController>();
-        if (cameraController != null)
+    if (cameraController != null)
         {
             cameraController.CenterOnPosition(transform.position);
         }
         
-        NodeInfoUI nodeInfoUI = FindFirstObjectByType<NodeInfoUI>();
-        if (nodeInfoUI != null)
+    if (nodeInfoUI != null)
         {
             nodeInfoUI.ShowInfo(GetNodeName(), GetNodeDescription(), transform.position);
         }
@@ -308,14 +390,14 @@ public class NodeClickHandler : MonoBehaviour
         switch (nodeType)
         {
             case NodeType.Start: return "Start";
-            case NodeType.Enemy: return "Enemy";
-            case NodeType.Elite: return "Elite Enemy";
-            case NodeType.Shop: return "Shop";
-            case NodeType.Treasure: return "Treasure";
-            case NodeType.Heal: return "Rest Site";
-            case NodeType.Gambling: return "Gambling";
+            case NodeType.Enemy: return "Griffon";
+            case NodeType.Elite: return "Minotaur";
+            case NodeType.Shop: return "Aeolus Wind Shop";
+            case NodeType.Treasure: return "Treasure Chest";
+            case NodeType.Heal: return "Asclepius Fountain";
+            case NodeType.Gambling: return "Lottery";
             case NodeType.Challenge: return "Challenge";
-            case NodeType.Boss: return "Boss";
+            case NodeType.Boss: return "Athena";
             default: return "Unknown";
         }
     }
@@ -325,15 +407,30 @@ public class NodeClickHandler : MonoBehaviour
         switch (nodeType)
         {
             case NodeType.Start: return "Your starting point";
-            case NodeType.Enemy: return "Fight enemies";
-            case NodeType.Elite: return "Fight elite enemies for better rewards";
-            case NodeType.Shop: return "Buy items and cards";
-            case NodeType.Treasure: return "Find treasure";
-            case NodeType.Heal: return "Rest and heal";
-            case NodeType.Gambling: return "Take risks for rewards";
+            case NodeType.Enemy: return "Half-eagle, half-lion. Proud and narcissistic, confident in both his strength and his beauty.";
+            case NodeType.Elite: return "A serious figure with the head of a bull, struggling with a crisis of self-identity.";
+            case NodeType.Shop: return "Here, amidst the whispering winds, are kept the gifts of the Lord of the Air himself. Come in and see what the wind has brought you!";
+            case NodeType.Treasure: return "Someone left a chest full of drachma here.";
+
+            case NodeType.Heal: return "Fountain of Asclepius. Taste its waters and gain new strength for your travels!";
+            case NodeType.Gambling: return "In a world where the gods play with the fates of humans, even Dionysus smiles upon those who love risk and surprises.Open your bag because a gift from the gods may be waiting there!";
             case NodeType.Challenge: return "Special challenges";
-            case NodeType.Boss: return "Final boss";
+            case NodeType.Boss: return "Goddess of Wisdom – always one step ahead. Watch your remaining turns carefully.";
             default: return "Unknown location";
         }
+    }
+
+    private bool IsSceneBlocked(string sceneName)
+    {
+        if(_healBlock && sceneName == "HealingDesign") return false;
+        if(_shopBlock && sceneName == "ShopScene") return false;
+
+        return true;
+    }
+
+    private void BlockScene(string scene)
+    {
+        if (scene == "Shop") _shopBlock = true;
+        if (scene == "Heal") _healBlock = true;
     }
 }

@@ -27,7 +27,7 @@ public class PlayerCardSpawner : MonoBehaviour
             playerDeck.Remove(card);
 
             cardObject.GetComponent<PlayerCardLogic>().SetCardProperties(card);
-            CardSetupManager.Instance.SetupCardVisual(cardObject.GetComponent<MeshRenderer>(), card.column, card.row);
+            MaterialSetupManager.Instance.SetupVisual(cardObject.GetComponent<MeshRenderer>(), card.column, card.row);
         }
         StartPlacement();
     }
@@ -38,7 +38,7 @@ public class PlayerCardSpawner : MonoBehaviour
         { 
             StopAllCoroutines();
             isPlaying = false;
-            MainHand.gameObject.GetComponent<HandAnimationLogic>().EnableAnimations();
+            MainHand.gameObject.GetComponent<CardHolderAnimation>().EnableAnimations(true);
         }
 
         _cardsNumber = PlayerCardManager.Instance.CardsInHand.Count;
@@ -49,7 +49,7 @@ public class PlayerCardSpawner : MonoBehaviour
 
     private IEnumerator SetCardsPosition()
 	{
-        MainHand.gameObject.GetComponent<HandAnimationLogic>().DisableAnimations();
+        MainHand.gameObject.GetComponent<CardHolderAnimation>().DisableAnimations();
         isPlaying = true;
 
         float offset = _cardSize - _cardSize * (Mathf.Max(k_maxHandSize, _cardsNumber) - k_maxHandSize) / Mathf.Max(_cardsNumber - 1, 1);
@@ -70,7 +70,10 @@ public class PlayerCardSpawner : MonoBehaviour
             PlayerCardLogic logic = card.GetComponent<PlayerCardLogic>();
 
             float x = start + i * offset;
+            card.transform.GetPositionAndRotation(out Vector3 startPos, out Quaternion startRot);
+            Vector3 startedScale = card.transform.localScale;
             Vector3 finalPos = new (x, MainHand.gameObject.transform.position.y, MainHand.gameObject.transform.position.z + z);
+            Vector3 finalScale = card.transform.localScale / 1.7f;
             card.SetActive(true);
 
             if (logic.IsNew)
@@ -81,12 +84,10 @@ public class PlayerCardSpawner : MonoBehaviour
                 {
                     elapsed += Time.deltaTime;
                     float t = Mathf.SmoothStep(0f, 1f, elapsed / _spawnDuration);
-                    Vector3 startPos = card.transform.position;
-                    Quaternion startRot = card.transform.rotation;
                     card.transform.SetPositionAndRotation(Vector3.Lerp(startPos, finalPos, t), Quaternion.Slerp(startRot, MainHand.transform.rotation, t));
+                    card.transform.localScale = Vector3.Lerp(startedScale, finalScale, t);
                     yield return null;
                 }
-
             }
             else
                 card.transform.SetPositionAndRotation(finalPos, MainHand.transform.rotation);
@@ -98,7 +99,7 @@ public class PlayerCardSpawner : MonoBehaviour
 
 		}
 
-        MainHand.gameObject.GetComponent<HandAnimationLogic>().EnableAnimations();
+        MainHand.gameObject.GetComponent<CardHolderAnimation>().EnableAnimations(true);
         isPlaying = false;
     }
 

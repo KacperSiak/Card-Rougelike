@@ -3,12 +3,13 @@
 [Serializable]
 public class BonusLuck : RelicEffects
 {
+    public float modifier;
     public override void Register(RelicContext ctx)
     {
-        // better rng
+        //ctx.gambler.Modify(modifier, false, false);
     }
     public override void Unregister(RelicContext ctx)
     {
-        // Normal rng
+        //ctx.gambler.Modify(modifier, false, true);
     }
 }

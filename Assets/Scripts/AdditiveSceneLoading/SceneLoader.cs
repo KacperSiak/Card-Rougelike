@@ -7,6 +7,7 @@ namespace Systems.SceneManagement
 {
     public class SceneLoader : MonoBehaviour
     {
+    public static SceneLoader Instance { get; private set; }
         [SerializeField] Image loadingBar;
         [SerializeField] float fillSpeed = 0.5f;
         [SerializeField] Canvas loadingCanvas;
@@ -20,6 +21,14 @@ namespace Systems.SceneManagement
 
         void Awake()
         {
+            if (Instance != null && Instance != this)
+            {
+                Destroy(gameObject);
+                return;
+            }
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+
             manager.OnSceneLoaded += sceneName => Debug.Log("Loaded: " + sceneName);
             manager.OnSceneUnloaded += sceneName => Debug.Log("Unloaded: " + sceneName);
             manager.OnSceneGroupLoaded += () => Debug.Log("Scene Group Loaded");
@@ -27,6 +36,7 @@ namespace Systems.SceneManagement
 
         async void Start()
         {
+            manager.RegisterSceneGroups(sceneGroups);
             await LoadSceneGroup(0);
         }
 

@@ -12,7 +12,7 @@ public class HPLose : DebuffEffects
         localTurnCounter = turnCounter;
         context = ctx;
         RoundManager.OnRoundEnd += TurnsLeft;
-        ctx.player.LoseHealth(lostHP);
+        ctx.player.HealthChange(lostHP, false);
     }
 
     public override void Unregister(DebuffContext ctx)
