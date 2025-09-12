@@ -182,7 +182,7 @@ public class MapGenerator : MonoBehaviour
             mapManager.CalculateMaxMapTime();
     }
 
-    public void SetupCameraBounds()
+    public void SetupCameraBounds() 
     {
         if (cameraController != null)
         {
@@ -402,7 +402,6 @@ public class MapGenerator : MonoBehaviour
         return null;
     }
 
-    // Returns the node Transform closest to a given 2D map position (x,z)
     public Transform GetClosestNodeTransform2D(Vector2 target)
     {
         Transform best = null;

@@ -2,10 +2,10 @@ using UnityEngine;
 
 public enum Suits
 {
-    Hearts,
-    Diamonds,
     Clubs,
     Spades,
+    Hearts,
+    Diamonds,
     Joker
 }
 

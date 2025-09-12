@@ -8,6 +8,10 @@ public abstract class PersistenSingleton<T> : MonoBehaviour where T : MonoBehavi
 
     private static bool _isShuttingDown;
 
+    [SerializeField]
+    private bool persistAcrossScenes = false;
+    protected virtual bool ShouldPersistAcrossScenes => persistAcrossScenes;
+
     protected virtual void Awake()
     {
         if (_isShuttingDown) return;
@@ -19,7 +23,10 @@ public abstract class PersistenSingleton<T> : MonoBehaviour where T : MonoBehavi
         }
 
         Instance = this as T;
-        DontDestroyOnLoad(gameObject);
+        if (ShouldPersistAcrossScenes)
+        {
+            DontDestroyOnLoad(gameObject);
+        }
         OnSingletonAwake();
     }
 
