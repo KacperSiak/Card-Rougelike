@@ -156,12 +156,15 @@ public class RoundManager : PersistenSingleton<RoundManager>
         _athenaAnimationLogic.RoundFinishAnimation();
         DamageManager.Instance.CalculatePlayerImpact();
 
-        if(!_alreadyFinished)
-        CheckRoundReadiness();
+        //if(!_alreadyFinished) //here
+        //CheckRoundReadiness();
     }
 
-    private void CheckRoundReadiness()
+    //temp public 
+    public void CheckRoundReadiness()
     {
+        if (_alreadyFinished) return;
+
         if (!PlayerCardManager.Instance.CheckRoundReadiness())
         {
             UIManager.Instance.Winner = "Enemy";

@@ -14,10 +14,18 @@ public class ConsumablesData : ShopItem
     [field: SerializeField] public string cardID { get; private set; }
     [field: SerializeField] public string cardName { get; private set; }
     [field: SerializeField, TextArea]  public string cardDescription { get; private set; }
-    [field: SerializeField] public Sprite icon { get; private set; }
     [field: SerializeField] public CardRarity rarity { get; private set; }
     [field: SerializeField] public int buyPrice { get; private set; }
     [field: SerializeField] public int sellPrice { get; private set; }
+
+    [Header("ShaderGraph")]
+    [field: SerializeField] public Texture2D atlasTexture { get; private set; }
+    [field: SerializeField] public int rows {  get; private set; }
+    [field: SerializeField] public int cols { get; private set; }
+    [field: SerializeField] public int row { get; private set; }
+    [field: SerializeField] public int col { get; private set; }
+
+
     [SerializeReference] public List<CardEffect> cardEffects;
 }
 

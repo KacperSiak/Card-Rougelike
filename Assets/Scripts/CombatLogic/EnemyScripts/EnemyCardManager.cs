@@ -24,8 +24,6 @@ public class EnemyCardManager : PersistenSingleton<EnemyCardManager>
         RoundManager.OnRoundEnd += RefillCards;
         RoundManager.OnCombatStart += StartCombat;
     }
-
-
     private void OnDisable()
     {
         RoundManager.OnRoundEnd -= RefillCards;
@@ -61,6 +59,17 @@ public class EnemyCardManager : PersistenSingleton<EnemyCardManager>
                 _spawner.SpawnCombo(cardObjects[startObjectIndex], cardHolderIndex, _cardsBySuitDeck);
                 break;
         }
+    }
+
+    public void Attack(int key)
+    {
+        cardObjects[key].GetComponent<CardHolderAnimation>().DisableAnimations();
+        _animations[key].Attack(cardHolders[key].transform, CardsInGame[key].ConvertAll(card => card.transform).ToArray(), isPlayer: false, key: -1);
+    }
+
+    public EnemyCardAnimation GetCurrentAnimationManager(int key)
+    { 
+        return _animations[key];
     }
 
     public void ControlIdleAnimation()

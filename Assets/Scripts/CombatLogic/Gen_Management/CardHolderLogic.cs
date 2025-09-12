@@ -80,7 +80,7 @@ public class CardHolderLogic : MonoBehaviour
 
     public void Attack()
     {
-        //_playerCardsAnimation.Attack(EnemyCardManager.Instance.cardObjects[EnemyComboIndex], PCardScripts.ConvertAll(card => card.transform).ToArray());
+        _playerCardsAnimation.Attack(EnemyCardManager.Instance.cardObjects[EnemyComboIndex], PCardScripts.ConvertAll(card => card.transform).ToArray(), isPlayer: true, key: EnemyComboIndex);
     }
 
     public void OnValidated()
@@ -92,7 +92,8 @@ public class CardHolderLogic : MonoBehaviour
 
     private IEnumerator PlaceCards()
     {
-        PlayerCardManager.Instance.GetMainHand().GetComponent<CardHolderAnimation>().DisableAnimations();
+        CardHolderAnimation mainHand = PlayerCardManager.Instance.GetMainHand().GetComponent<CardHolderAnimation>();
+        mainHand.DisableAnimations();
         _isOccupied = true;
 
         Vector3 _finalSpawnPosition = (PCardScripts.Count == 1) ? transform.position : transform.position + new Vector3(-0.05f, 0.001f, 0);
@@ -120,6 +121,7 @@ public class CardHolderLogic : MonoBehaviour
         }
 
         CardHolderAnimation.EnableAnimations(isPHand: false);
+        mainHand.EnableAnimations(isPHand: true);
     }
 
     public void OnValidationFailed()

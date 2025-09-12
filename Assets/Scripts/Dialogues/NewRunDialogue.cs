@@ -26,7 +26,7 @@ public class NewRunDialogue : MonoBehaviour
 
     private void Start()
     {
-        dialogueManager = DialogueManager.GetInstance();
+        dialogueManager = DialogueManager.Instance;
         data = GetComponent<DialogueData>();
         info = data.OverallDialogueInformation;
     }

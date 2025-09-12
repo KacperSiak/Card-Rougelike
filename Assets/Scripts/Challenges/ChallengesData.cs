@@ -16,6 +16,8 @@ public class ChallengesData : ScriptableObject
     [field: SerializeField, TextArea] public string challengeDescription { get; private set; }
     [field: SerializeField] public Difficulty difficulty { get; private set; }
     [field: SerializeField] public Sprite challIcon { get; private set; }
+    [field: SerializeField] public int col { get; private set; }
+    [field: SerializeField] public int row { get; private set; }
     [SerializeReference] public List<Challenges> challenge;
 }
 
@@ -28,7 +30,7 @@ public class ChallengeContext
     public ChallengeContext()
     {
         player = PlayerManager.Instance;
-        mapManager = MapManager.instance;
+        mapManager = MapManager.Instance;
         challengesMenager = ChallengesMenager.Instance;
     }
 }

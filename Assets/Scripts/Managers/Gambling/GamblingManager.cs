@@ -94,16 +94,23 @@ public class GamblingManager : PersistenSingleton<GamblingManager>
            
     }
 
-    public void Modify(float newModifier, bool potion, bool reset)
+    public void HideParticles()
     {
-        if (potion)
-        {
-            potionModifier = newModifier;
-            potionModified = true;
-        }
+        _positiveParticles.SetActive(false);
+        _negativeParticles.SetActive(false);
+        _neutralParticles.SetActive(false);
+    }
 
-        if (reset) modifier /= newModifier;
-        else modifier *= newModifier;
+    public void Modify(float newModifier)
+    {
+        //if (potion)
+        //{
+        //    potionModifier = newModifier;
+        //    potionModified = true;
+        //}
+
+        //if (reset) modifier /= newModifier;
+        //else modifier *= newModifier;
 
     }
 
