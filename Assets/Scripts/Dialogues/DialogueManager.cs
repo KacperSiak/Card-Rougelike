@@ -18,18 +18,20 @@ public class DialogueManager : PersistenSingleton<DialogueManager>
     [SerializeField] private Image _speakerImage;
     [SerializeField] private Button _skipDialogueButton;
     [SerializeField] private Button _increaseGoodGamblingBTN, _increaseBadGamblingBTN;
-
+    [SerializeField] private Sprite _athenaSprite, _apistosSprite;
     private const string SPEAKER_TAG = "speaker", PORTRAIT_TAG = "portrait";
 
     [Header("Flags")][Space]
     public bool IsDialoguePlaying; 
-    public bool IsDialoguePaused;  // true when some event started and dialogue has to pause
+    public bool IsDialoguePaused;
     private bool _isTextGenerating;
     private Story _currentStory;
 
 
     [Header("Text Generating Properties")][Space]
-    [SerializeField] private float _textDelay = .003f;
+    [SerializeField] private float _textDelay = .03f;
+
+    [SerializeField] private TextAsset testText;
 
     private void Start()
     {
@@ -45,8 +47,14 @@ public class DialogueManager : PersistenSingleton<DialogueManager>
         IsDialoguePlaying = false;
         _dialoguePanel.SetActive(false);
 
-        _increaseBadGamblingBTN.onClick.AddListener(_data.IncreaseBadGambleAttempts);
-        _increaseGoodGamblingBTN.onClick.AddListener(_data.IncreaseGoodGambleAttempts);
+        _increaseBadGamblingBTN?.onClick.AddListener(_data.IncreaseBadGambleAttempts);
+        _increaseGoodGamblingBTN?.onClick.AddListener(_data.IncreaseGoodGambleAttempts);
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.V))
+            EnterDialogueMode(testText);
     }
 
     public void InteractionWithDialogueBox()
@@ -133,6 +141,7 @@ public class DialogueManager : PersistenSingleton<DialogueManager>
             {
                 case SPEAKER_TAG:
                     _speakerName.text = tagValue;
+                    _speakerImage.sprite = tagValue == "Athena" ? _athenaSprite : _apistosSprite;
                     break;
                 case PORTRAIT_TAG:
                     if (tagValue == "null")
@@ -143,7 +152,6 @@ public class DialogueManager : PersistenSingleton<DialogueManager>
                     _speakerImage.enabled = true;
                     string[] splitPortraitName = tagValue.Split("_");
                     Sprite sprite = Resources.Load<Sprite>($"Dialogue Sprites/{splitPortraitName[0].Trim()}/{splitPortraitName[1].Trim()}");
-                    _speakerImage.sprite = sprite;
                     break;
                 default:
                     Debug.LogWarning("Tag came in but is not currently being handled: " + tag);
