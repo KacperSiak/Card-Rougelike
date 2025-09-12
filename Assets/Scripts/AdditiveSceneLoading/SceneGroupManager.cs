@@ -114,9 +114,9 @@ namespace Systems.SceneManagement
             {
                 var sceneAt = SceneManager.GetSceneAt(i);
                 if (!sceneAt.isLoaded) continue;
-
                 var sceneName = sceneAt.name;
                 if (sceneName == "Bootstrapper" || sceneName == "DontDestroyOnLoad") continue;
+                if (IsPersistent(sceneName)) continue;
                 scenesToUnload.Add(sceneName);
             }
 
@@ -389,7 +389,6 @@ namespace Systems.SceneManagement
             }
 
             var target = SceneManager.GetSceneByName(sceneName);
-            // If we have a deferred preload, finalize it first
             if (_deferredPreloads.TryGetValue(sceneName, out var deferredOp))
             {
                 deferredOp.allowSceneActivation = true;
@@ -436,6 +435,22 @@ namespace Systems.SceneManagement
             DisableInactiveSceneLights(target);
             DisableInactiveSceneObjects(target);
             ManageDontDestroyOnLoadObjects(sceneName);
+        }
+
+        private bool IsPersistent(string sceneName)
+        {
+            for (int g = 0; g < _registeredGroups.Count; g++)
+            {
+                var group = _registeredGroups[g];
+                if (group?.Scenes == null) continue;
+                for (int s = 0; s < group.Scenes.Count; s++)
+                {
+                    var data = group.Scenes[s];
+                    if (data != null && data.Name == sceneName && data.Persistent)
+                        return true;
+                }
+            }
+            return false;
         }
     }
 

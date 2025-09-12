@@ -24,9 +24,9 @@ namespace Systems.SceneManagement
         public SceneReference Reference;
         public string Name => Reference.Name;
         public SceneType SceneType;
+        [Tooltip("If true, this scene will never be unloaded automatically by SceneGroupManager")] public bool Persistent;
     }
 
-    // Extendable set of scene roles used by SceneGroupManager
     public enum SceneType
     {
         ActiveScene,
