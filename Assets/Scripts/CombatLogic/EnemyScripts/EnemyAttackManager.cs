@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class EnemyAttackManager : MonoBehaviour
 {
@@ -11,11 +12,17 @@ public class EnemyAttackManager : MonoBehaviour
     private const int k_minRound = 1;
     private const int k_maxRound = 5;
     private const int k_limit = 3;
+    private float _suitModifier;
+    private List<Suits> _suits;
     private ConsumableContext _consContext;
+    private Dictionary<float, float> _shieldModifier = new Dictionary<float, float>();
+    private float _shield = 1;
     private void OnEnable()
     {
         RoundManager.OnCombatEnd += OnCombatEnd;
         RoundManager.OnCombatStart += StartCombatSetup;
+        PotionEvents.OnSuitProitection.AddListener(SuitsBlock);
+        PotionEvents.OnShieldAcitvate.AddListener(ModifyShield);
         _consContext = new ConsumableContext();
     }
 
@@ -24,6 +31,7 @@ public class EnemyAttackManager : MonoBehaviour
     {
         RoundManager.OnCombatEnd -= OnCombatEnd;
         RoundManager.OnCombatStart -= StartCombatSetup;
+        PotionEvents.OnSuitProitection.RemoveListener(SuitsBlock);
     }
 
     public void StartCombatSetup()
@@ -71,8 +79,19 @@ public class EnemyAttackManager : MonoBehaviour
 
             if (RoundsForCards[i] > 0) continue;
 
-            if(_consContext.immune) RoundManager.Instance.PlayerHP -= EnemyCardManager.Instance.CardsInGamePower[i] * 0;
-            else if (_consContext.vulnerable) RoundManager.Instance.PlayerHP -= EnemyCardManager.Instance.CardsInGamePower[i] * 2;
+            if (SuitChecker(EnemyCardManager.Instance.CardsInGame[i])) _suitModifier = 0.75f;
+            else _suitModifier = 1;
+
+            foreach (var node in _shieldModifier)
+            {
+                if (CalculateShield(node.Key))
+                {
+                    _shield += node.Value;
+                }
+            }
+
+            if(_consContext.immune) RoundManager.Instance.PlayerHP -= Mathf.RoundToInt(EnemyCardManager.Instance.CardsInGamePower[i] * 0 * _suitModifier * _shield);
+            else if (_consContext.vulnerable) RoundManager.Instance.PlayerHP -= Mathf.RoundToInt(EnemyCardManager.Instance.CardsInGamePower[i] * 2 * _suitModifier);
             else
             {
                 EnemyCardManager.Instance.Attack(i);
@@ -80,9 +99,10 @@ public class EnemyAttackManager : MonoBehaviour
                 while(EnemyCardManager.Instance.GetCurrentAnimationManager(i).IsAnimating)
                 yield return null;
 
-                RoundManager.Instance.PlayerHP -= EnemyCardManager.Instance.CardsInGamePower[i];
+                RoundManager.Instance.PlayerHP -= Mathf.RoundToInt(EnemyCardManager.Instance.CardsInGamePower[i] * _suitModifier);  
             }
 
+            _shield = 1;
             if (RoundManager.Instance.PlayerHP <= 0) break;
 
             RemoveKey(i);
@@ -102,4 +122,39 @@ public class EnemyAttackManager : MonoBehaviour
     { 
         RoundsForCards.Clear();
     }
+
+    private void SuitsBlock(Suits suit, bool adding)
+    {
+        if (adding) _suits.Add(suit);
+        else _suits.Remove(suit);
+    }
+
+    private bool SuitChecker(List<GameObject> Cards)
+    {
+        foreach (var card in Cards)
+        {
+            var go = card.GetComponent<EnemyCardLogic>();
+            foreach (var suit in _suits)
+            {
+                if (suit == go.Card.suit) return true;
+            }
+        }
+        return false;
+    }
+
+    private void ModifyShield(float chances, float shield, bool add)
+    {
+        if (add) _shieldModifier[chances] = shield;
+        else _shieldModifier.Remove(chances);
+    }
+
+    private bool CalculateShield(float percentege)
+    {
+        percentege = Mathf.Clamp(percentege, 0f, 100f);
+
+        float roll = Random.Range(0, 100);
+
+        return roll < percentege;
+    }    
+    
 }

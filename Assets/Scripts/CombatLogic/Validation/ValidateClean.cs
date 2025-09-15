@@ -3,6 +3,10 @@ using UnityEngine;
 public class ValidateClean : Validator
 {
     private RelicContext _context; // Kacper Added
+    private void Start()
+    {
+        if (_context == null) _context = new RelicContext();
+    }
     protected override void ValidateCards()
     {
         if (PlayerCardManager.Instance.SelectedCards.Count > 1)
@@ -27,12 +31,12 @@ public class ValidateClean : Validator
                 _isValid = _cardHolder.PCardScripts[i].Card.power + 1 == _cardHolder.PCardScripts[i + 1].Card.power;
                 if (_cardHolder.PCardScripts[i + 1].Card.suit == Suits.Joker) _isValid = true;
 
-                //if (_context.Gaps)
-                //{
-                //    _isValid = _cardHolder.PCardScripts[i].Card.power + 2 == _cardHolder.PCardScripts[i + 1].Card.power;
-                //    if (_cardHolder.PCardScripts[i + 1].Card.suit == Suits.Joker) _isValid = true;
-                //}
-                //else continue;
+                if (_context.Gaps)
+                {
+                    _isValid = _cardHolder.PCardScripts[i].Card.power + 2 == _cardHolder.PCardScripts[i + 1].Card.power;
+                    if (_cardHolder.PCardScripts[i + 1].Card.suit == Suits.Joker) _isValid = true;
+                }
+                else continue;
                 Debug.Log("valid or not: " + _isValid);
             }
         }

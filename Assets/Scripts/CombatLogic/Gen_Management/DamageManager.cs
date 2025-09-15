@@ -10,6 +10,8 @@ public class DamageManager : PersistenSingleton<DamageManager>
    [SerializeField] private List<CardHolderLogic> _cardHolders;
 
     private int _bonusDamage = 0;
+    private float _bonusMultiplier = 1;
+    private Dictionary<float, float> _bonusMultDamage = new Dictionary<float, float>();
 
     protected override void OnSingletonAwake() { }
 
@@ -42,15 +44,24 @@ public class DamageManager : PersistenSingleton<DamageManager>
 
        ImplementPlayerImpact();
     }
-
+    
     private void ImplementPlayerImpact()
     {
         for (int i = 0; i < _cardHolders.Count; i++)
         { 
             if (!EnemyCardManager.Instance.CardsInGamePower.ContainsKey(i) || EnemyCardManager.Instance.CardsInGamePower[i] > 0) continue; 
 
-            RoundManager.Instance.EnemyHP -= -(EnemyCardManager.Instance.CardsInGamePower[i] - _bonusDamage); // cuz number in the list will be negative after we will implement player impact
+            foreach (var node in _bonusMultDamage)
+            {
+                if(CalculateChances(node.Key))
+                {
+                    _bonusMultiplier *= node.Value;
+                }
+            }
 
+            RoundManager.Instance.EnemyHP -= Mathf.RoundToInt(-((EnemyCardManager.Instance.CardsInGamePower[i] - _bonusDamage) * _bonusMultiplier)); // cuz number in the list will be negative after we will implement player impact
+
+            _bonusMultiplier = 1;
             if (RoundManager.Instance.EnemyHP <= 0) return;
 
             _cardHolders[i].ResetCardHolderEnemyCards();
@@ -67,4 +78,22 @@ public class DamageManager : PersistenSingleton<DamageManager>
         if (add) _bonusDamage += amount;
         else _bonusDamage -= amount;
     }
+
+    public void BonusMultiplierChange(float chances, float damage, bool add)
+    {
+        if (add) _bonusMultDamage[chances] = damage;
+        else _bonusMultDamage.Remove(chances);
+    }
+
+    private bool CalculateChances(float chances)
+    {
+        chances = Mathf.Clamp(chances, 0f, 100f);
+
+        float roll = Random.Range(0f, 100f);
+
+        return roll < chances;
+    }
+
+    
+    
 }

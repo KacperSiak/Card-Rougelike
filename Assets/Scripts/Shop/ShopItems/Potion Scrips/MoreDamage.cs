@@ -13,13 +13,13 @@ public class MoreDamage : PotionEffects
         localFightsLeft = fightLeft;
         context = ctx;
         RoundManager.OnCombatEnd += FightsLeft;
-        // bonus damage
+        ctx.damageManager.BonusMultiplierChange(chances, bonusDamage, true);
     }
 
     public override void Unregister(PotionContext ctx)
     {
         RoundManager.OnCombatEnd -= FightsLeft;
-        // no more bons damage
+        ctx.damageManager.BonusMultiplierChange(chances, bonusDamage, false);
     }
 
     public override void FightsLeft()

@@ -426,7 +426,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4fbf0f685887db749aa31071e0ef5244, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  allItems:
+  persistAcrossScenes: 0
+  items:
   - {fileID: 11400000, guid: fa229b7be69c92240b0d916ecb9b2689, type: 2}
   - {fileID: 11400000, guid: 6194f05b82f95bc4ea16a432141c5b96, type: 2}
   - {fileID: 11400000, guid: 4860c16a219a6584d8f76c92cc262afc, type: 2}
@@ -477,6 +478,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: dfbf7c7b594481e40bdad2192a2306e4, type: 2}
   - {fileID: 11400000, guid: 811b9ccf1615c9742b0a5b55a640b1fe, type: 2}
   - {fileID: 11400000, guid: 5bfeda047d26fa14e9c386bef1ad8133, type: 2}
+  allItems: []
   _slots:
   - {fileID: 508320826}
   - {fileID: 1627660336}
@@ -873,6 +875,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd04c91a230ed6e42a7f1239251156e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  persistAcrossScenes: 0
   _relicUI: {fileID: 1679897987}
   currentRelics: []
   allRelics:
@@ -904,6 +907,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 679e97a4dbe6c55418ac22c7b8b813cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  persistAcrossScenes: 0
   _debuffList: []
   _buffAndDebuffUI: {fileID: 1679897988}
   _currentDebuffs: []
@@ -1021,6 +1025,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9f2a3d68b3182a4d962751270fbb0ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  persistAcrossScenes: 0
   gold: 100
   availableDiscards: 3
   handsize: 8
@@ -1036,6 +1041,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 931930d3e723f2642ba07fb73c0d48f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  persistAcrossScenes: 0
   mapGenerator: {fileID: 0}
   maxMapTime: 0
   currentMapTime: 0
@@ -1162,11 +1168,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6183236472015425064, guid: 4da385bde2b6a9241abafdba27d0662e, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -178
+      value: -424.4
       objectReference: {fileID: 0}
     - target: {fileID: 6183236472015425064, guid: 4da385bde2b6a9241abafdba27d0662e, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -118
+      value: -29.3
       objectReference: {fileID: 0}
     - target: {fileID: 6183236472015425064, guid: 4da385bde2b6a9241abafdba27d0662e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -1320,7 +1326,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 47.8, y: 0}
+  m_AnchoredPosition: {x: 47.80005, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &954965809
@@ -1600,11 +1606,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6183236472015425064, guid: 4da385bde2b6a9241abafdba27d0662e, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 244
+      value: 116
       objectReference: {fileID: 0}
     - target: {fileID: 6183236472015425064, guid: 4da385bde2b6a9241abafdba27d0662e, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -118
+      value: -27
       objectReference: {fileID: 0}
     - target: {fileID: 6183236472015425064, guid: 4da385bde2b6a9241abafdba27d0662e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -1766,11 +1772,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6183236472015425064, guid: 4da385bde2b6a9241abafdba27d0662e, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 29
+      value: -145
       objectReference: {fileID: 0}
     - target: {fileID: 6183236472015425064, guid: 4da385bde2b6a9241abafdba27d0662e, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -118
+      value: -30
       objectReference: {fileID: 0}
     - target: {fileID: 6183236472015425064, guid: 4da385bde2b6a9241abafdba27d0662e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
