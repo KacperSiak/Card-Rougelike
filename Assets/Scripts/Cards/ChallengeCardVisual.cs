@@ -12,8 +12,9 @@ public class ChallengeCardVisual : MonoBehaviour
 
     [SerializeField] private Collider _frontColl;
     [SerializeField] private Collider _backColl;
+    [SerializeField] private Collider _allColl;
 
-    [Header ("Movement")]
+    [Header("Movement")]
     [SerializeField] private Vector3 _startPos;
     [SerializeField] private Vector3 _endPos;
     [SerializeField] private float _moveDuration;
@@ -23,7 +24,9 @@ public class ChallengeCardVisual : MonoBehaviour
     [SerializeField] private Vector3 _endRot;
     [SerializeField] private float _rotDuration;
 
-    private bool _isMoving,  _isRotating; 
+    private ChallengesData _challenge;
+
+    private bool _isMoving, _isRotating;
     private float _time;
     private Quaternion _qStart, _qEnd;
 
@@ -31,11 +34,13 @@ public class ChallengeCardVisual : MonoBehaviour
     {
         _frontColl.enabled = false;
         _backColl.enabled = false;
+        _allColl.enabled = false;
     }
 
-    public void SetupChalss(int col, int row)
+    public void SetupChalss(int col, int row, ChallengesData givenChallenge)
     {
         MaterialSetupManager.Instance.SetupVisual(_front, col, row);
+        _challenge = givenChallenge;
     }
 
     public void SetupBack(int number)
@@ -59,6 +64,11 @@ public class ChallengeCardVisual : MonoBehaviour
         _time = 0f;
 
         transform.SetPositionAndRotation(_startPos, _qStart);
+    }
+
+    private void OnMouseDown()
+    {
+        ChallengesMenager.Instance.ChallengeAccepted(_challenge);        
     }
 
     private void Update()
@@ -90,7 +100,7 @@ public class ChallengeCardVisual : MonoBehaviour
             {
                 _isRotating = false;
                 _time = 0f;
-                _frontColl.enabled = true;
+                _allColl.enabled = true;
             }
         }
     }
