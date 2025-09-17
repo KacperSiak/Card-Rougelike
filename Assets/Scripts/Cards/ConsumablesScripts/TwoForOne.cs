@@ -10,12 +10,8 @@ public class TwoForOne : CardEffect
     private List<RelicData> _relics;
     private Rarity _neededRarity;
 
-    // public static UnityEvent OnRemove = new UnityEvent();
     public override void ApplyEffect(ConsumableContext ctx)
     {
-        // remove 2 relics of same rarity
-        // add one better rarity
-
         if(CheckRarity())
         {
             _relics = DeleteRelics();

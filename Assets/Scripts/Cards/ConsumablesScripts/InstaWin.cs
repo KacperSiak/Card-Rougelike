@@ -5,11 +5,15 @@ public class InstaWin : CardEffect
 {
     public override void ApplyEffect(ConsumableContext ctx)
     {
-        
-        foreach (var relic in ctx.consAndRel.currentRelics)
+        if (ctx.combbatManager.CurrentNodeType != MapSystem.NodeType.Boss)
         {
-            RelicEventsSystem.RelicRemoved(relic);
+            foreach (var relic in ctx.consAndRel.currentRelics)
+            {
+                RelicEventsSystem.RelicRemoved(relic);
+            }
+            ConsumablesEventSystem.InstaWin();
         }
-        // win fight (boss prevented)
+        else return;
+        
     }
 }

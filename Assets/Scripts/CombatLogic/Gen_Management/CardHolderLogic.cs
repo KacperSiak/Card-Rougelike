@@ -75,7 +75,6 @@ public class CardHolderLogic : MonoBehaviour
             CardHolderAnimation.DisableAnimations();
             ValidatorType.Validate(this);
         }
-
     }
 
     public void Attack()

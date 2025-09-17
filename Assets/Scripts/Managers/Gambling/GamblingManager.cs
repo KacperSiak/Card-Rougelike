@@ -50,6 +50,7 @@ public class GamblingManager : PersistenSingleton<GamblingManager>
             {
                 ApplyEffect(r.type);
                 StartCoroutine(WaitForChest(_time, r.reward));
+                GamblingSceneManager.Instance.ShowReward(r.reward.rewardName);
                 break;
             }
         }

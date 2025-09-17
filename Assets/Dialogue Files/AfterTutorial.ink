@@ -15,7 +15,6 @@ Hard to believe, though… The goddess of wisdom, here, in this hole? I always t
 #speaker: Athena
 Watch your tongue in my presence. But fine—no punishment today. Instead I have a proposal for you.
 
-(2D cutscene starts)
 #speaker: Athena
 Once a year, we have a grand tournament in Diodós on Olympus. Every god chooses a champion. Mostly these are strong monsters or heroes who have already proven themselves to the gods. The winner earns the right to stand before Zeus and the entire pantheon… to ask for one wish. Anything what they want.
 (Cutscene ends)
@@ -64,4 +63,3 @@ As if you’re any different. As I say you hate those who resemble you the most.
 
 #speaker: Apistos
 Wait—no! Apistos does not mean fish!!!
-(But Athena was already gone.)
