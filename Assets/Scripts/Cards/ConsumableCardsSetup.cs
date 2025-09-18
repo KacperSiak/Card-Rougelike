@@ -20,7 +20,7 @@ public class ConsumableCardsSetup : MonoBehaviour
             var set = _cardPrefab.GetComponent<ConsCardProprties>();
             if (set != null)
             {
-                set.Setup(Card.type, Card.row, Card.col);
+                set.Setup(Card);
             }
         }
     }

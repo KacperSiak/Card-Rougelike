@@ -1,4 +1,6 @@
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 [System.Serializable]   
 public struct MaterialsByType
@@ -15,14 +17,41 @@ public class ConsCardProprties : MonoBehaviour
     [SerializeField] private Texture2D _moiraeBack;
     [SerializeField] private Texture2D _oneUseBack;
 
-    public void Setup(ConsCardType type, int row, int col)
+    [SerializeField] private Button _useButton;
+    [SerializeField] private Button _discardButton;
+    [SerializeField] private TextMeshProUGUI _discardButtonText;
+
+    private ConsumablesData _currCons;
+    private ConsumableContext _consContext;
+    private bool _visibleButtons = false;
+
+    private void OnEnable()
     {
-        var mat = FindMaterial(type);
+        _useButton.onClick.AddListener(Use);
+        _discardButton.onClick.AddListener(Discard);
+        _consContext = new ConsumableContext();
+        ShopMenager.OnSellingMode.AddListener(ButtonDiscardToSell);
+        ShopMenager.OffSellingMode.AddListener(ButtonSellToDiscard);
+        _visibleButtons = false;
+        _useButton.gameObject.SetActive(false);
+        _discardButton.gameObject.SetActive(false);
+    }
+
+    private void OnDisable()
+    {
+        _useButton.onClick.RemoveAllListeners();
+        _discardButton.onClick.RemoveAllListeners();
+    }
+
+    public void Setup(ConsumablesData cons)
+    {
+        _currCons = cons;
+        var mat = FindMaterial(_currCons.type);
         if (mat != null) _front.sharedMaterial = mat;
 
-        MaterialSetupManager.Instance.SetupVisual(_front, col, row);
+        MaterialSetupManager.Instance.SetupVisual(_front, _currCons.col, _currCons.row);
 
-        if (type == ConsCardType.Moirae) _back.material.mainTexture = _moiraeBack;
+        if (_currCons.type == ConsCardType.Moirae) _back.material.mainTexture = _moiraeBack;
         else _back.material.mainTexture = _oneUseBack;
 
     }
@@ -35,5 +64,50 @@ public class ConsCardProprties : MonoBehaviour
                 return _materials[i].material;
         }
         return null;
+    }
+
+    private void Use()
+    {
+        foreach(var effect in _currCons.cardEffects)
+        {
+            effect.ApplyEffect(_consContext);
+        }
+        gameObject.SetActive(false);
+        _currCons = null;
+    }
+
+    private void Discard()
+    {
+        gameObject.SetActive(false);
+        _currCons = null;
+
+        if (ShopMenager.Instance.inSellingMode)
+        {
+            PlayerManager.Instance.GoldChange(_currCons.sellPrice, true);
+        }
+    }
+
+    private void ButtonDiscardToSell()
+    {
+        _discardButtonText.text = $"Sell {_currCons.sellPrice}";
+    }
+
+    public void ButtonSellToDiscard()
+    {
+        _discardButtonText.text = "Discard";
+    }
+
+    private void OnMouseDown()
+    {
+        if(_visibleButtons)
+        {
+            _useButton.gameObject.SetActive(false);
+            _discardButton.gameObject.SetActive(false);
+        }
+        else
+        {
+            _useButton.gameObject.SetActive( true);
+            _discardButton.gameObject.SetActive(true);
+        }
     }
 }
