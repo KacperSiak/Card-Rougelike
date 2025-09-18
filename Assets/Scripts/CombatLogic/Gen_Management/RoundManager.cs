@@ -29,6 +29,8 @@ public class RoundManager : PersistenSingleton<RoundManager>
         OnHPChanged += CheckHPState;
         OnCombatEnd += ReturnHealthValueAfterCombat;
         OnCombatEnd += SwitchToMainScene;
+        OnCombatEnd += LogCombatResult;
+        OnCombatEnd += HandleCombatEndMarking;
         ConsumablesEventSystem.OnInstaWin.AddListener(CombatEndCard);
     } 
     
@@ -38,6 +40,8 @@ public class RoundManager : PersistenSingleton<RoundManager>
         OnHPChanged -= CheckHPState;
         OnCombatEnd -= ReturnHealthValueAfterCombat;
         OnCombatEnd -= SwitchToMainScene;
+        OnCombatEnd -= LogCombatResult;
+        OnCombatEnd -= HandleCombatEndMarking;
         ConsumablesEventSystem.OnInstaWin.RemoveListener(CombatEndCard);
     }
 
@@ -69,6 +73,8 @@ public class RoundManager : PersistenSingleton<RoundManager>
 
     void Start()
     {
+        _alreadyFinished = false;
+        Debug.Log("[RoundManager] Combat Start: resetting _alreadyFinished=false");
         Cursor.visible = true;
         _playerHP = PlayerManager.Instance.PlayerHP;
         CurrentCombatDetails = CombatManager.Instance.GetCurrentCombatDetails();
@@ -104,19 +110,37 @@ public class RoundManager : PersistenSingleton<RoundManager>
 
     private void SwitchToMainScene()
     {
+        Debug.Log($"[RoundManager] SwitchToMainScene invoked. Winner={UIManager.Instance.Winner}");
         if (SceneLoader.Instance != null)
         {
             StartCoroutine(SwitchToMainSceneFlow());
+        }
+        else
+        {
+            bool playerWon = UIManager.Instance.Winner == "Player";
+            if (playerWon)
+            {
+                Debug.Log("[RoundManager] (Fallback) Player won. Marking last combat node as cleared before direct scene load...");
+                NodeClickHandler.MarkLastCombatNodeClearedIfAny();
+            }
+            else
+            {
+                Debug.Log("[RoundManager] (Fallback) Player lost. Clearing cleared nodes and regenerating map after load...");
+                NodeClickHandler.ClearClearedNodes();
+            }
+            UnityEngine.SceneManagement.SceneManager.LoadScene("MapGeneration");
         }
     }
 
     private IEnumerator SwitchToMainSceneFlow()
     {
         bool playerWon = UIManager.Instance.Winner == "Player";
+        Debug.Log($"[RoundManager] SwitchToMainSceneFlow start. playerWon={playerWon}");
 
         var task = SceneLoader.Instance.manager.ActivateScene("MapGeneration");
         while (task != null && !task.IsCompleted)
             yield return null;
+        Debug.Log("[RoundManager] MapGeneration activation completed.");
 
         if (!playerWon)
         {
@@ -144,10 +168,6 @@ public class RoundManager : PersistenSingleton<RoundManager>
                     saveMgr.SaveCurrentMap();
                 }
             }
-        }
-        else
-        {
-            NodeClickHandler.MarkLastCombatNodeClearedIfAny();
         }
     }
 
@@ -204,7 +224,36 @@ public class RoundManager : PersistenSingleton<RoundManager>
 
     private void CombatEndCard()
     {
+        if (_alreadyFinished) return;
+        UIManager.Instance.Winner = "Player";
+        _alreadyFinished = true;
+        Debug.Log("[RoundManager] Insta-win: setting Winner=Player and ending combat");
         OnCombatEnd?.Invoke();
+    }
+
+    private void HandleCombatEndMarking()
+    {
+        bool playerWon = false;
+        var winner = UIManager.Instance.Winner;
+        if (!string.IsNullOrEmpty(winner))
+        {
+            playerWon = string.Equals(winner, "Player", StringComparison.OrdinalIgnoreCase);
+        }
+        if (!playerWon && _playerHP > 0 && _enemyHP <= 0)
+        {
+            Debug.Log("[RoundManager] Winner fallback via HP check -> Player");
+            playerWon = true;
+        }
+
+        if (playerWon)
+        {
+            Debug.Log("[RoundManager] OnCombatEnd: Player won. Marking last combat node as cleared now.");
+            NodeClickHandler.MarkLastCombatNodeClearedIfAny();
+        }
+        else
+        {
+            Debug.Log("[RoundManager] OnCombatEnd: Player did not win. No marking performed.");
+        }
     }
 
     private void LogCombatResult()

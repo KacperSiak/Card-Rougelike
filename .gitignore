@@ -102,3 +102,4 @@ FMOD/FMODproject/project/.unsaved/
 Assets/Plugins/FMOD//*.bundle text eol=lf
 Assets/Plugins/FMOD//Info.plist text eol=lf
 /[Aa]ssets/FMOD.unity
+Assets/Plugins/FMOD/Cache/Editor/FMODStudioCache.asset

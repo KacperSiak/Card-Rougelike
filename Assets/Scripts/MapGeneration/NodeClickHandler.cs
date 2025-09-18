@@ -37,9 +37,14 @@ public class NodeClickHandler : MonoBehaviour
     private static bool isPlayerMoving = false;
     private bool _shopBlock = false;
     private bool _healBlock = false;
+    private bool _wasClearedAndDisabled = false; 
 
     private static readonly HashSet<NodeClickHandler> _clearedCombatNodes = new HashSet<NodeClickHandler>();
     public static NodeClickHandler lastEnteredCombatNode;
+    private static readonly HashSet<string> _clearedCombatGuids = new HashSet<string>();
+    private static string _lastEnteredCombatGuid;
+    private static readonly HashSet<string> _clearedCombatKeys = new HashSet<string>();
+    private static string _lastEnteredCombatKey;
     
     [Header("Debug")]
     [Tooltip("Enable verbose debug logs for movement / adjacency checks.")]
@@ -60,6 +65,16 @@ public class NodeClickHandler : MonoBehaviour
         if (mapNode == null)
         {
             Debug.LogWarning($"[NodeClickHandler] mapNode reference is NULL on '{name}'. Movement adjacency will fail for this node.");
+        }
+        else
+        {
+            var guid = GetOrAssignNodeGuid(this);
+            if (!string.IsNullOrEmpty(guid) && _clearedCombatGuids.Contains(guid))
+            {
+                _wasClearedAndDisabled = true;
+                if (forceDebugLogs || enableDebugLogs)
+                    Debug.Log($"[NodeClickHandler] Start: Node '{name}' already cleared by GUID {guid}. Disabling loads.");
+            }
         }
     }
 
@@ -304,9 +319,20 @@ public class NodeClickHandler : MonoBehaviour
 
     void LoadScene()
     {
-        if (IsCombatNode(nodeType) && _clearedCombatNodes.Contains(this))
+        string myGuid = IsCombatNode(nodeType) ? GetOrAssignNodeGuid(this) : null;
+        string myKey = IsCombatNode(nodeType) ? GetNodeKey(this) : null;
+        if (_wasClearedAndDisabled)
         {
-            Debug.Log($"[NodeClickHandler] Node '{name}' already cleared. Staying on map.");
+            if (forceDebugLogs || enableDebugLogs)
+                Debug.Log($"[NodeClickHandler] Node '{name}' is disabled after clear. Staying on map.");
+            return;
+        }
+        if (IsCombatNode(nodeType) &&
+            (_clearedCombatNodes.Contains(this) ||
+             (!string.IsNullOrEmpty(myGuid) && _clearedCombatGuids.Contains(myGuid)) ||
+             (myKey != null && _clearedCombatKeys.Contains(myKey))))
+        {
+            Debug.Log($"[NodeClickHandler] Node '{name}' already cleared (guid={myGuid ?? "<none>"}, key={myKey ?? "<none>"}). Staying on map.");
             return;
         }
 
@@ -327,6 +353,10 @@ public class NodeClickHandler : MonoBehaviour
                 if (IsCombatNode(nodeType))
                 {
                     lastEnteredCombatNode = this;
+                    _lastEnteredCombatGuid = myGuid;
+                    _lastEnteredCombatKey = myKey;
+                    Debug.Log($"[NodeClickHandler] Entering combat from node '{name}' guid={_lastEnteredCombatGuid} key={_lastEnteredCombatKey}");
+                    DisableNodeOnCombatEntry(_lastEnteredCombatGuid);
                 }
                 Debug.Log("Using additive scene activation for: " + sceneToLoad);
                 SceneLoader.Instance.manager.ActivateScene(sceneToLoad);
@@ -341,6 +371,10 @@ public class NodeClickHandler : MonoBehaviour
             if (IsCombatNode(nodeType))
             {
                 lastEnteredCombatNode = this;
+                _lastEnteredCombatGuid = myGuid;
+                _lastEnteredCombatKey = myKey;
+                Debug.Log($"[NodeClickHandler] Entering combat (single load) from node '{name}' guid={_lastEnteredCombatGuid} key={_lastEnteredCombatKey}");
+                DisableNodeOnCombatEntry(_lastEnteredCombatGuid);
             }
             SceneManager.LoadScene(sceneToLoad);
         }
@@ -358,18 +392,102 @@ public class NodeClickHandler : MonoBehaviour
 
     public static void MarkLastCombatNodeClearedIfAny()
     {
+        bool any = false;
+        if (!string.IsNullOrEmpty(_lastEnteredCombatGuid))
+        {
+            _clearedCombatGuids.Add(_lastEnteredCombatGuid);
+            Debug.Log($"[NodeClickHandler] Marked GUID '{_lastEnteredCombatGuid}' as cleared");
+            DisableNodesWithGuid(_lastEnteredCombatGuid);
+            any = true;
+        }
+        if (!string.IsNullOrEmpty(_lastEnteredCombatKey))
+        {
+            _clearedCombatKeys.Add(_lastEnteredCombatKey);
+            Debug.Log($"[NodeClickHandler] Marked key '{_lastEnteredCombatKey}' as cleared");
+            any = true;
+        }
         if (lastEnteredCombatNode != null)
         {
             _clearedCombatNodes.Add(lastEnteredCombatNode);
-            Debug.Log($"[NodeClickHandler] Marked node '{lastEnteredCombatNode.name}' as cleared");
-            lastEnteredCombatNode = null;
+            Debug.Log($"[NodeClickHandler] Also marked instance '{lastEnteredCombatNode.name}' as cleared (legacy)");
+            lastEnteredCombatNode.DisableNodeAfterClear();
+            any = true;
         }
+        if (!any)
+        {
+            Debug.LogWarning("[NodeClickHandler] No last entered combat node/key to mark as cleared");
+        }
+        lastEnteredCombatNode = null;
+        _lastEnteredCombatGuid = null;
+        _lastEnteredCombatKey = null;
     }
 
     public static void ClearClearedNodes()
     {
         _clearedCombatNodes.Clear();
+        _clearedCombatGuids.Clear();
+        _clearedCombatKeys.Clear();
         lastEnteredCombatNode = null;
+        _lastEnteredCombatGuid = null;
+        _lastEnteredCombatKey = null;
+    }
+
+    private static string GetNodeKey(NodeClickHandler h)
+    {
+        if (h != null)
+        {
+            if (h.mapNode != null)
+            {
+                var p = h.mapNode.Position;
+                return $"{p.x:F3},{p.y:F3}";
+            }
+            var pos = h.transform.position;
+            return $"{pos.x:F3},{pos.z:F3}";
+        }
+        return null;
+    }
+
+    private static string GetOrAssignNodeGuid(NodeClickHandler h)
+    {
+        if (h == null) return null;
+        if (h.mapNode == null) return null;
+        if (!string.IsNullOrEmpty(h.mapNode.UniqueId)) return h.mapNode.UniqueId;
+        string guid = System.Guid.NewGuid().ToString("N");
+        h.mapNode.UniqueId = guid;
+        if (forceDebugLogs || h.enableDebugLogs)
+            Debug.Log($"[NodeClickHandler] Assigned GUID '{guid}' to node at {h.mapNode.Position}");
+        return guid;
+    }
+
+    private void DisableNodeAfterClear()
+    {
+        _wasClearedAndDisabled = true;
+        if (forceDebugLogs || enableDebugLogs)
+            Debug.Log($"[NodeClickHandler] Disabled node after clear: '{name}'");
+    }
+
+    private static void DisableNodesWithGuid(string guid)
+    {
+        if (string.IsNullOrEmpty(guid)) return;
+        var nodes = GameObject.FindObjectsOfType<NodeClickHandler>(includeInactive: true);
+        int count = 0;
+        foreach (var n in nodes)
+        {
+            if (n != null && n.mapNode != null && n.mapNode.UniqueId == guid)
+            {
+                n.DisableNodeAfterClear();
+                count++;
+            }
+        }
+        if (count > 0)
+            Debug.Log($"[NodeClickHandler] Disabled {count} node(s) with GUID {guid}");
+    }
+
+    private void DisableNodeOnCombatEntry(string guid)
+    {
+        _wasClearedAndDisabled = true;
+        if (forceDebugLogs || enableDebugLogs)
+            Debug.Log($"[NodeClickHandler] Disabled node on combat entry: '{name}' guid={guid} scene={sceneToLoad}");
     }
     
     private void ShowNodeInfo()
