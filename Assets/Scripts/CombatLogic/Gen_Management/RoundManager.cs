@@ -125,7 +125,7 @@ public class RoundManager : PersistenSingleton<RoundManager>
             }
             else
             {
-                Debug.Log("[RoundManager] (Fallback) Player lost. Clearing cleared nodes and regenerating map after load...");
+                Debug.Log("[RoundManager] (Fallback) Player lost. Clearing cleared nodes and reloading map scene directly...");
                 NodeClickHandler.ClearClearedNodes();
             }
             UnityEngine.SceneManagement.SceneManager.LoadScene("MapGeneration");
@@ -137,38 +137,74 @@ public class RoundManager : PersistenSingleton<RoundManager>
         bool playerWon = UIManager.Instance.Winner == "Player";
         Debug.Log($"[RoundManager] SwitchToMainSceneFlow start. playerWon={playerWon}");
 
-        var task = SceneLoader.Instance.manager.ActivateScene("MapGeneration");
-        while (task != null && !task.IsCompleted)
-            yield return null;
-        Debug.Log("[RoundManager] MapGeneration activation completed.");
-
-        if (!playerWon)
+        if (playerWon)
         {
-            var saveMgr = GameObject.FindObjectOfType<MapSaveManager>(includeInactive: true);
-            if (saveMgr != null)
-            {
-                saveMgr.DeleteSavedMap();
-            }
-
-            var gen = GameObject.FindObjectOfType<MapGenerator>(includeInactive: true);
-            if (gen != null)
-            {
-                if (NodeClickHandler.playerMarker != null)
-                {
-                    NodeClickHandler.playerMarker.SetActive(false);
-                }
-                NodeClickHandler.currentPlayerNode = null;
-                NodeClickHandler.currentPlayerMapNode = null;
-                NodeClickHandler.ClearClearedNodes();
-
-                gen.fixedSeed = 0;
-                gen.GenerateMap();
-                if (saveMgr != null)
-                {
-                    saveMgr.SaveCurrentMap();
-                }
-            }
+            var task = SceneLoader.Instance.manager.ActivateScene("MapGeneration");
+            while (task != null && !task.IsCompleted)
+                yield return null;
+            Debug.Log("[RoundManager][MapReload] Victory -> no reload, map preserved.");
         }
+        else
+        {
+            Debug.Log("[RoundManager][MapReload] Defeat detected -> full map scene reload requested.");
+            GlobalRunState.FlagDefeatReload();
+            yield return StartCoroutine(ReloadMapSceneCoroutine());
+        }
+    }
+
+    private IEnumerator ReloadMapSceneCoroutine()
+    {
+        Debug.Log("[RoundManager][MapReload] Clearing node static state before unload");
+        NodeClickHandler.ClearClearedNodes();
+        NodeClickHandler.currentPlayerNode = null;
+        NodeClickHandler.currentPlayerMapNode = null;
+        if (NodeClickHandler.playerMarker != null)
+        {
+            NodeClickHandler.playerMarker.SetActive(false);
+        }
+
+        var saveMgr = GameObject.FindObjectOfType<MapSaveManager>(includeInactive: true);
+        if (saveMgr != null)
+        {
+            saveMgr.DeleteSavedMap();
+            Debug.Log("[RoundManager][MapReload] Deleted saved map before reload");
+        }
+
+        var mapScene = UnityEngine.SceneManagement.SceneManager.GetSceneByName("MapGeneration");
+        if (mapScene.IsValid() && mapScene.isLoaded)
+        {
+            Debug.Log("[RoundManager][MapReload] Unloading existing MapGeneration scene");
+            var unloadOp = UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(mapScene);
+            while (unloadOp != null && !unloadOp.isDone)
+                yield return null;
+            yield return Resources.UnloadUnusedAssets();
+        }
+        else
+        {
+            Debug.Log("[RoundManager][MapReload] MapGeneration scene not loaded (skip unload)");
+        }
+
+        if (SceneLoader.Instance != null)
+        {
+            Debug.Log("[RoundManager][MapReload] Activating MapGeneration via SceneLoader");
+            var task = SceneLoader.Instance.manager.ActivateScene("MapGeneration");
+            while (task != null && !task.IsCompleted)
+                yield return null;
+            Debug.Log("[RoundManager][MapReload] SceneLoader activation finished");
+        }
+        else
+        {
+            Debug.LogWarning("[RoundManager][MapReload] SceneLoader.Instance is null, fallback to direct load");
+            var loadOp = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync("MapGeneration", UnityEngine.SceneManagement.LoadSceneMode.Additive);
+            while (loadOp != null && !loadOp.isDone)
+                yield return null;
+            var loaded = UnityEngine.SceneManagement.SceneManager.GetSceneByName("MapGeneration");
+            if (loaded.IsValid())
+                UnityEngine.SceneManagement.SceneManager.SetActiveScene(loaded);
+        }
+
+        yield return null;
+        GlobalRunState.ClearReloadFlags();
     }
 
     public void EndRound()
