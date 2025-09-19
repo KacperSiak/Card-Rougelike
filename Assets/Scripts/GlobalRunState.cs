@@ -10,7 +10,7 @@ public static class GlobalRunState
         PendingMapReloadAfterDefeat = true;
         UseFixedSeedOnNextMap = true;
         PendingDefeatRegeneration = false;
-        UnityEngine.Debug.Log("[GlobalRunState][MapReload] Defeat reload flagged (seed=0)");
+    UnityEngine.Debug.Log("Defeat — preparing map reload (seed=0).");
     }
 
     public static void ClearReloadFlags()

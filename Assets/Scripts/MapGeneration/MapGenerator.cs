@@ -113,12 +113,12 @@ public class MapGenerator : MonoBehaviour
         
     if (willLoadFromSave)
         {
-            Debug.Log("[MapGenerator] MapSaveManager will load saved map");
+            Debug.Log("Loading saved map.");
             mapSaveManager.LoadSavedMap();
         }
         else
         {
-            Debug.Log("[MapGenerator] Generating new map");
+            Debug.Log("Generating new map.");
             GenerateMap();
         }
     }
@@ -167,7 +167,7 @@ public class MapGenerator : MonoBehaviour
             Random.InitState(lastUsedSeed);
         }
         
-        Debug.Log($"[MapGenerator] Generating map with seed: {lastUsedSeed}");
+    Debug.Log($"Generating map. Seed: {lastUsedSeed}.");
         
         ClearOldNodes();
         ResetMapState();

@@ -74,13 +74,13 @@ public class RoundManager : PersistenSingleton<RoundManager>
     void Start()
     {
         _alreadyFinished = false;
-        Debug.Log("[RoundManager] Combat Start: resetting _alreadyFinished=false");
+        Debug.Log("Combat started.");
         Cursor.visible = true;
         _playerHP = PlayerManager.Instance.PlayerHP;
         CurrentCombatDetails = CombatManager.Instance.GetCurrentCombatDetails();
         StartCoroutine(CheckCombatReadiness());
         TrumpSuit = _trumpSuitSetup.ChooseSuit();
-        Debug.Log("Trump suit is: " + TrumpSuit);
+        Debug.Log("Trump suit: " + TrumpSuit);
     }
 
     private IEnumerator CheckCombatReadiness()
@@ -110,7 +110,7 @@ public class RoundManager : PersistenSingleton<RoundManager>
 
     private void SwitchToMainScene()
     {
-        Debug.Log($"[RoundManager] SwitchToMainScene invoked. Winner={UIManager.Instance.Winner}");
+        Debug.Log($"Combat ended. Winner: {UIManager.Instance.Winner}");
         if (SceneLoader.Instance != null)
         {
             StartCoroutine(SwitchToMainSceneFlow());
@@ -120,12 +120,12 @@ public class RoundManager : PersistenSingleton<RoundManager>
             bool playerWon = UIManager.Instance.Winner == "Player";
             if (playerWon)
             {
-                Debug.Log("[RoundManager] (Fallback) Player won. Marking last combat node as cleared before direct scene load...");
+                Debug.Log("Win — returning to map. Node cleared.");
                 NodeClickHandler.MarkLastCombatNodeClearedIfAny();
             }
             else
             {
-                Debug.Log("[RoundManager] (Fallback) Player lost. Clearing cleared nodes and reloading map scene directly...");
+                Debug.Log("Defeat — resetting map and reloading.");
                 NodeClickHandler.ClearClearedNodes();
             }
             UnityEngine.SceneManagement.SceneManager.LoadScene("MapGeneration");
@@ -135,18 +135,18 @@ public class RoundManager : PersistenSingleton<RoundManager>
     private IEnumerator SwitchToMainSceneFlow()
     {
         bool playerWon = UIManager.Instance.Winner == "Player";
-        Debug.Log($"[RoundManager] SwitchToMainSceneFlow start. playerWon={playerWon}");
+        Debug.Log($"Switching to map. Result: {(playerWon ? "win" : "defeat")}.");
 
         if (playerWon)
         {
             var task = SceneLoader.Instance.manager.ActivateScene("MapGeneration");
             while (task != null && !task.IsCompleted)
                 yield return null;
-            Debug.Log("[RoundManager][MapReload] Victory -> no reload, map preserved.");
+            Debug.Log("Win — back to map (no reload).");
         }
         else
         {
-            Debug.Log("[RoundManager][MapReload] Defeat detected -> full map scene reload requested.");
+            Debug.Log("Defeat — reloading map.");
             GlobalRunState.FlagDefeatReload();
             yield return StartCoroutine(ReloadMapSceneCoroutine());
         }
@@ -154,7 +154,7 @@ public class RoundManager : PersistenSingleton<RoundManager>
 
     private IEnumerator ReloadMapSceneCoroutine()
     {
-        Debug.Log("[RoundManager][MapReload] Clearing node static state before unload");
+        Debug.Log("Clearing map state...");
         NodeClickHandler.ClearClearedNodes();
         NodeClickHandler.currentPlayerNode = null;
         NodeClickHandler.currentPlayerMapNode = null;
@@ -167,13 +167,13 @@ public class RoundManager : PersistenSingleton<RoundManager>
         if (saveMgr != null)
         {
             saveMgr.DeleteSavedMap();
-            Debug.Log("[RoundManager][MapReload] Deleted saved map before reload");
+            Debug.Log("Deleting saved map.");
         }
 
         var mapScene = UnityEngine.SceneManagement.SceneManager.GetSceneByName("MapGeneration");
         if (mapScene.IsValid() && mapScene.isLoaded)
         {
-            Debug.Log("[RoundManager][MapReload] Unloading existing MapGeneration scene");
+            Debug.Log("Unloading map scene...");
             var unloadOp = UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(mapScene);
             while (unloadOp != null && !unloadOp.isDone)
                 yield return null;
@@ -181,20 +181,20 @@ public class RoundManager : PersistenSingleton<RoundManager>
         }
         else
         {
-            Debug.Log("[RoundManager][MapReload] MapGeneration scene not loaded (skip unload)");
+            Debug.Log("Map scene not loaded.");
         }
 
         if (SceneLoader.Instance != null)
         {
-            Debug.Log("[RoundManager][MapReload] Activating MapGeneration via SceneLoader");
+            Debug.Log("Switching to map scene...");
             var task = SceneLoader.Instance.manager.ActivateScene("MapGeneration");
             while (task != null && !task.IsCompleted)
                 yield return null;
-            Debug.Log("[RoundManager][MapReload] SceneLoader activation finished");
+            Debug.Log("Map ready.");
         }
         else
         {
-            Debug.LogWarning("[RoundManager][MapReload] SceneLoader.Instance is null, fallback to direct load");
+            Debug.LogWarning("SceneLoader not found — loading map directly.");
             var loadOp = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync("MapGeneration", UnityEngine.SceneManagement.LoadSceneMode.Additive);
             while (loadOp != null && !loadOp.isDone)
                 yield return null;
