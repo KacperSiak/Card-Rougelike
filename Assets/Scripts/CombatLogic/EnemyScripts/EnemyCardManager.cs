@@ -1,66 +1,46 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyCardManager : MonoBehaviour
+public class EnemyCardManager : PersistenSingleton<EnemyCardManager>
 {
-    public static EnemyCardManager Instance { get; private set; }
-
     [SerializeField] private EnemyCardSpawner _spawner;
-    
-    public List<GameObject> cardHolders;
-    public List<GameObject> cardObjects;
+    [SerializeField] private List<EnemyCardAnimation> _animations; 
 
-    private Dictionary<int, List<CardsSOTest>> _cardsBySuitDeck = new Dictionary<int, List<CardsSOTest>>();
+    public List<GameObject> cardHolders;
+    public List<Transform> cardObjects;
+
+    private Dictionary<int, List<CardsSOTest>> _cardsBySuitDeck = new();
 
     public Dictionary<int, List<GameObject>> CardsInGame { get; private set;} 
-    public Dictionary<int, int> CardsInGamePower { get; private set; } 
+    public Dictionary<int, int> CardsInGamePower { get; private set; }
 
-    private int _suitsAmount = 4;
-    private int _cardsSameSuit = 5;
-
-    void Awake()
-    {
-        if (Instance == null) Instance = this;
-
-        else Destroy(gameObject);
-    }
+    public int CardsInGameCount { get; private set; } = 0;
+    private bool isCalled = false;
+    private int _fullHolders;
+    private int _bittenCards = 0;
 
     private void OnEnable()
     {
-        RoundManager.OnCombatEnd += OnCombatEnd;
         RoundManager.OnRoundEnd += RefillCards;
         RoundManager.OnCombatStart += StartCombat;
     }
-
-
     private void OnDisable()
     {
-        RoundManager.OnCombatEnd -= OnCombatEnd;
         RoundManager.OnRoundEnd -= RefillCards;
         RoundManager.OnCombatStart -= StartCombat;
     }
 
     public void StartCombat()
     {
-        for (int i = 0, j = 0; i < _suitsAmount; i++)
-        {
-            _cardsBySuitDeck.Add(i, new List<CardsSOTest>());
-            int cardsInSuit = _cardsSameSuit + j;
-
-            for (; j < cardsInSuit; j++)
-            {
-                _cardsBySuitDeck[i].Add(RoundManager.Instance.EnemyCards[j]);
-            }
-
-        }
+        _cardsBySuitDeck.Clear();
+        _cardsBySuitDeck = CombatManager.Instance.GetCurrentDeck();
 
         CardsInGame = new Dictionary<int, List<GameObject>>();
         CardsInGamePower = new Dictionary<int, int>();
 
-        for (int i = 0, j = 0; i < 3; i++)
+        for (int i = 0; i < 3; i++)
         {
-            SetupSpawner(startObjectIndex: j, cardHolderIndex: i);
-            j += 3;
+            SetupSpawner(startObjectIndex: i, cardHolderIndex: i);
         }
     }
 
@@ -73,17 +53,43 @@ public class EnemyCardManager : MonoBehaviour
         switch (isSingle)
         {
             case true:
-                _spawner.SpawnSingle(startObjectIndex + 1, cardHolderIndex, _cardsBySuitDeck);
+                _spawner.SpawnSingle(cardObjects[startObjectIndex], cardHolderIndex, _cardsBySuitDeck);
                 break;
             case false:
-                _spawner.SpawnCombo(startObjectIndex, cardHolderIndex, _cardsBySuitDeck);
+                _spawner.SpawnCombo(cardObjects[startObjectIndex], cardHolderIndex, _cardsBySuitDeck);
                 break;
         }
     }
 
+    public void Attack(int key)
+    {
+        cardObjects[key].GetComponent<CardHolderAnimation>().DisableAnimations();
+        _animations[key].Attack(cardHolders[key].transform, CardsInGame[key].ConvertAll(card => card.transform).ToArray(), isPlayer: false, key: -1);
+    }
+
+    public EnemyCardAnimation GetCurrentAnimationManager(int key)
+    { 
+        return _animations[key];
+    }
+
+    public void ControlIdleAnimation()
+    {
+        foreach (var a in _animations)
+        {
+            if (a.IsAnimating) return;
+        }
+
+        foreach (var cardHolder in cardObjects)
+        {
+            cardHolder.GetComponent<CardHolderAnimation>().EnableAnimations(isPHand: false);
+        }
+
+        RoundAnimation.Instance.PlayerRound();
+    }
+
     public void SetupCardHolder(int index, Validator validator)
     {
-        cardHolders[index].GetComponent<CardHolderManager>().SetProperties(validator, index);
+        cardHolders[index].GetComponent<CardHolderLogic>().SetProperties(validator, index);
     }
 
     public void SetupCardsInGame(int key)
@@ -94,12 +100,20 @@ public class EnemyCardManager : MonoBehaviour
     public void UpdateCardsInGame(int key, GameObject cardObject)
     { 
         CardsInGame[key].Add(cardObject);
+        CardsInGameCount++;
     }
 
-    public void RemoveCardFromGame(int key)
+    public void RemoveCardFromGame(int key, int amount)
     {
+        foreach (var cardHolder in cardObjects)
+        {
+            cardHolder.GetComponent<CardHolderAnimation>().DisableAnimations();
+        }
+        _animations[key].RemoveCard(CardsInGame[key].ConvertAll(card => card.transform).ToArray());
         CardsInGame.Remove(key);
         CardsInGamePower.Remove(key);
+        _bittenCards++; 
+        CardsInGameCount -= amount;
     }
 
     public void SetupPower(int keyCardsIndex, int power)
@@ -112,10 +126,12 @@ public class EnemyCardManager : MonoBehaviour
         CardsInGamePower[keyCardsIndex] -= power;
     }
 
-    public bool CheckRoundReadiness()
+    public bool CheckRoundReadiness() // here improve logic later
     {
-        if(_cardsBySuitDeck.Count == 0 && CardsInGame.Count == 0) return false;
-        
+        if(_cardsBySuitDeck.Count == 0 && CardsInGame.Count == 0) return false; 
+
+        else if (_bittenCards >= RoundManager.Instance.CurrentCombatDetails.key) return false;
+
         return true;
     }
 
@@ -124,27 +140,29 @@ public class EnemyCardManager : MonoBehaviour
         if(_cardsBySuitDeck.Count == 0) return;
 
         int startIndex = 0;
+        _fullHolders = 0;
 
         foreach (var cardHolder in cardHolders)
         {
-            if (cardHolder.GetComponent<CardHolderManager>().EnemyComboIndex != -1)
+            if (cardHolder.GetComponent<CardHolderLogic>().EnemyComboIndex != -1)
             {
-                startIndex += 3;
+                startIndex++;
+                _fullHolders++;
                 continue;
-            } 
+            }
+
+            if (!isCalled)
+            {
+                RoundAnimation.Instance.EnemyRound();
+                isCalled = true;
+            }
 
             SetupSpawner(startObjectIndex: startIndex, cardHolderIndex: cardHolders.IndexOf(cardHolder));
-            startIndex += 3;
+            startIndex++;
         }
+
+        if (_fullHolders == 3) RoundAnimation.Instance.PlayerRound();
+        isCalled = false;
     }
 
-    private void OnCombatEnd()
-    {
-        foreach (var card in cardObjects)
-        {
-            card.SetActive(false);
-        }
-        CardsInGame.Clear();
-        CardsInGamePower.Clear();
-    }
 }

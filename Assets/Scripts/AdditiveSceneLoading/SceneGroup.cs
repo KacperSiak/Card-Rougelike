@@ -24,7 +24,21 @@ namespace Systems.SceneManagement
         public SceneReference Reference;
         public string Name => Reference.Name;
         public SceneType SceneType;
+        [Tooltip("If true, this scene will never be unloaded automatically by SceneGroupManager")] public bool Persistent;
     }
 
-    public enum SceneType{ActiveScene, MainMenu, UI, HUD, Map, Enemy, Shop}
+    public enum SceneType
+    {
+        ActiveScene,
+        MainMenu,
+        UI,
+        HUD,
+        Map,
+        Enemy,
+        Shop,
+        Treasure,
+        Heal,
+        Gambling,
+        Challenge
+    }
 }

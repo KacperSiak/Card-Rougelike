@@ -1,29 +1,3 @@
-%YAML 1.1
-%TAG !u! tag:unity3d.com,2011:
---- !u!114 &11400000
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4dce2b1003ba8b94499851aac558fec9, type: 3}
-  m_Name: InstaKill
-  m_EditorClassIdentifier: 
-  cardID: InstaKill
-  cardName: InstaKill
-  cardDescription: 'Kill an enemy minion '
-  icon: {fileID: 0}
-  rarity: 1
-  buyPrice: 80
-  sellPrice: 40
-  cardEffects:
-  - rid: 5888606620320792662
-  references:
-    version: 2
-    RefIds:
-    - rid: 5888606620320792662
-      type: {class: InstaKill, ns: , asm: Assembly-CSharp}
-      data: 
+version https://git-lfs.github.com/spec/v1
+oid sha256:6c7d1ccee9abd560919f1b887abe3477c1a1b26f7b0c21bdf09f7b5f2c3f69d8
+size 1047

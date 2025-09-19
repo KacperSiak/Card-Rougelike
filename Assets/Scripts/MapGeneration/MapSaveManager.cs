@@ -13,25 +13,45 @@ public class MapSaveManager : MonoBehaviour
     //this prevents any changes form outside while allowing the field to be drawn to inspector
     public MapManager mapManager;
     
-    [Header("Settings")]
-    public bool autoSaveBeforeSceneChange = true;
-    public bool autoLoadOnStart = true;
-    
     void Start()
     {
         if (mapGenerator == null)
-            mapGenerator = FindFirstObjectByType<MapGenerator>();
+            Debug.LogWarning("[MapSaveManager] MapGenerator not assigned (Inspector)");
         if (mapManager == null)
-            mapManager = FindFirstObjectByType<MapManager>(); //tymczasowe [mam nadzieje]
+            Debug.LogWarning("[MapSaveManager] MapManager not assigned (Inspector)");
+        
+        if (GameSaveManager.Instance != null && GameSaveManager.Instance.HasActiveSave())
+        {
+            mapSaveData = GameSaveManager.Instance.GetActiveSave();
+            Debug.Log("[MapSaveManager] Using active save from GameSaveManager");
+        }
             
-        if (autoLoadOnStart && mapSaveData != null && mapSaveData.CanLoadMap())
+        if (mapSaveData != null && mapSaveData.CanLoadMap())
         {
             Debug.Log("[MapSaveManager] Loading saved map...");
             LoadSavedMap();
         }
         else
         {
-            Debug.Log("[MapSaveManager] No save found - a new map will be generated");
+            if (mapSaveData == null)
+            {
+                CreateDefaultSave();
+            }
+            Debug.Log("[MapSaveManager] No save found or creating new map");
+        }
+    }
+
+    void OnEnable()
+    {
+        if (mapSaveData != null && mapSaveData.hasPlayerPosition)
+        {
+            if (NodeClickHandler.playerMarker != null)
+                NodeClickHandler.playerMarker.SetActive(false);
+
+            if (!TryRestorePlayerPositionImmediate())
+            {
+                StartCoroutine(RestoreWhenReady());
+            }
         }
     }
     
@@ -52,6 +72,22 @@ public class MapSaveManager : MonoBehaviour
         mapSaveData.SaveCurrentMapState(mapGenerator, mapManager);
         Debug.Log("[MapSaveManager] Map saved to ScriptableObject");
     }
+
+    public void SavePlayerPositionOnly()
+    {
+        if (mapSaveData == null || mapManager == null) return;
+        if (NodeClickHandler.currentPlayerNode != null)
+        {
+            Vector3 pos = NodeClickHandler.currentPlayerNode.position;
+            mapSaveData.playerPosition = new Vector2(pos.x, pos.z);
+            mapSaveData.hasPlayerPosition = true;
+            mapSaveData.currentMapTime = mapManager.currentMapTime;
+            mapSaveData.maxMapTime = mapManager.maxMapTime;
+            #if UNITY_EDITOR
+            UnityEditor.EditorUtility.SetDirty(mapSaveData);
+            #endif
+        }
+    }
     
     public void LoadSavedMap()
     {
@@ -68,7 +104,10 @@ public class MapSaveManager : MonoBehaviour
         }
         
         mapSaveData.ApplyToMapGenerator(mapGenerator);
-        
+
+        if (NodeClickHandler.playerMarker != null)
+            NodeClickHandler.playerMarker.SetActive(false);
+
         mapGenerator.GenerateMap();
         
         if (mapManager != null)
@@ -78,46 +117,40 @@ public class MapSaveManager : MonoBehaviour
         
         if (mapSaveData.hasPlayerPosition)
         {
-            StartCoroutine(RestorePlayerPositionDelayed());
+            TryRestorePlayerPositionImmediate();
         }
         
         Debug.Log($"[MapSaveManager] Map loaded from: {mapSaveData.saveDate}");
     }
     
-    IEnumerator RestorePlayerPositionDelayed()
+    bool TryRestorePlayerPositionImmediate()
     {
-        yield return new WaitForSeconds(0.2f);
-        
-        Transform closestNode = null;
-        float closestDistance = float.MaxValue;
-        
-        var allNodes = FindObjectsByType<NodeClickHandler>(FindObjectsSortMode.None);
-        
-        foreach (var nodeHandler in allNodes)
+        if (mapSaveData == null || mapGenerator == null) return false;
+
+        Transform closestNode = mapGenerator.GetClosestNodeTransform2D(mapSaveData.playerPosition);
+        if (closestNode == null) return false;
+
+        NodeClickHandler.currentPlayerNode = closestNode;
+
+        if (NodeClickHandler.playerMarker != null)
         {
-            Vector2 nodePos = new Vector2(nodeHandler.transform.position.x, nodeHandler.transform.position.z);
-            float distance = Vector2.Distance(nodePos, mapSaveData.playerPosition);
-            
-            if (distance < closestDistance)
-            {
-                closestDistance = distance;
-                closestNode = nodeHandler.transform;
-            }
+            Vector3 newPos = closestNode.position;
+            newPos.y = 0.2f;
+            NodeClickHandler.playerMarker.transform.position = newPos;
+            NodeClickHandler.playerMarker.SetActive(true);
         }
-        
-        if (closestNode != null)
+
+        Debug.Log($"[MapSaveManager] Player restored to position: {closestNode.position}");
+        return true;
+    }
+
+    IEnumerator RestoreWhenReady()
+    {
+        while (mapGenerator != null && mapSaveData != null)
         {
-            NodeClickHandler.currentPlayerNode = closestNode;
-            
-            if (NodeClickHandler.playerMarker != null)
-            {
-                Vector3 newPos = closestNode.position;
-                newPos.y = 0.2f;
-                NodeClickHandler.playerMarker.transform.position = newPos;
-                NodeClickHandler.playerMarker.SetActive(true);
-            }
-            
-            Debug.Log($"[MapSaveManager] Player restored to position: {closestNode.position}");
+            if (TryRestorePlayerPositionImmediate())
+                yield break;
+            yield return null;
         }
     }
     
@@ -135,41 +168,23 @@ public class MapSaveManager : MonoBehaviour
         }
     }
     
-    public void SaveBeforeSceneChange()
+    private void CreateDefaultSave()
     {
-        if (autoSaveBeforeSceneChange)
-        {
-            SaveCurrentMap();
-        }
-    }
-    
-    [ContextMenu("Save Current Map")]
-    public void SaveFromMenu()
-    {
-        SaveCurrentMap();
-    }
-    
-    [ContextMenu("Load Saved Map")]
-    public void LoadFromMenu()
-    {
-        LoadSavedMap();
-    }
-    
-    [ContextMenu("Delete Saved Map")]
-    public void DeleteFromMenu()
-    {
-        DeleteSavedMap();
-    }
-    
-    [ContextMenu("Create New Save Data Asset")]
-    public void CreateSaveDataAsset()
-    {
-        #if UNITY_EDITOR
-        var saveData = ScriptableObject.CreateInstance<MapSaveDataSO>();
-        UnityEditor.AssetDatabase.CreateAsset(saveData, "Assets/MapSaveData.asset");
-        UnityEditor.AssetDatabase.SaveAssets();
-        mapSaveData = saveData;
-        Debug.Log("Created new MapSaveDataSO asset");
-        #endif
+        mapSaveData = ScriptableObject.CreateInstance<MapSaveDataSO>();
+        
+        mapSaveData.numberOfLevels = 8;
+        mapSaveData.minNodesPerLevel = 2;
+        mapSaveData.maxNodesPerLevel = 4;
+        mapSaveData.horizontalSpacing = 5f;
+        mapSaveData.verticalSpacing = 6f;
+        mapSaveData.horizontalRandomRange = 2f;
+        mapSaveData.verticalRandomRange = 1f;
+        mapSaveData.mapSeed = 0;
+        mapSaveData.hasPlayerPosition = false;
+        mapSaveData.maxMapTime = 0f;
+        mapSaveData.currentMapTime = 0f;
+        mapSaveData.saveDate = System.DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
+        
+        Debug.Log("[MapSaveManager] Default save created");
     }
 }

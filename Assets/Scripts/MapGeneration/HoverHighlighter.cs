@@ -6,8 +6,15 @@ public class HoverHighlighter : MonoBehaviour
     public Color baseColor = Color.white;
     public Color highlightColor = Color.yellow;
     
+    [Header("Icon Animation")]
+    public Transform iconToAnimate;
+    public float liftHeight = 0.5f;
+    public float animationSpeed = 3f;
+    
     [Header("Settings")]
     public LayerMask raycastLayer = -1;
+    [Tooltip("Gdy true, wyłącza efekt hover, jeśli gracz stoi na tym polu")]
+    public bool disableWhenOccupied = true;
     
     private Renderer objectRenderer;
     private Collider objectCollider;
@@ -15,6 +22,10 @@ public class HoverHighlighter : MonoBehaviour
     private MaterialPropertyBlock propertyBlock;
     private static readonly int BaseColorProperty = Shader.PropertyToID("_BaseColor");
     private static readonly int ColorProperty = Shader.PropertyToID("_Color");
+    
+    private Vector3 originalIconPosition;
+    private Vector3 targetIconPosition;
+    private bool isAnimating = false;
 
     void Start()
     {
@@ -35,6 +46,12 @@ public class HoverHighlighter : MonoBehaviour
         
         propertyBlock = new MaterialPropertyBlock();
         
+        if (iconToAnimate != null)
+        {
+            originalIconPosition = iconToAnimate.localPosition;
+            targetIconPosition = originalIconPosition;
+        }
+        
         SetColor(false);
     }
 
@@ -42,6 +59,16 @@ public class HoverHighlighter : MonoBehaviour
     {
         if (Camera.main == null)
         {
+            return;
+        }
+
+        if (disableWhenOccupied && NodeClickHandler.currentPlayerNode != null && NodeClickHandler.currentPlayerNode == this.transform)
+        {
+            if (isHighlighted)
+            {
+                SetHighlight(false);
+            }
+            AnimateIcon();
             return;
         }
 
@@ -64,13 +91,15 @@ public class HoverHighlighter : MonoBehaviour
                 }
             }
         }
-        else //SetHighlight(hit.transform == transform);
+        else
         {
             if (isHighlighted)
             {
                 SetHighlight(false);
             }
         }
+        
+        AnimateIcon();
     }
     
     private void SetHighlight(bool highlight)
@@ -80,6 +109,7 @@ public class HoverHighlighter : MonoBehaviour
         if (highlight == isHighlighted) return;
         
         SetColor(highlight);
+        SetIconTarget(highlight);
         
         isHighlighted = highlight;
     }
@@ -106,14 +136,41 @@ public class HoverHighlighter : MonoBehaviour
         }
     }
     
-    [ContextMenu("Toggle Highlight")]
-    public void ToggleHighlight()
-    {
-        SetHighlight(!isHighlighted);
-    }
-    
     public void ForceHighlight(bool highlight)
     {
         SetHighlight(highlight);
+    }
+    
+    private void SetIconTarget(bool highlight)
+    {
+        if (iconToAnimate == null) return;
+        
+        if (highlight)
+        {
+            targetIconPosition = originalIconPosition + Vector3.up * liftHeight;
+        }
+        else
+        {
+            targetIconPosition = originalIconPosition;
+        }
+        
+        isAnimating = true;
+    }
+    
+    private void AnimateIcon()
+    {
+        if (iconToAnimate == null || !isAnimating) return;
+        
+        iconToAnimate.localPosition = Vector3.Lerp(
+            iconToAnimate.localPosition, 
+            targetIconPosition, 
+            animationSpeed * Time.deltaTime
+        );
+        
+        if (Vector3.Distance(iconToAnimate.localPosition, targetIconPosition) < 0.01f)
+        {
+            iconToAnimate.localPosition = targetIconPosition;
+            isAnimating = false;
+        }
     }
 }

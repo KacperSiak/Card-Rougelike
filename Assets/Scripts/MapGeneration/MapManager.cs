@@ -3,7 +3,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Data;
 
-public class MapManager : MonoBehaviour
+public class MapManager : PersistenSingleton<MapManager>
 {
     [Header("References")]
     public MapGenerator mapGenerator;
@@ -14,15 +14,16 @@ public class MapManager : MonoBehaviour
 
     // Kacper Added
     private float _modifier = 1;
-    public static MapManager instance;
 
+    protected override void OnSingletonAwake() { }
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
+    }
     void Start()
     {
         if (mapGenerator == null)
             mapGenerator = FindFirstObjectByType<MapGenerator>(); //tymczasowe
-
-        if (instance == null)
-            instance = this;
     }
 
     public void CalculateMaxMapTime()
@@ -154,9 +155,14 @@ public class MapManager : MonoBehaviour
         _modifier = 1;
     }
 
-    public void ModifieTime(float time, bool add)
+    public void ModifyTime(float time, bool add)
     {
         if (add) currentMapTime += time;
         else currentMapTime -= time;
+    }
+
+    public void AutoTeleport()
+    {
+        currentMapTime = 0;
     }
 }

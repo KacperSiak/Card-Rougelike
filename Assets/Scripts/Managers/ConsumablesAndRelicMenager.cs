@@ -2,11 +2,11 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 
-public class ConsumablesAndRelicMenager : MonoBehaviour
-{
+public class ConsumablesAndRelicMenager : PersistenSingleton<ConsumablesAndRelicMenager>
+{ 
     [Header("Relics")]
     [SerializeField] private RelicUIDisplay _relicUI;
-    public List<RelicData> currentRelics;
+    public List<RelicData> currentRelics = new List<RelicData>();
     public List<RelicData> allRelics;
     public int maxRelics = 5;
     private RelicContext _ctx;
@@ -20,33 +20,25 @@ public class ConsumablesAndRelicMenager : MonoBehaviour
     public List<ConsumablesData> currentConsums;
     public int slotCounter = 0;
 
-    public static ConsumablesAndRelicMenager instance;
-
-    private void Awake()
+    protected override void OnSingletonAwake()
     {
         RelicEventsSystem.OnRelicAcquired.AddListener(HandleRelicAcquired);
         RelicEventsSystem.OnRelicRemoved.AddListener(HandleRelicRemoved);
         RelicIconButtonsUI.OnRelicUpgrade.AddListener(RelicUpgrade);
-
-        if (instance == null)
-        {
-            instance = this;
-        }
-        else
-        {
-            Debug.Log("Found Another ConsumableMenager");
-        }
     }
 
     private void Start()
     {
-        _ctx = new RelicContext { player = PlayerOverlay.instance };
+        _ctx = new RelicContext();
     }
 
-    private void OnDestroy()
+    protected override void OnDestroy()
     {
         RelicEventsSystem.OnRelicAcquired.RemoveListener(HandleRelicAcquired);
         RelicEventsSystem.OnRelicRemoved.RemoveListener(HandleRelicRemoved);
+        RelicIconButtonsUI.OnRelicUpgrade.RemoveListener(RelicUpgrade);
+
+        base.OnDestroy();
     }
 
     // Relics //    
@@ -57,9 +49,8 @@ public class ConsumablesAndRelicMenager : MonoBehaviour
             currentRelics.Add(relic);
             foreach (var effect in relic.relicEffets) effect.Register(_ctx);
             _relicUI.AddIcon(relic);
-        }
-
-        ShopMenager.instance.allItems.Remove(relic);
+            ShopMenager.Instance.allItems.Remove(relic);
+        } 
     }
 
     private void HandleRelicRemoved(RelicData relic)
@@ -67,15 +58,22 @@ public class ConsumablesAndRelicMenager : MonoBehaviour
         currentRelics.Remove(relic);
         foreach (var effect in relic.relicEffets) effect.Unregister(_ctx);
 
-        ShopMenager.instance.allItems.Add(relic);
+        ShopMenager.Instance.allItems.Add(relic);
     }
 
     public bool RelicChecker(RelicData relic)
     {
-        if (!currentRelics.Any(r => r.relicID == relic.relicID))
+        if (!currentRelics.Any(r => r.relicName == relic.relicName))
         {
             return true;
         }
+
+        return false;
+    }
+
+    public bool RelicSlotCounter()
+    {
+        if (currentRelics.Count < maxRelics) return true;
 
         return false;
     }
@@ -91,81 +89,21 @@ public class ConsumablesAndRelicMenager : MonoBehaviour
         return _drawnRelic;
     }
 
-    public RelicData RollCommonRelic()
+    public RelicData RollRarityRelic(Rarity relicRarity)
     {
-        List<RelicData> commonRelics = new List<RelicData>();
+        List<RelicData> needeRarityRelics = new List<RelicData>();
         for (int i = 0; i < allRelics.Count; i++)
         {
-            if (allRelics[i].rarity == Rarity.Common)
+            if (allRelics[i].rarity == relicRarity)
             {
-                commonRelics.Add(allRelics[i]);
+                needeRarityRelics.Add(allRelics[i]);
             }
         }
 
         do
         {
-            int index = Random.Range(0, commonRelics.Count);
-            _drawnRelic = commonRelics[index];
-        } while (!RelicChecker(_drawnRelic));
-
-        return _drawnRelic;
-    }
-
-    public RelicData RollRareRelic()
-    {
-        List<RelicData> rareRelics = new List<RelicData>();
-        for (int i = 0; i < allRelics.Count; i++)
-        {
-            if (allRelics[i].rarity == Rarity.Rare)
-            {
-                rareRelics.Add(allRelics[i]);
-            }
-        }
-
-        do
-        {
-            int index = Random.Range(0, rareRelics.Count);
-            _drawnRelic = rareRelics[index];
-        } while (!RelicChecker(_drawnRelic));
-
-        return _drawnRelic;
-    }
-
-    public RelicData RollEpicRelic()
-    {
-        List<RelicData> epicRelics = new List<RelicData>();
-        for (int i = 0; i < allRelics.Count; i++)
-        {
-            if (allRelics[i].rarity == Rarity.Epic)
-            {
-                epicRelics.Add(allRelics[i]);
-            }
-        }
-
-        do
-        {
-            int index = Random.Range(0, epicRelics.Count);
-            _drawnRelic = epicRelics[index];
-        } while (!RelicChecker(_drawnRelic));
-
-        return _drawnRelic;
-    }
-
-    public RelicData RollLegendaryRelic()
-    {
-        List<RelicData> legendaryRelics = new List<RelicData>();
-        for (int i = 0; i < allRelics.Count; i++)
-        {
-            if (allRelics[i].rarity == Rarity.Legendary)
-            {
-                legendaryRelics.Add(allRelics[i]);
-            }
-        }
-
-        do
-        {
-            int index = Random.Range(0, legendaryRelics.Count);
-            _drawnRelic = legendaryRelics[index];
+            int index = Random.Range(0, needeRarityRelics.Count);
+            _drawnRelic = needeRarityRelics[index];
         } while (!RelicChecker(_drawnRelic));
 
         return _drawnRelic;
@@ -174,12 +112,12 @@ public class ConsumablesAndRelicMenager : MonoBehaviour
     public void RelicUpgrade(RelicData relic)
     {
         Rarity neededRarity = RelicRarityNeed(relic.rarity);
-
         RelicData foundRelic = allRelics.Find(r => r.relicName == relic.relicName && r.rarity == neededRarity);
-        RelicEventsSystem.RelicAcquired(foundRelic);
         RelicEventsSystem.RelicRemoved(relic);
         currentRelics.Remove(relic);
-        ShopMenager.instance.allItems.Add(_vase);
+        ShopMenager.Instance.allItems.Add(_vase);
+        RelicEventsSystem.RelicAcquired(foundRelic);
+        
     }
 
     public Rarity RelicRarityNeed(Rarity rarity)

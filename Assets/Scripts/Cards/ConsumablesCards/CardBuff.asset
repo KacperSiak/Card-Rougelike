@@ -1,29 +1,3 @@
-%YAML 1.1
-%TAG !u! tag:unity3d.com,2011:
---- !u!114 &11400000
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4dce2b1003ba8b94499851aac558fec9, type: 3}
-  m_Name: CardBuff
-  m_EditorClassIdentifier: 
-  cardID: CardBuff
-  cardName: CardBuff
-  cardDescription: Boost one card of your choice. It deals double damage
-  icon: {fileID: -1463789882, guid: 28a5df7ffde1bb5408169991d42c3ab0, type: 3}
-  rarity: 1
-  buyPrice: 80
-  sellPrice: 40
-  cardEffects:
-  - rid: 5888606709509259327
-  references:
-    version: 2
-    RefIds:
-    - rid: 5888606709509259327
-      type: {class: CardBuff, ns: , asm: Assembly-CSharp}
-      data: 
+version https://git-lfs.github.com/spec/v1
+oid sha256:3738bb80cfe67f792f57813f815d8402c5fc460f44bb09f043b1f7403c5f03dd
+size 1076

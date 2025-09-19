@@ -20,7 +20,7 @@ public class RelicIconButtonsUI : MonoBehaviour
         ShopMenager.OnSellingMode.AddListener(ButtonDiscardToSell);
         ShopMenager.OffSellingMode.AddListener(ButtonSellToDiscard);
         VaseRelicUpgrade.OnVaseAcquired.AddListener(VaseButtonShow);
-        
+        RelicEventsSystem.OnRelicRemoved.AddListener(OnRelicRemoved);
     }
     public void Init(RelicData relic)
     {
@@ -30,7 +30,7 @@ public class RelicIconButtonsUI : MonoBehaviour
         _removeButton.onClick.AddListener(RemoveRelic);
         _vaseButton.onClick.AddListener(UpgradeRelic);
 
-        if(ShopMenager.instance.inSellingMode)
+        if(ShopMenager.Instance.inSellingMode)
         {
             _buttonText.text = $"Sell {relic.sellPrice}";
         }
@@ -44,13 +44,17 @@ public class RelicIconButtonsUI : MonoBehaviour
 
     public void RemoveRelic()
     {
-        if (ShopMenager.instance.inSellingMode)
+        if (ShopMenager.Instance.inSellingMode)
         {
-            PlayerOverlay.instance.AddGold(_relic.sellPrice);
+            PlayerManager.Instance.GoldChange(_relic.sellPrice, true);
         }
-        ToolTipManager.Instance.HideToolTip();
         RelicEventsSystem.RelicRemoved(_relic);
-        Destroy(gameObject);
+    }
+
+    public void OnRelicRemoved(RelicData removed)
+    {
+        if (removed.relicID == _relic.relicID)
+            Destroy(gameObject);
     }
 
     private void ButtonDiscardToSell()
@@ -74,7 +78,6 @@ public class RelicIconButtonsUI : MonoBehaviour
         OnRelicUpgrade.Invoke(_relic);
         _vaseButton.gameObject.SetActive(false);
         vaseEnabled = false;
-        ToolTipManager.Instance.HideToolTip();
         Destroy(gameObject);
     }
 }

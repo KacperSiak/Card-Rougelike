@@ -1,58 +1,110 @@
 using Ink.Parsed;
+using Ink.UnityIntegration;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
+using Ink.Runtime;
 
 public class NewRunDialogue : MonoBehaviour
 {
-    public static NewRunDialogue instance;
+    private DialogueManager dialogueManager;
+    private DialogueData data;
+    private OverallDialogueInformation info;
 
-    DialogueManager dialogueManager;
+    [SerializeField] private TextAsset firstDeathInkFile;
+    [SerializeField] private TextAsset defeatInkFile;
+    [SerializeField] private TextAsset goodGambleInkFile;
+    [SerializeField] private TextAsset badGambleInkFile;
+    [SerializeField] private TextAsset equalGambleInkFile;
+    [SerializeField] private TextAsset neutralInkFile;
 
-    [SerializeField] TextAsset inkFile;
+    [SerializeField] int numberOfDefeatTexts, numberOfGambleTexts;
 
-    private Dictionary<string, int> countOfDefeats;
-    //private Dictionary<string, int> countOfDefeats = new(); intialize it here instead of in start
 
-    private void Awake()
-    {
-        if(instance == null)
-            instance = this;
-    }
+    [SerializeField] string defeatedBy; // for testing
+
 
     private void Start()
     {
-        countOfDefeats = new Dictionary<string, int>();
-
         dialogueManager = DialogueManager.GetInstance();
-        NewGameAssign();
+        data = GetComponent<DialogueData>();
+        info = data.OverallDialogueInformation;
     }
 
-    // has to be called at the beggining of 'New Game'
-    void NewGameAssign()
+    public void DefeatDialogue(string defeatedBy)
     {
-        countOfDefeats.Add("Minotaur",0);
-        countOfDefeats.Add("Arachne",0);
-        countOfDefeats.Add("Griffon",0);
-        countOfDefeats.Add("Satyr",0);
-        countOfDefeats.Add("Athena",0);
-    }
+        if (dialogueManager.isDialoguePlaying) return;
 
-    // call this when starting new Run
-    public void DialogueByDefeat(string defeatedBy)
-    {
-        int whichTimeDefeated = countOfDefeats[defeatedBy];
-        whichTimeDefeated++;
-        countOfDefeats[defeatedBy] = whichTimeDefeated;
+        data.IncreaseDeathCount(defeatedBy);
 
-        dialogueManager.EnterDialogueMode(inkFile, $"{defeatedBy}.died{whichTimeDefeated}");
-    }
+        int deaths = info.numberOfDeaths;
+        int goodGamble = info.goodGambleAttempts;
+        int badGamble = info.badGambleAttempts;
+        int totalGamble = info.allGambleAttempts;
 
-    //use new unity input system in future
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Tab))
+        var opponent = info.opponentInformation.FirstOrDefault(c => c.opponentName == defeatedBy);
+        int bgTriesLT5 = opponent?.badGambleDialoguePlayedLessThanFive ?? -1;   // bad gamble tries individual for each opponent - less than 5 total gambling attempts
+        int bgTriesMT5 = opponent?.badGambleDialoguePlayedMoreThanFive ?? -1;   // bad gamble tries individual for each opponent - more than 5 total gambling attempts
+        int ggTriesLT5 = opponent?.goodGambleDialoguePlayedLessThanFive ?? -1;  // good gamble tries individual for each opponent - less than 5 total gambling attempts
+        int ggTriesMT5 = opponent?.goodGambleDialoguePlayedMoreThanFive ?? -1;  // good gamble tries individual for each opponent - more than 5 total gambling attempts
+        int eqTries = opponent?.equalGambleDialoguePlayed ?? -1;                // equal gamble tries
+        int neutralTries = opponent?.neutralDialoguePlayed ?? -1;               // dialogues after every other has played
+
+        if (deaths == 1)
         {
-            DialogueByDefeat("Minotaur");
+            dialogueManager.EnterDialogueMode(firstDeathInkFile); // dialogue after our first ever death
         }
+        else
+        {
+            int defeatedByCount = opponent?.numberOfDefeatsByOpponent ?? -1;
+
+            if (defeatedByCount-1 <= numberOfDefeatTexts)
+                dialogueManager.EnterDialogueMode(defeatInkFile, $"{defeatedBy}.died{defeatedByCount - 1}");
+            else if (defeatedByCount-1 > numberOfDefeatTexts)
+            {
+                if (goodGamble > badGamble)
+                {
+                    if (totalGamble <= 5 && ggTriesLT5 < numberOfGambleTexts)
+                    {
+                        Dialogue(goodGambleInkFile, $"lessThanFive.died{ggTriesLT5 + 1}", opponent.goodGambleDialoguePlayedLessThanFive);
+                    }
+                    if (totalGamble > 5 && ggTriesMT5 < numberOfGambleTexts)
+                    {
+                        Dialogue(goodGambleInkFile, $"moreThanFive.died{ggTriesMT5 + 1}", opponent.goodGambleDialoguePlayedMoreThanFive);
+                    }
+                }
+                else if (badGamble > goodGamble)
+                {
+                    if (totalGamble <= 5 && bgTriesLT5 < numberOfGambleTexts)
+                    {
+                        Dialogue(badGambleInkFile, $"lessThanFive.died{bgTriesLT5 + 1}", opponent.badGambleDialoguePlayedLessThanFive);
+                    }
+                    if (totalGamble > 5 && bgTriesMT5 < numberOfGambleTexts)
+                    {
+                        Dialogue(badGambleInkFile, $"moreThanFive.died{bgTriesMT5 + 1}", opponent.goodGambleDialoguePlayedMoreThanFive);
+                    }
+                }
+                else if (badGamble == goodGamble && eqTries < numberOfGambleTexts)
+                {
+                    Dialogue(equalGambleInkFile, $"main.died{eqTries + 1}", opponent.equalGambleDialoguePlayed++);
+                }
+                else
+                {
+                    if (neutralTries < 3)
+                    {
+                        Dialogue(neutralInkFile, $"main.died{neutralTries + 1}", opponent.neutralDialoguePlayed);
+                    }
+                    else
+                        dialogueManager.EnterDialogueMode(neutralInkFile, $"main.died3");
+                }
+            }
+        }
+        data.SaveToJson();
+    }
+
+    void Dialogue(TextAsset asset, string knot, int value)
+    {
+        dialogueManager.EnterDialogueMode(asset, knot);
+        value++;
     }
 }

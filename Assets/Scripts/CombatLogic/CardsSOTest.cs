@@ -2,11 +2,18 @@ using UnityEngine;
 
 public enum Suits
 {
-    Hearts,
-    Diamonds,
     Clubs,
     Spades,
+    Hearts,
+    Diamonds,
     Joker
+}
+
+public enum CardColor
+{
+    Red,
+    Black,
+    None
 }
 
 [CreateAssetMenu(fileName = "CardsSOTest", menuName = "Scriptable Objects/CardsSOTest")]
@@ -15,8 +22,8 @@ public enum Suits
 public class CardsSOTest : ScriptableObject
 {
     public int power;
-    public Sprite graphics;
     public int column;
     public int row;
     public Suits suit;
+    public CardColor color;
 }

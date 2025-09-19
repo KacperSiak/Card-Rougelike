@@ -1,20 +1,29 @@
+using Unity.VisualScripting.Antlr3.Runtime.Tree;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class HealingManager : MonoBehaviour
 {
-    [SerializeField] private Button _healButton;
-    [SerializeField] private Button _backButton;
+    [SerializeField] private int _healAmount;
+    private bool _healEnabled;
 
     private void Awake()
     {
-        _healButton.onClick.AddListener(Heal);
+        _healEnabled = true;
+    }
+    private void OnMouseDown()
+    {
+        Heal();
     }
 
     private void Heal()
     {
-        int healAmount = 50;
-        PlayerOverlay.instance.AddHealth(healAmount);
-        _healButton.onClick.RemoveAllListeners();
+        if (_healEnabled)
+        {
+            Debug.Log($"Healuje cie za {_healAmount}");
+            // PlayerOverlay.Instance.AddHealth(_healAmount);
+            _healEnabled = false;
+        }
+        
     }
 }

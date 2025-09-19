@@ -1,30 +1,3 @@
-%YAML 1.1
-%TAG !u! tag:unity3d.com,2011:
---- !u!114 &11400000
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2ac408ffee77df04da26ff85eae270b0, type: 3}
-  m_Name: BonusGoldEpic
-  m_EditorClassIdentifier: 
-  relicID: BonusGoldEpic
-  relicName: Haron's bag
-  description: After fight gives use +15% Drachmy from basic coast
-  icon: {fileID: 0}
-  rarity: 2
-  buyPrice: 0
-  sellPrice: 150
-  relicEffets:
-  - rid: 5888606618676363328
-  references:
-    version: 2
-    RefIds:
-    - rid: 5888606618676363328
-      type: {class: BonusGold, ns: , asm: Assembly-CSharp}
-      data:
-        bonusGold: 0.15
+version https://git-lfs.github.com/spec/v1
+oid sha256:3a0223bd321b399fca56d9ae1572d4ac7026f30736a5f00c33e1c43e2d800b93
+size 985

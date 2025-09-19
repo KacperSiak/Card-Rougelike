@@ -1,27 +1,3 @@
-%YAML 1.1
-%TAG !u! tag:unity3d.com,2011:
---- !u!114 &11400000
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ea794a9f71dedaa4ea38dec2157374d9, type: 3}
-  m_Name: Hp Lose2
-  m_EditorClassIdentifier: 
-  debuffName: HpLose
-  debuffDesc: Lose one health every turn
-  debuffIcon: {fileID: 0}
-  debuffTurns: 8
-  debuffs:
-  - rid: 2307447362607644736
-  references:
-    version: 2
-    RefIds:
-    - rid: 2307447362607644736
-      type: {class: HPLose, ns: , asm: Assembly-CSharp}
-      data:
-        lostHP: 1
+version https://git-lfs.github.com/spec/v1
+oid sha256:090dc22adccb9c716d36b2ddfc34e2f46f2d007b1c89cb392b375bd90ce4d501
+size 803

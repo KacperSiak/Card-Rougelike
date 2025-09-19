@@ -1,30 +1,3 @@
-%YAML 1.1
-%TAG !u! tag:unity3d.com,2011:
---- !u!114 &11400000
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2ac408ffee77df04da26ff85eae270b0, type: 3}
-  m_Name: DiscountEpic
-  m_EditorClassIdentifier: 
-  relicID: DiscountEpic
-  relicName: Aeolu's flow
-  description: Items in the shop are 40% cheaper
-  icon: {fileID: 0}
-  rarity: 2
-  buyPrice: 0
-  sellPrice: 150
-  relicEffets:
-  - rid: 5888606574037696646
-  references:
-    version: 2
-    RefIds:
-    - rid: 5888606574037696646
-      type: {class: Discount, ns: , asm: Assembly-CSharp}
-      data:
-        discount: 0.6
+version https://git-lfs.github.com/spec/v1
+oid sha256:eddd7ae7d4bfdbdc096881be128fc9e21ac1a12b8654389ecb40d4427f388a71
+size 963

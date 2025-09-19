@@ -22,7 +22,7 @@ public class CardSlotUI : MonoBehaviour
     {
         _cardData = data;
 
-        _icon.sprite = _cardData.icon;
+        //_icon.sprite = _cardData.icon;
 
         _useButton.onClick.RemoveAllListeners();
         _useButton.onClick.AddListener(UseCard);
@@ -33,7 +33,7 @@ public class CardSlotUI : MonoBehaviour
         _showButton.onClick.RemoveAllListeners();
         _showButton.onClick.AddListener(ShowButtons);
 
-        if (ShopMenager.instance.inSellingMode)
+        if (ShopMenager.Instance.inSellingMode)
         {
             _discardButtonText.text = $"Sell {_cardData.sellPrice}";
         }    
@@ -43,25 +43,25 @@ public class CardSlotUI : MonoBehaviour
     {
         var ctx = new ConsumableContext
         {
-            player = PlayerOverlay.instance
+            player = PlayerManager.Instance
         };
         foreach (var effect in _cardData.cardEffects)
         {
             effect.ApplyEffect(ctx);
         }
-        ConsumablesAndRelicMenager.instance.currentConsums.Remove(_cardData);
-        ConsumablesAndRelicMenager.instance.slotCounter--;
+        ConsumablesAndRelicMenager.Instance.currentConsums.Remove(_cardData);
+        ConsumablesAndRelicMenager.Instance.slotCounter--;
         Destroy(gameObject);
     }
 
     public void DiscardCard()
     {
-        if (ShopMenager.instance.inSellingMode)
+        if (ShopMenager.Instance.inSellingMode)
         {
-            PlayerOverlay.instance.AddGold(_cardData.sellPrice);
+            PlayerManager.Instance.GoldChange(_cardData.sellPrice, true);
         }
-        ConsumablesAndRelicMenager.instance.currentConsums.Remove(_cardData);
-        ConsumablesAndRelicMenager.instance.slotCounter--;
+        ConsumablesAndRelicMenager.Instance.currentConsums.Remove(_cardData);
+        ConsumablesAndRelicMenager.Instance.slotCounter--;
         Destroy(gameObject);
     }
 

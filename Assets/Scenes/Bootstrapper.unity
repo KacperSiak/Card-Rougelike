@@ -624,10 +624,29 @@ MonoBehaviour:
         asset: {fileID: 102900000, guid: 688c1fd6238f5414896758621fb92deb, type: 3}
         guid: 688c1fd6238f5414896758621fb92deb
       SceneType: 0
+      Persistent: 1
+  - GroupName: Nodes
+    Scenes:
     - Reference:
-        asset: {fileID: 102900000, guid: c9be718a85113f647a695d05bf1d6373, type: 3}
-        guid: c9be718a85113f647a695d05bf1d6373
-      SceneType: 4
+        asset: {fileID: 102900000, guid: 1c5d67bfc39d4a045820c21ff3fc908d, type: 3}
+        guid: 1c5d67bfc39d4a045820c21ff3fc908d
+      SceneType: 5
+      Persistent: 0
+    - Reference:
+        asset: {fileID: 102900000, guid: 7067715549785224fbeaf328ebf2a192, type: 3}
+        guid: 7067715549785224fbeaf328ebf2a192
+      SceneType: 6
+      Persistent: 1
+    - Reference:
+        asset: {fileID: 102900000, guid: 800e14468a144de4e86c22c1a92939f2, type: 3}
+        guid: 800e14468a144de4e86c22c1a92939f2
+      SceneType: 7
+      Persistent: 1
+    - Reference:
+        asset: {fileID: 102900000, guid: a9d81ada56ce34e419f1092ba770995d, type: 3}
+        guid: a9d81ada56ce34e419f1092ba770995d
+      SceneType: 10
+      Persistent: 1
 --- !u!4 &644061552
 Transform:
   m_ObjectHideFlags: 0
