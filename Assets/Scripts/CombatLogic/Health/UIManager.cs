@@ -48,8 +48,8 @@ public class UIManager : MonoBehaviour
 
     private void SetHealthUI()
     {
-        //_playerHPText.text = $"Player HP: {RoundManager.Instance.PlayerHP}";
-        //_enemyHPText.text = $"Enemy HP: {RoundManager.Instance.EnemyHP}";
+        _playerHPText.text = $"HP: {RoundManager.Instance.PlayerHP}/50"; //temp 50
+        _enemyHPText.text = $"HP: {RoundManager.Instance.EnemyHP}/50";
     }
 
     private void SetupCombatEndUI()
