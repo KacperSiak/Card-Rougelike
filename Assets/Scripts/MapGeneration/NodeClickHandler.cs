@@ -43,8 +43,6 @@ public class NodeClickHandler : MonoBehaviour
     public static NodeClickHandler lastEnteredCombatNode;
     private static readonly HashSet<string> _clearedCombatGuids = new HashSet<string>();
     private static string _lastEnteredCombatGuid;
-    private static readonly HashSet<string> _clearedCombatKeys = new HashSet<string>();
-    private static string _lastEnteredCombatKey;
     
     [Header("Debug")]
     [Tooltip("Enable verbose debug logs for movement / adjacency checks.")]
@@ -224,9 +222,14 @@ public class NodeClickHandler : MonoBehaviour
 
         if (mapManager != null)
         {
-            Vector2 fromPos2D = new Vector2(fromPos.x, fromPos.z);
-            Vector2 toPos2D = new Vector2(toPos.x, toPos.z);
-            mapManager.TravelToNode(fromPos2D, toPos2D);
+            string fromGuid = null;
+            var currentHandler = currentPlayerNode != null ? currentPlayerNode.GetComponent<NodeClickHandler>() : null;
+            if (currentHandler != null && currentHandler.mapNode != null)
+            {
+                fromGuid = GetOrAssignNodeGuid(currentHandler);
+            }
+            string toGuid = GetOrAssignNodeGuid(this);
+            mapManager.TravelToNode(fromGuid, toGuid);
         }
         
         float duration = Vector3.Distance(fromPos, toPos) / moveSpeed;
@@ -284,9 +287,14 @@ public class NodeClickHandler : MonoBehaviour
         {
             fromPos3D = currentPlayerNode.position;
             hasFromPosition = true;
-            Vector2 fromPos = new Vector2(fromPos3D.x, fromPos3D.z);
-            Vector2 toPos = new Vector2(toPos3D.x, toPos3D.z);
-            mapManager.TravelToNode(fromPos, toPos);
+            string fromGuid = null;
+            var currentHandler = currentPlayerNode.GetComponent<NodeClickHandler>();
+            if (currentHandler != null && currentHandler.mapNode != null)
+            {
+                fromGuid = GetOrAssignNodeGuid(currentHandler);
+            }
+            string toGuid = GetOrAssignNodeGuid(this);
+            mapManager.TravelToNode(fromGuid, toGuid);
         }
         
         currentPlayerNode = transform;
@@ -319,8 +327,7 @@ public class NodeClickHandler : MonoBehaviour
 
     void LoadScene() // TODO: do skryptu od ladowania scen
     {
-        string myGuid = IsCombatNode(nodeType) ? GetOrAssignNodeGuid(this) : null;
-        string myKey = IsCombatNode(nodeType) ? GetNodeKey(this) : null;
+    string myGuid = IsCombatNode(nodeType) ? GetOrAssignNodeGuid(this) : null;
         if (_wasClearedAndDisabled)
         {
             if (forceDebugLogs || enableDebugLogs)
@@ -329,10 +336,9 @@ public class NodeClickHandler : MonoBehaviour
         }
         if (IsCombatNode(nodeType) &&
             (_clearedCombatNodes.Contains(this) ||
-             (!string.IsNullOrEmpty(myGuid) && _clearedCombatGuids.Contains(myGuid)) ||
-             (myKey != null && _clearedCombatKeys.Contains(myKey))))
+             (!string.IsNullOrEmpty(myGuid) && _clearedCombatGuids.Contains(myGuid))))
         {
-            Debug.Log($"[NodeClickHandler] Node '{name}' already cleared (guid={myGuid ?? "<none>"}, key={myKey ?? "<none>"}). Staying on map.");
+            Debug.Log($"[NodeClickHandler] Node '{name}' already cleared (guid={myGuid ?? "<none>"}). Staying on map.");
             return;
         }
 
@@ -354,8 +360,7 @@ public class NodeClickHandler : MonoBehaviour
                 {
                     lastEnteredCombatNode = this;
                     _lastEnteredCombatGuid = myGuid;
-                    _lastEnteredCombatKey = myKey;
-                    Debug.Log($"[NodeClickHandler] Entering combat from node '{name}' guid={_lastEnteredCombatGuid} key={_lastEnteredCombatKey}");
+                    Debug.Log($"[NodeClickHandler] Entering combat from node '{name}' guid={_lastEnteredCombatGuid}");
                     DisableNodeOnCombatEntry(_lastEnteredCombatGuid);
                 }
                 Debug.Log("Using additive scene activation for: " + sceneToLoad);
@@ -372,8 +377,7 @@ public class NodeClickHandler : MonoBehaviour
             {
                 lastEnteredCombatNode = this;
                 _lastEnteredCombatGuid = myGuid;
-                _lastEnteredCombatKey = myKey;
-                Debug.Log($"[NodeClickHandler] Entering combat (single load) from node '{name}' guid={_lastEnteredCombatGuid} key={_lastEnteredCombatKey}");
+                Debug.Log($"[NodeClickHandler] Entering combat (single load) from node '{name}' guid={_lastEnteredCombatGuid}");
                 DisableNodeOnCombatEntry(_lastEnteredCombatGuid);
             }
             SceneManager.LoadScene(sceneToLoad);
@@ -400,12 +404,7 @@ public class NodeClickHandler : MonoBehaviour
             DisableNodesWithGuid(_lastEnteredCombatGuid);
             any = true;
         }
-        if (!string.IsNullOrEmpty(_lastEnteredCombatKey))
-        {
-            _clearedCombatKeys.Add(_lastEnteredCombatKey);
-            Debug.Log($"[NodeClickHandler] Marked key '{_lastEnteredCombatKey}' as cleared");
-            any = true;
-        }
+        // position-based key removed
         if (lastEnteredCombatNode != null)
         {
             _clearedCombatNodes.Add(lastEnteredCombatNode);
@@ -419,32 +418,14 @@ public class NodeClickHandler : MonoBehaviour
         }
         lastEnteredCombatNode = null;
         _lastEnteredCombatGuid = null;
-        _lastEnteredCombatKey = null;
     }
 
     public static void ClearClearedNodes()
     {
         _clearedCombatNodes.Clear();
         _clearedCombatGuids.Clear();
-        _clearedCombatKeys.Clear();
         lastEnteredCombatNode = null;
         _lastEnteredCombatGuid = null;
-        _lastEnteredCombatKey = null;
-    }
-
-    private static string GetNodeKey(NodeClickHandler h)
-    {
-        if (h != null)
-        {
-            if (h.mapNode != null)
-            {
-                var p = h.mapNode.Position;
-                return $"{p.x:F3},{p.y:F3}";
-            }
-            var pos = h.transform.position;
-            return $"{pos.x:F3},{pos.z:F3}";
-        }
-        return null;
     }
 
     private static string GetOrAssignNodeGuid(NodeClickHandler h)
