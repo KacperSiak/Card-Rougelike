@@ -55,9 +55,9 @@ public class MapManager : PersistenSingleton<MapManager>
         Debug.Log($"[MapManager] Max map time: {maxMapTime:F2}");
     }
 
-    public void TravelToNode(Vector2 fromPos, Vector2 toPos)
+    public void TravelToNode(Vector2 fromPos, Vector2 toPos) // TODO: zmienic na guid
     {
-        float travelTime = (float)Math.Round(Vector2.Distance(fromPos, toPos) * _modifier); //Kacper modified
+        float travelTime = (float)Math.Round(Vector2.Distance(fromPos, toPos) * _modifier);
         currentMapTime -= travelTime;
         
         if (currentMapTime < 0f)

@@ -16,8 +16,8 @@ public class NodeClickHandler : MonoBehaviour
     public static MapNode currentPlayerMapNode;
     
     [Header("References")]
-    public MapGenerator mapGenerator;
-    public MapManager mapManager;
+    public MapGenerator mapGenerator; //TODO: singleton
+    public MapManager mapManager; //TODO: singleton
     [Header("Optional (injected)")]
     public CameraController cameraController;
     public NodeInfoUI nodeInfoUI;
@@ -34,9 +34,9 @@ public class NodeClickHandler : MonoBehaviour
     [Tooltip("Backing MapNode for this instance, set by MapGenerator during instantiation")]
     public MapNode mapNode;
     
-    private static bool isPlayerMoving = false;
+    private static bool isPlayerMoving = false; // TODO: do skryptu playera
     private bool _shopBlock = false;
-    private bool _healBlock = false;
+    private bool _healBlock = false; // TODO: do skryptu nodea
     private bool _wasClearedAndDisabled = false; 
 
     private static readonly HashSet<NodeClickHandler> _clearedCombatNodes = new HashSet<NodeClickHandler>();
@@ -124,7 +124,7 @@ public class NodeClickHandler : MonoBehaviour
         }
     }
 
-    bool CanMoveToThisNode()
+    bool CanMoveToThisNode() // TODO: do managera mapy albo node
     {
         if (isPlayerMoving)
         { LogMoveBlock("Already moving"); return false; }
@@ -317,7 +317,7 @@ public class NodeClickHandler : MonoBehaviour
         LoadScene();
     }
 
-    void LoadScene()
+    void LoadScene() // TODO: do skryptu od ladowania scen
     {
         string myGuid = IsCombatNode(nodeType) ? GetOrAssignNodeGuid(this) : null;
         string myKey = IsCombatNode(nodeType) ? GetNodeKey(this) : null;
