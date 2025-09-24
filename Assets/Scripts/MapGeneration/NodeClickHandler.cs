@@ -16,12 +16,11 @@ public class NodeClickHandler : MonoBehaviour
     public static MapNode currentPlayerMapNode;
     
     [Header("References")]
-    public MapGenerator mapGenerator; //TODO: singleton
-    public MapManager mapManager; //TODO: singleton
-    [Header("Optional (injected)")]
-    public CameraController cameraController;
-    public NodeInfoUI nodeInfoUI;
-    public MapSaveManager mapSaveManager;
+    public MapGenerator mapGenerator;
+    public MapManager mapManager;
+    [SerializeField] private CameraController cameraController;
+    [SerializeField] private NodeInfoUI nodeInfoUI;
+    [SerializeField] private MapSaveManager mapSaveManager;
 
     [Header("Player Movement")]
     public float moveSpeed = 3f;
@@ -34,9 +33,6 @@ public class NodeClickHandler : MonoBehaviour
     [Tooltip("Backing MapNode for this instance, set by MapGenerator during instantiation")]
     public MapNode mapNode;
     
-    private static bool isPlayerMoving = false; // TODO: do skryptu playera
-    private bool _shopBlock = false;
-    private bool _healBlock = false; // TODO: do skryptu nodea
     private bool _wasClearedAndDisabled = false; 
 
     private static readonly HashSet<NodeClickHandler> _clearedCombatNodes = new HashSet<NodeClickHandler>();
@@ -53,6 +49,11 @@ public class NodeClickHandler : MonoBehaviour
 
     void Start()
     {
+        if (mapGenerator == null && MapGenerator.Instance != null)
+            mapGenerator = MapGenerator.Instance;
+        if (mapManager == null && MapManager.Instance != null)
+            mapManager = MapManager.Instance;
+
         if (GetComponent<Collider>() == null)
         {
             gameObject.AddComponent<BoxCollider>();
@@ -122,9 +123,9 @@ public class NodeClickHandler : MonoBehaviour
         }
     }
 
-    bool CanMoveToThisNode() // TODO: do managera mapy albo node
+    bool CanMoveToThisNode()
     {
-        if (isPlayerMoving)
+    if (PlayerMovementState.IsMoving)
         { LogMoveBlock("Already moving"); return false; }
         
         if (currentPlayerNode == null) 
@@ -174,7 +175,7 @@ public class NodeClickHandler : MonoBehaviour
     if (sourceMapNode == null) { LogMoveBlock("Cannot resolve current MapNode"); return false; }
     if (mapNode == null) { LogMoveBlock("Target mapNode null"); return false; }
 
-    bool reachable = sourceMapNode.ConnectedNodes.Contains(mapNode);
+    bool reachable = mapManager != null ? mapManager.AreNodesAdjacent(sourceMapNode, mapNode) : (sourceMapNode.ConnectedNodes.Contains(mapNode));
     if (enableDebugLogs)
     {
         int currentConn = sourceMapNode.ConnectedNodes != null ? sourceMapNode.ConnectedNodes.Count : -1;
@@ -215,7 +216,7 @@ public class NodeClickHandler : MonoBehaviour
     
     System.Collections.IEnumerator SmoothMovePlayer()
     {
-        isPlayerMoving = true;
+    if (!PlayerMovementState.TryBeginMove()) yield break;
         
         Vector3 fromPos = currentPlayerNode.position;
         Vector3 toPos = transform.position;
@@ -272,7 +273,7 @@ public class NodeClickHandler : MonoBehaviour
         {
             mapSaveManager.SaveCurrentMap();
         }
-        isPlayerMoving = false;
+    PlayerMovementState.EndMove();
         
         LoadScene();
     }
@@ -325,9 +326,9 @@ public class NodeClickHandler : MonoBehaviour
         LoadScene();
     }
 
-    void LoadScene() // TODO: do skryptu od ladowania scen
+    void LoadScene()
     {
-    string myGuid = IsCombatNode(nodeType) ? GetOrAssignNodeGuid(this) : null;
+        string myGuid = IsCombatNode(nodeType) ? GetOrAssignNodeGuid(this) : null;
         if (_wasClearedAndDisabled)
         {
             if (forceDebugLogs || enableDebugLogs)
@@ -342,51 +343,29 @@ public class NodeClickHandler : MonoBehaviour
             return;
         }
 
-        if (!string.IsNullOrEmpty(sceneToLoad) && IsSceneBlocked(sceneToLoad))
+        if (string.IsNullOrEmpty(sceneToLoad) || !IsSceneBlocked(sceneToLoad)) return;
+
+        if (IsCombatNode(nodeType))
         {
-            if (IsCombatNode(nodeType))
-            {
-                CombatManager.ApplyNodeType(nodeType);
-            }
-            
-            if (mapSaveManager != null)
-            {
-                mapSaveManager.SaveCurrentMap();
-            }
-            
-            if (SceneLoader.Instance != null)
-            {
-                if (IsCombatNode(nodeType))
-                {
-                    lastEnteredCombatNode = this;
-                    _lastEnteredCombatGuid = myGuid;
-                    Debug.Log($"[NodeClickHandler] Entering combat from node '{name}' guid={_lastEnteredCombatGuid}");
-                    DisableNodeOnCombatEntry(_lastEnteredCombatGuid);
-                }
-                Debug.Log("Using additive scene activation for: " + sceneToLoad);
-                SceneLoader.Instance.manager.ActivateScene(sceneToLoad);
-                if (IsCombatNode(nodeType))
-                {
-                    CombatManager.ApplyNodeType(nodeType);
-                }
-                return;
-            }
-            
-            Debug.Log("SceneLoader not found, using normal scene loading for: " + sceneToLoad);
-            if (IsCombatNode(nodeType))
-            {
-                lastEnteredCombatNode = this;
-                _lastEnteredCombatGuid = myGuid;
-                Debug.Log($"[NodeClickHandler] Entering combat (single load) from node '{name}' guid={_lastEnteredCombatGuid}");
-                DisableNodeOnCombatEntry(_lastEnteredCombatGuid);
-            }
-            SceneManager.LoadScene(sceneToLoad);
+            CombatManager.ApplyNodeType(nodeType);
         }
+
+        if (mapSaveManager != null)
+        {
+            mapSaveManager.SaveCurrentMap();
+        }
+
+        NodeSceneLoader.LoadFromNode(this, sceneToLoad, myGuid);
     }
 
-    static bool IsCombatNode(NodeType t)
+    public static bool IsCombatNode(NodeType t)
     {
         return t == NodeType.Enemy || t == NodeType.Elite || t == NodeType.Boss;
+    }
+
+    public static void SetLastEnteredCombatGuid(string guid)
+    {
+        _lastEnteredCombatGuid = guid;
     }
     
     public void TriggerLoadScene()
@@ -404,7 +383,6 @@ public class NodeClickHandler : MonoBehaviour
             DisableNodesWithGuid(_lastEnteredCombatGuid);
             any = true;
         }
-        // position-based key removed
         if (lastEnteredCombatNode != null)
         {
             _clearedCombatNodes.Add(lastEnteredCombatNode);
@@ -450,7 +428,7 @@ public class NodeClickHandler : MonoBehaviour
     private static void DisableNodesWithGuid(string guid)
     {
         if (string.IsNullOrEmpty(guid)) return;
-        var nodes = GameObject.FindObjectsOfType<NodeClickHandler>(includeInactive: true);
+    var nodes = Object.FindObjectsByType<NodeClickHandler>(FindObjectsInactive.Include, FindObjectsSortMode.None);
         int count = 0;
         foreach (var n in nodes)
         {
@@ -464,7 +442,7 @@ public class NodeClickHandler : MonoBehaviour
             Debug.Log($"[NodeClickHandler] Disabled {count} node(s) with GUID {guid}");
     }
 
-    private void DisableNodeOnCombatEntry(string guid)
+    public void DisableNodeOnCombatEntry(string guid)
     {
         _wasClearedAndDisabled = true;
         if (forceDebugLogs || enableDebugLogs)
@@ -482,6 +460,15 @@ public class NodeClickHandler : MonoBehaviour
         {
             nodeInfoUI.ShowInfo(GetNodeName(), GetNodeDescription(), transform.position);
         }
+    }
+
+    public void InjectDependencies(MapGenerator gen, MapManager mgr, CameraController cam, NodeInfoUI info, MapSaveManager save)
+    {
+        if (mapGenerator == null) mapGenerator = gen;
+        if (mapManager == null) mapManager = mgr;
+        if (cameraController == null) cameraController = cam;
+        if (nodeInfoUI == null) nodeInfoUI = info;
+        if (mapSaveManager == null) mapSaveManager = save;
     }
     
     private string GetNodeName()
@@ -521,15 +508,11 @@ public class NodeClickHandler : MonoBehaviour
 
     private bool IsSceneBlocked(string sceneName)
     {
-        if(_healBlock && sceneName == "HealingDesign") return false;
-        if(_shopBlock && sceneName == "ShopScene") return false;
-
-        return true;
+        return SceneBlockState.IsBlocked(sceneName);
     }
 
     private void BlockScene(string scene)
     {
-        if (scene == "Shop") _shopBlock = true;
-        if (scene == "Heal") _healBlock = true;
+        SceneBlockState.Block(scene);
     }
 }

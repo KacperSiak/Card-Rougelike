@@ -552,7 +552,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   timeText: {fileID: 421021101}
   mapManager: {fileID: 594651637}
-  timeFormat: '{1:F1}'
+  timeFormat: '{0:F1}'
   lowTimeColor: {r: 1, g: 0, b: 0, a: 1}
   normalColor: {r: 0.13207549, g: 0.04183707, b: 0, a: 1}
   lowTimeThreshold: 0.2

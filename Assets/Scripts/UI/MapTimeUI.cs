@@ -81,6 +81,8 @@ public class MapTimeUI : MonoBehaviour
     
     void CheckForBossTeleport()
     {
+        if (mapManager.maxMapTime <= 0f) return;
+
         if (mapManager.currentMapTime <= 0f)
         {
             Debug.Log("[MapTimeUI] Time is up! Triggering boss teleport...");
