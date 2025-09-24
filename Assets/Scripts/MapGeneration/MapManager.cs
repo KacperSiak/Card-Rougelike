@@ -22,8 +22,8 @@ public class MapManager : PersistenSingleton<MapManager>
     }
     void Start()
     {
-        if (mapGenerator == null)
-            mapGenerator = FindFirstObjectByType<MapGenerator>(); //tymczasowe
+        if (mapGenerator == null && MapGenerator.Instance != null)
+            mapGenerator = MapGenerator.Instance;
     }
 
     public void CalculateMaxMapTime()
@@ -74,7 +74,6 @@ public class MapManager : PersistenSingleton<MapManager>
 
         if (fromNode == null)
         {
-            // First placement or missing previous node: no time cost.
             Debug.Log("[MapManager] TravelToNode: fromNode null – treating as zero travel cost");
             return;
         }
@@ -84,6 +83,12 @@ public class MapManager : PersistenSingleton<MapManager>
         currentMapTime -= travelTime;
         if (currentMapTime < 0f) currentMapTime = 0f;
         Debug.Log($"[MapManager] Traveled distance: {travelTime:F2}, remaining time: {currentMapTime:F2}");
+    }
+
+    public bool AreNodesAdjacent(MapNode a, MapNode b)
+    {
+        if (a == null || b == null) return false;
+        return a.ConnectedNodes != null && a.ConnectedNodes.Contains(b);
     }
 
     private MapNode FindNodeByGuid(string guid)
