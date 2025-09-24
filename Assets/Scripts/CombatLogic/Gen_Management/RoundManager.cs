@@ -199,13 +199,13 @@ public class RoundManager : PersistenSingleton<RoundManager>
             var loadOp = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync("MapGeneration", UnityEngine.SceneManagement.LoadSceneMode.Additive);
             while (loadOp != null && !loadOp.isDone)
                 yield return null;
-            var loaded = UnityEngine.SceneManagement.SceneManager.GetSceneByName("MapGeneration");
+            var loaded = UnityEngine.SceneManagement.SceneManager.GetSceneByName("MapGeneration"); // zmienic do zmiennej "MapGeneration"
             if (loaded.IsValid())
                 UnityEngine.SceneManagement.SceneManager.SetActiveScene(loaded);
         }
 
         yield return null;
-        GlobalRunState.ClearReloadFlags();
+        GlobalRunState.ClearReloadFlags(); // flagi mozna usunac
     }
 
     public void EndRound()
@@ -224,7 +224,7 @@ public class RoundManager : PersistenSingleton<RoundManager>
 
         if (!PlayerCardManager.Instance.CheckRoundReadiness())
         {
-            UIManager.Instance.Winner = "Enemy";
+            UIManager.Instance.Winner = "Enemy"; // mozna zmienic na bool
             _alreadyFinished = true;
             OnCombatEnd?.Invoke();
             return;
