@@ -517,7 +517,7 @@ public class NodeClickHandler : MonoBehaviour
         if (nodeType == NodeType.Elite)
         {
             return eliteVariant == EliteVariant.Arachne
-                ? "The weaver of fate and silk; swift and cunning, she traps the careless."
+                ? "Once an ordinary weaver girl, she is now half-spider—thanks to a “small” misunderstanding."
                 : "A towering brute with a bull's head and boundless rage.";
         }
         switch (nodeType)
