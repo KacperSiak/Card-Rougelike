@@ -21,7 +21,6 @@ public class DamageManager : PersistenSingleton<DamageManager>
         base.OnDestroy();
     }
 
-    //here  
     public void CalculatePlayerImpact()
     {
         StartCoroutine(Animated());
@@ -51,8 +50,8 @@ public class DamageManager : PersistenSingleton<DamageManager>
         for (int i = 0; i < _cardHolders.Count; i++)
         { 
             if (!EnemyCardManager.Instance.CardsInGamePower.ContainsKey(i) || EnemyCardManager.Instance.CardsInGamePower[i] > 0) continue;
-            int dmg = -((EnemyCardManager.Instance.CardsInGamePower[i] - _bonusDamage) * multiply);
-            RoundManager.Instance.EnemyHP -= dmg; // cuz number in the list will be negative after we will implement player impact
+            int dmg = -((EnemyCardManager.Instance.CardsInGamePower[i] - _bonusDamage) * multiply); // cuz number in the list will be negative after we will implement player impact
+            RoundManager.Instance.EnemyHP -= dmg; 
 
             //if(_consContext.selfHit)
             //{

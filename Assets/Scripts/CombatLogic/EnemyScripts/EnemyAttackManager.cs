@@ -50,7 +50,6 @@ public class EnemyAttackManager : MonoBehaviour
         return Mathf.Clamp(amount, k_minRound, k_maxRound);
     }
 
-    //here 
     public void UpdateRounds()
     {
         StartCoroutine(Animated());
@@ -72,16 +71,17 @@ public class EnemyAttackManager : MonoBehaviour
             if (RoundsForCards[i] > 0) continue;
          
 
-            if(_consContext.immune) RoundManager.Instance.PlayerHP -= EnemyCardManager.Instance.CardsInGamePower[i] * 0;
-            else if (_consContext.vulnerable) RoundManager.Instance.PlayerHP -= EnemyCardManager.Instance.CardsInGamePower[i] * 2;
-            else
+            //if(_consContext.immune) RoundManager.Instance.PlayerHP -= EnemyCardManager.Instance.CardsInGamePower[i] * 0;
+            if (_consContext.vulnerable) RoundManager.Instance.PlayerHP -= EnemyCardManager.Instance.CardsInGamePower[i] * 2;
+            else if(!_consContext.immune)
             {
                 EnemyCardManager.Instance.Attack(i);
                 
                 while(EnemyCardManager.Instance.GetCurrentAnimationManager(i).IsAnimating)
                 yield return null;
 
-                RoundManager.Instance.PlayerHP -= EnemyCardManager.Instance.CardsInGamePower[i];
+                RoundManager.Instance.PlayerHP -= EnemyCardManager.Instance.CardsInGamePower[i]; 
+                UIManager.Instance.ShowPlayerDamage(EnemyCardManager.Instance.CardsInGamePower[i]);
             }
 
             if (RoundManager.Instance.PlayerHP <= 0) break;
