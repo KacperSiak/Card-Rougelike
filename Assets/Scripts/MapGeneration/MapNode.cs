@@ -8,4 +8,6 @@ public class MapNode
     public Vector2 Position;
     public List<MapNode> ConnectedNodes = new List<MapNode>();
     public string UniqueId;
+    public MapSystem.EnemyVariant EnemyVariant;
+    public MapSystem.EliteVariant EliteVariant;
 }
