@@ -518,7 +518,7 @@ public class NodeClickHandler : MonoBehaviour
         {
             return eliteVariant == EliteVariant.Arachne
                 ? "Once an ordinary weaver girl, she is now half-spider—thanks to a “small” misunderstanding."
-                : "A towering brute with a bull's head and boundless rage.";
+                : "A serious figure with the head of a bull, struggling with a crisis of self-identity.";
         }
         switch (nodeType)
         {
