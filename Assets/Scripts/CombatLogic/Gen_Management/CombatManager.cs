@@ -7,9 +7,13 @@ public class CombatManager : MonoBehaviour
     public static CombatManager Instance { get; private set; }
     
     public static NodeType NextCombatNodeType = NodeType.Enemy;
+    public static MapSystem.EnemyVariant NextEnemyVariant = MapSystem.EnemyVariant.None;
+    public static MapSystem.EliteVariant NextEliteVariant = MapSystem.EliteVariant.None;
     
     //need to be set by the map field before we load combat scene 
     public NodeType CurrentNodeType { get; set; } = NodeType.Boss; // temp default value
+    public MapSystem.EnemyVariant CurrentEnemyVariant { get; set; } = MapSystem.EnemyVariant.None;
+    public MapSystem.EliteVariant CurrentEliteVariant { get; set; } = MapSystem.EliteVariant.None;
 
     [SerializeField] private List<StructForDictionary<NodeType, List<StructForDictionary<int, List<CardsSOTest>>>>> _listDifferentTypes;
 
@@ -30,6 +34,8 @@ public class CombatManager : MonoBehaviour
         else Destroy(gameObject);
 
     CurrentNodeType = NextCombatNodeType;
+    CurrentEnemyVariant = NextEnemyVariant;
+    CurrentEliteVariant = NextEliteVariant;
         
         SetProperties();
     }
@@ -37,6 +43,8 @@ public class CombatManager : MonoBehaviour
     private void OnEnable()
     {
         CurrentNodeType = NextCombatNodeType;
+    CurrentEnemyVariant = NextEnemyVariant;
+    CurrentEliteVariant = NextEliteVariant;
     }
 
     public static void ApplyNodeType(NodeType type)
@@ -45,6 +53,24 @@ public class CombatManager : MonoBehaviour
         if (Instance != null)
         {
             Instance.CurrentNodeType = type;
+        }
+    }
+
+    public static void ApplyEnemyVariant(MapSystem.EnemyVariant variant)
+    {
+        NextEnemyVariant = variant;
+        if (Instance != null)
+        {
+            Instance.CurrentEnemyVariant = variant;
+        }
+    }
+
+    public static void ApplyEliteVariant(MapSystem.EliteVariant variant)
+    {
+        NextEliteVariant = variant;
+        if (Instance != null)
+        {
+            Instance.CurrentEliteVariant = variant;
         }
     }
 
@@ -61,9 +87,16 @@ public class CombatManager : MonoBehaviour
 
     private string GetCurrentEnemyTypeName()
     {
+        if (CurrentNodeType == NodeType.Enemy)
+        {
+            return CurrentEnemyVariant == MapSystem.EnemyVariant.Satyr ? "Satyr" : "Griffon";
+        }
+        if (CurrentNodeType == NodeType.Elite)
+        {
+            return CurrentEliteVariant == MapSystem.EliteVariant.Arachne ? "Arachne" : "Minotaur";
+        }
         switch (CurrentNodeType)
         {
-            case NodeType.Enemy: return "Enemy";
             case NodeType.Boss: return "Boss";
             default: return CurrentNodeType.ToString();
         }
