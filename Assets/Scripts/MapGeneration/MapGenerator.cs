@@ -19,6 +19,7 @@ public struct NodeTypeSettings
 
 public class MapGenerator : MonoBehaviour
 {
+    public static MapGenerator Instance { get; private set; }
     private const float PLAYER_MARKER_Y_OFFSET = 0.2f;
     
     [Header("Node Type Configuration")]
@@ -104,6 +105,17 @@ public class MapGenerator : MonoBehaviour
     private Transform startNodeTransform;
     private Transform bossNodeTransform;
     private Dictionary<Vector3, Transform> nodeTransformCache = new Dictionary<Vector3, Transform>();
+
+    void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Debug.LogWarning("[MapGenerator] Duplicate instance found, destroying this one.");
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+    }
 
     void Start()
     {
@@ -340,11 +352,7 @@ public class MapGenerator : MonoBehaviour
                     {
                         nodeHandler.nodeType = node.Type;
                         nodeHandler.mapNode = node;
-                        if (nodeHandler.mapGenerator == null) nodeHandler.mapGenerator = this;
-                        if (nodeHandler.mapManager == null) nodeHandler.mapManager = mapManager;
-                        if (nodeHandler.cameraController == null) nodeHandler.cameraController = cameraController;
-                        if (nodeHandler.nodeInfoUI == null) nodeHandler.nodeInfoUI = nodeInfoUI;
-                        if (nodeHandler.mapSaveManager == null) nodeHandler.mapSaveManager = mapSaveManager;
+                        nodeHandler.InjectDependencies(this, mapManager, cameraController, nodeInfoUI, mapSaveManager);
                     }
                 }
             }

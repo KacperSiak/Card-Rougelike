@@ -40,7 +40,7 @@ public class EventSystemRefresher : MonoBehaviour
 
         // pick EventSystem in the new active scene
         EventSystem target = null;
-        var systems = FindObjectsOfType<EventSystem>(true);
+    var systems = Object.FindObjectsByType<EventSystem>(FindObjectsInactive.Include, FindObjectsSortMode.None);
         foreach (var es in systems)
         {
             if (es != null && es.gameObject.scene == scene)
