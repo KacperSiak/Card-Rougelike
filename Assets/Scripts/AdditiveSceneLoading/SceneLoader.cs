@@ -16,6 +16,7 @@ namespace Systems.SceneManagement
 
         float targetProgress;
         bool isLoading;
+    bool missingFaderLogged;
 
         public readonly SceneGroupManager manager = new SceneGroupManager();
 
@@ -29,6 +30,8 @@ namespace Systems.SceneManagement
             Instance = this;
             DontDestroyOnLoad(gameObject);
 
+            EnsureScreenFader();
+
             manager.OnSceneLoaded += sceneName => Debug.Log("Loaded: " + sceneName);
             manager.OnSceneUnloaded += sceneName => Debug.Log("Unloaded: " + sceneName);
             manager.OnSceneGroupLoaded += () => Debug.Log("Scene Group Loaded");
@@ -38,6 +41,13 @@ namespace Systems.SceneManagement
         {
             manager.RegisterSceneGroups(sceneGroups);
             await LoadSceneGroup(0);
+        }
+
+        void EnsureScreenFader()
+        {
+            if (ScreenFader.Instance != null) return;
+            var go = new GameObject("ScreenFader");
+            go.AddComponent<ScreenFader>();
         }
 
         void Update()
@@ -66,9 +76,72 @@ namespace Systems.SceneManagement
             LoadingProgress progress = new LoadingProgress();
             progress.Progressed += target => targetProgress = Mathf.Max(target, targetProgress);
 
+            if (ScreenFader.Instance != null)
+                await ScreenFader.Instance.FadeOut();
+            else if (!missingFaderLogged)
+            {
+                missingFaderLogged = true;
+                Debug.LogWarning("[SceneLoader] FadeOut skipped: ScreenFader instance missing.");
+            }
+
             EnableLoadingCanvas();
             await manager.LoadScenes(sceneGroups[index], progress);
             EnableLoadingCanvas(false);
+
+            if (ScreenFader.Instance != null)
+                await ScreenFader.Instance.FadeIn();
+            else if (!missingFaderLogged)
+            {
+                missingFaderLogged = true;
+                Debug.LogWarning("[SceneLoader] FadeIn skipped: ScreenFader instance missing.");
+            }
+        }
+
+        public async Task ActivateSceneWithFade(string sceneName, bool loadIfMissing = true)
+        {
+            if (ScreenFader.Instance != null)
+                await ScreenFader.Instance.FadeOut();
+            else if (!missingFaderLogged)
+            {
+                missingFaderLogged = true;
+                Debug.LogWarning("[SceneLoader] FadeOut skipped: ScreenFader instance missing.");
+            }
+
+            await manager.ActivateScene(sceneName, loadIfMissing);
+
+            if (ScreenFader.Instance != null)
+                await ScreenFader.Instance.FadeIn();
+            else if (!missingFaderLogged)
+            {
+                missingFaderLogged = true;
+                Debug.LogWarning("[SceneLoader] FadeIn skipped: ScreenFader instance missing.");
+            }
+        }
+
+        public void ActivateSceneFromNode(NodeClickHandler handler, string sceneName, string combatGuid)
+        {
+            _ = ActivateSceneFromNodeAsync(handler, sceneName, combatGuid);
+        }
+
+        private async Task ActivateSceneFromNodeAsync(NodeClickHandler handler, string sceneName, string combatGuid)
+        {
+            if (handler == null || string.IsNullOrEmpty(sceneName)) return;
+            if (NodeClickHandler.forceDebugLogs || handler.enableDebugLogs)
+                Debug.Log($"[SceneLoader] Node transition -> {sceneName} guid={combatGuid}");
+
+            if (NodeClickHandler.IsCombatNode(handler.nodeType))
+            {
+                NodeClickHandler.lastEnteredCombatNode = handler;
+                NodeClickHandler.SetLastEnteredCombatGuid(combatGuid);
+                handler.DisableNodeOnCombatEntry(combatGuid);
+            }
+
+            await ActivateSceneWithFade(sceneName, true);
+
+            if (NodeClickHandler.IsCombatNode(handler.nodeType))
+            {
+                CombatManager.ApplyNodeType(handler.nodeType);
+            }
         }
 
         void EnableLoadingCanvas(bool enable = true)
