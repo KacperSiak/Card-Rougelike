@@ -13,13 +13,14 @@ public class GamblingManager : PersistenSingleton<GamblingManager>
     [SerializeField] private Button RollButton;
     [SerializeField] private Button ReturnButton;
 
-    [SerializeField] private Image jokeIcon;
-    [SerializeField] private TextMeshProUGUI joketext;
+    //[SerializeField] private Image jokeIcon;
+    //[SerializeField] private TextMeshProUGUI joketext;
 
     public float modifier;
     private float potionModifier;
     private bool potionModified;
     private float _time = 0.83f;
+    private int _jokesCount = 8;
 
     [Header("Particles")]
     [SerializeField] private GameObject _positiveParticles;
@@ -50,7 +51,7 @@ public class GamblingManager : PersistenSingleton<GamblingManager>
             {
                 ApplyEffect(r.type);
                 StartCoroutine(WaitForChest(_time, r.reward));
-                GamblingSceneManager.Instance.ShowReward(r.reward.rewardName);
+                GamblingSceneManager.Instance.ShowReward(r);
                 break;
             }
         }
@@ -70,18 +71,22 @@ public class GamblingManager : PersistenSingleton<GamblingManager>
         }
     }
 
-    public void GetHermesJoke(HermesJoke joke)
+    public void GetHermesJoke(MeshRenderer joke)
     {
-        if (joke.jokeIcon != null)
-        {
-            jokeIcon.gameObject.SetActive(true);
-            jokeIcon.sprite = joke.jokeIcon;
-        }
-        else
-        {
-            jokeIcon.gameObject.SetActive(true);
-            joketext.text = joke.joke;
-        }
+        int col = Random.Range(0, _jokesCount);
+        MaterialSetupManager.Instance.SetupVisual(joke, col, row: 0);
+        joke.gameObject.SetActive(true);
+
+        //if (joke.jokeIcon != null)
+        //{
+        //    jokeIcon.gameObject.SetActive(true);
+        //    jokeIcon.sprite = joke.jokeIcon;
+        //}
+        //else
+        //{
+        //    jokeIcon.gameObject.SetActive(true);
+        //    joketext.text = joke.joke;
+        //}
     }
     
     private void ApplyEffect(RewardType type)
