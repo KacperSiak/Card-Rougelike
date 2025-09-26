@@ -55,6 +55,7 @@ public class RoundManager : PersistenSingleton<RoundManager>
             if (damageBlock) return; // Kacper Added
 
             _playerHP = value;
+            OnHPChanged?.Invoke();
             PlayerManager.Instance.PlayerHP = _playerHP;
         }
     }
