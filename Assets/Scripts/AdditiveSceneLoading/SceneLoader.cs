@@ -12,7 +12,8 @@ namespace Systems.SceneManagement
         [SerializeField] float fillSpeed = 0.5f;
         [SerializeField] Canvas loadingCanvas;
         [SerializeField] Camera loadingCamera;
-        [SerializeField] SceneGroup[] sceneGroups;
+    [SerializeField] SceneGroup[] sceneGroups;
+    [SerializeField] float fadeHold = 0.15f; 
 
         float targetProgress;
         bool isLoading;
@@ -77,7 +78,10 @@ namespace Systems.SceneManagement
             progress.Progressed += target => targetProgress = Mathf.Max(target, targetProgress);
 
             if (ScreenFader.Instance != null)
+            {
                 await ScreenFader.Instance.FadeOut();
+                if (fadeHold > 0f) await Task.Delay(Mathf.RoundToInt(fadeHold * 1000f));
+            }
             else if (!missingFaderLogged)
             {
                 missingFaderLogged = true;
@@ -100,7 +104,10 @@ namespace Systems.SceneManagement
         public async Task ActivateSceneWithFade(string sceneName, bool loadIfMissing = true)
         {
             if (ScreenFader.Instance != null)
+            {
                 await ScreenFader.Instance.FadeOut();
+                if (fadeHold > 0f) await Task.Delay(Mathf.RoundToInt(fadeHold * 1000f));
+            }
             else if (!missingFaderLogged)
             {
                 missingFaderLogged = true;
