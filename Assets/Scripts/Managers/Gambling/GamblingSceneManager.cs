@@ -11,6 +11,7 @@ public class GamblingSceneManager : PersistenSingleton<GamblingSceneManager>
 
     [SerializeField] private GameObject canvas;
     [SerializeField] private TextMeshProUGUI text;
+    [SerializeField] private MeshRenderer joke;
 
     public event Action OnRewardGranted;
 
@@ -40,10 +41,16 @@ public class GamblingSceneManager : PersistenSingleton<GamblingSceneManager>
         isIdle = true;
     }
 
-    public void ShowReward(string rewardName)
+    public void ShowReward(RewardStruct reward)
     {
+        if (reward.type == RewardType.Neutral)
+        {
+            GamblingManager.Instance.GetHermesJoke(joke);
+            return;
+        }
+        
         canvas.SetActive(true);
-        text.text = rewardName;
+        text.text = reward.reward.rewardName;
     }
 
     void ReturnToMap()
@@ -51,5 +58,10 @@ public class GamblingSceneManager : PersistenSingleton<GamblingSceneManager>
         return;
     }
 
-    public void HideReward() => canvas.SetActive(false);
+    public void HideReward()
+    {
+        canvas.SetActive(false);
+        joke.gameObject.SetActive(false);
+    }
+
 }

@@ -9,13 +9,13 @@ public class MaterialSetupManager : PersistenSingleton<MaterialSetupManager>
         _block = new();
     }
 
-    public void SetupVisual(MeshRenderer card, int col, int row)
+    public void SetupVisual(MeshRenderer obj, int col, int row)
     {
         _block.SetFloat("_ColIndex", col);
         _block.SetFloat("_RowIndex", row);
 
-        card.SetPropertyBlock(_block);
+        obj.SetPropertyBlock(_block);
 
-        card.SetPropertyBlock(_block, 0);
+        obj.SetPropertyBlock(_block, 0);
     }
 }
