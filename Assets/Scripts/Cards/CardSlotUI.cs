@@ -22,7 +22,7 @@ public class CardSlotUI : MonoBehaviour
     {
         _cardData = data;
 
-        _icon.sprite = _cardData.icon;
+        //_icon.sprite = _cardData.icon;
 
         _useButton.onClick.RemoveAllListeners();
         _useButton.onClick.AddListener(UseCard);

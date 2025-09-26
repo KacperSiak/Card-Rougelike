@@ -19,6 +19,7 @@ public struct NodeTypeSettings
 
 public class MapGenerator : MonoBehaviour
 {
+    public static MapGenerator Instance { get; private set; }
     private const float PLAYER_MARKER_Y_OFFSET = 0.2f;
     
     [Header("Node Type Configuration")]
@@ -105,6 +106,17 @@ public class MapGenerator : MonoBehaviour
     private Transform bossNodeTransform;
     private Dictionary<Vector3, Transform> nodeTransformCache = new Dictionary<Vector3, Transform>();
 
+    void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Debug.LogWarning("[MapGenerator] Duplicate instance found, destroying this one.");
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+    }
+
     void Start()
     {
         InitializeSettings();
@@ -113,12 +125,12 @@ public class MapGenerator : MonoBehaviour
         
     if (willLoadFromSave)
         {
-            Debug.Log("[MapGenerator] MapSaveManager will load saved map");
+            Debug.Log("Loading saved map.");
             mapSaveManager.LoadSavedMap();
         }
         else
         {
-            Debug.Log("[MapGenerator] Generating new map");
+            Debug.Log("Generating new map.");
             GenerateMap();
         }
     }
@@ -167,7 +179,7 @@ public class MapGenerator : MonoBehaviour
             Random.InitState(lastUsedSeed);
         }
         
-        Debug.Log($"[MapGenerator] Generating map with seed: {lastUsedSeed}");
+    Debug.Log($"Generating map. Seed: {lastUsedSeed}.");
         
         ClearOldNodes();
         ResetMapState();
@@ -182,7 +194,7 @@ public class MapGenerator : MonoBehaviour
             mapManager.CalculateMaxMapTime();
     }
 
-    public void SetupCameraBounds()
+    public void SetupCameraBounds() 
     {
         if (cameraController != null)
         {
@@ -340,11 +352,7 @@ public class MapGenerator : MonoBehaviour
                     {
                         nodeHandler.nodeType = node.Type;
                         nodeHandler.mapNode = node;
-                        if (nodeHandler.mapGenerator == null) nodeHandler.mapGenerator = this;
-                        if (nodeHandler.mapManager == null) nodeHandler.mapManager = mapManager;
-                        if (nodeHandler.cameraController == null) nodeHandler.cameraController = cameraController;
-                        if (nodeHandler.nodeInfoUI == null) nodeHandler.nodeInfoUI = nodeInfoUI;
-                        if (nodeHandler.mapSaveManager == null) nodeHandler.mapSaveManager = mapSaveManager;
+                        nodeHandler.InjectDependencies(this, mapManager, cameraController, nodeInfoUI, mapSaveManager);
                     }
                 }
             }
@@ -402,7 +410,6 @@ public class MapGenerator : MonoBehaviour
         return null;
     }
 
-    // Returns the node Transform closest to a given 2D map position (x,z)
     public Transform GetClosestNodeTransform2D(Vector2 target)
     {
         Transform best = null;

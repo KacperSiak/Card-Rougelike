@@ -5,6 +5,6 @@ public class ExtraTurn : CardEffect
 {
     public override void ApplyEffect(ConsumableContext ctx)
     {
-        // extra turn
+        ctx.bonusRound = true;
     }
 }

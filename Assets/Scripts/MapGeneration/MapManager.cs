@@ -3,7 +3,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Data;
 
-public class MapManager : MonoBehaviour
+public class MapManager : PersistenSingleton<MapManager>
 {
     [Header("References")]
     public MapGenerator mapGenerator;
@@ -14,15 +14,16 @@ public class MapManager : MonoBehaviour
 
     // Kacper Added
     private float _modifier = 1;
-    public static MapManager instance;
 
+    protected override void OnSingletonAwake() { }
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
+    }
     void Start()
     {
-        if (mapGenerator == null)
-            mapGenerator = FindFirstObjectByType<MapGenerator>(); //tymczasowe
-
-        if (instance == null)
-            instance = this;
+        if (mapGenerator == null && MapGenerator.Instance != null)
+            mapGenerator = MapGenerator.Instance;
     }
 
     public void CalculateMaxMapTime()
@@ -54,15 +55,54 @@ public class MapManager : MonoBehaviour
         Debug.Log($"[MapManager] Max map time: {maxMapTime:F2}");
     }
 
-    public void TravelToNode(Vector2 fromPos, Vector2 toPos)
+    public void TravelToNode(string fromGuid, string toGuid)
     {
-        float travelTime = (float)Math.Round(Vector2.Distance(fromPos, toPos) * _modifier); //Kacper modified
+        if (mapGenerator == null || mapGenerator.mapLevels == null)
+        {
+            Debug.LogWarning("[MapManager] TravelToNode: MapGenerator or mapLevels is null");
+            return;
+        }
+
+        MapNode fromNode = FindNodeByGuid(fromGuid);
+        MapNode toNode = FindNodeByGuid(toGuid);
+
+        if (toNode == null)
+        {
+            Debug.LogWarning($"[MapManager] TravelToNode: Could not resolve toNode for guid='{toGuid}'");
+            return;
+        }
+
+        if (fromNode == null)
+        {
+            Debug.Log("[MapManager] TravelToNode: fromNode null – treating as zero travel cost");
+            return;
+        }
+
+        float dist = Vector2.Distance(fromNode.Position, toNode.Position);
+        float travelTime = (float)Math.Round(dist * _modifier);
         currentMapTime -= travelTime;
-        
-        if (currentMapTime < 0f)
-            currentMapTime = 0f;
-            
+        if (currentMapTime < 0f) currentMapTime = 0f;
         Debug.Log($"[MapManager] Traveled distance: {travelTime:F2}, remaining time: {currentMapTime:F2}");
+    }
+
+    public bool AreNodesAdjacent(MapNode a, MapNode b)
+    {
+        if (a == null || b == null) return false;
+        return a.ConnectedNodes != null && a.ConnectedNodes.Contains(b);
+    }
+
+    private MapNode FindNodeByGuid(string guid)
+    {
+        if (string.IsNullOrEmpty(guid)) return null;
+        foreach (var level in mapGenerator.mapLevels)
+        {
+            foreach (var node in level)
+            {
+                if (!string.IsNullOrEmpty(node.UniqueId) && node.UniqueId == guid)
+                    return node;
+            }
+        }
+        return null;
     }
 
     public bool HasTimeLeft()

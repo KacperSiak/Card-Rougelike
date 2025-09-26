@@ -3,8 +3,6 @@ using UnityEngine;
 public class CameraController : MonoBehaviour
 {
     [Header("Movement Limits")]
-    public Vector2 minBounds = new Vector2(-50f, -50f);
-    public Vector2 maxBounds = new Vector2(50f, 50f);
     public bool autoSetBounds = false;
     
     [Header("Bounds from Object")]
@@ -15,6 +13,8 @@ public class CameraController : MonoBehaviour
     
     [Header("Centering Settings")]
     public float xOffset = 0f;
+    [Tooltip("Duration (seconds) for smooth centering movement")]
+    public float centerMoveDuration = 0.5f;
 
     [Header("Zoom Settings")]
     public float minZoom = 5f;
@@ -94,10 +94,6 @@ public class CameraController : MonoBehaviour
                 return position;
             }
         }
-        
-        position.x = Mathf.Clamp(position.x, minBounds.x, maxBounds.x);
-        position.z = Mathf.Clamp(position.z, minBounds.y, maxBounds.y);
-        
         return position;
     }
     
@@ -178,51 +174,15 @@ public class CameraController : MonoBehaviour
         Renderer renderer = boundsObject.GetComponent<Renderer>();
         Collider collider = boundsObject.GetComponent<Collider>();
         
-        Bounds bounds;
-        
-        if (renderer != null)
+        if (renderer == null && collider == null)
         {
-            bounds = renderer.bounds;
+            Debug.LogWarning("[CameraController] Bounds object has neither Renderer nor Collider!");
         }
-        else if (collider != null)
-        {
-            bounds = collider.bounds;
-        }
-        else
-        {
-            Debug.LogWarning("[CameraController] Bounds object nie ma Renderer ani Collider!");
-            return;
-        }
-        
-        minBounds = new Vector2(bounds.min.x, bounds.min.z);
-        maxBounds = new Vector2(bounds.max.x, bounds.max.z);
-        
-        Debug.Log($"[CameraController] Bounds ustawione na podstawie {boundsObject.name}: Min{minBounds}, Max{maxBounds}");
     }
     
     public void SetBoundsFromMap(MapGenerator mapGenerator)
     {
         if (!autoSetBounds) return;
-        
-        if (mapGenerator != null && mapGenerator.mapLevels != null && mapGenerator.mapLevels.Count > 0)
-        {
-            float minX = float.MaxValue, maxX = float.MinValue;
-            float minZ = float.MaxValue, maxZ = float.MinValue;
-            
-            foreach (var level in mapGenerator.mapLevels)
-            {
-                foreach (var node in level)
-                {
-                    if (node.Position.x < minX) minX = node.Position.x;
-                    if (node.Position.x > maxX) maxX = node.Position.x;
-                    if (node.Position.y < minZ) minZ = node.Position.y;
-                    if (node.Position.y > maxZ) maxZ = node.Position.y;
-                }
-            }
-            
-            minBounds = new Vector2(minX - 10f, minZ - 10f);
-            maxBounds = new Vector2(maxX + 10f, maxZ + 10f);
-        }
     }
     
     public void CenterOnPosition(Vector3 worldPosition)
@@ -239,7 +199,7 @@ public class CameraController : MonoBehaviour
     private System.Collections.IEnumerator SmoothMoveToPosition(Vector3 targetPos)
     {
         Vector3 startPos = transform.position;
-        float duration = 0.5f;
+        float duration = centerMoveDuration;
         float elapsed = 0f;
         
         while (elapsed < duration)

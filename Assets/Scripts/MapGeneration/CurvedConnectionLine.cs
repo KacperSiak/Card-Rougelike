@@ -55,8 +55,6 @@ public class CurvedConnectionLine : MonoBehaviour
     void OnEnable()
     {
         Setup();
-        // When created via AddComponent(), OnEnable fires before Initialize assigns start/end.
-        // Defer rebuilding until both endpoints are available.
         if (start != null && end != null)
         {
             Rebuild();
@@ -127,7 +125,7 @@ public class CurvedConnectionLine : MonoBehaviour
 
     Vector3 GetStart()
     {
-    if (start == null) return lastStartPos; // fallback (likely zero) until initialized
+    if (start == null) return lastStartPos;
     var p = start.position; p.y = yOffset; return p;
     }
 
@@ -140,7 +138,7 @@ public class CurvedConnectionLine : MonoBehaviour
     public void Rebuild()
     {
         if (lr == null) Setup();
-    if (start == null || end == null) return; // still not initialized
+    if (start == null || end == null) return;
 
     if (lr.sharedMaterial != material) lr.sharedMaterial = material;
         lr.positionCount = Mathf.Max(2, segments + 1);

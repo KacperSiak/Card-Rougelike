@@ -76,6 +76,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 60be74dabc7da444ab8d0f114ceb7a19, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _hoverVectors: []
+  _pressedVectors: []
 --- !u!212 &3626688452416832117
 SpriteRenderer:
   m_ObjectHideFlags: 0

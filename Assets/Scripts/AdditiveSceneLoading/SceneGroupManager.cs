@@ -14,9 +14,7 @@ namespace Systems.SceneManagement
         public event Action OnSceneGroupLoaded = delegate { };
 
         SceneGroup ActiveSceneGroup;
-    // Scenes preloaded with allowSceneActivation=false (will finalize on ActivateScene)
     readonly Dictionary<string, AsyncOperation> _deferredPreloads = new Dictionary<string, AsyncOperation>();
-        // All known groups (optional) so we can detect cross-group scene activation
         readonly List<SceneGroup> _registeredGroups = new List<SceneGroup>();
 
         public void RegisterSceneGroups(IEnumerable<SceneGroup> groups)
@@ -28,7 +26,6 @@ namespace Systems.SceneManagement
 
         public async Task LoadScenes(SceneGroup group, IProgress<float> progress, bool reloadDupScenes = false)
         {
-            // Clear old deferred operations when loading a fresh group
             _deferredPreloads.Clear();
             ActiveSceneGroup = group;
             var loadedScenes = new List<string>();
@@ -42,8 +39,6 @@ namespace Systems.SceneManagement
                 loadedScenes.Add(SceneManager.GetSceneAt(i).name);
             }
 
-            // Load ONLY the designated ActiveScene from the group to avoid
-            // running scripts (Awake/Start) from other scenes at bootstrap.
             var activeSceneName = ActiveSceneGroup.FindSceneNameByType(SceneType.ActiveScene);
             if (string.IsNullOrEmpty(activeSceneName))
             {
@@ -66,7 +61,6 @@ namespace Systems.SceneManagement
                 OnSceneLoaded.Invoke(activeSceneName);
             }
 
-            // Preload remaining scenes in the group with deferred activation so their scripts don't run yet
             foreach (var sceneData in ActiveSceneGroup.Scenes)
             {
                 var name = sceneData.Name;
@@ -77,14 +71,11 @@ namespace Systems.SceneManagement
                 if (preloadOp == null) continue;
                 preloadOp.allowSceneActivation = false;
                 _deferredPreloads[name] = preloadOp;
-
-                // Progress feedback while preloading to 0.9
                 while (preloadOp.progress < 0.9f)
                 {
                     progress?.Report(preloadOp.progress);
                     await Task.Delay(50);
                 }
-                // Now it's ready to be activated later; do NOT invoke OnSceneLoaded here
             }
 
             Scene activeScene = SceneManager.GetSceneByName(activeSceneName);
@@ -123,9 +114,9 @@ namespace Systems.SceneManagement
             {
                 var sceneAt = SceneManager.GetSceneAt(i);
                 if (!sceneAt.isLoaded) continue;
-
                 var sceneName = sceneAt.name;
                 if (sceneName == "Bootstrapper" || sceneName == "DontDestroyOnLoad") continue;
+                if (IsPersistent(sceneName)) continue;
                 scenesToUnload.Add(sceneName);
             }
 
@@ -150,7 +141,7 @@ namespace Systems.SceneManagement
 
         void DisableInactiveSceneCameras(Scene activeScene)
         {
-            Camera[] allCameras = UnityEngine.Object.FindObjectsOfType<Camera>();
+            Camera[] allCameras = UnityEngine.Object.FindObjectsByType<Camera>(FindObjectsSortMode.None);
             
             foreach (Camera cam in allCameras)
             {
@@ -163,7 +154,7 @@ namespace Systems.SceneManagement
 
         void EnableActiveSceneCameras(Scene activeScene)
         {
-            Camera[] allCameras = UnityEngine.Object.FindObjectsOfType<Camera>();
+            Camera[] allCameras = UnityEngine.Object.FindObjectsByType<Camera>(FindObjectsSortMode.None);
             foreach (Camera cam in allCameras)
             {
                 if (cam.gameObject.scene == activeScene)
@@ -175,7 +166,7 @@ namespace Systems.SceneManagement
 
         void DisableInactiveSceneUI(Scene activeScene)
         {
-            Canvas[] allCanvases = UnityEngine.Object.FindObjectsOfType<Canvas>();
+            Canvas[] allCanvases = UnityEngine.Object.FindObjectsByType<Canvas>(FindObjectsSortMode.None);
             
             foreach (Canvas canvas in allCanvases)
             {
@@ -188,7 +179,7 @@ namespace Systems.SceneManagement
 
         void EnableActiveSceneUI(Scene activeScene)
         {
-            Canvas[] allCanvases = UnityEngine.Object.FindObjectsOfType<Canvas>();
+            Canvas[] allCanvases = UnityEngine.Object.FindObjectsByType<Canvas>(FindObjectsSortMode.None);
             foreach (Canvas canvas in allCanvases)
             {
                 if (canvas.gameObject.scene == activeScene)
@@ -200,7 +191,7 @@ namespace Systems.SceneManagement
 
         void DisableInactiveSceneLights(Scene activeScene)
         {
-            Light[] allLights = UnityEngine.Object.FindObjectsOfType<Light>();
+            Light[] allLights = UnityEngine.Object.FindObjectsByType<Light>(FindObjectsSortMode.None);
             
             foreach (Light light in allLights)
             {
@@ -213,7 +204,7 @@ namespace Systems.SceneManagement
 
         void EnableActiveSceneLights(Scene activeScene)
         {
-            Light[] allLights = UnityEngine.Object.FindObjectsOfType<Light>();
+            Light[] allLights = UnityEngine.Object.FindObjectsByType<Light>(FindObjectsSortMode.None);
             foreach (Light light in allLights)
             {
                 if (light.gameObject.scene == activeScene)
@@ -373,7 +364,6 @@ namespace Systems.SceneManagement
 
         public async Task ActivateScene(string sceneName, bool loadIfMissing = true)
         {
-            // Detect if target scene belongs to another registered group; if so switch groups first
             SceneGroup targetGroup = null;
             if (_registeredGroups.Count > 0)
             {
@@ -388,21 +378,17 @@ namespace Systems.SceneManagement
                 }
             }
 
-            if (targetGroup != null && targetGroup != ActiveSceneGroup)
+        if (targetGroup != null && targetGroup != ActiveSceneGroup)
             {
-                // Load the new group (unloads previous internally)
                 await LoadScenes(targetGroup, null);
-                // If the group's ActiveScene is the requested one, we're done.
                 var groupActive = targetGroup.FindSceneNameByType(SceneType.ActiveScene);
                 if (groupActive == sceneName)
                 {
-                    return; // Already active after group load
+            return;
                 }
-                // Otherwise continue to finalize/activate the specific scene (likely preloaded now)
             }
 
             var target = SceneManager.GetSceneByName(sceneName);
-            // If we have a deferred preload, finalize it first
             if (_deferredPreloads.TryGetValue(sceneName, out var deferredOp))
             {
                 deferredOp.allowSceneActivation = true;
@@ -449,6 +435,22 @@ namespace Systems.SceneManagement
             DisableInactiveSceneLights(target);
             DisableInactiveSceneObjects(target);
             ManageDontDestroyOnLoadObjects(sceneName);
+        }
+
+        private bool IsPersistent(string sceneName)
+        {
+            for (int g = 0; g < _registeredGroups.Count; g++)
+            {
+                var group = _registeredGroups[g];
+                if (group?.Scenes == null) continue;
+                for (int s = 0; s < group.Scenes.Count; s++)
+                {
+                    var data = group.Scenes[s];
+                    if (data != null && data.Name == sceneName && data.Persistent)
+                        return true;
+                }
+            }
+            return false;
         }
     }
 
