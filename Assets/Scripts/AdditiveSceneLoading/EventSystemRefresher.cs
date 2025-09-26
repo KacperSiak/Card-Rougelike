@@ -60,7 +60,7 @@ public class EventSystemRefresher : MonoBehaviour
         {
             target.enabled = false;
             if (EnableLogs) Debug.Log("[EventSystemRefresher] Disable EventSystem");
-            yield return null; // one more frame
+            yield return null;
             target.enabled = true;
             if (EnableLogs) Debug.Log("[EventSystemRefresher] Enable EventSystem");
         }
