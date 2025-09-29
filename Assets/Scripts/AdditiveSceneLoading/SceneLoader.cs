@@ -2,6 +2,8 @@ using UnityEngine;
 using System;
 using System.Threading.Tasks;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 
 namespace Systems.SceneManagement
 {
@@ -92,6 +94,8 @@ namespace Systems.SceneManagement
             await manager.LoadScenes(sceneGroups[index], progress);
             EnableLoadingCanvas(false);
 
+            RefreshEventSystem();
+
             if (ScreenFader.Instance != null)
                 await ScreenFader.Instance.FadeIn();
             else if (!missingFaderLogged)
@@ -103,6 +107,15 @@ namespace Systems.SceneManagement
 
         public async Task ActivateSceneWithFade(string sceneName, bool loadIfMissing = true)
         {
+            var active = SceneManager.GetActiveScene().name;
+            if (active == sceneName)
+            {
+                // Same scene – just visual pulse (no reload) and EventSystem refresh.
+                await PulseFade();
+                RefreshEventSystem();
+                return;
+            }
+
             if (ScreenFader.Instance != null)
             {
                 await ScreenFader.Instance.FadeOut();
@@ -116,6 +129,8 @@ namespace Systems.SceneManagement
 
             await manager.ActivateScene(sceneName, loadIfMissing);
 
+            RefreshEventSystem();
+
             if (ScreenFader.Instance != null)
                 await ScreenFader.Instance.FadeIn();
             else if (!missingFaderLogged)
@@ -123,6 +138,50 @@ namespace Systems.SceneManagement
                 missingFaderLogged = true;
                 Debug.LogWarning("[SceneLoader] FadeIn skipped: ScreenFader instance missing.");
             }
+        }
+
+        public async Task PulseFade(float outDuration = -1f, float inDuration = -1f)
+        {
+            if (ScreenFader.Instance == null) return;
+            await ScreenFader.Instance.FadeOut(outDuration);
+            if (fadeHold > 0f) await Task.Delay(Mathf.RoundToInt(fadeHold * 1000f));
+            await ScreenFader.Instance.FadeIn(inDuration);
+        }
+
+        public bool IsSceneInGroup(string sceneName, string groupName)
+        {
+            if (string.IsNullOrEmpty(sceneName) || string.IsNullOrEmpty(groupName) || sceneGroups == null) return false;
+            for (int g = 0; g < sceneGroups.Length; g++)
+            {
+                var grp = sceneGroups[g];
+                if (grp == null || grp.GroupName != groupName) continue;
+                if (grp.Scenes == null) continue;
+                for (int s = 0; s < grp.Scenes.Count; s++)
+                {
+                    var data = grp.Scenes[s];
+                    if (data != null && data.Name == sceneName) return true;
+                }
+            }
+            return false;
+        }
+
+        void RefreshEventSystem()
+        {
+            // Destroy existing EventSystem (if any) and create a fresh one to clear stale references / selection.
+            var existing = GameObject.FindObjectOfType<EventSystem>();
+            if (existing != null)
+            {
+                Destroy(existing.gameObject);
+            }
+            var go = new GameObject("EventSystem", typeof(EventSystem), typeof(StandaloneInputModule));
+            DontDestroyOnLoad(go); // Keep consistent between additive scenes until next refresh.
+            // Optional: clear selected object
+            var es = go.GetComponent<EventSystem>();
+            if (es != null)
+            {
+                es.SetSelectedGameObject(null);
+            }
+            Debug.Log("[SceneLoader] EventSystem refreshed.");
         }
 
         public void ActivateSceneFromNode(NodeClickHandler handler, string sceneName, string combatGuid)
