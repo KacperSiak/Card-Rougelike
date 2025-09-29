@@ -5,6 +5,7 @@ public class RoundAnimation : PersistenSingleton<RoundAnimation>
 {
     [SerializeField] private Transform _roundSetter;
     [SerializeField] private float _animationDuration = 0.5f;
+    [SerializeField] private RoundEndSFX _sfx;
     private bool _isAnimating = false;
 
     private void OnEnable()
@@ -38,6 +39,7 @@ public class RoundAnimation : PersistenSingleton<RoundAnimation>
             yield return null;
 
         StartCoroutine(Animation(position));
+        _sfx.Play();
     }
 
     private IEnumerator Animation(Quaternion endPosition)

@@ -13,7 +13,7 @@ public class PlayerCardSpawner : MonoBehaviour
     private float _cardSize = 0.06f;
     private bool isPlaying = false;
 
-    public void SpawnCards(List<CardsSOTest> playerDeck, List<GameObject> playerCards,  int cardsAmount)
+    public void SpawnCards(List<CardsSO> playerDeck, List<GameObject> playerCards,  int cardsAmount)
     {
         for (int i = 0; i < cardsAmount; i++)
         {
@@ -23,7 +23,7 @@ public class PlayerCardSpawner : MonoBehaviour
             playerCards.Add(cardObject);
             PlayerCardManager.Instance.IncreaseCardsInHandAmount();
 
-            CardsSOTest card = playerDeck[Random.Range(0, playerDeck.Count)];
+            CardsSO card = playerDeck[Random.Range(0, playerDeck.Count)];
             playerDeck.Remove(card);
 
             cardObject.GetComponent<PlayerCardLogic>().SetCardProperties(card);
