@@ -8,7 +8,7 @@ public class RoundManager : PersistenSingleton<RoundManager>
 {
     // I think I need to do Global Combat Manager in the nearest future, to take care of some global logic, like cursor, unload the scene, end the combat, but for now I will keep it here
 
-    [field: SerializeField] public List<CardsSOTest> PlayerCards { get; private set; }
+    [field: SerializeField] public List<CardsSO> PlayerCards { get; private set; }
     [SerializeField] private AthenaAnimationLogic _athenaAnimationLogic;
     [SerializeField] private TrumpSuitSetup _trumpSuitSetup;
     public StructForDictionary<int, int> CurrentCombatDetails { get; private set; } 

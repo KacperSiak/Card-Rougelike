@@ -18,7 +18,7 @@ public class PlayerCardLogic : MonoBehaviour
     public bool IsUsed { get; set; } = false;
     public bool IsNew { get; private set; } = true;
 
-    public CardsSOTest Card { get; private set; }
+    public CardsSO Card { get; private set; }
 
     public void RestoreSelectedPosition()
     {
@@ -42,7 +42,7 @@ public class PlayerCardLogic : MonoBehaviour
             IsNew = false;
     }
 
-    public void SetCardProperties(CardsSOTest card)
+    public void SetCardProperties(CardsSO card)
     {
         Card = card;
         _isAvailable = true;

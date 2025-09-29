@@ -15,15 +15,15 @@ public class CombatManager : MonoBehaviour
     public MapSystem.EnemyVariant CurrentEnemyVariant { get; set; } = MapSystem.EnemyVariant.None;
     public MapSystem.EliteVariant CurrentEliteVariant { get; set; } = MapSystem.EliteVariant.None;
 
-    [SerializeField] private List<StructForDictionary<NodeType, List<StructForDictionary<int, List<CardsSOTest>>>>> _listDifferentTypes;
+    [SerializeField] private List<StructForDictionary<NodeType, List<StructForDictionary<int, List<CardsSO>>>>> _listDifferentTypes;
 
     [SerializeField] private List<StructForDictionary<NodeType, StructForDictionary<int, int>>> _listCombatDetails;
 
     [SerializeField] private List<StructForDictionary<int, StructForDictionary<int, int>>> diceInfo;
 
-    private StructForDictionary<int, List<CardsSOTest>> _innerDeck = new();
+    private StructForDictionary<int, List<CardsSO>> _innerDeck = new();
 
-    private Dictionary<NodeType, Dictionary<int, List<CardsSOTest>>> _decksForDifferentTypes = new();
+    private Dictionary<NodeType, Dictionary<int, List<CardsSO>>> _decksForDifferentTypes = new();
     private Dictionary<NodeType, StructForDictionary<int, int>> _combatDetails = new();
     private Dictionary<NodeType, int> _deckSize = new();
     public Dictionary<int, StructForDictionary<int, int>> _diceDictionary { get; private set; } = new();
@@ -112,12 +112,12 @@ public class CombatManager : MonoBehaviour
 
         foreach (var enemyType in _listDifferentTypes)
         {
-            _decksForDifferentTypes[enemyType.key] = new Dictionary<int, List<CardsSOTest>>();
+            _decksForDifferentTypes[enemyType.key] = new Dictionary<int, List<CardsSO>>();
 
             for (int i = 0; i < enemyType.value.Count; i++)
             {
                 _innerDeck = enemyType.value[i];
-                _decksForDifferentTypes[enemyType.key].Add(_innerDeck.key, new List<CardsSOTest>(_innerDeck.value)); //?
+                _decksForDifferentTypes[enemyType.key].Add(_innerDeck.key, new List<CardsSO>(_innerDeck.value)); //?
             }
             _deckSize[enemyType.key] = _decksForDifferentTypes[enemyType.key].Keys.Count * _decksForDifferentTypes[enemyType.key][0].Count; //?
         }
@@ -147,10 +147,10 @@ public class CombatManager : MonoBehaviour
     return _deckSize.ContainsKey(NodeType.Enemy) ? _deckSize[NodeType.Enemy] : 0;
     }
 
-    public Dictionary<int, List<CardsSOTest>> GetCurrentDeck()
+    public Dictionary<int, List<CardsSO>> GetCurrentDeck()
     {
     if (_decksForDifferentTypes.TryGetValue(CurrentNodeType, out var deck)) return deck;
     Debug.LogWarning($"[CombatManager] Missing deck for {CurrentNodeType}. Using Enemy deck if available.");
-    return _decksForDifferentTypes.ContainsKey(NodeType.Enemy) ? _decksForDifferentTypes[NodeType.Enemy] : new Dictionary<int, List<CardsSOTest>>();
+    return _decksForDifferentTypes.ContainsKey(NodeType.Enemy) ? _decksForDifferentTypes[NodeType.Enemy] : new Dictionary<int, List<CardsSO>>();
     }
 }
