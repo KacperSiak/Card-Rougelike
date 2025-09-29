@@ -48,19 +48,18 @@ public class RoundManager : PersistenSingleton<RoundManager>
     private int _playerHP;
 
     public int PlayerHP
-    { 
+    {
         get => _playerHP;
         set
         {
             if (damageBlock) return; // Kacper Added
 
             _playerHP = value;
-            PlayerManager.Instance.PlayerHP = _playerHP; 
             OnHPChanged?.Invoke();
+            PlayerManager.Instance.PlayerHP = _playerHP;
         }
     }
-
-    private int _enemyHP = 50; // temp default value
+ private int _enemyHP = 50; // temp default value
 
     public int EnemyHP
     {

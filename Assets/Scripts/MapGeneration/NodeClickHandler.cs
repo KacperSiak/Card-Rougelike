@@ -32,6 +32,10 @@ public class NodeClickHandler : MonoBehaviour
     public NodeType nodeType = NodeType.Enemy;
     [Tooltip("Backing MapNode for this instance, set by MapGenerator during instantiation")]
     public MapNode mapNode;
+    [Tooltip("Optional enemy variant for Enemy nodes (e.g., Griffon or Satyr)")]
+    public EnemyVariant enemyVariant = EnemyVariant.None;
+    [Tooltip("Optional elite variant for Elite nodes (e.g., Minotaur or Arachne)")]
+    public EliteVariant eliteVariant = EliteVariant.None;
     
     private bool _wasClearedAndDisabled = false; 
 
@@ -348,6 +352,14 @@ public class NodeClickHandler : MonoBehaviour
         if (IsCombatNode(nodeType))
         {
             CombatManager.ApplyNodeType(nodeType);
+            if (nodeType == NodeType.Enemy)
+            {
+                CombatManager.ApplyEnemyVariant(enemyVariant);
+            }
+            else if (nodeType == NodeType.Elite)
+            {
+                CombatManager.ApplyEliteVariant(eliteVariant);
+            }
         }
 
         if (mapSaveManager != null)
@@ -473,11 +485,17 @@ public class NodeClickHandler : MonoBehaviour
     
     private string GetNodeName()
     {
+        if (nodeType == NodeType.Enemy)
+        {
+            return enemyVariant == EnemyVariant.Satyr ? "Satyr" : "Griffon";
+        }
+        if (nodeType == NodeType.Elite)
+        {
+            return eliteVariant == EliteVariant.Arachne ? "Arachne" : "Minotaur";
+        }
         switch (nodeType)
         {
             case NodeType.Start: return "Start";
-            case NodeType.Enemy: return "Griffon";
-            case NodeType.Elite: return "Minotaur";
             case NodeType.Shop: return "Aeolus Wind Shop";
             case NodeType.Treasure: return "Treasure Chest";
             case NodeType.Heal: return "Asclepius Fountain";
@@ -490,14 +508,23 @@ public class NodeClickHandler : MonoBehaviour
     
     private string GetNodeDescription()
     {
+        if (nodeType == NodeType.Enemy)
+        {
+            return enemyVariant == EnemyVariant.Satyr
+                ? "Cheerful and persistent, with a love for drink. Half-goat, half-human, and utterly devoted to his flute."
+                : "Half-eagle, half-lion. Proud and narcissistic, confident in both his strength and his beauty.";
+        }
+        if (nodeType == NodeType.Elite)
+        {
+            return eliteVariant == EliteVariant.Arachne
+                ? "Once an ordinary weaver girl, she is now half-spider—thanks to a “small” misunderstanding."
+                : "A serious figure with the head of a bull, struggling with a crisis of self-identity.";
+        }
         switch (nodeType)
         {
             case NodeType.Start: return "Your starting point";
-            case NodeType.Enemy: return "Half-eagle, half-lion. Proud and narcissistic, confident in both his strength and his beauty.";
-            case NodeType.Elite: return "A serious figure with the head of a bull, struggling with a crisis of self-identity.";
             case NodeType.Shop: return "Here, amidst the whispering winds, are kept the gifts of the Lord of the Air himself. Come in and see what the wind has brought you!";
             case NodeType.Treasure: return "Someone left a chest full of drachma here.";
-
             case NodeType.Heal: return "Fountain of Asclepius. Taste its waters and gain new strength for your travels!";
             case NodeType.Gambling: return "In a world where the gods play with the fates of humans, even Dionysus smiles upon those who love risk and surprises.Open your bag because a gift from the gods may be waiting there!";
             case NodeType.Challenge: return "Special challenges";
