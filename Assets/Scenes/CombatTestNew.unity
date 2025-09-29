@@ -65556,7 +65556,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1794805947}
   - component: {fileID: 1794805949}
-  - component: {fileID: 1794805950}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -65631,22 +65630,6 @@ MonoBehaviour:
   - {fileID: 1937258466}
   - {fileID: 515630724}
   - {fileID: 408332185}
---- !u!114 &1794805950
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1794805945}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b9f2a3d68b3182a4d962751270fbb0ef, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  persistAcrossScenes: 0
-  gold: 0
-  availableDiscards: 3
-  handsize: 8
 --- !u!1 &1821129955
 GameObject:
   m_ObjectHideFlags: 0
@@ -67158,7 +67141,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2095126431}
-  - component: {fileID: 2095126430}
   m_Layer: 0
   m_Name: CardSetupManager
   m_TagString: Untagged
@@ -67166,19 +67148,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &2095126430
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2095126429}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d31ebdc43e45e1e41b2393acea75e575, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  persistAcrossScenes: 0
 --- !u!4 &2095126431
 Transform:
   m_ObjectHideFlags: 0
