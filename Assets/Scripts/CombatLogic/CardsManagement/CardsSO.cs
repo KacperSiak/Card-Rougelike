@@ -16,10 +16,10 @@ public enum CardColor
     None
 }
 
-[CreateAssetMenu(fileName = "CardsSOTest", menuName = "Scriptable Objects/CardsSOTest")]
+[CreateAssetMenu(fileName = "CardsSO", menuName = "Scriptable Objects/CardsSO")]
 
 //will be main cardSO script
-public class CardsSOTest : ScriptableObject
+public class CardsSO : ScriptableObject
 {
     public int power;
     public int column;

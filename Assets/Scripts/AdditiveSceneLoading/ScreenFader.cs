@@ -24,6 +24,7 @@ namespace Systems.SceneManagement
                 return;
             }
             Instance = this;
+            gameObject.name = "ScreenFader_Manager";
             DontDestroyOnLoad(gameObject);
             if (canvasGroup == null)
             {
@@ -72,6 +73,9 @@ namespace Systems.SceneManagement
                     if (verboseLogs) Debug.Log("[ScreenFader] Canvas was disabled externally -> re-enabled");
                 }
             }
+
+            if (gameObject.name != "ScreenFader_Manager")
+                gameObject.name = "ScreenFader_Manager";
         }
 
         public Task FadeOut(float duration = -1f) => Fade(1f, duration);
@@ -105,7 +109,7 @@ namespace Systems.SceneManagement
         public static void EnsureInstance()
         {
             if (Instance != null) return;
-            var go = new GameObject("ScreenFader");
+            var go = new GameObject("ScreenFader_Manager");
             go.AddComponent<ScreenFader>();
         }
     }

@@ -13,7 +13,7 @@ public class PlayerCardManager : PersistenSingleton<PlayerCardManager>
     public List<GameObject> CardsInHand { get; private set; } = new();
     public List<GameObject> SelectedCards { get; private set; } = new();
     public int SelectedCardsPower { get; private set; }
-    public List<CardsSOTest> PlayerDeckInGame { get; private set; }
+    public List<CardsSO> PlayerDeckInGame { get; private set; }
 
     [SerializeField] private int _cardsInHandDefault = 8;
     private int _currentCardsInHand = 0;
@@ -41,7 +41,7 @@ public class PlayerCardManager : PersistenSingleton<PlayerCardManager>
 
     public void StartCombat()
     {
-        PlayerDeckInGame = new List<CardsSOTest>(RoundManager.Instance.PlayerCards);
+        PlayerDeckInGame = new List<CardsSO>(RoundManager.Instance.PlayerCards);
         SelectedCards.Clear();
         CardsInHand.Clear();
         SetMainHand();
