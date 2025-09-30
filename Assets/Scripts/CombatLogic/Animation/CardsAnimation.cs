@@ -4,6 +4,7 @@ using UnityEngine;
 public class CardsAnimation : MonoBehaviour
 {
     [SerializeField] protected Transform _removedCardPosition;
+    [SerializeField] private AttackSFX _sfx;
     [SerializeField] private float _attackDuration = 1f;
     [SerializeField] private float _removalDuration = 1f;
     private float _damageDuration = 0.2f;
@@ -14,6 +15,7 @@ public class CardsAnimation : MonoBehaviour
 
     public void Attack(Transform attackPosition, Transform[] cards, bool isPlayer, int key)
     {
+        _sfx.Play();
         StartCoroutine(AnimatedAttack(attackPosition, cards, isPlayer, key));
     }
 
