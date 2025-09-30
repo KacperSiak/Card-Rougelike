@@ -4,9 +4,9 @@ public class EnemyCardLogic : MonoBehaviour
 {
     //Remove if I don't need it any more in the future
 
-    public CardsSOTest Card { get; private set; }
+    public CardsSO Card { get; private set; }
 
-    public void SetCardProperties(CardsSOTest card)
+    public void SetCardProperties(CardsSO card)
     {
         Card = card;
     }

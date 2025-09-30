@@ -9,7 +9,7 @@ public class EnemyCardManager : PersistenSingleton<EnemyCardManager>
     public List<GameObject> cardHolders;
     public List<Transform> cardObjects;
 
-    private Dictionary<int, List<CardsSOTest>> _cardsBySuitDeck = new();
+    private Dictionary<int, List<CardsSO>> _cardsBySuitDeck = new();
 
     public Dictionary<int, List<GameObject>> CardsInGame { get; private set;} 
     public Dictionary<int, int> CardsInGamePower { get; private set; }
