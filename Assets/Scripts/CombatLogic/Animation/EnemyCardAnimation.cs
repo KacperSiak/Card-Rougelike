@@ -4,6 +4,7 @@ using UnityEngine;
 public class EnemyCardAnimation : CardsAnimation
 {
     [SerializeField] private float _placementDuration = 1f;
+    [SerializeField] private PlacementSFX _placementSFX;
 
     public void PlaceCards(Transform parentPosition, int amount, int key)
     {
@@ -44,6 +45,7 @@ public class EnemyCardAnimation : CardsAnimation
 
             }
 
+            _placementSFX.Play();
             cardObject.transform.SetPositionAndRotation(_finalSpawnPosition, parentPosition.transform.rotation);
             cardObject.transform.SetParent(parentPosition, true);
             _finalSpawnPosition += new Vector3(0.11f, 0, 0);

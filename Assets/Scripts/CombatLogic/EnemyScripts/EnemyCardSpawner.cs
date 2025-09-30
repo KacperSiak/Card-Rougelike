@@ -12,7 +12,7 @@ public class EnemyCardSpawner : MonoBehaviour
     private readonly int _cardsInCombo = 3;
     private readonly int _cardsBuffer = 2;
 
-    public void SpawnCombo(Transform indexObject, int indexCardHolder, Dictionary<int, List<CardsSOTest>> cardsBySuit)
+    public void SpawnCombo(Transform indexObject, int indexCardHolder, Dictionary<int, List<CardsSO>> cardsBySuit)
     {
         if (EnemyCardManager.Instance.CardsInGameCount >= RoundManager.Instance.CurrentCombatDetails.value)
         {
@@ -56,7 +56,7 @@ public class EnemyCardSpawner : MonoBehaviour
                 }
 
                 GameObject cardObject = ObjPoolManager.Instance.GetCardFromPool(isSenderPlayer: false);
-                CardsSOTest card = cardsBySuit[randomCleanSuit][randomCleanCard];
+                CardsSO card = cardsBySuit[randomCleanSuit][randomCleanCard];
                 cardsBySuit[randomCleanSuit].RemoveAt(randomCleanCard);
 
                 MaterialSetupManager.Instance.SetupVisual(cardObject.GetComponent<MeshRenderer>(), card.column, card.row);
@@ -108,7 +108,7 @@ public class EnemyCardSpawner : MonoBehaviour
         {
             GameObject cardObject = ObjPoolManager.Instance.GetCardFromPool(isSenderPlayer: false);
 
-            CardsSOTest card = cardsBySuit[randomDirtySuit][index[i]];
+            CardsSO card = cardsBySuit[randomDirtySuit][index[i]];
              cardsBySuit[randomDirtySuit].Remove(card);
 
             if (cardsBySuit[randomDirtySuit].Count == 0)
@@ -132,14 +132,14 @@ public class EnemyCardSpawner : MonoBehaviour
         _enemyCardAnimations[key].PlaceCards(indexObject, _cardsInCombo, key);
     }
 
-    public void SpawnSingle(Transform cardObjectIndex, int indexCardHolder, Dictionary<int, List<CardsSOTest>> cardsBySuit)
+    public void SpawnSingle(Transform cardObjectIndex, int indexCardHolder, Dictionary<int, List<CardsSO>> cardsBySuit)
     { 
         int randomSuit = Random.Range(0, cardsBySuit.Count);
         int randomCard = Random.Range(0, cardsBySuit[randomSuit].Count); 
         int power = 0;
 
         GameObject cardObject = ObjPoolManager.Instance.GetCardFromPool(isSenderPlayer: false);
-        CardsSOTest card = cardsBySuit[randomSuit][randomCard]; 
+        CardsSO card = cardsBySuit[randomSuit][randomCard]; 
         cardsBySuit[randomSuit].RemoveAt(randomCard);
 
         CheckCardsInDeckAmount(cardsBySuit, randomSuit);
@@ -160,7 +160,7 @@ public class EnemyCardSpawner : MonoBehaviour
         _enemyCardAnimations[keySingle].PlaceCards(cardObjectIndex, amount: 1, keySingle);
     }
 
-    private void CheckCardsInDeckAmount(Dictionary<int, List<CardsSOTest>> deck, int key)
+    private void CheckCardsInDeckAmount(Dictionary<int, List<CardsSO>> deck, int key)
     {
         if (deck[key].Count == 0)
         {

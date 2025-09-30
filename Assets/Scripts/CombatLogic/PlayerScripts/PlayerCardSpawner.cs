@@ -7,13 +7,14 @@ public class PlayerCardSpawner : MonoBehaviour
     public BoxCollider MainHand { get; set; }
 
     [SerializeField] private float _spawnDuration = 0.5f;
+    [SerializeField] private RefillSFX _refillSFX;
 
     private int _cardsNumber = 0;
     private const int k_maxHandSize = 8; // max without overlay
     private float _cardSize = 0.06f;
     private bool isPlaying = false;
 
-    public void SpawnCards(List<CardsSOTest> playerDeck, List<GameObject> playerCards,  int cardsAmount)
+    public void SpawnCards(List<CardsSO> playerDeck, List<GameObject> playerCards,  int cardsAmount)
     {
         for (int i = 0; i < cardsAmount; i++)
         {
@@ -23,7 +24,7 @@ public class PlayerCardSpawner : MonoBehaviour
             playerCards.Add(cardObject);
             PlayerCardManager.Instance.IncreaseCardsInHandAmount();
 
-            CardsSOTest card = playerDeck[Random.Range(0, playerDeck.Count)];
+            CardsSO card = playerDeck[Random.Range(0, playerDeck.Count)];
             playerDeck.Remove(card);
 
             cardObject.GetComponent<PlayerCardLogic>().SetCardProperties(card);
@@ -80,6 +81,7 @@ public class PlayerCardSpawner : MonoBehaviour
             { 
                 float elapsed = 0f; 
 
+                _refillSFX.Play();
                 while (elapsed < _spawnDuration)
                 {
                     elapsed += Time.deltaTime;
