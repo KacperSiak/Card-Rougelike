@@ -5,6 +5,7 @@ public class DeckAnimation : PersistenSingleton<DeckAnimation>
 {
     [SerializeField] private Transform _endPlayer;
     [SerializeField] private Transform _endEnemy;
+    [SerializeField] private ShuffleSFX _shuffleSFX;
 
     private int _enemySize;
     private int _playerSize;
@@ -25,6 +26,7 @@ public class DeckAnimation : PersistenSingleton<DeckAnimation>
         Vector3 endPosEnemy = _endEnemy.transform.position;
         GameObject obj;
 
+        _shuffleSFX.Play();
         for (int i = 0; i < _playerSize; i++)
         {
             obj = ObjPoolManager.Instance._playerPool[i];

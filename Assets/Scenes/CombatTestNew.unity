@@ -15509,6 +15509,7 @@ GameObject:
   - component: {fileID: 217537005}
   - component: {fileID: 217537004}
   - component: {fileID: 217537006}
+  - component: {fileID: 217537007}
   m_Layer: 0
   m_Name: SFX
   m_TagString: Untagged
@@ -15698,6 +15699,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 66bd41d76b0eef4438452b5d25301c31, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &217537007
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 217536998}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bc547e4cb2a9aa8439856eb306ca8472, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &230911699
@@ -20778,6 +20791,7 @@ MonoBehaviour:
   persistAcrossScenes: 0
   _endPlayer: {fileID: 390661189}
   _endEnemy: {fileID: 1114681898}
+  _shuffleSFX: {fileID: 217537007}
   _duration: 0.04
 --- !u!4 &305940404
 Transform:
@@ -65084,10 +65098,10 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 161baf2cebf92ef42a43c4e8353edd4e, type: 3}
-  m_Resource: {fileID: 8300000, guid: 161baf2cebf92ef42a43c4e8353edd4e, type: 3}
+  m_audioClip: {fileID: 8300000, guid: eff90efe324483549899332121d2bf13, type: 3}
+  m_Resource: {fileID: 8300000, guid: eff90efe324483549899332121d2bf13, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 0.6
+  m_Volume: 0.9
   m_Pitch: 1
   Loop: 1
   Mute: 0
