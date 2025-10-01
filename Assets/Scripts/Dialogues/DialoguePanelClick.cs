@@ -10,5 +10,5 @@ public class DialoguePanelClick : MonoBehaviour
     {
         dialogueManager = DialogueManager.Instance;
         button.onClick.AddListener(()=>dialogueManager.InteractionWithDialogueBox());
-    }
+    } 
 }

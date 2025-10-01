@@ -19,6 +19,7 @@ public struct NodeTypeSettings
 
 public class MapGenerator : MonoBehaviour
 {
+    public static MapGenerator Instance { get; private set; }
     private const float PLAYER_MARKER_Y_OFFSET = 0.2f;
     
     [Header("Node Type Configuration")]
@@ -105,6 +106,17 @@ public class MapGenerator : MonoBehaviour
     private Transform bossNodeTransform;
     private Dictionary<Vector3, Transform> nodeTransformCache = new Dictionary<Vector3, Transform>();
 
+    void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Debug.LogWarning("[MapGenerator] Duplicate instance found, destroying this one.");
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+    }
+
     void Start()
     {
         InitializeSettings();
@@ -113,12 +125,12 @@ public class MapGenerator : MonoBehaviour
         
     if (willLoadFromSave)
         {
-            Debug.Log("[MapGenerator] MapSaveManager will load saved map");
+            Debug.Log("Loading saved map.");
             mapSaveManager.LoadSavedMap();
         }
         else
         {
-            Debug.Log("[MapGenerator] Generating new map");
+            Debug.Log("Generating new map.");
             GenerateMap();
         }
     }
@@ -167,7 +179,7 @@ public class MapGenerator : MonoBehaviour
             Random.InitState(lastUsedSeed);
         }
         
-        Debug.Log($"[MapGenerator] Generating map with seed: {lastUsedSeed}");
+    Debug.Log($"Generating map. Seed: {lastUsedSeed}.");
         
         ClearOldNodes();
         ResetMapState();
@@ -274,10 +286,17 @@ public class MapGenerator : MonoBehaviour
                 float totalWidth = (nodesCount - 1) * horizontalSpacing;
                 float offsetX = -totalWidth / 2f;
 
+                var chosenType = GetRandomNodeType(level, availableTypes);
                 MapNode node = new MapNode
                 {
-                    Type = GetRandomNodeType(level, availableTypes),
-                    Position = new Vector2(baseX + offsetX, baseY)
+                    Type = chosenType,
+                    Position = new Vector2(baseX + offsetX, baseY),
+                    EnemyVariant = (chosenType == NodeType.Enemy)
+                        ? (Random.value < 0.5f ? MapSystem.EnemyVariant.Griffon : MapSystem.EnemyVariant.Satyr)
+                        : MapSystem.EnemyVariant.None,
+                    EliteVariant = (chosenType == NodeType.Elite)
+                        ? (Random.value < 0.5f ? MapSystem.EliteVariant.Minotaur : MapSystem.EliteVariant.Arachne)
+                        : MapSystem.EliteVariant.None
                 };
                 currentLevelNodes.Add(node);
             }
@@ -287,6 +306,7 @@ public class MapGenerator : MonoBehaviour
 
     public void InstantiateMapVisuals()
     {
+        EnsureEliteVariantsDistinct();
         for (int level = 0; level < mapLevels.Count; level++)
         {
             foreach (var node in mapLevels[level])
@@ -340,14 +360,42 @@ public class MapGenerator : MonoBehaviour
                     {
                         nodeHandler.nodeType = node.Type;
                         nodeHandler.mapNode = node;
-                        if (nodeHandler.mapGenerator == null) nodeHandler.mapGenerator = this;
-                        if (nodeHandler.mapManager == null) nodeHandler.mapManager = mapManager;
-                        if (nodeHandler.cameraController == null) nodeHandler.cameraController = cameraController;
-                        if (nodeHandler.nodeInfoUI == null) nodeHandler.nodeInfoUI = nodeInfoUI;
-                        if (nodeHandler.mapSaveManager == null) nodeHandler.mapSaveManager = mapSaveManager;
+                        nodeHandler.enemyVariant = node.EnemyVariant;
+                        nodeHandler.eliteVariant = node.EliteVariant;
+                        nodeHandler.InjectDependencies(this, mapManager, cameraController, nodeInfoUI, mapSaveManager);
                     }
                 }
             }
+        }
+    }
+
+    private void EnsureEliteVariantsDistinct()
+    {
+        if (mapLevels == null || mapLevels.Count == 0) return;
+        var elites = new System.Collections.Generic.List<MapNode>();
+        for (int l = 0; l < mapLevels.Count; l++)
+        {
+            var level = mapLevels[l];
+            if (level == null) continue;
+            for (int i = 0; i < level.Count; i++)
+            {
+                var n = level[i];
+                if (n != null && n.Type == NodeType.Elite)
+                {
+                    elites.Add(n);
+                }
+            }
+        }
+        if (elites.Count < 2) return;
+
+        // Force the first two elites to be different
+        elites[0].EliteVariant = MapSystem.EliteVariant.Minotaur;
+        elites[1].EliteVariant = MapSystem.EliteVariant.Arachne;
+
+        // If there are more, alternate for variety
+        for (int i = 2; i < elites.Count; i++)
+        {
+            elites[i].EliteVariant = (i % 2 == 0) ? MapSystem.EliteVariant.Minotaur : MapSystem.EliteVariant.Arachne;
         }
     }
 

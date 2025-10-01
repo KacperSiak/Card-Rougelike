@@ -141,7 +141,7 @@ namespace Systems.SceneManagement
 
         void DisableInactiveSceneCameras(Scene activeScene)
         {
-            Camera[] allCameras = UnityEngine.Object.FindObjectsOfType<Camera>();
+            Camera[] allCameras = UnityEngine.Object.FindObjectsByType<Camera>(FindObjectsSortMode.None);
             
             foreach (Camera cam in allCameras)
             {
@@ -154,7 +154,7 @@ namespace Systems.SceneManagement
 
         void EnableActiveSceneCameras(Scene activeScene)
         {
-            Camera[] allCameras = UnityEngine.Object.FindObjectsOfType<Camera>();
+            Camera[] allCameras = UnityEngine.Object.FindObjectsByType<Camera>(FindObjectsSortMode.None);
             foreach (Camera cam in allCameras)
             {
                 if (cam.gameObject.scene == activeScene)
@@ -166,7 +166,7 @@ namespace Systems.SceneManagement
 
         void DisableInactiveSceneUI(Scene activeScene)
         {
-            Canvas[] allCanvases = UnityEngine.Object.FindObjectsOfType<Canvas>();
+            Canvas[] allCanvases = UnityEngine.Object.FindObjectsByType<Canvas>(FindObjectsSortMode.None);
             
             foreach (Canvas canvas in allCanvases)
             {
@@ -179,7 +179,7 @@ namespace Systems.SceneManagement
 
         void EnableActiveSceneUI(Scene activeScene)
         {
-            Canvas[] allCanvases = UnityEngine.Object.FindObjectsOfType<Canvas>();
+            Canvas[] allCanvases = UnityEngine.Object.FindObjectsByType<Canvas>(FindObjectsSortMode.None);
             foreach (Canvas canvas in allCanvases)
             {
                 if (canvas.gameObject.scene == activeScene)
@@ -191,7 +191,7 @@ namespace Systems.SceneManagement
 
         void DisableInactiveSceneLights(Scene activeScene)
         {
-            Light[] allLights = UnityEngine.Object.FindObjectsOfType<Light>();
+            Light[] allLights = UnityEngine.Object.FindObjectsByType<Light>(FindObjectsSortMode.None);
             
             foreach (Light light in allLights)
             {
@@ -204,7 +204,7 @@ namespace Systems.SceneManagement
 
         void EnableActiveSceneLights(Scene activeScene)
         {
-            Light[] allLights = UnityEngine.Object.FindObjectsOfType<Light>();
+            Light[] allLights = UnityEngine.Object.FindObjectsByType<Light>(FindObjectsSortMode.None);
             foreach (Light light in allLights)
             {
                 if (light.gameObject.scene == activeScene)

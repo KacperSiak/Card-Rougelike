@@ -3,7 +3,6 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 
-// Refreshes EventSystem after active scene changes (helps UI clicks in additive setups)
 public class EventSystemRefresher : MonoBehaviour
 {
     private static EventSystemRefresher _instance;
@@ -35,12 +34,10 @@ public class EventSystemRefresher : MonoBehaviour
 
     private IEnumerator RefreshNextFrame(Scene scene)
     {
-        // wait a frame so canvases & objects settle
         yield return null;
 
-        // pick EventSystem in the new active scene
         EventSystem target = null;
-        var systems = FindObjectsOfType<EventSystem>(true);
+    var systems = Object.FindObjectsByType<EventSystem>(FindObjectsInactive.Include, FindObjectsSortMode.None);
         foreach (var es in systems)
         {
             if (es != null && es.gameObject.scene == scene)
@@ -63,7 +60,7 @@ public class EventSystemRefresher : MonoBehaviour
         {
             target.enabled = false;
             if (EnableLogs) Debug.Log("[EventSystemRefresher] Disable EventSystem");
-            yield return null; // one more frame
+            yield return null;
             target.enabled = true;
             if (EnableLogs) Debug.Log("[EventSystemRefresher] Enable EventSystem");
         }

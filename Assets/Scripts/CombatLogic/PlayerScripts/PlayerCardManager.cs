@@ -13,10 +13,12 @@ public class PlayerCardManager : PersistenSingleton<PlayerCardManager>
     public List<GameObject> CardsInHand { get; private set; } = new();
     public List<GameObject> SelectedCards { get; private set; } = new();
     public int SelectedCardsPower { get; private set; }
-    public List<CardsSOTest> PlayerDeckInGame { get; private set; }
+    public List<CardsSO> PlayerDeckInGame { get; private set; }
 
     [SerializeField] private int _cardsInHandDefault = 8;
     private int _currentCardsInHand = 0;
+
+    private ConsumableContext _consContext;
 
     protected override void OnSingletonAwake()
     {
@@ -39,7 +41,7 @@ public class PlayerCardManager : PersistenSingleton<PlayerCardManager>
 
     public void StartCombat()
     {
-        PlayerDeckInGame = new List<CardsSOTest>(RoundManager.Instance.PlayerCards);
+        PlayerDeckInGame = new List<CardsSO>(RoundManager.Instance.PlayerCards);
         SelectedCards.Clear();
         CardsInHand.Clear();
         SetMainHand();
@@ -125,12 +127,59 @@ public class PlayerCardManager : PersistenSingleton<PlayerCardManager>
     
     private void RefillCards()
     {
+        //if (!_consContext.drawBlock)
+        //{
         if (PlayerDeckInGame.Count == 0) return;
 
-        int amount = _currentCardsInHand >= _cardsInHandDefault? 1 : _cardsInHandDefault - _currentCardsInHand;
+        int amount = _currentCardsInHand >= _cardsInHandDefault ? 1 : _cardsInHandDefault - _currentCardsInHand;
 
         _spawner.SpawnCards(PlayerDeckInGame, CardsInHand, cardsAmount: amount);
+        //}
+        //else return;
 
     }
 
+    public void Draw3Cards(int amount)
+    {
+        _spawner.SpawnCards(PlayerDeckInGame, CardsInHand, amount);
+    }
+
+    public void Reshuffle()
+    {
+        int cards = 0;
+        foreach(var go in CardsInHand)
+        {
+            var logic = go.GetComponent<PlayerCardLogic>();
+            if(logic != null && logic.Card != null )
+            {
+                PlayerDeckInGame.Add(logic.Card);
+            }
+
+            ObjPoolManager.Instance.ReturnCard(go);
+            cards++;
+        }
+
+        CardsInHand.Clear();
+        ClearSelectedStorage();
+        _currentCardsInHand = 0;
+
+        Shuffle(PlayerDeckInGame);
+      
+        int todraw = Math.Min(cards, PlayerDeckInGame.Count);
+
+        if( todraw > 0 )
+        {
+            _spawner.SpawnCards(PlayerDeckInGame, CardsInHand, todraw);
+            SetCards();
+        }
+    }
+
+    private static void Shuffle<T>(List<T> list)
+    {
+        for(int i = list.Count-1; i>0; i--)
+        {
+            int j = UnityEngine.Random.Range(0, i + 1);
+            (list[i], list[j]) = (list[j], list[i]);
+        }
+    }    
 }

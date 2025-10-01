@@ -58,7 +58,6 @@ public class EnemyAttackManager : MonoBehaviour
         return Mathf.Clamp(amount, k_minRound, k_maxRound);
     }
 
-    //here 
     public void UpdateRounds()
     {
         StartCoroutine(Animated());
@@ -78,28 +77,19 @@ public class EnemyAttackManager : MonoBehaviour
             _diceLogic[i].UpdateRounds(RoundsForCards[i]);
 
             if (RoundsForCards[i] > 0) continue;
+         
 
-            if (SuitChecker(EnemyCardManager.Instance.CardsInGame[i])) _suitModifier = 0.75f;
-            else _suitModifier = 1;
-
-            foreach (var node in _shieldModifier)
-            {
-                if (CalculateShield(node.Key))
-                {
-                    _shield += node.Value;
-                }
-            }
-
-            if(_consContext.immune) RoundManager.Instance.PlayerHP -= Mathf.RoundToInt(EnemyCardManager.Instance.CardsInGamePower[i] * 0 * _suitModifier * _shield);
-            else if (_consContext.vulnerable) RoundManager.Instance.PlayerHP -= Mathf.RoundToInt(EnemyCardManager.Instance.CardsInGamePower[i] * 2 * _suitModifier);
-            else
+            //if(_consContext.immune) RoundManager.Instance.PlayerHP -= EnemyCardManager.Instance.CardsInGamePower[i] * 0;
+            if (_consContext.vulnerable) RoundManager.Instance.PlayerHP -= EnemyCardManager.Instance.CardsInGamePower[i] * 2;
+            else if(!_consContext.immune)
             {
                 EnemyCardManager.Instance.Attack(i);
                 
                 while(EnemyCardManager.Instance.GetCurrentAnimationManager(i).IsAnimating)
                 yield return null;
 
-                RoundManager.Instance.PlayerHP -= Mathf.RoundToInt(EnemyCardManager.Instance.CardsInGamePower[i] * _suitModifier);  
+                RoundManager.Instance.PlayerHP -= EnemyCardManager.Instance.CardsInGamePower[i]; 
+                UIManager.Instance.ShowPlayerDamage(EnemyCardManager.Instance.CardsInGamePower[i]);
             }
 
             _shield = 1;

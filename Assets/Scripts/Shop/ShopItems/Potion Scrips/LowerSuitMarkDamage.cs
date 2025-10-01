@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using UnityEngine;
 
 [Serializable]
@@ -13,13 +13,14 @@ public class LowerSuitMarkDamage : PotionEffects
         localFightsLeft = fightsLeft;
         context = ctx;
         RoundManager.OnCombatEnd += FightsLeft;
-        PotionEvents.ModifyProtection(suit, true);
+        PotionEventScript.StartSuitProtect(suit);
     }
 
     public override void Unregister(PotionContext ctx)
     {
         RoundManager.OnCombatEnd -= FightsLeft;
-        PotionEvents.ModifyProtection(suit, false);
+        Debug.Log("Protection Ended");
+        PotionEventScript.StopSuitProtection(suit);
     }
 
     public override void FightsLeft()

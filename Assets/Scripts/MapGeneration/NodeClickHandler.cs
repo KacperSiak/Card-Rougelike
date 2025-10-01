@@ -18,10 +18,9 @@ public class NodeClickHandler : MonoBehaviour
     [Header("References")]
     public MapGenerator mapGenerator;
     public MapManager mapManager;
-    [Header("Optional (injected)")]
-    public CameraController cameraController;
-    public NodeInfoUI nodeInfoUI;
-    public MapSaveManager mapSaveManager;
+    [SerializeField] private CameraController cameraController;
+    [SerializeField] private NodeInfoUI nodeInfoUI;
+    [SerializeField] private MapSaveManager mapSaveManager;
 
     [Header("Player Movement")]
     public float moveSpeed = 3f;
@@ -33,13 +32,17 @@ public class NodeClickHandler : MonoBehaviour
     public NodeType nodeType = NodeType.Enemy;
     [Tooltip("Backing MapNode for this instance, set by MapGenerator during instantiation")]
     public MapNode mapNode;
+    [Tooltip("Optional enemy variant for Enemy nodes (e.g., Griffon or Satyr)")]
+    public EnemyVariant enemyVariant = EnemyVariant.None;
+    [Tooltip("Optional elite variant for Elite nodes (e.g., Minotaur or Arachne)")]
+    public EliteVariant eliteVariant = EliteVariant.None;
     
-    private static bool isPlayerMoving = false;
-    private bool _shopBlock = false;
-    private bool _healBlock = false;
+    private bool _wasClearedAndDisabled = false; 
 
     private static readonly HashSet<NodeClickHandler> _clearedCombatNodes = new HashSet<NodeClickHandler>();
     public static NodeClickHandler lastEnteredCombatNode;
+    private static readonly HashSet<string> _clearedCombatGuids = new HashSet<string>();
+    private static string _lastEnteredCombatGuid;
     
     [Header("Debug")]
     [Tooltip("Enable verbose debug logs for movement / adjacency checks.")]
@@ -50,6 +53,11 @@ public class NodeClickHandler : MonoBehaviour
 
     void Start()
     {
+        if (mapGenerator == null && MapGenerator.Instance != null)
+            mapGenerator = MapGenerator.Instance;
+        if (mapManager == null && MapManager.Instance != null)
+            mapManager = MapManager.Instance;
+
         if (GetComponent<Collider>() == null)
         {
             gameObject.AddComponent<BoxCollider>();
@@ -60,6 +68,16 @@ public class NodeClickHandler : MonoBehaviour
         if (mapNode == null)
         {
             Debug.LogWarning($"[NodeClickHandler] mapNode reference is NULL on '{name}'. Movement adjacency will fail for this node.");
+        }
+        else
+        {
+            var guid = GetOrAssignNodeGuid(this);
+            if (!string.IsNullOrEmpty(guid) && _clearedCombatGuids.Contains(guid))
+            {
+                _wasClearedAndDisabled = true;
+                if (forceDebugLogs || enableDebugLogs)
+                    Debug.Log($"[NodeClickHandler] Start: Node '{name}' already cleared by GUID {guid}. Disabling loads.");
+            }
         }
     }
 
@@ -111,7 +129,7 @@ public class NodeClickHandler : MonoBehaviour
 
     bool CanMoveToThisNode()
     {
-        if (isPlayerMoving)
+    if (PlayerMovementState.IsMoving)
         { LogMoveBlock("Already moving"); return false; }
         
         if (currentPlayerNode == null) 
@@ -161,7 +179,7 @@ public class NodeClickHandler : MonoBehaviour
     if (sourceMapNode == null) { LogMoveBlock("Cannot resolve current MapNode"); return false; }
     if (mapNode == null) { LogMoveBlock("Target mapNode null"); return false; }
 
-    bool reachable = sourceMapNode.ConnectedNodes.Contains(mapNode);
+    bool reachable = mapManager != null ? mapManager.AreNodesAdjacent(sourceMapNode, mapNode) : (sourceMapNode.ConnectedNodes.Contains(mapNode));
     if (enableDebugLogs)
     {
         int currentConn = sourceMapNode.ConnectedNodes != null ? sourceMapNode.ConnectedNodes.Count : -1;
@@ -202,16 +220,21 @@ public class NodeClickHandler : MonoBehaviour
     
     System.Collections.IEnumerator SmoothMovePlayer()
     {
-        isPlayerMoving = true;
+    if (!PlayerMovementState.TryBeginMove()) yield break;
         
         Vector3 fromPos = currentPlayerNode.position;
         Vector3 toPos = transform.position;
 
         if (mapManager != null)
         {
-            Vector2 fromPos2D = new Vector2(fromPos.x, fromPos.z);
-            Vector2 toPos2D = new Vector2(toPos.x, toPos.z);
-            mapManager.TravelToNode(fromPos2D, toPos2D);
+            string fromGuid = null;
+            var currentHandler = currentPlayerNode != null ? currentPlayerNode.GetComponent<NodeClickHandler>() : null;
+            if (currentHandler != null && currentHandler.mapNode != null)
+            {
+                fromGuid = GetOrAssignNodeGuid(currentHandler);
+            }
+            string toGuid = GetOrAssignNodeGuid(this);
+            mapManager.TravelToNode(fromGuid, toGuid);
         }
         
         float duration = Vector3.Distance(fromPos, toPos) / moveSpeed;
@@ -254,7 +277,7 @@ public class NodeClickHandler : MonoBehaviour
         {
             mapSaveManager.SaveCurrentMap();
         }
-        isPlayerMoving = false;
+    PlayerMovementState.EndMove();
         
         LoadScene();
     }
@@ -269,9 +292,14 @@ public class NodeClickHandler : MonoBehaviour
         {
             fromPos3D = currentPlayerNode.position;
             hasFromPosition = true;
-            Vector2 fromPos = new Vector2(fromPos3D.x, fromPos3D.z);
-            Vector2 toPos = new Vector2(toPos3D.x, toPos3D.z);
-            mapManager.TravelToNode(fromPos, toPos);
+            string fromGuid = null;
+            var currentHandler = currentPlayerNode.GetComponent<NodeClickHandler>();
+            if (currentHandler != null && currentHandler.mapNode != null)
+            {
+                fromGuid = GetOrAssignNodeGuid(currentHandler);
+            }
+            string toGuid = GetOrAssignNodeGuid(this);
+            mapManager.TravelToNode(fromGuid, toGuid);
         }
         
         currentPlayerNode = transform;
@@ -304,51 +332,52 @@ public class NodeClickHandler : MonoBehaviour
 
     void LoadScene()
     {
-        if (IsCombatNode(nodeType) && _clearedCombatNodes.Contains(this))
+        string myGuid = IsCombatNode(nodeType) ? GetOrAssignNodeGuid(this) : null;
+        if (_wasClearedAndDisabled)
         {
-            Debug.Log($"[NodeClickHandler] Node '{name}' already cleared. Staying on map.");
+            if (forceDebugLogs || enableDebugLogs)
+                Debug.Log($"[NodeClickHandler] Node '{name}' is disabled after clear. Staying on map.");
+            return;
+        }
+        if (IsCombatNode(nodeType) &&
+            (_clearedCombatNodes.Contains(this) ||
+             (!string.IsNullOrEmpty(myGuid) && _clearedCombatGuids.Contains(myGuid))))
+        {
+            Debug.Log($"[NodeClickHandler] Node '{name}' already cleared (guid={myGuid ?? "<none>"}). Staying on map.");
             return;
         }
 
-        if (!string.IsNullOrEmpty(sceneToLoad) && IsSceneBlocked(sceneToLoad))
+        if (string.IsNullOrEmpty(sceneToLoad) || !IsSceneBlocked(sceneToLoad)) return;
+
+        if (IsCombatNode(nodeType))
         {
-            if (IsCombatNode(nodeType))
+            CombatManager.ApplyNodeType(nodeType);
+            if (nodeType == NodeType.Enemy)
             {
-                CombatManager.ApplyNodeType(nodeType);
+                CombatManager.ApplyEnemyVariant(enemyVariant);
             }
-            
-            if (mapSaveManager != null)
+            else if (nodeType == NodeType.Elite)
             {
-                mapSaveManager.SaveCurrentMap();
+                CombatManager.ApplyEliteVariant(eliteVariant);
             }
-            
-            if (SceneLoader.Instance != null)
-            {
-                if (IsCombatNode(nodeType))
-                {
-                    lastEnteredCombatNode = this;
-                }
-                Debug.Log("Using additive scene activation for: " + sceneToLoad);
-                SceneLoader.Instance.manager.ActivateScene(sceneToLoad);
-                if (IsCombatNode(nodeType))
-                {
-                    CombatManager.ApplyNodeType(nodeType);
-                }
-                return;
-            }
-            
-            Debug.Log("SceneLoader not found, using normal scene loading for: " + sceneToLoad);
-            if (IsCombatNode(nodeType))
-            {
-                lastEnteredCombatNode = this;
-            }
-            SceneManager.LoadScene(sceneToLoad);
         }
+
+        if (mapSaveManager != null)
+        {
+            mapSaveManager.SaveCurrentMap();
+        }
+
+        NodeSceneLoader.LoadFromNode(this, sceneToLoad, myGuid);
     }
 
-    static bool IsCombatNode(NodeType t)
+    public static bool IsCombatNode(NodeType t)
     {
         return t == NodeType.Enemy || t == NodeType.Elite || t == NodeType.Boss;
+    }
+
+    public static void SetLastEnteredCombatGuid(string guid)
+    {
+        _lastEnteredCombatGuid = guid;
     }
     
     public void TriggerLoadScene()
@@ -358,18 +387,78 @@ public class NodeClickHandler : MonoBehaviour
 
     public static void MarkLastCombatNodeClearedIfAny()
     {
+        bool any = false;
+        if (!string.IsNullOrEmpty(_lastEnteredCombatGuid))
+        {
+            _clearedCombatGuids.Add(_lastEnteredCombatGuid);
+            Debug.Log($"[NodeClickHandler] Marked GUID '{_lastEnteredCombatGuid}' as cleared");
+            DisableNodesWithGuid(_lastEnteredCombatGuid);
+            any = true;
+        }
         if (lastEnteredCombatNode != null)
         {
             _clearedCombatNodes.Add(lastEnteredCombatNode);
-            Debug.Log($"[NodeClickHandler] Marked node '{lastEnteredCombatNode.name}' as cleared");
-            lastEnteredCombatNode = null;
+            Debug.Log($"[NodeClickHandler] Also marked instance '{lastEnteredCombatNode.name}' as cleared (legacy)");
+            lastEnteredCombatNode.DisableNodeAfterClear();
+            any = true;
         }
+        if (!any)
+        {
+            Debug.LogWarning("[NodeClickHandler] No last entered combat node/key to mark as cleared");
+        }
+        lastEnteredCombatNode = null;
+        _lastEnteredCombatGuid = null;
     }
 
     public static void ClearClearedNodes()
     {
         _clearedCombatNodes.Clear();
+        _clearedCombatGuids.Clear();
         lastEnteredCombatNode = null;
+        _lastEnteredCombatGuid = null;
+    }
+
+    private static string GetOrAssignNodeGuid(NodeClickHandler h)
+    {
+        if (h == null) return null;
+        if (h.mapNode == null) return null;
+        if (!string.IsNullOrEmpty(h.mapNode.UniqueId)) return h.mapNode.UniqueId;
+        string guid = System.Guid.NewGuid().ToString("N");
+        h.mapNode.UniqueId = guid;
+        if (forceDebugLogs || h.enableDebugLogs)
+            Debug.Log($"[NodeClickHandler] Assigned GUID '{guid}' to node at {h.mapNode.Position}");
+        return guid;
+    }
+
+    private void DisableNodeAfterClear()
+    {
+        _wasClearedAndDisabled = true;
+        if (forceDebugLogs || enableDebugLogs)
+            Debug.Log($"[NodeClickHandler] Disabled node after clear: '{name}'");
+    }
+
+    private static void DisableNodesWithGuid(string guid)
+    {
+        if (string.IsNullOrEmpty(guid)) return;
+    var nodes = Object.FindObjectsByType<NodeClickHandler>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        int count = 0;
+        foreach (var n in nodes)
+        {
+            if (n != null && n.mapNode != null && n.mapNode.UniqueId == guid)
+            {
+                n.DisableNodeAfterClear();
+                count++;
+            }
+        }
+        if (count > 0)
+            Debug.Log($"[NodeClickHandler] Disabled {count} node(s) with GUID {guid}");
+    }
+
+    public void DisableNodeOnCombatEntry(string guid)
+    {
+        _wasClearedAndDisabled = true;
+        if (forceDebugLogs || enableDebugLogs)
+            Debug.Log($"[NodeClickHandler] Disabled node on combat entry: '{name}' guid={guid} scene={sceneToLoad}");
     }
     
     private void ShowNodeInfo()
@@ -384,14 +473,29 @@ public class NodeClickHandler : MonoBehaviour
             nodeInfoUI.ShowInfo(GetNodeName(), GetNodeDescription(), transform.position);
         }
     }
+
+    public void InjectDependencies(MapGenerator gen, MapManager mgr, CameraController cam, NodeInfoUI info, MapSaveManager save)
+    {
+        if (mapGenerator == null) mapGenerator = gen;
+        if (mapManager == null) mapManager = mgr;
+        if (cameraController == null) cameraController = cam;
+        if (nodeInfoUI == null) nodeInfoUI = info;
+        if (mapSaveManager == null) mapSaveManager = save;
+    }
     
     private string GetNodeName()
     {
+        if (nodeType == NodeType.Enemy)
+        {
+            return enemyVariant == EnemyVariant.Satyr ? "Satyr" : "Griffon";
+        }
+        if (nodeType == NodeType.Elite)
+        {
+            return eliteVariant == EliteVariant.Arachne ? "Arachne" : "Minotaur";
+        }
         switch (nodeType)
         {
             case NodeType.Start: return "Start";
-            case NodeType.Enemy: return "Griffon";
-            case NodeType.Elite: return "Minotaur";
             case NodeType.Shop: return "Aeolus Wind Shop";
             case NodeType.Treasure: return "Treasure Chest";
             case NodeType.Heal: return "Asclepius Fountain";
@@ -404,14 +508,23 @@ public class NodeClickHandler : MonoBehaviour
     
     private string GetNodeDescription()
     {
+        if (nodeType == NodeType.Enemy)
+        {
+            return enemyVariant == EnemyVariant.Satyr
+                ? "Cheerful and persistent, with a love for drink. Half-goat, half-human, and utterly devoted to his flute."
+                : "Half-eagle, half-lion. Proud and narcissistic, confident in both his strength and his beauty.";
+        }
+        if (nodeType == NodeType.Elite)
+        {
+            return eliteVariant == EliteVariant.Arachne
+                ? "Once an ordinary weaver girl, she is now half-spider—thanks to a “small” misunderstanding."
+                : "A serious figure with the head of a bull, struggling with a crisis of self-identity.";
+        }
         switch (nodeType)
         {
             case NodeType.Start: return "Your starting point";
-            case NodeType.Enemy: return "Half-eagle, half-lion. Proud and narcissistic, confident in both his strength and his beauty.";
-            case NodeType.Elite: return "A serious figure with the head of a bull, struggling with a crisis of self-identity.";
             case NodeType.Shop: return "Here, amidst the whispering winds, are kept the gifts of the Lord of the Air himself. Come in and see what the wind has brought you!";
             case NodeType.Treasure: return "Someone left a chest full of drachma here.";
-
             case NodeType.Heal: return "Fountain of Asclepius. Taste its waters and gain new strength for your travels!";
             case NodeType.Gambling: return "In a world where the gods play with the fates of humans, even Dionysus smiles upon those who love risk and surprises.Open your bag because a gift from the gods may be waiting there!";
             case NodeType.Challenge: return "Special challenges";
@@ -422,15 +535,11 @@ public class NodeClickHandler : MonoBehaviour
 
     private bool IsSceneBlocked(string sceneName)
     {
-        if(_healBlock && sceneName == "HealingDesign") return false;
-        if(_shopBlock && sceneName == "ShopScene") return false;
-
-        return true;
+        return SceneBlockState.IsBlocked(sceneName);
     }
 
     private void BlockScene(string scene)
     {
-        if (scene == "Shop") _shopBlock = true;
-        if (scene == "Heal") _healBlock = true;
+        SceneBlockState.Block(scene);
     }
 }
