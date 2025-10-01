@@ -3,8 +3,7 @@ using System.Collections.Generic;
 
 public class ConsumableCardsSetup : MonoBehaviour
 {
-    [SerializeField] private GameObject _cardPrefab;
-    [SerializeField] private Transform _cardHand;
+    [SerializeField] private List<GameObject> _prefabs = new List<GameObject>();
 
     private void Awake()
     {
@@ -15,13 +14,10 @@ public class ConsumableCardsSetup : MonoBehaviour
     {
         List<ConsumablesData> consCards = ConsumablesAndRelicMenager.Instance.currentConsums;
 
-        foreach (ConsumablesData Card in consCards)
+        for (int i = 0; i<consCards.Count; i++)
         {
-            var set = _cardPrefab.GetComponent<ConsCardProprties>();
-            if (set != null)
-            {
-                set.Setup(Card);
-            }
+            var set = _prefabs[i].GetComponent<ConsCardProperties>();
+            set.Setup(consCards[i]);
         }
     }
 }

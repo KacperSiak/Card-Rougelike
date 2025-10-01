@@ -8,7 +8,7 @@ public struct MaterialsByType
     public ConsCardType type;
     public Material material;
 }
-public class ConsCardProprties : MonoBehaviour
+public class ConsCardProperties : MonoBehaviour
 {
     [SerializeField] private MeshRenderer _front;
     [SerializeField] private MeshRenderer _back;
@@ -53,7 +53,7 @@ public class ConsCardProprties : MonoBehaviour
 
         if (_currCons.type == ConsCardType.Moirae) _back.material.mainTexture = _moiraeBack;
         else _back.material.mainTexture = _oneUseBack;
-
+        gameObject.SetActive(true);
     }
 
     private Material FindMaterial(ConsCardType type)
@@ -68,12 +68,13 @@ public class ConsCardProprties : MonoBehaviour
 
     private void Use()
     {
-        foreach(var effect in _currCons.cardEffects)
+        foreach (var effect in _currCons.cardEffects)
         {
             effect.ApplyEffect(_consContext);
         }
         gameObject.SetActive(false);
         _currCons = null;
+        gameObject.SetActive(false);
     }
 
     private void Discard()
@@ -103,11 +104,13 @@ public class ConsCardProprties : MonoBehaviour
         {
             _useButton.gameObject.SetActive(false);
             _discardButton.gameObject.SetActive(false);
+            _visibleButtons = false;
         }
         else
         {
             _useButton.gameObject.SetActive( true);
             _discardButton.gameObject.SetActive(true);
+            _visibleButtons = true;
         }
     }
 }
