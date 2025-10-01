@@ -756,6 +756,11 @@ MonoBehaviour:
         guid: a9d81ada56ce34e419f1092ba770995d
       SceneType: 10
       Persistent: 1
+    - Reference:
+        asset: {fileID: 102900000, guid: 9ccfa8c517a61d543ace288cd51523cf, type: 3}
+        guid: 9ccfa8c517a61d543ace288cd51523cf
+      SceneType: 10
+      Persistent: 1
   fadeHold: 0.15
 --- !u!4 &644061552
 Transform:
