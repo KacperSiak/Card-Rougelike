@@ -6,6 +6,12 @@ public class Ambient : MonoBehaviour, IAudioHandler
 
     void Awake()
     {
+       if(_ambientSource.clip && !_ambientSource.isPlaying) Play();
+    }
+
+    public void AddClip(AudioClip clip)
+    {
+        _ambientSource.clip = clip;
         Play();
     }
 
