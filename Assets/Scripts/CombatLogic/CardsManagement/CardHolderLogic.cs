@@ -6,6 +6,7 @@ public class CardHolderLogic : MonoBehaviour
 {
     [SerializeField] private Material _highlightMaterial;
     [SerializeField] private Material _defaultMaterial;
+    [SerializeField] private PlacementSFX _placementSFX;
     [field: SerializeField] public CardHolderAnimation CardHolderAnimation { get; private set; }
     [SerializeField] private PlayerCardsAnimation _playerCardsAnimation;
     [SerializeField] private float _duration;
@@ -104,6 +105,7 @@ public class CardHolderLogic : MonoBehaviour
             Vector3 scale = card.transform.localScale;
             card.transform.GetPositionAndRotation(out Vector3 startPos, out Quaternion startRot);
 
+            _placementSFX.Play();
             while (elapsed < _duration)
             {
                 elapsed += Time.deltaTime;

@@ -7,6 +7,7 @@ public class PlayerCardSpawner : MonoBehaviour
     public BoxCollider MainHand { get; set; }
 
     [SerializeField] private float _spawnDuration = 0.5f;
+    [SerializeField] private RefillSFX _refillSFX;
 
     private int _cardsNumber = 0;
     private const int k_maxHandSize = 8; // max without overlay
@@ -80,6 +81,7 @@ public class PlayerCardSpawner : MonoBehaviour
             { 
                 float elapsed = 0f; 
 
+                _refillSFX.Play();
                 while (elapsed < _spawnDuration)
                 {
                     elapsed += Time.deltaTime;
