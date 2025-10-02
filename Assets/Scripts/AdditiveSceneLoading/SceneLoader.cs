@@ -168,7 +168,8 @@ namespace Systems.SceneManagement
         void RefreshEventSystem()
         {
             // Destroy existing EventSystem (if any) and create a fresh one to clear stale references / selection.
-            var existing = GameObject.FindObjectOfType<EventSystem>();
+            // Updated to newer API: FindFirstObjectByType instead of deprecated FindObjectOfType
+            var existing = UnityEngine.Object.FindFirstObjectByType<EventSystem>();
             if (existing != null)
             {
                 Destroy(existing.gameObject);
