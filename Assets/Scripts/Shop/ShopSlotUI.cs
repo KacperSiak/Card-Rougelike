@@ -45,6 +45,7 @@ public class ShopSlotUI : MonoBehaviour
 
     public void Setup(ScriptableObject item, int price)
     {
+        _icon.rectTransform.rotation = Quaternion.Euler(0, 0,0 );
         _currentItem = item;
         _currentPrice = price;
         _basePrice = price;

@@ -2,17 +2,21 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class DamageManager : PersistenSingleton<DamageManager>
 {
-   [SerializeField] private EnemyAttackManager _enemyAttackManager;
-   [SerializeField] private PlayerCardsAnimation _playerCardsAnimation;
+    [SerializeField] private EnemyAttackManager _enemyAttackManager;
+    [SerializeField] private PlayerCardsAnimation _playerCardsAnimation;
 
-   [SerializeField] private List<CardHolderLogic> _cardHolders;
+    [SerializeField] private List<CardHolderLogic> _cardHolders;
 
     private int _bonusDamage = 0;
     private float multiply = 1;
     private ConsumableContext _consContext;
+    
+    public static UnityEvent OnEnemyHalfHP = new UnityEvent();
+    public static UnityEvent OnJokerPlay = new UnityEvent();
 
     protected override void OnSingletonAwake() 
     {
@@ -51,7 +55,8 @@ public class DamageManager : PersistenSingleton<DamageManager>
     private void ImplementPlayerImpact()
     {
         for (int i = 0; i < _cardHolders.Count; i++)
-        { 
+        {
+            if (EnemyCardManager.Instance.CardsInGamePower[i] == 0) OnJokerPlay?.Invoke();
             if (!EnemyCardManager.Instance.CardsInGamePower.ContainsKey(i) || EnemyCardManager.Instance.CardsInGamePower[i] > 0) continue;
             int dmg = (int)Mathf.RoundToInt(-((EnemyCardManager.Instance.CardsInGamePower[i] - _bonusDamage) * multiply)); // cuz number in the list will be negative after we will implement player impact
             RoundManager.Instance.EnemyHP -= dmg;
@@ -61,6 +66,7 @@ public class DamageManager : PersistenSingleton<DamageManager>
                 int health = (int)System.Math.Round(dmg * 0.1f, MidpointRounding.AwayFromZero);
                 RoundManager.Instance.PlayerHP -= health;
             }
+            if (RoundManager.Instance.EnemyHP <= RoundManager.Instance.EnemyHP / 2) OnEnemyHalfHP?.Invoke();
             if (RoundManager.Instance.EnemyHP <= 0) return;
 
             _cardHolders[i].ResetCardHolderEnemyCards();

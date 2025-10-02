@@ -62,7 +62,6 @@ public class ShopMenager : PersistenSingleton<ShopMenager>
 
     private void Start()
     {
-        
         RerollShop();
         _goldForRerol = 5;
         _rerollText.text = "Reroll: " + _goldForRerol;

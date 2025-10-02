@@ -432,7 +432,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   persistAcrossScenes: 0
-  allItems:
+  items:
   - {fileID: 11400000, guid: fa229b7be69c92240b0d916ecb9b2689, type: 2}
   - {fileID: 11400000, guid: 6194f05b82f95bc4ea16a432141c5b96, type: 2}
   - {fileID: 11400000, guid: 4860c16a219a6584d8f76c92cc262afc, type: 2}
