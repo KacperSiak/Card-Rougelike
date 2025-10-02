@@ -21,7 +21,7 @@ public class EnemyCardAnimation : CardsAnimation
             GameObject cardObject = EnemyCardManager.Instance.CardsInGame[key][i];
             cardObject.SetActive(true);
             cardObject.transform.GetPositionAndRotation(out Vector3 startPos, out Quaternion startRot);
-            cardObject.transform.localScale /= 1.7f;
+            cardObject.transform.localScale /= 1.3f;
 
             float elapsed = 0f;
 
