@@ -26,12 +26,14 @@ public class ChallengeContext
     public PlayerManager player;
     public MapManager mapManager;
     public ChallengesMenager challengesMenager;
+    public DamageManager damage;
 
     public ChallengeContext()
     {
         player = PlayerManager.Instance;
         mapManager = MapManager.Instance;
         challengesMenager = ChallengesMenager.Instance;
+        damage = DamageManager.Instance;    
     }
 }
 

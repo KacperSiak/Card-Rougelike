@@ -6,6 +6,7 @@ using UnityEngine.Events;
 
 public class ShopMenager : PersistenSingleton<ShopMenager>
 {
+    [SerializeField] private List<ShopItem> items;
     public List<ShopItem> allItems;
     [Header("Slot Lists")]
     [SerializeField] private List<GameObject> _slots;
@@ -43,6 +44,7 @@ public class ShopMenager : PersistenSingleton<ShopMenager>
         _eatLutter.onClick.AddListener(EatLutter);
         _Lutter.onClick.AddListener(OpenMenu);
         _closeLuttMenu.onClick.AddListener(CloseMenu);
+        allItems = items;
         //_closeShop.onClick.AddListener(CloseShop);
     }
 
@@ -60,7 +62,6 @@ public class ShopMenager : PersistenSingleton<ShopMenager>
 
     private void Start()
     {
-        
         RerollShop();
         _goldForRerol = 5;
         _rerollText.text = "Reroll: " + _goldForRerol;

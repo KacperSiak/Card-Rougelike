@@ -11,14 +11,14 @@ public class NoJoke : Challenges
         _questInfo = false; 
         RoundManager.OnCombatEnd += NoJokerFightWon;
         RoundManager.OnCombatEnd += QuestReset;
-        // joker used subscribe for questundone;
+        DamageManager.OnJokerPlay.AddListener(QuestFailed);
     }
 
     public override void Unregister(ChallengeContext ctx)
     {
         RoundManager.OnCombatEnd -= NoJokerFightWon;
         RoundManager.OnCombatEnd -= QuestReset;
-        // joker used remove subscribe for questundone;
+        DamageManager.OnJokerPlay.RemoveListener(QuestFailed);
     }
 
     private void NoJokerFightWon()
