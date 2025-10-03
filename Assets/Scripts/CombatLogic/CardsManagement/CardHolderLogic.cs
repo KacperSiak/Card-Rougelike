@@ -23,6 +23,7 @@ public class CardHolderLogic : MonoBehaviour
 
     public static UnityEvent OnBlackPlay = new UnityEvent();
     public static UnityEvent OnRedPlay = new UnityEvent();
+    public static UnityEvent OnTrumpSuitPlayed = new UnityEvent();
 
     private void OnEnable()
     {
@@ -90,6 +91,7 @@ public class CardHolderLogic : MonoBehaviour
     public void OnValidated()
     {
         CheckColors(PlayerCardManager.Instance.SelectedCards);
+        CheckSuits(PlayerCardManager.Instance.SelectedCards, RoundManager.Instance.TrumpSuit);
         ValidatedPlayerCardsPower = PlayerCardManager.Instance.SelectedCardsPower;
         PlayerCardManager.Instance.ClearSelectedCards();
         StartCoroutine(PlaceCards());
@@ -161,7 +163,7 @@ public class CardHolderLogic : MonoBehaviour
     private void CheckColors(List<GameObject> cardList)
     {
         foreach (var card in cardList)
-        { 
+        {
             var cardProps = card.GetComponent<PlayerCardLogic>();
 
             if (cardProps.Card.color == CardColor.None)
@@ -170,7 +172,7 @@ public class CardHolderLogic : MonoBehaviour
                 OnBlackPlay?.Invoke();
                 continue;
             }
-            
+
             if (cardProps.Card.color == CardColor.Red)
             {
                 OnRedPlay?.Invoke();
@@ -182,4 +184,16 @@ public class CardHolderLogic : MonoBehaviour
         }
     }
 
+    private void CheckSuits(List<GameObject> cardList, Suits suit)
+    {
+        foreach(var card in cardList)
+        {
+            var cardProps = card.GetComponent<PlayerCardLogic>();
+
+            if(cardProps.Card.suit == suit)
+            {
+                OnTrumpSuitPlayed?.Invoke();
+            }
+        }
+    }    
 }

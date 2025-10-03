@@ -17,6 +17,8 @@ public class DamageManager : PersistenSingleton<DamageManager>
     
     public static UnityEvent OnEnemyHalfHP = new UnityEvent();
     public static UnityEvent OnJokerPlay = new UnityEvent();
+    public static UnityEvent OnSingleDestroy = new UnityEvent();
+    public static UnityEvent OnSequenceDestroy = new UnityEvent();
 
     protected override void OnSingletonAwake() 
     {
@@ -71,6 +73,8 @@ public class DamageManager : PersistenSingleton<DamageManager>
 
             _cardHolders[i].ResetCardHolderEnemyCards();
 
+            if (EnemyCardManager.Instance.CardsInGame[i].Count == 1) OnSingleDestroy?.Invoke();
+            else OnSequenceDestroy?.Invoke();
             EnemyCardManager.Instance.RemoveCardFromGame(key: i, EnemyCardManager.Instance.CardsInGame[i].Count);
             _enemyAttackManager.RemoveKey(key: i);
         }
