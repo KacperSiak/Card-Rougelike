@@ -17,6 +17,13 @@ namespace Systems.SceneManagement
     [SerializeField] SceneGroup[] sceneGroups;
     [SerializeField] float fadeHold = 0.15f; 
 
+    [Header("Startup Config")] 
+    [Tooltip("Single scene (e.g. main menu) to load first, BEFORE any group. Leave empty to skip.")] 
+    [SerializeField] string loadSingleSceneOnStart = "VideoMainMenu"; 
+    [Tooltip("If true AND loadSingleSceneOnStart is empty, will load this scene group index.")] 
+    [SerializeField] bool loadGroupIfNoSingle = true; 
+    [SerializeField] int initialSceneGroupIndex = 0; 
+
         float targetProgress;
         bool isLoading;
     bool missingFaderLogged;
@@ -43,7 +50,27 @@ namespace Systems.SceneManagement
         async void Start()
         {
             manager.RegisterSceneGroups(sceneGroups);
-            await LoadSceneGroup(0);
+
+            if (!string.IsNullOrEmpty(loadSingleSceneOnStart))
+            {
+                if (ScreenFader.Instance != null)
+                {
+                    await ScreenFader.Instance.FadeOut();
+                    if (fadeHold > 0f) await Task.Delay(Mathf.RoundToInt(fadeHold * 1000f));
+                }
+                EnableLoadingCanvas();
+                var op = SceneManager.LoadSceneAsync(loadSingleSceneOnStart, LoadSceneMode.Additive);
+                while (!op.isDone) await Task.Delay(50);
+                EnableLoadingCanvas(false);
+                RefreshEventSystem();
+                if (ScreenFader.Instance != null) await ScreenFader.Instance.FadeIn();
+                // Mark this scene as externally persistent so later group loads don't disable/unload it.
+                manager.RegisterExternalPersistent(loadSingleSceneOnStart);
+            }
+            else if (loadGroupIfNoSingle && sceneGroups != null && sceneGroups.Length > 0)
+            {
+                await LoadSceneGroup(Mathf.Clamp(initialSceneGroupIndex, 0, sceneGroups.Length - 1));
+            }
         }
 
         void EnsureScreenFader()
@@ -64,6 +91,7 @@ namespace Systems.SceneManagement
 
             loadingBar.fillAmount = Mathf.Lerp(currentFillAmount, targetProgress, Time.deltaTime * dynamicFillSpeed);
         }
+
 
         public async Task LoadSceneGroup(int index)
         {
@@ -110,7 +138,6 @@ namespace Systems.SceneManagement
             var active = SceneManager.GetActiveScene().name;
             if (active == sceneName)
             {
-                // Same scene – just visual pulse (no reload) and EventSystem refresh.
                 await PulseFade();
                 RefreshEventSystem();
                 return;
@@ -167,15 +194,13 @@ namespace Systems.SceneManagement
 
         void RefreshEventSystem()
         {
-            // Destroy existing EventSystem (if any) and create a fresh one to clear stale references / selection.
-            var existing = GameObject.FindObjectOfType<EventSystem>();
+            var existing = UnityEngine.Object.FindFirstObjectByType<EventSystem>();
             if (existing != null)
             {
                 Destroy(existing.gameObject);
             }
             var go = new GameObject("EventSystem", typeof(EventSystem), typeof(StandaloneInputModule));
-            DontDestroyOnLoad(go); // Keep consistent between additive scenes until next refresh.
-            // Optional: clear selected object
+            DontDestroyOnLoad(go);
             var es = go.GetComponent<EventSystem>();
             if (es != null)
             {
