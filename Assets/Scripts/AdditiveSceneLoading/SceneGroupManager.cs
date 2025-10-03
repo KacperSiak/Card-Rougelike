@@ -16,6 +16,13 @@ namespace Systems.SceneManagement
         SceneGroup ActiveSceneGroup;
     readonly Dictionary<string, AsyncOperation> _deferredPreloads = new Dictionary<string, AsyncOperation>();
         readonly List<SceneGroup> _registeredGroups = new List<SceneGroup>();
+        readonly HashSet<string> _externalPersistent = new HashSet<string>(StringComparer.Ordinal);
+
+        public void RegisterExternalPersistent(string sceneName)
+        {
+            if (string.IsNullOrEmpty(sceneName)) return;
+            _externalPersistent.Add(sceneName);
+        }
 
         public void RegisterSceneGroups(IEnumerable<SceneGroup> groups)
         {
@@ -147,6 +154,7 @@ namespace Systems.SceneManagement
             {
                 if (cam.gameObject.scene != activeScene)
                 {
+                    if (IsPersistent(cam.gameObject.scene.name)) continue;
                     cam.enabled = false;
                 }
             }
@@ -172,6 +180,7 @@ namespace Systems.SceneManagement
             {
                 if (canvas.gameObject.scene != activeScene && canvas.renderMode == RenderMode.ScreenSpaceOverlay)
                 {
+                    if (IsPersistent(canvas.gameObject.scene.name)) continue;
                     canvas.enabled = false;
                 }
             }
@@ -197,6 +206,7 @@ namespace Systems.SceneManagement
             {
                 if (light.gameObject.scene != activeScene)
                 {
+                    if (IsPersistent(light.gameObject.scene.name)) continue;
                     light.enabled = false;
                 }
             }
@@ -226,6 +236,11 @@ namespace Systems.SceneManagement
                 if (scene == activeScene || !scene.isLoaded) 
                 {
                     Debug.Log($"Skipping scene {scene.name} (active or not loaded)");
+                    continue;
+                }
+                if (IsPersistent(scene.name))
+                {
+                    Debug.Log($"Skipping disable for persistent scene {scene.name}");
                     continue;
                 }
                 
@@ -305,8 +320,14 @@ namespace Systems.SceneManagement
                 }
                 else if (obj.name.Contains("Map") || obj.name.Contains("Generation"))
                 {
-                    bool shouldBeActive = activeSceneName == "MapGeneration";
+                    bool shouldBeActive = activeSceneName.Contains("Map");
                     Debug.Log($"Map object {obj.name}: setting to {shouldBeActive}");
+                    obj.SetActive(shouldBeActive);
+                }
+                else if (obj.name.Contains("Menu"))
+                {
+                    bool shouldBeActive = activeSceneName.Contains("Menu");
+                    Debug.Log($"Menu object {obj.name}: setting to {shouldBeActive}");
                     obj.SetActive(shouldBeActive);
                 }
                 else if (obj.name.Contains("SceneLoader") || obj.name.Contains("Bootstrapper") ||
@@ -439,6 +460,7 @@ namespace Systems.SceneManagement
 
         private bool IsPersistent(string sceneName)
         {
+            if (_externalPersistent.Contains(sceneName)) return true;
             for (int g = 0; g < _registeredGroups.Count; g++)
             {
                 var group = _registeredGroups[g];

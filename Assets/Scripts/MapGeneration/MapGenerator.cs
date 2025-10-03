@@ -130,8 +130,13 @@ public class MapGenerator : MonoBehaviour
         if (ForceFreshGeneration)
         {
             if (debugLogs) Debug.Log("[MapGenerator] ForceFreshGeneration flag set -> ignoring save & using new random seed.");
-            fixedSeed = 0; // ensure new seed path
-            ForceFreshGeneration = false; // consume flag
+            if (mapSaveManager != null)
+            {
+                mapSaveManager.DeleteSavedMap();
+                if (debugLogs) Debug.Log("[MapGenerator] Deleted existing saved map for fresh generation.");
+            }
+            fixedSeed = 0;
+            ForceFreshGeneration = false;
             GenerateMap();
             return;
         }
@@ -146,6 +151,18 @@ public class MapGenerator : MonoBehaviour
             Debug.Log("Generating new map.");
             GenerateMap();
         }
+    }
+
+    // Fully start a brand-new run while already on the map scene.
+    public void NewGameFresh()
+    {
+        if (mapSaveManager != null)
+        {
+            mapSaveManager.DeleteSavedMap();
+            if (debugLogs) Debug.Log("[MapGenerator] NewGameFresh: deleted saved map.");
+        }
+        fixedSeed = 0; // force new random seed next generation
+        GenerateMap();
     }
 
     void OnValidate()
