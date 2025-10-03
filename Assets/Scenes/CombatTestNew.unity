@@ -14942,6 +14942,7 @@ MonoBehaviour:
   persistAcrossScenes: 0
   _cameraTransform: {fileID: 333617528}
   _cameraAnimation: {fileID: 333617531}
+  _playerCardSpawner: {fileID: 1781399644}
   _duration: 0.7
   _dictList:
   - key: Main
@@ -26275,10 +26276,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4105e684d1db1ee4cadd862998e23f24, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  desiredResult: 0
-  autoWireButton: 1
-  useReflectionFallbackForDefeat: 1
-  preferForceEndCombatIfExists: 1
 --- !u!114 &435241896
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -36812,6 +36809,11 @@ MonoBehaviour:
   _duration: 1.8
   playerCardsAnimation: {fileID: 1794805949}
   _idleV: {x: 0, y: 0.008, z: 0}
+--- !u!4 &554807612 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2838976923631966213, guid: bfe4728489db81e49884386efaf0c384, type: 3}
+  m_PrefabInstance: {fileID: 113371367}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &556219131
 GameObject:
   m_ObjectHideFlags: 0
@@ -46478,11 +46480,6 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     vectorLabel1_3: W
---- !u!4 &554807612 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 2838976923631966213, guid: bfe4728489db81e49884386efaf0c384, type: 3}
-  m_PrefabInstance: {fileID: 113371367}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &585412720
 GameObject:
   m_ObjectHideFlags: 0
@@ -57164,10 +57161,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4105e684d1db1ee4cadd862998e23f24, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  desiredResult: 1
-  autoWireButton: 1
-  useReflectionFallbackForDefeat: 1
-  preferForceEndCombatIfExists: 1
 --- !u!114 &796302544
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -97505,3 +97498,4 @@ SceneRoots:
   - {fileID: 1310623759}
   - {fileID: 1619527985}
   - {fileID: 1647659074}
+  - {fileID: 2037205323}
