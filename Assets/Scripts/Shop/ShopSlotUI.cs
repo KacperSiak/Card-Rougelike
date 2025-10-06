@@ -10,6 +10,7 @@ public class ShopSlotUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _priceText;
     [SerializeField] private TextMeshProUGUI _descritpion;
     [SerializeField] private Button _scrollButton;
+    
 
     private ScriptableObject _currentItem;
     private int _currentPrice;

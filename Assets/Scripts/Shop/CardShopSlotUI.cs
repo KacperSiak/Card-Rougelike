@@ -6,8 +6,12 @@ public class CardShopSlotUI : MonoBehaviour
     [SerializeField] private Image _icon;
     [SerializeField] private Button _sellButton;
     [SerializeField] private Button _showButton;
+    [SerializeField] private Texture2D _atlasTexture;
 
-    private BaseCard _cardToSell;
+    private int _rows = 4;
+    private int _cols = 13;
+
+    private CardsSO _cardToSell;
     private int price = 10;
     private void Start()
     {
@@ -15,9 +19,18 @@ public class CardShopSlotUI : MonoBehaviour
         _showButton.onClick.AddListener(ShowSellButton);
     }
 
-    public void Setup(BaseCard normal)
+    public void Setup(CardsSO normal)
     {
-        _icon.sprite = normal.icon;
+        Sprite sp = AtlasHelper.Cutoff(
+            _atlasTexture,
+            _rows,
+            _cols,
+            normal.row,
+            normal.column,
+            rowZeroTop: true
+        );
+
+        _icon.sprite = sp;
         _cardToSell = normal;
     }
 
@@ -25,7 +38,7 @@ public class CardShopSlotUI : MonoBehaviour
     {
         if (_cardToSell != null)
         {
-            DeckManager.instance.RemmoveCard(_cardToSell);
+            RoundManager.Instance.RemoveCard(_cardToSell);
         }
 
         PlayerManager.Instance.GoldChange(price, true);
