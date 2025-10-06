@@ -27,7 +27,11 @@ public class MainMenuButton : MonoBehaviour, IPointerClickHandler
     {
         _button = GetComponent<Button>();
         if (controller == null && autoFindController)
-            controller = Object.FindFirstObjectByType<MainMenuController>();
+        {
+            controller = GetComponentInParent<MainMenuController>();
+            if (controller == null)
+                controller = GetComponentInChildren<MainMenuController>(true);
+        }
     }
 
     void Start()
