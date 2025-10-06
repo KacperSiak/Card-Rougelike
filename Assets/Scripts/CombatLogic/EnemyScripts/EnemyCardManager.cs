@@ -9,7 +9,7 @@ public class EnemyCardManager : PersistenSingleton<EnemyCardManager>
     public List<GameObject> cardHolders;
     public List<Transform> cardObjects;
 
-    private Dictionary<int, List<CardsSOTest>> _cardsBySuitDeck = new();
+    private Dictionary<int, List<CardsSO>> _cardsBySuitDeck = new();
 
     public Dictionary<int, List<GameObject>> CardsInGame { get; private set;} 
     public Dictionary<int, int> CardsInGamePower { get; private set; }
@@ -17,7 +17,7 @@ public class EnemyCardManager : PersistenSingleton<EnemyCardManager>
     public int CardsInGameCount { get; private set; } = 0;
     private bool isCalled = false;
     private int _fullHolders;
-    private int _bittenCards = 0;
+    private int _beatenCards = 0;
 
     private void OnEnable()
     {
@@ -112,7 +112,7 @@ public class EnemyCardManager : PersistenSingleton<EnemyCardManager>
         _animations[key].RemoveCard(CardsInGame[key].ConvertAll(card => card.transform).ToArray());
         CardsInGame.Remove(key);
         CardsInGamePower.Remove(key);
-        _bittenCards++; 
+        _beatenCards++; 
         CardsInGameCount -= amount;
     }
 
@@ -124,13 +124,14 @@ public class EnemyCardManager : PersistenSingleton<EnemyCardManager>
     public void UpdatePower(int keyCardsIndex, int power)
     {
         CardsInGamePower[keyCardsIndex] -= power;
+        if (CardsInGamePower[keyCardsIndex] < 0) UIManager.Instance.ShowEnemyDamage(-CardsInGamePower[keyCardsIndex]);
     }
 
-    public bool CheckRoundReadiness() // here improve logic later
+    public bool CheckRoundReadiness() 
     {
         if(_cardsBySuitDeck.Count == 0 && CardsInGame.Count == 0) return false; 
 
-        else if (_bittenCards >= RoundManager.Instance.CurrentCombatDetails.key) return false;
+        else if (_beatenCards >= RoundManager.Instance.CurrentCombatDetails.key) return false;
 
         return true;
     }
