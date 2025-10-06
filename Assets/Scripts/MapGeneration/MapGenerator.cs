@@ -153,7 +153,6 @@ public class MapGenerator : MonoBehaviour
         }
     }
 
-    // Fully start a brand-new run while already on the map scene.
     public void NewGameFresh()
     {
         if (mapSaveManager != null)
@@ -161,7 +160,7 @@ public class MapGenerator : MonoBehaviour
             mapSaveManager.DeleteSavedMap();
             if (debugLogs) Debug.Log("[MapGenerator] NewGameFresh: deleted saved map.");
         }
-        fixedSeed = 0; // force new random seed next generation
+        fixedSeed = 0;
         GenerateMap();
     }
 

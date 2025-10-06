@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System.Collections;
-using Systems.SceneManagement; // for ScreenFader & SceneLoader
+using Systems.SceneManagement;
 
 [RequireComponent(typeof(Button))]
 public class MainMenuButton : MonoBehaviour, IPointerClickHandler
@@ -74,7 +74,7 @@ public class MainMenuButton : MonoBehaviour, IPointerClickHandler
 
     async void HandleNewGame()
     {
-        // If already on the map, fade -> regenerate -> fade in.
+        if (_button != null) _button.interactable = false;
         if (MapGenerator.Instance != null)
         {
             if (ScreenFader.Instance != null)
@@ -86,10 +86,10 @@ public class MainMenuButton : MonoBehaviour, IPointerClickHandler
             {
                 await ScreenFader.Instance.FadeIn();
             }
+            if (_button != null) _button.interactable = true;
             return;
         }
 
-        // Otherwise force a fresh generation once map scene loads.
         MapGenerator.ForceFreshGeneration = true;
 
         if (!string.IsNullOrEmpty(controller.mapSceneName))
@@ -97,17 +97,25 @@ public class MainMenuButton : MonoBehaviour, IPointerClickHandler
             var loader = SceneLoader.Instance;
             if (loader != null)
             {
-                // Use existing fade-capable API so we don't duplicate logic.
-                await loader.ActivateSceneWithFade(controller.mapSceneName, true);
-                // After activation (and while screen is faded back or finishing), ensure regeneration.
-                StartCoroutine(WaitAndFreshGenerate());
+                await loader.ActivateSceneWithFadeAndThen(controller.mapSceneName, async () =>
+                {
+                    float timeout = 5f;
+                    while (MapGenerator.Instance == null && timeout > 0f)
+                    {
+                        timeout -= Time.unscaledDeltaTime;
+                        await System.Threading.Tasks.Task.Yield();
+                    }
+                    if (MapGenerator.Instance != null)
+                        MapGenerator.Instance.NewGameFresh();
+                }, true);
+                if (_button != null) _button.interactable = true;
             }
             else
             {
-                // Manual fallback: fade if possible, load, then wait and regenerate.
                 if (ScreenFader.Instance != null) await ScreenFader.Instance.FadeOut();
                 UnityEngine.SceneManagement.SceneManager.LoadScene(controller.mapSceneName);
                 StartCoroutine(WaitAndFreshGenerate(withFinalFadeIn:true));
+                if (_button != null) _button.interactable = true;
             }
         }
     }
@@ -125,7 +133,6 @@ public class MainMenuButton : MonoBehaviour, IPointerClickHandler
             MapGenerator.Instance.NewGameFresh();
             if (withFinalFadeIn && ScreenFader.Instance != null)
             {
-                // Delay one frame to allow objects to spawn before fade-in.
                 yield return null;
                 var _ = ScreenFader.Instance.FadeIn();
             }
