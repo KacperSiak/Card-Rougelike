@@ -60,7 +60,6 @@ public class MapTimeUI : MonoBehaviour
             return;
         }
 
-        // Dopasuj skalowanie do MapManagera, jeśli dostępne
         if (showAsHoursMinutes && mapManager != null && mapManager.minutesPerUnit > 0f)
         {
             minutesPerUnit = mapManager.minutesPerUnit;
@@ -141,7 +140,6 @@ public class MapTimeUI : MonoBehaviour
     string FormatAsHoursMinutes(float units)
     {
         if (units < 0f) units = 0f;
-        // Convert units to total minutes using scaling
         float totalMinutesF = units * minutesPerUnit;
         int totalMinutes = Mathf.RoundToInt(totalMinutesF);
         int hours = totalMinutes / 60;

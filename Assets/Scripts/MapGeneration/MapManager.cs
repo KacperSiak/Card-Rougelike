@@ -54,11 +54,9 @@ public class MapManager : PersistenSingleton<MapManager>
                 }
             }
         }
-        // Ustal surowy czas w jednostkach
         maxMapTime = totalDistance;
         currentMapTime = maxMapTime;
 
-        // Opcjonalnie zaokrąglij do pełnych minut w oparciu o minutesPerUnit
         if (roundToWholeMinutes && minutesPerUnit > 0f)
         {
             float maxMinutes = maxMapTime * minutesPerUnit;
