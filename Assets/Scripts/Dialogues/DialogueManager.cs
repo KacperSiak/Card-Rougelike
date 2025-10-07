@@ -14,8 +14,9 @@ public class DialogueManager : PersistenSingleton<DialogueManager>
     [Header("Dialogue Panel Components")][Space]
     [SerializeField] private GameObject _dialoguePanel;
     [SerializeField] private TextMeshProUGUI _dialogueText;
-    [SerializeField] private TextMeshProUGUI _speakerName;
+    //[SerializeField] private TextMeshProUGUI _speakerName;
     [SerializeField] private Image _speakerImage;
+    [SerializeField] private Image _backgroundImage;
     [SerializeField] private Button _skipDialogueButton;
     [SerializeField] private Button _increaseGoodGamblingBTN, _increaseBadGamblingBTN;
     [SerializeField] private Sprite _athenaSprite, _apistosSprite;
@@ -140,8 +141,8 @@ public class DialogueManager : PersistenSingleton<DialogueManager>
             switch (tagKey)
             {
                 case SPEAKER_TAG:
-                    _speakerName.text = tagValue;
-                    _speakerImage.sprite = tagValue == "Athena" ? _athenaSprite : _apistosSprite;
+                    //_speakerName.text = tagValue;
+                    _backgroundImage.sprite = tagValue == "Athena" ? _athenaSprite : _apistosSprite;
                     break;
                 case PORTRAIT_TAG:
                     if (tagValue == "null")
@@ -152,6 +153,8 @@ public class DialogueManager : PersistenSingleton<DialogueManager>
                     _speakerImage.enabled = true;
                     string[] splitPortraitName = tagValue.Split("_");
                     Sprite sprite = Resources.Load<Sprite>($"Dialogue Sprites/{splitPortraitName[0].Trim()}/{splitPortraitName[1].Trim()}");
+                    _speakerImage.sprite = sprite;
+                    _speakerImage.SetNativeSize();
                     break;
                 default:
                     Debug.LogWarning("Tag came in but is not currently being handled: " + tag);

@@ -20,14 +20,17 @@ public class GamblingManager : PersistenSingleton<GamblingManager>
     private float potionModifier;
     private bool potionModified;
     private float _time = 0.83f;
-    private int _jokesCount = 8;
+    private Material[] _jokesMaterials;
 
     [Header("Particles")]
     [SerializeField] private GameObject _positiveParticles;
     [SerializeField] private GameObject _neutralParticles;
     [SerializeField] private GameObject _negativeParticles;
 
-    protected override void OnSingletonAwake() { }
+    protected override void OnSingletonAwake() 
+    {
+        _jokesMaterials = Resources.LoadAll<Material>("JokesMaterials");
+    }
 
     protected override void OnDestroy()
     {
@@ -73,8 +76,9 @@ public class GamblingManager : PersistenSingleton<GamblingManager>
 
     public void GetHermesJoke(MeshRenderer joke)
     {
-        int col = Random.Range(0, _jokesCount);
-        MaterialSetupManager.Instance.SetupVisual(joke, col, row: 0);
+        int index = Random.Range(0, _jokesMaterials.Length);
+        //MaterialSetupManager.Instance.SetupVisual(joke, col, row: 0); //for shader graph
+        joke.material = _jokesMaterials[index];
         joke.gameObject.SetActive(true);
 
         //if (joke.jokeIcon != null)

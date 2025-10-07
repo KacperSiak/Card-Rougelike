@@ -19,6 +19,7 @@ public class PotionContext
     public ShopMenager shopManager;
     public GamblingManager gambler;
     public BuffsAndDebuffsManager buffsAndDebuffsManager;
+    public DamageManager damageManager;
 
     public PotionContext()
     {
@@ -26,6 +27,7 @@ public class PotionContext
         shopManager = ShopMenager.Instance;
         gambler = GamblingManager.Instance;
         buffsAndDebuffsManager = BuffsAndDebuffsManager.Instance;
+        damageManager = DamageManager.Instance;
     }
 }
 
