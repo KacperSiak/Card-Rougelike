@@ -7,7 +7,7 @@ public class ConsumableCardsSetup : MonoBehaviour
 
     private void Awake()
     {
-        RoundManager.OnCombatStart += SetupCards;
+        //RoundManager.OnCombatStart += SetupCards;
     }
 
     private void SetupCards()
