@@ -153,7 +153,6 @@ public class MapGenerator : MonoBehaviour
         }
     }
 
-    // Fully start a brand-new run while already on the map scene.
     public void NewGameFresh()
     {
         if (mapSaveManager != null)
@@ -161,7 +160,7 @@ public class MapGenerator : MonoBehaviour
             mapSaveManager.DeleteSavedMap();
             if (debugLogs) Debug.Log("[MapGenerator] NewGameFresh: deleted saved map.");
         }
-        fixedSeed = 0; // force new random seed next generation
+        fixedSeed = 0;
         GenerateMap();
     }
 
@@ -894,4 +893,17 @@ public class MapGenerator : MonoBehaviour
         Debug.LogWarning("[MapGenerator] Boss node not found!");
         return null;
     }
+
+    private MapNode GetBossMapNode()
+    {
+        if (mapLevels == null || mapLevels.Count == 0) return null;
+        var last = mapLevels[mapLevels.Count - 1];
+        for (int i = 0; i < last.Count; i++)
+        {
+            if (last[i].Type == NodeType.Boss) return last[i];
+        }
+        return null;
+    }
+
+    // Validation utilities removed per request
 }

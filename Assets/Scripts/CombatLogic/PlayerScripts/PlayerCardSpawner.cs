@@ -12,7 +12,7 @@ public class PlayerCardSpawner : MonoBehaviour
     private int _cardsNumber = 0;
     private const int k_maxHandSize = 8; // max without overlay
     private float _cardSize = 0.06f;
-    private bool isPlaying = false;
+    public bool IsPlaying { get; private set; } = false;
 
     public void SpawnCards(List<CardsSO> playerDeck, List<GameObject> playerCards,  int cardsAmount)
     {
@@ -35,10 +35,10 @@ public class PlayerCardSpawner : MonoBehaviour
 
     public void StartPlacement()
     {
-        if (isPlaying)
+        if (IsPlaying)
         { 
             StopAllCoroutines();
-            isPlaying = false;
+            IsPlaying = false;
             MainHand.gameObject.GetComponent<CardHolderAnimation>().EnableAnimations(true);
         }
 
@@ -50,8 +50,8 @@ public class PlayerCardSpawner : MonoBehaviour
 
     private IEnumerator SetCardsPosition()
 	{
+        IsPlaying = true;
         MainHand.gameObject.GetComponent<CardHolderAnimation>().DisableAnimations();
-        isPlaying = true;
 
         float offset = _cardSize - _cardSize * (Mathf.Max(k_maxHandSize, _cardsNumber) - k_maxHandSize) / Mathf.Max(_cardsNumber - 1, 1);
 
@@ -102,7 +102,7 @@ public class PlayerCardSpawner : MonoBehaviour
 		}
 
         MainHand.gameObject.GetComponent<CardHolderAnimation>().EnableAnimations(true);
-        isPlaying = false;
+        IsPlaying = false;
     }
 
 }

@@ -7,13 +7,13 @@ public class CombatManager : MonoBehaviour
     public static CombatManager Instance { get; private set; }
     
     public static NodeType NextCombatNodeType = NodeType.Enemy;
-    public static MapSystem.EnemyVariant NextEnemyVariant = MapSystem.EnemyVariant.None;
-    public static MapSystem.EliteVariant NextEliteVariant = MapSystem.EliteVariant.None;
+    public static EnemyVariant NextEnemyVariant = EnemyVariant.None;
+    public static EliteVariant NextEliteVariant = EliteVariant.None;
     
     //need to be set by the map field before we load combat scene 
     public NodeType CurrentNodeType { get; set; } = NodeType.Boss; // temp default value
-    public MapSystem.EnemyVariant CurrentEnemyVariant { get; set; } = MapSystem.EnemyVariant.None;
-    public MapSystem.EliteVariant CurrentEliteVariant { get; set; } = MapSystem.EliteVariant.None;
+    public EnemyVariant CurrentEnemyVariant { get; set; } = EnemyVariant.None;
+    public EliteVariant CurrentEliteVariant { get; set; } = EliteVariant.None;
 
     [SerializeField] private List<StructForDictionary<NodeType, List<StructForDictionary<int, List<CardsSO>>>>> _listDifferentTypes;
 
@@ -21,11 +21,15 @@ public class CombatManager : MonoBehaviour
 
     [SerializeField] private List<StructForDictionary<int, StructForDictionary<int, int>>> diceInfo;
 
+    [SerializeField] private List<StructForDictionary<NodeType, StructForDictionary<int,AudioClip>>> _listEnemyAndMusic;
+
     private StructForDictionary<int, List<CardsSO>> _innerDeck = new();
 
     private Dictionary<NodeType, Dictionary<int, List<CardsSO>>> _decksForDifferentTypes = new();
     private Dictionary<NodeType, StructForDictionary<int, int>> _combatDetails = new();
     private Dictionary<NodeType, int> _deckSize = new();
+    private Dictionary<NodeType, StructForDictionary<int, AudioClip>> _enemyAndMusic = new();
+
     public Dictionary<int, StructForDictionary<int, int>> _diceDictionary { get; private set; } = new();
 
     private void Awake()
@@ -33,9 +37,9 @@ public class CombatManager : MonoBehaviour
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
 
-    CurrentNodeType = NextCombatNodeType;
-    CurrentEnemyVariant = NextEnemyVariant;
-    CurrentEliteVariant = NextEliteVariant;
+        CurrentNodeType = NextCombatNodeType;
+        CurrentEnemyVariant = NextEnemyVariant;
+        CurrentEliteVariant = NextEliteVariant;
         
         SetProperties();
     }
@@ -43,8 +47,8 @@ public class CombatManager : MonoBehaviour
     private void OnEnable()
     {
         CurrentNodeType = NextCombatNodeType;
-    CurrentEnemyVariant = NextEnemyVariant;
-    CurrentEliteVariant = NextEliteVariant;
+        CurrentEnemyVariant = NextEnemyVariant;
+        CurrentEliteVariant = NextEliteVariant;
     }
 
     public static void ApplyNodeType(NodeType type)
@@ -56,7 +60,7 @@ public class CombatManager : MonoBehaviour
         }
     }
 
-    public static void ApplyEnemyVariant(MapSystem.EnemyVariant variant)
+    public static void ApplyEnemyVariant(EnemyVariant variant)
     {
         NextEnemyVariant = variant;
         if (Instance != null)
@@ -65,7 +69,7 @@ public class CombatManager : MonoBehaviour
         }
     }
 
-    public static void ApplyEliteVariant(MapSystem.EliteVariant variant)
+    public static void ApplyEliteVariant(EliteVariant variant)
     {
         NextEliteVariant = variant;
         if (Instance != null)
@@ -93,7 +97,7 @@ public class CombatManager : MonoBehaviour
         }
         if (CurrentNodeType == NodeType.Elite)
         {
-            return CurrentEliteVariant == MapSystem.EliteVariant.Arachne ? "Arachne" : "Minotaur";
+            return CurrentEliteVariant == EliteVariant.Arachne ? "Arachne" : "Minotaur";
         }
         switch (CurrentNodeType)
         {
@@ -109,6 +113,7 @@ public class CombatManager : MonoBehaviour
         _combatDetails.Clear();
         _deckSize.Clear();
         _diceDictionary.Clear();
+        _enemyAndMusic.Clear();
 
         foreach (var enemyType in _listDifferentTypes)
         {
@@ -131,26 +136,38 @@ public class CombatManager : MonoBehaviour
         {
             _diceDictionary.Add(dice.key, dice.value);
         }
+
+        foreach (var enemyMusic in _listEnemyAndMusic)
+        {
+            _enemyAndMusic.Add(enemyMusic.key, enemyMusic.value);
+        }
     }
 
-   public StructForDictionary<int, int> GetCurrentCombatDetails()
+    public StructForDictionary<int, int> GetCurrentCombatDetails()
     {
-    if (_combatDetails.TryGetValue(CurrentNodeType, out var details)) return details;
-    Debug.LogWarning($"[CombatManager] Missing combat details for {CurrentNodeType}. Using Enemy.");
-    return _combatDetails.ContainsKey(NodeType.Enemy) ? _combatDetails[NodeType.Enemy] : new StructForDictionary<int, int>();
+        if (_combatDetails.TryGetValue(CurrentNodeType, out var details)) return details;
+        Debug.LogWarning($"[CombatManager] Missing combat details for {CurrentNodeType}. Using Enemy.");
+        return _combatDetails.ContainsKey(NodeType.Enemy) ? _combatDetails[NodeType.Enemy] : new StructForDictionary<int, int>();
+    }
+
+    public StructForDictionary<int, AudioClip> GetCurrentEnemyAndMusic()
+    {
+        if (_enemyAndMusic.TryGetValue(CurrentNodeType, out var enemyMusic)) return enemyMusic;
+        Debug.LogWarning($"[CombatManager] Missing enemy and music for {CurrentNodeType}. Using Enemy.");
+        return _enemyAndMusic.ContainsKey(NodeType.Enemy) ? _enemyAndMusic[NodeType.Enemy] : new StructForDictionary<int, AudioClip>();
     }
 
     public int GetCurrentDeckSize()
     {
-    if (_deckSize.TryGetValue(CurrentNodeType, out var size)) return size;
-    Debug.LogWarning($"[CombatManager] Missing deck size for {CurrentNodeType}. Using Enemy size if available.");
-    return _deckSize.ContainsKey(NodeType.Enemy) ? _deckSize[NodeType.Enemy] : 0;
+        if (_deckSize.TryGetValue(CurrentNodeType, out var size)) return size;
+        Debug.LogWarning($"[CombatManager] Missing deck size for {CurrentNodeType}. Using Enemy size if available.");
+        return _deckSize.ContainsKey(NodeType.Enemy) ? _deckSize[NodeType.Enemy] : 0;
     }
 
     public Dictionary<int, List<CardsSO>> GetCurrentDeck()
     {
-    if (_decksForDifferentTypes.TryGetValue(CurrentNodeType, out var deck)) return deck;
-    Debug.LogWarning($"[CombatManager] Missing deck for {CurrentNodeType}. Using Enemy deck if available.");
-    return _decksForDifferentTypes.ContainsKey(NodeType.Enemy) ? _decksForDifferentTypes[NodeType.Enemy] : new Dictionary<int, List<CardsSO>>();
+        if (_decksForDifferentTypes.TryGetValue(CurrentNodeType, out var deck)) return deck;
+        Debug.LogWarning($"[CombatManager] Missing deck for {CurrentNodeType}. Using Enemy deck if available.");
+        return _decksForDifferentTypes.ContainsKey(NodeType.Enemy) ? _decksForDifferentTypes[NodeType.Enemy] : new Dictionary<int, List<CardsSO>>();
     }
 }

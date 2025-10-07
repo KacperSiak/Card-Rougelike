@@ -11,6 +11,8 @@ public class RoundManager : PersistenSingleton<RoundManager>
     [field: SerializeField] public List<CardsSO> PlayerCards { get; private set; }
     [SerializeField] private AthenaAnimationLogic _athenaAnimationLogic;
     [SerializeField] private TrumpSuitSetup _trumpSuitSetup;
+    [SerializeField] private GameObject[] _enemies;
+    [SerializeField] private Ambient _ambient;
     public StructForDictionary<int, int> CurrentCombatDetails { get; private set; } 
     public Suits TrumpSuit { get; private set; } 
     private bool _alreadyFinished = false; // to prevent double calls of the end of combat
@@ -78,13 +80,17 @@ public class RoundManager : PersistenSingleton<RoundManager>
         Cursor.visible = true;
         _playerHP = PlayerManager.Instance.PlayerHP;
         CurrentCombatDetails = CombatManager.Instance.GetCurrentCombatDetails();
-        StartCoroutine(CheckCombatReadiness());
+        StartCoroutine(SetCombat());
         TrumpSuit = _trumpSuitSetup.ChooseSuit();
         Debug.Log("Trump suit: " + TrumpSuit);
     }
 
-    private IEnumerator CheckCombatReadiness()
+    private IEnumerator SetCombat()
     {
+        var EM = CombatManager.Instance.GetCurrentEnemyAndMusic();
+        _ambient.AddClip(EM.value);
+        _enemies[EM.key].SetActive(true);
+
         while (!DeckAnimation.Instance.IsDeckReady)
             yield return null;
 
@@ -95,17 +101,6 @@ public class RoundManager : PersistenSingleton<RoundManager>
     private void ReturnHealthValueAfterCombat()
     { 
         PlayerManager.Instance.PlayerHP = _playerHP;
-    }
-
-    private void SyncFromPlayerManager()
-    {
-        var newHp = PlayerManager.Instance.PlayerHP;
-        if (newHp != _playerHP)
-        {
-            _playerHP = newHp;
-            Debug.Log($"[RoundManager] SyncFromPlayerManager new HP={_playerHP}");
-            OnHPChanged?.Invoke();
-        }
     }
 
     private void SwitchToMainScene()
