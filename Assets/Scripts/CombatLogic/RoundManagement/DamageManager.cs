@@ -15,6 +15,7 @@ public class DamageManager : PersistenSingleton<DamageManager>
     private float multiply = 1;
     private ConsumableContext _consContext;
     private RelicContext _relicContext;
+    private Dictionary<float, float> potionDict = new Dictionary<float, float>();
     
     public static UnityEvent OnEnemyHalfHP = new UnityEvent();
     public static UnityEvent OnJokerPlay = new UnityEvent();
@@ -59,12 +60,20 @@ public class DamageManager : PersistenSingleton<DamageManager>
     private void ImplementPlayerImpact()
     {
         int doubleSingle = 1;
-        if (_cardHolders.Count == 1 || _relicContext.doubleSingleDamage) doubleSingle = 2;
+        float potionMultiplayer = 1;
+
+        foreach (var node in potionDict)
+        {
+            float multiplayer = PotionCount(node.Key, node.Value);
+
+            potionMultiplayer *= multiplayer;
+        }
+        if (_cardHolders.Count == 1 && _relicContext.doubleSingleDamage) doubleSingle = 2;
         for (int i = 0; i < _cardHolders.Count; i++)
         {
             if (EnemyCardManager.Instance.CardsInGamePower[i] == 0) OnJokerPlay?.Invoke();
             if (!EnemyCardManager.Instance.CardsInGamePower.ContainsKey(i) || EnemyCardManager.Instance.CardsInGamePower[i] > 0) continue;
-            int dmg = (int)Mathf.RoundToInt(-((EnemyCardManager.Instance.CardsInGamePower[i] - _bonusDamage) * multiply * doubleSingle)); // cuz number in the list will be negative after we will implement player impact
+            int dmg = (int)Mathf.RoundToInt(-((EnemyCardManager.Instance.CardsInGamePower[i] - _bonusDamage) * multiply * doubleSingle * potionMultiplayer)); // cuz number in the list will be negative after we will implement player impact
             RoundManager.Instance.EnemyHP -= dmg;
 
             if (_consContext.selfHit)
@@ -96,5 +105,22 @@ public class DamageManager : PersistenSingleton<DamageManager>
     {
         if (add) multiply *= amount;
         else multiply /= amount;
+    }
+
+    public void PotionDictModify(float chances, float multiply, bool add)
+    {
+        if (add) potionDict[chances] = multiply;
+        else potionDict.Remove(chances);
+    }
+
+    private float PotionCount(float chances, float multiplayer)
+    {
+        float roll = UnityEngine.Random.Range(0, 100);
+        if(roll<=chances)
+        {
+            return multiplayer;
+        }
+
+        return 1;
     }
 }
