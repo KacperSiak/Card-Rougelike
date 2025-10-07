@@ -91,7 +91,8 @@ public class ReturnToSceneButton : MonoBehaviour
         }
 
         // Find existing persistent canvas
-        var allCanvases = FindObjectsOfType<Canvas>(true);
+    // Updated deprecated API: FindObjectsOfType -> FindObjectsByType with explicit inactive inclusion and no sorting for performance.
+    var allCanvases = UnityEngine.Object.FindObjectsByType<Canvas>(FindObjectsInactive.Include, FindObjectsSortMode.None);
         foreach (var c in allCanvases)
         {
             if (c.gameObject.scene.name == "DontDestroyOnLoad" && c.renderMode == RenderMode.ScreenSpaceOverlay)

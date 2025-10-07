@@ -17,6 +17,13 @@ namespace Systems.SceneManagement
     [SerializeField] SceneGroup[] sceneGroups;
     [SerializeField] float fadeHold = 0.15f; 
 
+    [Header("Startup Config")] 
+    [Tooltip("Single scene (e.g. main menu) to load first, BEFORE any group. Leave empty to skip.")] 
+    [SerializeField] string loadSingleSceneOnStart = "VideoMainMenu"; 
+    [Tooltip("If true AND loadSingleSceneOnStart is empty, will load this scene group index.")] 
+    [SerializeField] bool loadGroupIfNoSingle = true; 
+    [SerializeField] int initialSceneGroupIndex = 0; 
+
         float targetProgress;
         bool isLoading;
     bool missingFaderLogged;
@@ -43,7 +50,26 @@ namespace Systems.SceneManagement
         async void Start()
         {
             manager.RegisterSceneGroups(sceneGroups);
-            await LoadSceneGroup(0);
+
+            if (!string.IsNullOrEmpty(loadSingleSceneOnStart))
+            {
+                if (ScreenFader.Instance != null)
+                {
+                    await ScreenFader.Instance.FadeOut();
+                    if (fadeHold > 0f) await Task.Delay(Mathf.RoundToInt(fadeHold * 1000f));
+                }
+                EnableLoadingCanvas();
+                var op = SceneManager.LoadSceneAsync(loadSingleSceneOnStart, LoadSceneMode.Additive);
+                while (!op.isDone) await Task.Delay(50);
+                EnableLoadingCanvas(false);
+                RefreshEventSystem();
+                if (ScreenFader.Instance != null) await ScreenFader.Instance.FadeIn();
+                manager.RegisterExternalPersistent(loadSingleSceneOnStart);
+            }
+            else if (loadGroupIfNoSingle && sceneGroups != null && sceneGroups.Length > 0)
+            {
+                await LoadSceneGroup(Mathf.Clamp(initialSceneGroupIndex, 0, sceneGroups.Length - 1));
+            }
         }
 
         void EnsureScreenFader()
@@ -64,6 +90,7 @@ namespace Systems.SceneManagement
 
             loadingBar.fillAmount = Mathf.Lerp(currentFillAmount, targetProgress, Time.deltaTime * dynamicFillSpeed);
         }
+
 
         public async Task LoadSceneGroup(int index)
         {
@@ -110,7 +137,6 @@ namespace Systems.SceneManagement
             var active = SceneManager.GetActiveScene().name;
             if (active == sceneName)
             {
-                // Same scene – just visual pulse (no reload) and EventSystem refresh.
                 await PulseFade();
                 RefreshEventSystem();
                 return;
@@ -148,6 +174,56 @@ namespace Systems.SceneManagement
             await ScreenFader.Instance.FadeIn(inDuration);
         }
 
+        public async Task RunWithFade(Func<Task> duringBlack, float outDuration = -1f, float inDuration = -1f)
+        {
+            if (ScreenFader.Instance != null)
+            {
+                await ScreenFader.Instance.FadeOut(outDuration);
+            }
+            if (duringBlack != null) await duringBlack();
+            if (ScreenFader.Instance != null)
+            {
+                if (fadeHold > 0f) await Task.Delay(Mathf.RoundToInt(fadeHold * 1000f));
+                await ScreenFader.Instance.FadeIn(inDuration);
+            }
+        }
+
+        public async Task ActivateSceneWithFadeAndThen(string sceneName, Func<Task> duringBlack, bool loadIfMissing = true)
+        {
+            var active = SceneManager.GetActiveScene().name;
+            if (active == sceneName)
+            {
+                await RunWithFade(duringBlack);
+                RefreshEventSystem();
+                return;
+            }
+
+            if (ScreenFader.Instance != null)
+            {
+                await ScreenFader.Instance.FadeOut();
+                if (fadeHold > 0f) await Task.Delay(Mathf.RoundToInt(fadeHold * 1000f));
+            }
+            else if (!missingFaderLogged)
+            {
+                missingFaderLogged = true;
+                Debug.LogWarning("[SceneLoader] FadeOut skipped: ScreenFader instance missing.");
+            }
+
+            await manager.ActivateScene(sceneName, loadIfMissing);
+
+            RefreshEventSystem();
+
+            if (duringBlack != null) await duringBlack();
+
+            if (ScreenFader.Instance != null)
+                await ScreenFader.Instance.FadeIn();
+            else if (!missingFaderLogged)
+            {
+                missingFaderLogged = true;
+                Debug.LogWarning("[SceneLoader] FadeIn skipped: ScreenFader instance missing.");
+            }
+        }
+
         public bool IsSceneInGroup(string sceneName, string groupName)
         {
             if (string.IsNullOrEmpty(sceneName) || string.IsNullOrEmpty(groupName) || sceneGroups == null) return false;
@@ -167,21 +243,34 @@ namespace Systems.SceneManagement
 
         void RefreshEventSystem()
         {
-            // Destroy existing EventSystem (if any) and create a fresh one to clear stale references / selection.
-            var existing = GameObject.FindObjectOfType<EventSystem>();
+            var all = UnityEngine.Object.FindObjectsByType<EventSystem>(FindObjectsSortMode.InstanceID);
+            if (all != null && all.Length > 1)
+            {
+                Debug.LogWarning($"[SceneLoader] Multiple EventSystems detected ({all.Length}). Keeping the first and disabling the rest.");
+                for (int i = 1; i < all.Length; i++)
+                {
+                    if (all[i] != null) all[i].gameObject.SetActive(false);
+                }
+            }
+
+            var existing = UnityEngine.Object.FindFirstObjectByType<EventSystem>();
+            if (existing == null)
+            {
+                var go = new GameObject("EventSystem", typeof(EventSystem), typeof(StandaloneInputModule));
+                DontDestroyOnLoad(go);
+                existing = go.GetComponent<EventSystem>();
+                Debug.Log("[SceneLoader] EventSystem created.");
+            }
+
             if (existing != null)
             {
-                Destroy(existing.gameObject);
+                var module = existing.GetComponent<StandaloneInputModule>();
+                if (module == null)
+                {
+                    existing.gameObject.AddComponent<StandaloneInputModule>();
+                }
+                existing.SetSelectedGameObject(null);
             }
-            var go = new GameObject("EventSystem", typeof(EventSystem), typeof(StandaloneInputModule));
-            DontDestroyOnLoad(go); // Keep consistent between additive scenes until next refresh.
-            // Optional: clear selected object
-            var es = go.GetComponent<EventSystem>();
-            if (es != null)
-            {
-                es.SetSelectedGameObject(null);
-            }
-            Debug.Log("[SceneLoader] EventSystem refreshed.");
         }
 
         public void ActivateSceneFromNode(NodeClickHandler handler, string sceneName, string combatGuid)
