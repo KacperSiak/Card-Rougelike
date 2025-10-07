@@ -221,11 +221,6 @@ public class MapGenerator : MonoBehaviour
         SetupCameraBounds();
         if (mapManager != null)
             mapManager.CalculateMaxMapTime();
-
-        if (autoValidateAfterGenerate)
-        {
-            ValidateMap();
-        }
     }
 
     public void ResetMapState()
@@ -910,89 +905,5 @@ public class MapGenerator : MonoBehaviour
         return null;
     }
 
-    [ContextMenu("Validate Map")] 
-    public void ValidateMap()
-    {
-        System.Text.StringBuilder sb = new System.Text.StringBuilder();
-        var issues = 0;
-
-        if (mapLevels == null || mapLevels.Count == 0)
-        {
-            sb.AppendLine("No levels generated.");
-            lastValidationReport = sb.ToString();
-            if (debugLogs) Debug.LogWarning("[MapGenerator][Validate] Empty map.");
-            return;
-        }
-
-        var bossNode = GetBossMapNode();
-        if (bossNode == null)
-        {
-            sb.AppendLine("Boss node missing.");
-            issues++;
-        }
-
-        for (int lvl = 0; lvl < mapLevels.Count; lvl++)
-        {
-            var level = mapLevels[lvl];
-            for (int n = 0; n < level.Count; n++)
-            {
-                var node = level[n];
-                if (node == null) { issues++; sb.AppendLine($"Null node reference at level {lvl} index {n}"); continue; }
-                if (node.ConnectedNodes == null || node.ConnectedNodes.Count == 0)
-                {
-                    if (!(mapLevels.Count == 1 && lvl == 0))
-                    {
-                        issues++;
-                        sb.AppendLine($"Node {node.Type} at L{lvl} has 0 connections.");
-                    }
-                }
-            }
-        }
-
-        if (bossNode != null)
-        {
-            var visited = new HashSet<MapNode>();
-            var q = new Queue<MapNode>();
-            q.Enqueue(bossNode);
-            visited.Add(bossNode);
-            while (q.Count > 0)
-            {
-                var cur = q.Dequeue();
-                if (cur.ConnectedNodes == null) continue;
-                for (int i = 0; i < cur.ConnectedNodes.Count; i++)
-                {
-                    var next = cur.ConnectedNodes[i];
-                    if (next == null) continue;
-                    if (!visited.Contains(next)) { visited.Add(next); q.Enqueue(next); }
-                }
-            }
-            for (int lvl = 0; lvl < mapLevels.Count; lvl++)
-            {
-                foreach (var node in mapLevels[lvl])
-                {
-                    if (!visited.Contains(node))
-                    {
-                        issues++;
-                        sb.AppendLine($"Unreachable-from-boss node {node.Type} at level {lvl}.");
-                    }
-                }
-            }
-        }
-
-        if (issues == 0 && sb.Length == 0)
-        {
-            sb.AppendLine("No structural issues detected.");
-        }
-        else
-        {
-            sb.Insert(0, $"Issues: {issues}\n");
-        }
-
-        lastValidationReport = sb.ToString().TrimEnd();
-        if (debugLogs)
-        {
-            if (issues == 0) Debug.Log("[MapGenerator][Validate] OK");
-            else Debug.LogWarning("[MapGenerator][Validate]\n" + lastValidationReport);
-        }
-    }
+    // Validation utilities removed per request
 }
