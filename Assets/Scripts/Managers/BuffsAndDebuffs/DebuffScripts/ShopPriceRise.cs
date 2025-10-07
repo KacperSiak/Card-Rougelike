@@ -11,7 +11,7 @@ public class ShopPriceRise : DebuffEffects
 
     public override void Unregister(DebuffContext ctx)
     {
-        // shop back
+        ctx.shopManager.UpdatePrices(shopRise, true);
     }
 
     public override void TurnsLeft() {}

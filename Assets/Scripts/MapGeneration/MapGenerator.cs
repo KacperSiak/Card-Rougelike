@@ -106,6 +106,14 @@ public class MapGenerator : MonoBehaviour
     private Transform bossNodeTransform;
     private Dictionary<Vector3, Transform> nodeTransformCache = new Dictionary<Vector3, Transform>();
 
+    [Header("Debug / Validation")]
+    [Tooltip("If true, extra debug logs will be printed during generation.")]
+    public bool debugLogs = false;
+    [Tooltip("Automatically run structural validation after each generation.")]
+    public bool autoValidateAfterGenerate = true;
+    [Tooltip("Last validation issues (read-only)")]
+    [TextArea(2,6)] public string lastValidationReport = string.Empty;
+
     void Awake()
     {
         if (Instance != null && Instance != this)
@@ -178,8 +186,8 @@ public class MapGenerator : MonoBehaviour
             lastUsedSeed = (int)System.DateTime.Now.Ticks;
             Random.InitState(lastUsedSeed);
         }
-        
-    Debug.Log($"Generating map. Seed: {lastUsedSeed}.");
+        if (debugLogs)
+            Debug.Log($"[MapGenerator] Generating map (seed={lastUsedSeed}).");
         
         ClearOldNodes();
         ResetMapState();
@@ -192,6 +200,44 @@ public class MapGenerator : MonoBehaviour
         SetupCameraBounds();
         if (mapManager != null)
             mapManager.CalculateMaxMapTime();
+
+        if (autoValidateAfterGenerate)
+        {
+            ValidateMap();
+        }
+    }
+
+    [ContextMenu("Regenerate (same seed)")]
+    public void RegenerateSameSeed()
+    {
+        if (lastUsedSeed == 0 && fixedSeed == 0)
+        {
+            if (debugLogs) Debug.LogWarning("[MapGenerator] No previous seed; generating new map instead.");
+            GenerateMap();
+            return;
+        }
+        int seed = fixedSeed != 0 ? fixedSeed : lastUsedSeed;
+        Random.InitState(seed);
+        if (debugLogs) Debug.Log($"[MapGenerator] Regenerating with same seed {seed}");
+        ClearOldNodes();
+        ResetMapState();
+        GenerateMapStructure();
+        AdjustBossNodePosition();
+        ConnectNodes();
+        InstantiateMapVisuals();
+        SpawnPlayerMarker();
+        DrawConnections();
+        SetupCameraBounds();
+        if (mapManager != null) mapManager.CalculateMaxMapTime();
+        if (autoValidateAfterGenerate) ValidateMap();
+    }
+
+    [ContextMenu("Regenerate (new seed)")]
+    public void RegenerateNewSeed()
+    {
+        fixedSeed = 0; // force new random
+        if (debugLogs) Debug.Log("[MapGenerator] Regenerating with new random seed");
+        GenerateMap();
     }
 
     public void SetupCameraBounds() 
@@ -595,11 +641,6 @@ public class MapGenerator : MonoBehaviour
             }
         }
 
-        if (mapLevels.Count >= 2)
-        {
-            EnsureBossSingleConnection();
-        }
-
         EnsureAllNodesConnected();
     }
 
@@ -654,33 +695,6 @@ public class MapGenerator : MonoBehaviour
         edges.Add((from.Position, to.Position));
     }
 
-    void EnsureBossSingleConnection()
-    {
-        int bossLevel = numberOfLevels - 1;
-        if (bossLevel >= mapLevels.Count) return;
-
-        List<MapNode> bossNodes = mapLevels[bossLevel];
-        List<MapNode> preBossLevel = mapLevels[bossLevel - 1];
-
-        foreach (var bossNode in bossNodes)
-        {
-            if (bossNode.Type == NodeType.Boss)
-            {
-                foreach (var preBossNode in preBossLevel)
-                {
-                    preBossNode.ConnectedNodes.RemoveAll(n => n == bossNode);
-                }
-                bossNode.ConnectedNodes.Clear();
-
-                var closestPreBossNode = preBossLevel
-                    .OrderBy(n => Vector2.Distance(n.Position, bossNode.Position))
-                    .First();
-
-                closestPreBossNode.ConnectedNodes.Add(bossNode);
-                bossNode.ConnectedNodes.Add(closestPreBossNode);
-            }
-        }
-    }
 
     void AdjustBossNodePosition()
     {
@@ -877,5 +891,102 @@ public class MapGenerator : MonoBehaviour
         
         Debug.LogWarning("[MapGenerator] Boss node not found!");
         return null;
+    }
+
+    private MapNode GetBossMapNode()
+    {
+        if (mapLevels == null || mapLevels.Count == 0) return null;
+        var last = mapLevels[mapLevels.Count - 1];
+        for (int i = 0; i < last.Count; i++)
+        {
+            if (last[i].Type == NodeType.Boss) return last[i];
+        }
+        return null;
+    }
+
+    [ContextMenu("Validate Map")] 
+    public void ValidateMap()
+    {
+        System.Text.StringBuilder sb = new System.Text.StringBuilder();
+        var issues = 0;
+
+        if (mapLevels == null || mapLevels.Count == 0)
+        {
+            sb.AppendLine("No levels generated.");
+            lastValidationReport = sb.ToString();
+            if (debugLogs) Debug.LogWarning("[MapGenerator][Validate] Empty map.");
+            return;
+        }
+
+        var bossNode = GetBossMapNode();
+        if (bossNode == null)
+        {
+            sb.AppendLine("Boss node missing.");
+            issues++;
+        }
+
+        for (int lvl = 0; lvl < mapLevels.Count; lvl++)
+        {
+            var level = mapLevels[lvl];
+            for (int n = 0; n < level.Count; n++)
+            {
+                var node = level[n];
+                if (node == null) { issues++; sb.AppendLine($"Null node reference at level {lvl} index {n}"); continue; }
+                if (node.ConnectedNodes == null || node.ConnectedNodes.Count == 0)
+                {
+                    if (!(mapLevels.Count == 1 && lvl == 0))
+                    {
+                        issues++;
+                        sb.AppendLine($"Node {node.Type} at L{lvl} has 0 connections.");
+                    }
+                }
+            }
+        }
+
+        if (bossNode != null)
+        {
+            var visited = new HashSet<MapNode>();
+            var q = new Queue<MapNode>();
+            q.Enqueue(bossNode);
+            visited.Add(bossNode);
+            while (q.Count > 0)
+            {
+                var cur = q.Dequeue();
+                if (cur.ConnectedNodes == null) continue;
+                for (int i = 0; i < cur.ConnectedNodes.Count; i++)
+                {
+                    var next = cur.ConnectedNodes[i];
+                    if (next == null) continue;
+                    if (!visited.Contains(next)) { visited.Add(next); q.Enqueue(next); }
+                }
+            }
+            for (int lvl = 0; lvl < mapLevels.Count; lvl++)
+            {
+                foreach (var node in mapLevels[lvl])
+                {
+                    if (!visited.Contains(node))
+                    {
+                        issues++;
+                        sb.AppendLine($"Unreachable-from-boss node {node.Type} at level {lvl}.");
+                    }
+                }
+            }
+        }
+
+        if (issues == 0 && sb.Length == 0)
+        {
+            sb.AppendLine("No structural issues detected.");
+        }
+        else
+        {
+            sb.Insert(0, $"Issues: {issues}\n");
+        }
+
+        lastValidationReport = sb.ToString().TrimEnd();
+        if (debugLogs)
+        {
+            if (issues == 0) Debug.Log("[MapGenerator][Validate] OK");
+            else Debug.LogWarning("[MapGenerator][Validate]\n" + lastValidationReport);
+        }
     }
 }

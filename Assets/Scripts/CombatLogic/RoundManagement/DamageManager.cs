@@ -11,10 +11,13 @@ public class DamageManager : PersistenSingleton<DamageManager>
    [SerializeField] private List<CardHolderLogic> _cardHolders;
 
     private int _bonusDamage = 0;
-    private int multiply = 1;
+    private float multiply = 1;
     private ConsumableContext _consContext;
 
-    protected override void OnSingletonAwake() { }
+    protected override void OnSingletonAwake() 
+    {
+        _consContext = new ConsumableContext();
+    }
 
     protected override void OnDestroy()
     {
@@ -44,20 +47,20 @@ public class DamageManager : PersistenSingleton<DamageManager>
 
        ImplementPlayerImpact();
     }
-
+    
     private void ImplementPlayerImpact()
     {
         for (int i = 0; i < _cardHolders.Count; i++)
         { 
             if (!EnemyCardManager.Instance.CardsInGamePower.ContainsKey(i) || EnemyCardManager.Instance.CardsInGamePower[i] > 0) continue;
-            int dmg = -((EnemyCardManager.Instance.CardsInGamePower[i] - _bonusDamage) * multiply); // cuz number in the list will be negative after we will implement player impact
-            RoundManager.Instance.EnemyHP -= dmg; 
+            int dmg = (int)Mathf.RoundToInt(-((EnemyCardManager.Instance.CardsInGamePower[i] - _bonusDamage) * multiply)); // cuz number in the list will be negative after we will implement player impact
+            RoundManager.Instance.EnemyHP -= dmg;
 
-            //if(_consContext.selfHit)
-            //{
-            //    int health = (int)System.Math.Round(dmg * 0.1f, MidpointRounding.AwayFromZero);
-            //    RoundManager.Instance.PlayerHP -= health; 
-            //} 
+            if (_consContext.selfHit)
+            {
+                int health = (int)System.Math.Round(dmg * 0.1f, MidpointRounding.AwayFromZero);
+                RoundManager.Instance.PlayerHP -= health;
+            }
             if (RoundManager.Instance.EnemyHP <= 0) return;
 
             _cardHolders[i].ResetCardHolderEnemyCards();
@@ -75,7 +78,7 @@ public class DamageManager : PersistenSingleton<DamageManager>
         else _bonusDamage -= amount;
     }
 
-    public void MultiplyDamage(int amount, bool add)
+    public void MultiplyDamage(float amount, bool add)
     {
         if (add) multiply *= amount;
         else multiply /= amount;

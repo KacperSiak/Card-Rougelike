@@ -48,7 +48,10 @@ public class ObjPoolManager : PersistenSingleton<ObjPoolManager>
         obj.SetActive(false);
         obj.transform.SetPositionAndRotation(start.position, Quaternion.identity);
         pool.Add(obj);
-        obj.transform.localScale *= 1.7f;
+        if(prefab == _prefabPlayer) 
+            obj.transform.localScale *= 1.7f;
+        else
+            obj.transform.localScale *= 1.3f;
         obj.transform.SetParent(transform, true);
     }
 
