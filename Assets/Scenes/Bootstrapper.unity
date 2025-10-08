@@ -733,7 +733,7 @@ MonoBehaviour:
         asset: {fileID: 102900000, guid: 093346a840ebbff4b892f71494a96733, type: 3}
         guid: 093346a840ebbff4b892f71494a96733
       SceneType: 1
-      Persistent: 1
+      Persistent: 0
   - GroupName: MapGeneration
     Scenes:
     - Reference:
