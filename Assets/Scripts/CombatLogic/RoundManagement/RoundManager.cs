@@ -117,6 +117,7 @@ public class RoundManager : PersistenSingleton<RoundManager>
             {
                 Debug.Log("Win — returning to map. Node cleared.");
                 NodeClickHandler.MarkLastCombatNodeClearedIfAny();
+                TryAutosaveJson();
             }
             else
             {
@@ -138,6 +139,7 @@ public class RoundManager : PersistenSingleton<RoundManager>
             while (task != null && !task.IsCompleted)
                 yield return null;
             Debug.Log("Win — back to map (no reload).");
+            TryAutosaveJson();
         }
         else
         {
@@ -157,8 +159,6 @@ public class RoundManager : PersistenSingleton<RoundManager>
         {
             NodeClickHandler.playerMarker.SetActive(false);
         }
-
-    // Updated deprecated API usage: FindObjectOfType -> FindFirstObjectByType with inactive inclusion
     var saveMgr = UnityEngine.Object.FindFirstObjectByType<MapSaveManager>(FindObjectsInactive.Include);
         if (saveMgr != null)
         {
@@ -201,6 +201,21 @@ public class RoundManager : PersistenSingleton<RoundManager>
 
         yield return null;
         GlobalRunState.ClearReloadFlags(); // flagi mozna usunac
+    }
+
+    private void TryAutosaveJson()
+    {
+        try
+        {
+            var gen = MapGenerator.Instance;
+            if (gen == null) return;
+            var data = gen.BuildJsonSave();
+            JsonSaveManager.Save(data);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogWarning($"[RoundManager] Autosave failed: {ex.Message}");
+        }
     }
 
     public void EndRound()

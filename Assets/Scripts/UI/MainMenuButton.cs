@@ -85,6 +85,8 @@ public class MainMenuButton : MonoBehaviour, IPointerClickHandler
     async void HandleNewGame()
     {
         if (_button != null) _button.interactable = false;
+        JsonSaveManager.SetCurrentSlot("default");
+        JsonSaveManager.SetMaxSavesPerSlot(10);
         if (MapGenerator.Instance != null)
         {
             if (ScreenFader.Instance != null)
@@ -152,6 +154,7 @@ public class MainMenuButton : MonoBehaviour, IPointerClickHandler
     async void HandleContinue()
     {
         if (_button != null) _button.interactable = false;
+        JsonSaveManager.SetCurrentSlot("default");
         string latest = JsonSaveManager.GetLatestSavePath();
         if (string.IsNullOrEmpty(latest))
         {
