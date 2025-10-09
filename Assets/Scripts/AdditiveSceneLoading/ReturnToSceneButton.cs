@@ -9,7 +9,7 @@ public class ReturnToSceneButton : MonoBehaviour
     [Tooltip("Nazwa sceny do aktywacji przez SceneLoader")] public string targetSceneName = "MapGeneration";
     private bool _isActivating;
     [Header("Widoczność")] [SerializeField] bool hideIfAlreadyOnTarget = true;
-    [SerializeField] string targetGroupName = "Nodes"; // nazwa grupy w SceneLoader
+    [SerializeField] string targetGroupName = "Nodes";
     [Header("Auto pozycja")] [SerializeField] bool autoPlaceBottomLeft = true;
     [SerializeField] Vector2 bottomLeftOffset = new Vector2(40f, 40f);
     CanvasGroup _cg;
@@ -79,7 +79,6 @@ public class ReturnToSceneButton : MonoBehaviour
 
     void EnsurePersistentCanvas()
     {
-        // If already under a DontDestroyOnLoad parent, skip
         if (gameObject.scene.name == "DontDestroyOnLoad")
             return;
 
@@ -90,8 +89,6 @@ public class ReturnToSceneButton : MonoBehaviour
             return;
         }
 
-        // Find existing persistent canvas
-    // Updated deprecated API: FindObjectsOfType -> FindObjectsByType with explicit inactive inclusion and no sorting for performance.
     var allCanvases = UnityEngine.Object.FindObjectsByType<Canvas>(FindObjectsInactive.Include, FindObjectsSortMode.None);
         foreach (var c in allCanvases)
         {
@@ -147,9 +144,27 @@ public class ReturnToSceneButton : MonoBehaviour
     private IEnumerator ActivateRoutine()
     {
         _isActivating = true;
+        TryAutosaveJson();
         var task = SceneLoader.Instance.ActivateSceneWithFade(targetSceneName, true);
         while (task != null && !task.IsCompleted)
             yield return null;
         _isActivating = false;
+    }
+
+    private void TryAutosaveJson()
+    {
+        try
+        {
+            var gen = MapGenerator.Instance;
+            if (gen == null) return;
+            var data = gen.BuildJsonSave();
+            if (data == null) return;
+            JsonSaveManager.Save(data);
+            Debug.Log("[ReturnToSceneButton] Auto-saved JSON before returning to map");
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogWarning($"[ReturnToSceneButton] JSON autosave failed: {ex.Message}");
+        }
     }
 }
