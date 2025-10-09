@@ -11,6 +11,10 @@ public class MapManager : PersistenSingleton<MapManager>
     [Header("Map Time Settings")]
     public float maxMapTime = 0f;
     public float currentMapTime = 0f;
+    [Tooltip("Ile minut odpowiada jednej jednostce mapTime (np. 12 => 80 jednostek ≈ 16h)")]
+    public float minutesPerUnit = 12f;
+    [Tooltip("Jeśli włączone: czas jest przyznawany i odejmowany w pełnych minutach (zaokrąglanie)")]
+    public bool roundToWholeMinutes = true;
 
     // Kacper Added
     private float _modifier = 1;
@@ -52,6 +56,14 @@ public class MapManager : PersistenSingleton<MapManager>
         }
         maxMapTime = totalDistance;
         currentMapTime = maxMapTime;
+
+        if (roundToWholeMinutes && minutesPerUnit > 0f)
+        {
+            float maxMinutes = maxMapTime * minutesPerUnit;
+            int roundedMaxMinutes = Mathf.RoundToInt(maxMinutes);
+            maxMapTime = roundedMaxMinutes / minutesPerUnit;
+            currentMapTime = maxMapTime;
+        }
         Debug.Log($"[MapManager] Max map time: {maxMapTime:F2}");
     }
 
@@ -79,10 +91,20 @@ public class MapManager : PersistenSingleton<MapManager>
         }
 
         float dist = Vector2.Distance(fromNode.Position, toNode.Position);
-        float travelTime = (float)Math.Round(dist * _modifier);
-        currentMapTime -= travelTime;
+        float travelUnits = dist * _modifier;
+        if (roundToWholeMinutes && minutesPerUnit > 0f)
+        {
+            float minutes = travelUnits * minutesPerUnit;
+            int roundedMinutes = Mathf.RoundToInt(minutes);
+            float roundedUnits = roundedMinutes / minutesPerUnit;
+            currentMapTime -= roundedUnits;
+        }
+        else
+        {
+            currentMapTime -= (float)Math.Round(travelUnits);
+        }
         if (currentMapTime < 0f) currentMapTime = 0f;
-        Debug.Log($"[MapManager] Traveled distance: {travelTime:F2}, remaining time: {currentMapTime:F2}");
+        Debug.Log($"[MapManager] Traveled units: {travelUnits:F2}, remaining time (units): {currentMapTime:F2}");
     }
 
     public bool AreNodesAdjacent(MapNode a, MapNode b)

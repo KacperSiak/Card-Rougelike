@@ -727,6 +727,13 @@ MonoBehaviour:
   loadingCanvas: {fileID: 381594448}
   loadingCamera: {fileID: 328742885}
   sceneGroups:
+  - GroupName: MainMenu
+    Scenes:
+    - Reference:
+        asset: {fileID: 102900000, guid: 093346a840ebbff4b892f71494a96733, type: 3}
+        guid: 093346a840ebbff4b892f71494a96733
+      SceneType: 1
+      Persistent: 1
   - GroupName: MapGeneration
     Scenes:
     - Reference:
@@ -756,12 +763,10 @@ MonoBehaviour:
         guid: a9d81ada56ce34e419f1092ba770995d
       SceneType: 10
       Persistent: 1
-    - Reference:
-        asset: {fileID: 102900000, guid: 9ccfa8c517a61d543ace288cd51523cf, type: 3}
-        guid: 9ccfa8c517a61d543ace288cd51523cf
-      SceneType: 10
-      Persistent: 1
-  fadeHold: 0.15
+  fadeHold: 0.2
+  loadSingleSceneOnStart: VideoMainMenu
+  loadGroupIfNoSingle: 1
+  initialSceneGroupIndex: 0
 --- !u!4 &644061552
 Transform:
   m_ObjectHideFlags: 0

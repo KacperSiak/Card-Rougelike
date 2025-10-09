@@ -21,6 +21,7 @@ public class MapGenerator : MonoBehaviour
 {
     public static MapGenerator Instance { get; private set; }
     private const float PLAYER_MARKER_Y_OFFSET = 0.2f;
+        public static bool ForceFreshGeneration = false;
     
     [Header("Node Type Configuration")]
     public NodeTypeSettings[] nodeTypes;
@@ -106,13 +107,9 @@ public class MapGenerator : MonoBehaviour
     private Transform bossNodeTransform;
     private Dictionary<Vector3, Transform> nodeTransformCache = new Dictionary<Vector3, Transform>();
 
-    [Header("Debug / Validation")]
+    [Header("Debug")]
     [Tooltip("If true, extra debug logs will be printed during generation.")]
     public bool debugLogs = false;
-    [Tooltip("Automatically run structural validation after each generation.")]
-    public bool autoValidateAfterGenerate = true;
-    [Tooltip("Last validation issues (read-only)")]
-    [TextArea(2,6)] public string lastValidationReport = string.Empty;
 
     void Awake()
     {
@@ -129,9 +126,22 @@ public class MapGenerator : MonoBehaviour
     {
         InitializeSettings();
         
-    bool willLoadFromSave = mapSaveManager != null && mapSaveManager.HasSavedMap();
-        
-    if (willLoadFromSave)
+        bool hasSave = mapSaveManager != null && mapSaveManager.HasSavedMap();
+        if (ForceFreshGeneration)
+        {
+            if (debugLogs) Debug.Log("[MapGenerator] ForceFreshGeneration flag set -> ignoring save & using new random seed.");
+            if (mapSaveManager != null)
+            {
+                mapSaveManager.DeleteSavedMap();
+                if (debugLogs) Debug.Log("[MapGenerator] Deleted existing saved map for fresh generation.");
+            }
+            fixedSeed = 0;
+            ForceFreshGeneration = false;
+            GenerateMap();
+            return;
+        }
+
+        if (hasSave)
         {
             Debug.Log("Loading saved map.");
             mapSaveManager.LoadSavedMap();
@@ -141,6 +151,17 @@ public class MapGenerator : MonoBehaviour
             Debug.Log("Generating new map.");
             GenerateMap();
         }
+    }
+
+    public void NewGameFresh()
+    {
+        if (mapSaveManager != null)
+        {
+            mapSaveManager.DeleteSavedMap();
+            if (debugLogs) Debug.Log("[MapGenerator] NewGameFresh: deleted saved map.");
+        }
+        fixedSeed = 0;
+        GenerateMap();
     }
 
     void OnValidate()
@@ -188,7 +209,7 @@ public class MapGenerator : MonoBehaviour
         }
         if (debugLogs)
             Debug.Log($"[MapGenerator] Generating map (seed={lastUsedSeed}).");
-        
+
         ClearOldNodes();
         ResetMapState();
         GenerateMapStructure();
@@ -200,70 +221,22 @@ public class MapGenerator : MonoBehaviour
         SetupCameraBounds();
         if (mapManager != null)
             mapManager.CalculateMaxMapTime();
-
-        if (autoValidateAfterGenerate)
-        {
-            ValidateMap();
-        }
-    }
-
-    [ContextMenu("Regenerate (same seed)")]
-    public void RegenerateSameSeed()
-    {
-        if (lastUsedSeed == 0 && fixedSeed == 0)
-        {
-            if (debugLogs) Debug.LogWarning("[MapGenerator] No previous seed; generating new map instead.");
-            GenerateMap();
-            return;
-        }
-        int seed = fixedSeed != 0 ? fixedSeed : lastUsedSeed;
-        Random.InitState(seed);
-        if (debugLogs) Debug.Log($"[MapGenerator] Regenerating with same seed {seed}");
-        ClearOldNodes();
-        ResetMapState();
-        GenerateMapStructure();
-        AdjustBossNodePosition();
-        ConnectNodes();
-        InstantiateMapVisuals();
-        SpawnPlayerMarker();
-        DrawConnections();
-        SetupCameraBounds();
-        if (mapManager != null) mapManager.CalculateMaxMapTime();
-        if (autoValidateAfterGenerate) ValidateMap();
-    }
-
-    [ContextMenu("Regenerate (new seed)")]
-    public void RegenerateNewSeed()
-    {
-        fixedSeed = 0; // force new random
-        if (debugLogs) Debug.Log("[MapGenerator] Regenerating with new random seed");
-        GenerateMap();
-    }
-
-    public void SetupCameraBounds() 
-    {
-        if (cameraController != null)
-        {
-            cameraController.SetBoundsFromMap(this);
-        }
     }
 
     public void ResetMapState()
     {
         bossAssigned = false;
         mapLevels.Clear();
-        
         startNodeTransform = null;
         bossNodeTransform = null;
         nodeTransformCache.Clear();
-
         foreach (var type in currentCounts.Keys.ToList())
         {
             currentCounts[type] = 0;
         }
     }
 
-    void GenerateMapStructure()
+    public void GenerateMapStructure()
     {
         for (int level = 0; level < numberOfLevels; level++)
         {
@@ -292,9 +265,7 @@ public class MapGenerator : MonoBehaviour
                     if (level < settings.minLevel)
                         continue;
                     if (currentCounts[type] < settings.maxCount)
-                    {
                         availableTypes.Add(type);
-                    }
                 }
 
                 if (i > 0)
@@ -312,23 +283,17 @@ public class MapGenerator : MonoBehaviour
                         if (level < settings.minLevel)
                             continue;
                         if (currentCounts[type] < settings.maxCount)
-                        {
                             availableTypes.Add(type);
-                        }
                     }
                 }
 
                 if (availableTypes.Count == 0 && level != numberOfLevels - 1)
-                {
                     break;
-                }
 
                 float baseX = i * horizontalSpacing;
                 float baseY = -level * verticalSpacing;
-
                 baseX += Random.Range(-horizontalRandomRange, horizontalRandomRange);
                 baseY += Random.Range(-verticalRandomRange, verticalRandomRange);
-
                 float totalWidth = (nodesCount - 1) * horizontalSpacing;
                 float offsetX = -totalWidth / 2f;
 
@@ -348,6 +313,44 @@ public class MapGenerator : MonoBehaviour
             }
             mapLevels.Add(currentLevelNodes);
         }
+    }
+
+    public void SetupCameraBounds()
+    {
+        if (cameraController != null)
+            cameraController.SetBoundsFromMap(this);
+    }
+
+    [ContextMenu("Regenerate (same seed)")]
+    public void RegenerateSameSeed()
+    {
+        if (lastUsedSeed == 0 && fixedSeed == 0)
+        {
+            if (debugLogs) Debug.LogWarning("[MapGenerator] No previous seed; generating new map instead.");
+            GenerateMap();
+            return;
+        }
+        int seed = fixedSeed != 0 ? fixedSeed : lastUsedSeed;
+        Random.InitState(seed);
+        if (debugLogs) Debug.Log($"[MapGenerator] Regenerating with same seed {seed}");
+        ClearOldNodes();
+        ResetMapState();
+        GenerateMapStructure();
+        AdjustBossNodePosition();
+        ConnectNodes();
+        InstantiateMapVisuals();
+        SpawnPlayerMarker();
+        DrawConnections();
+        SetupCameraBounds();
+        if (mapManager != null) mapManager.CalculateMaxMapTime();
+    }
+
+    [ContextMenu("Regenerate (new seed)")]
+    public void RegenerateNewSeed()
+    {
+        fixedSeed = 0;
+        if (debugLogs) Debug.Log("[MapGenerator] Regenerating with new random seed");
+        GenerateMap();
     }
 
     public void InstantiateMapVisuals()
@@ -434,11 +437,9 @@ public class MapGenerator : MonoBehaviour
         }
         if (elites.Count < 2) return;
 
-        // Force the first two elites to be different
         elites[0].EliteVariant = MapSystem.EliteVariant.Minotaur;
         elites[1].EliteVariant = MapSystem.EliteVariant.Arachne;
 
-        // If there are more, alternate for variety
         for (int i = 2; i < elites.Count; i++)
         {
             elites[i].EliteVariant = (i % 2 == 0) ? MapSystem.EliteVariant.Minotaur : MapSystem.EliteVariant.Arachne;
@@ -904,89 +905,5 @@ public class MapGenerator : MonoBehaviour
         return null;
     }
 
-    [ContextMenu("Validate Map")] 
-    public void ValidateMap()
-    {
-        System.Text.StringBuilder sb = new System.Text.StringBuilder();
-        var issues = 0;
-
-        if (mapLevels == null || mapLevels.Count == 0)
-        {
-            sb.AppendLine("No levels generated.");
-            lastValidationReport = sb.ToString();
-            if (debugLogs) Debug.LogWarning("[MapGenerator][Validate] Empty map.");
-            return;
-        }
-
-        var bossNode = GetBossMapNode();
-        if (bossNode == null)
-        {
-            sb.AppendLine("Boss node missing.");
-            issues++;
-        }
-
-        for (int lvl = 0; lvl < mapLevels.Count; lvl++)
-        {
-            var level = mapLevels[lvl];
-            for (int n = 0; n < level.Count; n++)
-            {
-                var node = level[n];
-                if (node == null) { issues++; sb.AppendLine($"Null node reference at level {lvl} index {n}"); continue; }
-                if (node.ConnectedNodes == null || node.ConnectedNodes.Count == 0)
-                {
-                    if (!(mapLevels.Count == 1 && lvl == 0))
-                    {
-                        issues++;
-                        sb.AppendLine($"Node {node.Type} at L{lvl} has 0 connections.");
-                    }
-                }
-            }
-        }
-
-        if (bossNode != null)
-        {
-            var visited = new HashSet<MapNode>();
-            var q = new Queue<MapNode>();
-            q.Enqueue(bossNode);
-            visited.Add(bossNode);
-            while (q.Count > 0)
-            {
-                var cur = q.Dequeue();
-                if (cur.ConnectedNodes == null) continue;
-                for (int i = 0; i < cur.ConnectedNodes.Count; i++)
-                {
-                    var next = cur.ConnectedNodes[i];
-                    if (next == null) continue;
-                    if (!visited.Contains(next)) { visited.Add(next); q.Enqueue(next); }
-                }
-            }
-            for (int lvl = 0; lvl < mapLevels.Count; lvl++)
-            {
-                foreach (var node in mapLevels[lvl])
-                {
-                    if (!visited.Contains(node))
-                    {
-                        issues++;
-                        sb.AppendLine($"Unreachable-from-boss node {node.Type} at level {lvl}.");
-                    }
-                }
-            }
-        }
-
-        if (issues == 0 && sb.Length == 0)
-        {
-            sb.AppendLine("No structural issues detected.");
-        }
-        else
-        {
-            sb.Insert(0, $"Issues: {issues}\n");
-        }
-
-        lastValidationReport = sb.ToString().TrimEnd();
-        if (debugLogs)
-        {
-            if (issues == 0) Debug.Log("[MapGenerator][Validate] OK");
-            else Debug.LogWarning("[MapGenerator][Validate]\n" + lastValidationReport);
-        }
-    }
+    // Validation utilities removed per request
 }

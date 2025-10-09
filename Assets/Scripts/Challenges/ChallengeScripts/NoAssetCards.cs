@@ -9,19 +9,19 @@ public class NoAssetCards : Challenges
     {
         context = ctx;
         _questInfo = false;
-        RoundManager.OnCombatEnd += NoJokerFightWon;
+        RoundManager.OnCombatEnd += NoTrumpCardFightWon;
         RoundManager.OnCombatEnd += QuestReset;
-        // Asset card used subscribe for questundone;
+        CardHolderLogic.OnTrumpSuitPlayed.AddListener(QuestFailed);
     }
 
     public override void Unregister(ChallengeContext ctx)
     {
-        RoundManager.OnCombatEnd -= NoJokerFightWon;
+        RoundManager.OnCombatEnd -= NoTrumpCardFightWon;
         RoundManager.OnCombatEnd -= QuestReset;
-        // Asset card used remove subscribe for questundone;
+        CardHolderLogic.OnTrumpSuitPlayed.RemoveListener(QuestFailed);
     }
 
-    private void NoJokerFightWon()
+    private void NoTrumpCardFightWon()
     {
         if (_questInfo)
         {

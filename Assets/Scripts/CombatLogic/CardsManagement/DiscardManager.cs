@@ -1,4 +1,6 @@
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.EventSystems;
 
 public class DiscardManager : PersistenSingleton<DiscardManager>
 {
@@ -7,6 +9,7 @@ public class DiscardManager : PersistenSingleton<DiscardManager>
     private int discardAvailableAmount = 3;
 
     public bool InUI { get; private set; } = false;
+    public static UnityEvent OnDiscard = new UnityEvent();
 
     protected override void OnSingletonAwake()
     {
@@ -53,6 +56,8 @@ public class DiscardManager : PersistenSingleton<DiscardManager>
         discardAvailableAmount -= PlayerCardManager.Instance.SelectedCards.Count;
 
         _playerCardsAnimation.RemoveCard(PlayerCardManager.Instance.SelectedCards.ConvertAll(card => card.transform).ToArray());
+
+        OnDiscard?.Invoke();
 
         PlayerCardManager.Instance.UpdateAfterDiscard(amount: PlayerCardManager.Instance.SelectedCards.Count);
     }

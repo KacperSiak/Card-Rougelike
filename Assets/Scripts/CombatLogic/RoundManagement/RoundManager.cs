@@ -158,7 +158,8 @@ public class RoundManager : PersistenSingleton<RoundManager>
             NodeClickHandler.playerMarker.SetActive(false);
         }
 
-        var saveMgr = GameObject.FindObjectOfType<MapSaveManager>(includeInactive: true);
+    // Updated deprecated API usage: FindObjectOfType -> FindFirstObjectByType with inactive inclusion
+    var saveMgr = UnityEngine.Object.FindFirstObjectByType<MapSaveManager>(FindObjectsInactive.Include);
         if (saveMgr != null)
         {
             saveMgr.DeleteSavedMap();
@@ -290,5 +291,10 @@ public class RoundManager : PersistenSingleton<RoundManager>
     private void LogCombatResult()
     {
         Debug.Log($"[RoundManager][Result] Winner={UIManager.Instance.Winner} PlayerHP={_playerHP} EnemyHP={_enemyHP}");
+    }
+
+    public void RemoveCard(CardsSO card)
+    {
+        PlayerCards.Remove(card);
     }
 }

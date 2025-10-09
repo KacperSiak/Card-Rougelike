@@ -12,12 +12,15 @@ public class ConsumableCardsSetup : MonoBehaviour
 
     private void SetupCards()
     {
-        List<ConsumablesData> consCards = ConsumablesAndRelicMenager.Instance.currentConsums;
-
-        for (int i = 0; i<consCards.Count; i++)
+        if (ConsumablesAndRelicMenager.Instance.currentConsums.Count != 0)
         {
-            var set = _prefabs[i].GetComponent<ConsCardProperties>();
-            set.Setup(consCards[i]);
+            List<ConsumablesData> consCards = ConsumablesAndRelicMenager.Instance.currentConsums;
+
+            for (int i = 0; i < consCards.Count; i++)
+            {
+                var set = _prefabs[i].GetComponent<ConsCardProperties>();
+                set.Setup(consCards[i]);
+            }
         }
     }
 }
