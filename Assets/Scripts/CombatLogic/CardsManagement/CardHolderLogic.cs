@@ -47,7 +47,7 @@ public class CardHolderLogic : MonoBehaviour
 
     private void OnMouseEnter()
     {
-        if (DiscardManager.Instance.InUI) return;
+        if (RoundManager.Instance.InUI) return;
 
         if (!_isOccupied && PlayerCardManager.Instance.SelectedCards.Count != 0 && PlayerCardManager.Instance.SelectedCards.Count != 2)
         {
@@ -69,7 +69,7 @@ public class CardHolderLogic : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if (PlayerCardManager.Instance.SelectedCards.Count == 2 || _isOccupied || DiscardManager.Instance.InUI) return;
+        if (PlayerCardManager.Instance.SelectedCards.Count == 2 || _isOccupied || RoundManager.Instance.InUI) return;
 
         foreach (GameObject card in PlayerCardManager.Instance.SelectedCards)
         {

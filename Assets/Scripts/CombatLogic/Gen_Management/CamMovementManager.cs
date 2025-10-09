@@ -38,7 +38,7 @@ public class CamMovementManager : PersistenSingleton<CamMovementManager>
     {     
         if (Input.anyKey)
         {
-            if (InProgress || DiscardManager.Instance.InUI || _playerCardSpawner.IsPlaying || _hintAnimationLogic.IsShown) return;
+            if (InProgress || RoundManager.Instance.InUI || _playerCardSpawner.IsPlaying || _hintAnimationLogic.IsShown) return;
 
             CheckKeyAndActivateAnimation();
             return;

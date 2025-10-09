@@ -9,7 +9,7 @@ public class HintAnimationLogic : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if (DiscardManager.Instance.InUI) return;
+        if (RoundManager.Instance.InUI) return;
 
         if (IsShown)
         {
