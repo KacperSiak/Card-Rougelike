@@ -1,14 +1,24 @@
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class RewardPanelLogic : MonoBehaviour
 {
     [SerializeField] private GameObject _pressAnyButton;
+    [SerializeField] private Transform _parent;
+    [SerializeField] private GameObject _prefab;
     [SerializeField] private float _delay = 1f;
     private bool _isShown = false;
 
-    public void ShowReward()
+    public void SetReward(Sprite image, string text)
+    { 
+        GameObject reward = Instantiate(_prefab, _parent);
+        reward.GetComponentInChildren<Image>().sprite = image;
+        reward.GetComponentInChildren<TextMeshProUGUI>().text = text;
+    }
+
+    public void ShowRewards()
     { 
         gameObject.SetActive(true);
         RoundManager.Instance.InUI = true;
