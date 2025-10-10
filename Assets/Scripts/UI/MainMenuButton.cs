@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System.Collections;
 using Systems.SceneManagement;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(Button))]
 public class MainMenuButton : MonoBehaviour, IPointerClickHandler
@@ -45,6 +46,11 @@ public class MainMenuButton : MonoBehaviour, IPointerClickHandler
         if (buttonType == MenuButtonType.Continue)
         {
             bool canContinue = controller != null && controller.HasSave();
+            if (!canContinue)
+            {
+                string latest = JsonSaveManager.GetLatestSavePath();
+                canContinue = !string.IsNullOrEmpty(latest);
+            }
             _button.interactable = canContinue;
         }
     }
@@ -63,7 +69,7 @@ public class MainMenuButton : MonoBehaviour, IPointerClickHandler
                 HandleNewGame();
                 break;
             case MenuButtonType.Continue:
-                controller.OnContinueGame();
+                HandleContinue();
                 break;
             case MenuButtonType.Options:
                 controller.OnOptions();
@@ -79,6 +85,8 @@ public class MainMenuButton : MonoBehaviour, IPointerClickHandler
     async void HandleNewGame()
     {
         if (_button != null) _button.interactable = false;
+        JsonSaveManager.SetCurrentSlot("default");
+        JsonSaveManager.SetMaxSavesPerSlot(10);
         if (MapGenerator.Instance != null)
         {
             if (ScreenFader.Instance != null)
@@ -112,6 +120,7 @@ public class MainMenuButton : MonoBehaviour, IPointerClickHandler
                     if (MapGenerator.Instance != null)
                         MapGenerator.Instance.NewGameFresh();
                 }, true);
+                UnloadOwnScene();
                 if (_button != null) _button.interactable = true;
             }
             else
@@ -140,6 +149,63 @@ public class MainMenuButton : MonoBehaviour, IPointerClickHandler
                 yield return null;
                 var _ = ScreenFader.Instance.FadeIn();
             }
+        }
+    }
+    async void HandleContinue()
+    {
+        if (_button != null) _button.interactable = false;
+        JsonSaveManager.SetCurrentSlot("default");
+        string latest = JsonSaveManager.GetLatestSavePath();
+        if (string.IsNullOrEmpty(latest))
+        {
+            Debug.Log("[MainMenuButton] No JSON save found.");
+            if (_button != null) _button.interactable = true;
+            return;
+        }
+
+        if (MapGenerator.Instance != null)
+        {
+            MapGenerator.Instance.TryLoadLatestJsonAndApply();
+            if (_button != null) _button.interactable = true;
+            return;
+        }
+
+        if (!string.IsNullOrEmpty(controller.mapSceneName))
+        {
+            var loader = Systems.SceneManagement.SceneLoader.Instance;
+            if (loader != null)
+            {
+                await loader.ActivateSceneWithFadeAndThen(controller.mapSceneName, async () =>
+                {
+                    MapGenerator.Instance?.TryLoadLatestJsonAndApply();
+                    await System.Threading.Tasks.Task.Yield();
+                }, true);
+                UnloadOwnScene();
+                if (_button != null) _button.interactable = true;
+            }
+            else
+            {
+                if (ScreenFader.Instance != null) await ScreenFader.Instance.FadeOut();
+                UnityEngine.SceneManagement.SceneManager.LoadScene(controller.mapSceneName);
+                await System.Threading.Tasks.Task.Yield();
+                MapGenerator.Instance?.TryLoadLatestJsonAndApply();
+                if (ScreenFader.Instance != null) await ScreenFader.Instance.FadeIn();
+                if (_button != null) _button.interactable = true;
+            }
+        }
+        else
+        {
+            Debug.LogError("[MainMenuButton] mapSceneName not set on controller.");
+            if (_button != null) _button.interactable = true;
+        }
+    }
+
+    void UnloadOwnScene()
+    {
+        var scene = gameObject.scene;
+        if (scene.IsValid() && scene.isLoaded)
+        {
+            SceneManager.UnloadSceneAsync(scene);
         }
     }
 }

@@ -379,6 +379,12 @@ public class NodeClickHandler : MonoBehaviour
     {
         _lastEnteredCombatGuid = guid;
     }
+
+    public static bool IsGuidCleared(string guid)
+    {
+        if (string.IsNullOrEmpty(guid)) return false;
+        return _clearedCombatGuids != null && _clearedCombatGuids.Contains(guid);
+    }
     
     public void TriggerLoadScene()
     {
