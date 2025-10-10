@@ -11,6 +11,8 @@ public class CamMovementManager : PersistenSingleton<CamMovementManager>
 
     [SerializeField] private Transform _cameraTransform;
     [SerializeField] private CameraAnimation _cameraAnimation;
+    [SerializeField] private PlayerCardSpawner _playerCardSpawner;
+    [SerializeField] private HintAnimationLogic _hintAnimationLogic;
     [SerializeField] private float _duration;
     [SerializeField] private List<StructForDictionary<string, Transform>> _dictList;
     private Dictionary<string, Transform> _camPositionsFirstSet = new();
@@ -36,13 +38,18 @@ public class CamMovementManager : PersistenSingleton<CamMovementManager>
     {     
         if (Input.anyKey)
         {
-            if (InProgress || DiscardManager.Instance.InUI) return;
+            if (InProgress || RoundManager.Instance.InUI || _playerCardSpawner.IsPlaying || _hintAnimationLogic.IsShown) return;
 
             CheckKeyAndActivateAnimation();
             return;
         }
 
-        else if (_cameraTransform.rotation != _currentCamPositionsSet["Main"].rotation) //?
+        CheckCameraPosition();
+    }
+
+    public void CheckCameraPosition()
+    {
+        if (_cameraTransform.rotation != _currentCamPositionsSet["Main"].rotation)
         {
             _currentCamPositionsSet = IsFirstSet ? _camPositionsFirstSet : _camPositionsSecondSet;
             _cameraAnimation.ChangeCameraPlacement(target: _currentCamPositionsSet["Main"], duration: _duration, isChanging: false);
@@ -107,7 +114,7 @@ public class CamMovementManager : PersistenSingleton<CamMovementManager>
     public void ChangeCameraPlacementOnSelected()
     {
         _cameraAnimation.ChangeCameraPlacement(target: _camPositionsFirstSet["Main"], duration: _duration, isChanging: true);
-        InProgress = false;
         IsFirstSet = true;
+        InProgress = false;
     }   
 }

@@ -2,7 +2,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System.Collections;
-using Systems.SceneManagement; // for ScreenFader & SceneLoader
+using Systems.SceneManagement;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(Button))]
 public class MainMenuButton : MonoBehaviour, IPointerClickHandler
@@ -27,7 +28,11 @@ public class MainMenuButton : MonoBehaviour, IPointerClickHandler
     {
         _button = GetComponent<Button>();
         if (controller == null && autoFindController)
-            controller = Object.FindFirstObjectByType<MainMenuController>();
+        {
+            controller = GetComponentInParent<MainMenuController>();
+            if (controller == null)
+                controller = GetComponentInChildren<MainMenuController>(true);
+        }
     }
 
     void Start()
@@ -41,6 +46,11 @@ public class MainMenuButton : MonoBehaviour, IPointerClickHandler
         if (buttonType == MenuButtonType.Continue)
         {
             bool canContinue = controller != null && controller.HasSave();
+            if (!canContinue)
+            {
+                string latest = JsonSaveManager.GetLatestSavePath();
+                canContinue = !string.IsNullOrEmpty(latest);
+            }
             _button.interactable = canContinue;
         }
     }
@@ -59,7 +69,7 @@ public class MainMenuButton : MonoBehaviour, IPointerClickHandler
                 HandleNewGame();
                 break;
             case MenuButtonType.Continue:
-                controller.OnContinueGame();
+                HandleContinue();
                 break;
             case MenuButtonType.Options:
                 controller.OnOptions();
@@ -74,7 +84,9 @@ public class MainMenuButton : MonoBehaviour, IPointerClickHandler
 
     async void HandleNewGame()
     {
-        // If already on the map, fade -> regenerate -> fade in.
+        if (_button != null) _button.interactable = false;
+        JsonSaveManager.SetCurrentSlot("default");
+        JsonSaveManager.SetMaxSavesPerSlot(10);
         if (MapGenerator.Instance != null)
         {
             if (ScreenFader.Instance != null)
@@ -86,10 +98,10 @@ public class MainMenuButton : MonoBehaviour, IPointerClickHandler
             {
                 await ScreenFader.Instance.FadeIn();
             }
+            if (_button != null) _button.interactable = true;
             return;
         }
 
-        // Otherwise force a fresh generation once map scene loads.
         MapGenerator.ForceFreshGeneration = true;
 
         if (!string.IsNullOrEmpty(controller.mapSceneName))
@@ -97,17 +109,26 @@ public class MainMenuButton : MonoBehaviour, IPointerClickHandler
             var loader = SceneLoader.Instance;
             if (loader != null)
             {
-                // Use existing fade-capable API so we don't duplicate logic.
-                await loader.ActivateSceneWithFade(controller.mapSceneName, true);
-                // After activation (and while screen is faded back or finishing), ensure regeneration.
-                StartCoroutine(WaitAndFreshGenerate());
+                await loader.ActivateSceneWithFadeAndThen(controller.mapSceneName, async () =>
+                {
+                    float timeout = 5f;
+                    while (MapGenerator.Instance == null && timeout > 0f)
+                    {
+                        timeout -= Time.unscaledDeltaTime;
+                        await System.Threading.Tasks.Task.Yield();
+                    }
+                    if (MapGenerator.Instance != null)
+                        MapGenerator.Instance.NewGameFresh();
+                }, true);
+                UnloadOwnScene();
+                if (_button != null) _button.interactable = true;
             }
             else
             {
-                // Manual fallback: fade if possible, load, then wait and regenerate.
                 if (ScreenFader.Instance != null) await ScreenFader.Instance.FadeOut();
                 UnityEngine.SceneManagement.SceneManager.LoadScene(controller.mapSceneName);
                 StartCoroutine(WaitAndFreshGenerate(withFinalFadeIn:true));
+                if (_button != null) _button.interactable = true;
             }
         }
     }
@@ -125,10 +146,66 @@ public class MainMenuButton : MonoBehaviour, IPointerClickHandler
             MapGenerator.Instance.NewGameFresh();
             if (withFinalFadeIn && ScreenFader.Instance != null)
             {
-                // Delay one frame to allow objects to spawn before fade-in.
                 yield return null;
                 var _ = ScreenFader.Instance.FadeIn();
             }
+        }
+    }
+    async void HandleContinue()
+    {
+        if (_button != null) _button.interactable = false;
+        JsonSaveManager.SetCurrentSlot("default");
+        string latest = JsonSaveManager.GetLatestSavePath();
+        if (string.IsNullOrEmpty(latest))
+        {
+            Debug.Log("[MainMenuButton] No JSON save found.");
+            if (_button != null) _button.interactable = true;
+            return;
+        }
+
+        if (MapGenerator.Instance != null)
+        {
+            MapGenerator.Instance.TryLoadLatestJsonAndApply();
+            if (_button != null) _button.interactable = true;
+            return;
+        }
+
+        if (!string.IsNullOrEmpty(controller.mapSceneName))
+        {
+            var loader = Systems.SceneManagement.SceneLoader.Instance;
+            if (loader != null)
+            {
+                await loader.ActivateSceneWithFadeAndThen(controller.mapSceneName, async () =>
+                {
+                    MapGenerator.Instance?.TryLoadLatestJsonAndApply();
+                    await System.Threading.Tasks.Task.Yield();
+                }, true);
+                UnloadOwnScene();
+                if (_button != null) _button.interactable = true;
+            }
+            else
+            {
+                if (ScreenFader.Instance != null) await ScreenFader.Instance.FadeOut();
+                UnityEngine.SceneManagement.SceneManager.LoadScene(controller.mapSceneName);
+                await System.Threading.Tasks.Task.Yield();
+                MapGenerator.Instance?.TryLoadLatestJsonAndApply();
+                if (ScreenFader.Instance != null) await ScreenFader.Instance.FadeIn();
+                if (_button != null) _button.interactable = true;
+            }
+        }
+        else
+        {
+            Debug.LogError("[MainMenuButton] mapSceneName not set on controller.");
+            if (_button != null) _button.interactable = true;
+        }
+    }
+
+    void UnloadOwnScene()
+    {
+        var scene = gameObject.scene;
+        if (scene.IsValid() && scene.isLoaded)
+        {
+            SceneManager.UnloadSceneAsync(scene);
         }
     }
 }

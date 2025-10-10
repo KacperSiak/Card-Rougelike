@@ -394,3 +394,4 @@ MonoBehaviour:
   _icon: {fileID: 6878410886244536436}
   _sellButton: {fileID: 6444926802952915193}
   _showButton: {fileID: 3814668457993352339}
+  _atlasTexture: {fileID: 2800000, guid: 4e80de4db1e75a34ea3679c27c02047b, type: 3}

@@ -15,12 +15,12 @@ public class RelicUIDisplay : MonoBehaviour
 
     private void OnEnable()
     {
-        _showFullDisplay.onClick.AddListener(ShowFullDisplay);
+        //_showFullDisplay.onClick.AddListener(ShowFullDisplay);
     }
 
     private void OnDisable()
     {
-        _showFullDisplay.onClick.RemoveAllListeners();
+        //_showFullDisplay.onClick.RemoveAllListeners();
     }
     private void RefreshDisplay()
     {

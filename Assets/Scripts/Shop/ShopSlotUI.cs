@@ -9,7 +9,7 @@ public class ShopSlotUI : MonoBehaviour
     [SerializeField] private Image _icon;
     [SerializeField] private TextMeshProUGUI _priceText;
     [SerializeField] private TextMeshProUGUI _descritpion;
-    [SerializeField] private Button _scrollButton;
+    
 
     private ScriptableObject _currentItem;
     private int _currentPrice;
@@ -20,9 +20,6 @@ public class ShopSlotUI : MonoBehaviour
     void Start()
     {
         _buyButton.onClick.AddListener(Buy);
-        _buyButton.gameObject.SetActive(false);
-        _descritpion.gameObject.SetActive(false);
-        _scrollButton.onClick.AddListener(ChangeScroll);
         _anim = GetComponentInChildren<Animator>();
     }
 

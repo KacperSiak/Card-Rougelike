@@ -105,7 +105,7 @@ namespace Systems.SceneManagement
 
         }
 
-        public async Task UnloadScenes()
+    public async Task UnloadScenes()
         {
             var bootstrapper = SceneManager.GetSceneByName("Bootstrapper");
             if (bootstrapper.IsValid() && bootstrapper.isLoaded)
@@ -124,7 +124,20 @@ namespace Systems.SceneManagement
                 var sceneName = sceneAt.name;
                 if (sceneName == "Bootstrapper" || sceneName == "DontDestroyOnLoad") continue;
                 if (IsPersistent(sceneName)) continue;
-                scenesToUnload.Add(sceneName);
+
+                var policy = GetScenePolicy(sceneName);
+                if (policy.UnloadWhenInactive)
+                {
+                    scenesToUnload.Add(sceneName);
+                }
+                else if (policy.DeactivateWhenInactive)
+                {
+                    continue;
+                }
+                else
+                {
+                    scenesToUnload.Add(sceneName);
+                }
             }
 
             var operationGroup = new AsyncOperationGroup(scenesToUnload.Count);
@@ -154,7 +167,8 @@ namespace Systems.SceneManagement
             {
                 if (cam.gameObject.scene != activeScene)
                 {
-                    if (IsPersistent(cam.gameObject.scene.name)) continue;
+                    var sName = cam.gameObject.scene.name;
+                    if (!ShouldDeactivateScene(sName)) continue;
                     cam.enabled = false;
                 }
             }
@@ -180,7 +194,8 @@ namespace Systems.SceneManagement
             {
                 if (canvas.gameObject.scene != activeScene && canvas.renderMode == RenderMode.ScreenSpaceOverlay)
                 {
-                    if (IsPersistent(canvas.gameObject.scene.name)) continue;
+                    var sName = canvas.gameObject.scene.name;
+                    if (!ShouldDeactivateScene(sName)) continue;
                     canvas.enabled = false;
                 }
             }
@@ -206,7 +221,8 @@ namespace Systems.SceneManagement
             {
                 if (light.gameObject.scene != activeScene)
                 {
-                    if (IsPersistent(light.gameObject.scene.name)) continue;
+                    var sName = light.gameObject.scene.name;
+                    if (!ShouldDeactivateScene(sName)) continue;
                     light.enabled = false;
                 }
             }
@@ -224,7 +240,7 @@ namespace Systems.SceneManagement
             }
         }
 
-        void DisableInactiveSceneObjects(Scene activeScene)
+    void DisableInactiveSceneObjects(Scene activeScene)
         {
             Debug.Log($"DisableInactiveSceneObjects called for active scene: {activeScene.name}");
             
@@ -238,9 +254,10 @@ namespace Systems.SceneManagement
                     Debug.Log($"Skipping scene {scene.name} (active or not loaded)");
                     continue;
                 }
-                if (IsPersistent(scene.name))
+                var policy = GetScenePolicy(scene.name);
+                if (!policy.DeactivateWhenInactive)
                 {
-                    Debug.Log($"Skipping disable for persistent scene {scene.name}");
+                    Debug.Log($"Policy keeps inactive scene objects active: {scene.name}");
                     continue;
                 }
                 
@@ -473,6 +490,28 @@ namespace Systems.SceneManagement
                 }
             }
             return false;
+        }
+
+        private (bool DeactivateWhenInactive, bool UnloadWhenInactive) GetScenePolicy(string sceneName)
+        {
+            for (int g = 0; g < _registeredGroups.Count; g++)
+            {
+                var group = _registeredGroups[g];
+                if (group?.Scenes == null) continue;
+                for (int s = 0; s < group.Scenes.Count; s++)
+                {
+                    var data = group.Scenes[s];
+                    if (data != null && data.Name == sceneName)
+                        return (data.DeactivateWhenInactive, data.UnloadWhenInactive && !data.Persistent);
+                }
+            }
+            return (true, false);
+        }
+
+        private bool ShouldDeactivateScene(string sceneName)
+        {
+            var policy = GetScenePolicy(sceneName);
+            return policy.DeactivateWhenInactive;
         }
     }
 

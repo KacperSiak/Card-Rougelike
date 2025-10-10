@@ -17,6 +17,7 @@ public class ValidateDirty : Validator
             return;
         }
 
+        //here 
         _isValid = SuitRules.AreEqual(_cardHolder.PCardScripts[0].Card.suit, _cardHolder.PCardScripts[_cardHolder.PCardScripts.Count - 1].Card.suit); // changed == for SuitRules. It works the same way as "==" but let relics easly change logic
         Debug.Log("valid or not: " + _isValid);
 

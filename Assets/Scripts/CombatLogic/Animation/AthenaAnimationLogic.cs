@@ -24,6 +24,8 @@ public class AthenaAnimationLogic : MonoBehaviour
 
     public void RoundFinishAnimation()
     {
+        if(CombatManager.Instance.CurrentNodeType != MapSystem.NodeType.Boss) return;
+
         _animator.SetTrigger(_roundFinishOption);
         _currentTime = 0f;
     }
