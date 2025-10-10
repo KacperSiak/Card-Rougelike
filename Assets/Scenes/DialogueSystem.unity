@@ -1430,7 +1430,7 @@ MonoBehaviour:
       badGambleDialoguePlayedLessThanFive: 0
       equalGambleDialoguePlayed: 0
       neutralDialoguePlayed: 0
-  dialogueVariablesInkFile: {fileID: 4900000, guid: 206822eb6b1f23e4f99235686fb7e17a, type: 3}
+  dialogueVariablesInkFile: {fileID: 4900000, guid: 77dbb204aae058b4cb803c1d4cc2f279, type: 3}
 --- !u!1001 &3146271385177968774
 PrefabInstance:
   m_ObjectHideFlags: 0

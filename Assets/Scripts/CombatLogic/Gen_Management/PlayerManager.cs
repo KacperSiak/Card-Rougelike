@@ -41,6 +41,7 @@ public class PlayerManager : PersistenSingleton<PlayerManager>
     {
         if(add) gold += amount;
         else gold -= amount;
+        Debug.Log("Current gold: " + gold);
     }
 
     public void HealthChange(int amount, bool add)
