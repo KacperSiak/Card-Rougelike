@@ -14,7 +14,9 @@ public class RoundManager : PersistenSingleton<RoundManager>
     [SerializeField] private GameObject[] _enemies;
     [SerializeField] private Ambient _ambient;
     public StructForDictionary<int, int> CurrentCombatDetails { get; private set; } 
-    public Suits TrumpSuit { get; private set; } 
+    public Suits TrumpSuit { get; private set; }
+
+    public bool InUI { get; set; } = false;
     private bool _alreadyFinished = false; // to prevent double calls of the end of combat
 
     public bool damageBlock; // Kacper Added
@@ -236,14 +238,14 @@ public class RoundManager : PersistenSingleton<RoundManager>
         {
             UIManager.Instance.Winner = "Enemy"; // mozna zmienic na bool
             _alreadyFinished = true;
-            OnCombatEnd?.Invoke();
+            FinishCombat();
             return;
         }
         else if (!EnemyCardManager.Instance.CheckRoundReadiness())
         {
             UIManager.Instance.Winner = "Player";
             _alreadyFinished = true;
-            OnCombatEnd?.Invoke();
+            RewardManager.Instance.HandleReward();
             return;
         }
 
@@ -253,6 +255,11 @@ public class RoundManager : PersistenSingleton<RoundManager>
 
     }
 
+    public void FinishCombat()
+    {
+        OnCombatEnd?.Invoke();
+    }
+
     private void MoveToNextRound()
     { 
         OnRoundEnd?.Invoke();
@@ -260,13 +267,13 @@ public class RoundManager : PersistenSingleton<RoundManager>
 
     private void CheckHPState()
     {
-
         if (_playerHP > 0 && _enemyHP > 0) return;
 
         Debug.Log($"[RoundManager] Combat end trigger: playerHP={_playerHP} enemyHP={_enemyHP} winner={( _playerHP>0 ? "Player" : "Enemy")}");
         UIManager.Instance.Winner = _playerHP > 0 ? "Player" : "Enemy";
         _alreadyFinished = true;
-        OnCombatEnd?.Invoke();
+        if (_playerHP > 0) RewardManager.Instance.HandleReward();
+        else FinishCombat();
     }
 
     private void CombatEndCard()
@@ -275,7 +282,7 @@ public class RoundManager : PersistenSingleton<RoundManager>
         UIManager.Instance.Winner = "Player";
         _alreadyFinished = true;
         Debug.Log("[RoundManager] Insta-win: setting Winner=Player and ending combat");
-        OnCombatEnd?.Invoke();
+        RewardManager.Instance.HandleReward();
     }
 
     private void HandleCombatEndMarking()
