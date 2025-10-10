@@ -42,7 +42,8 @@ public class MapTimeUI : MonoBehaviour
             Debug.LogWarning("[MapTimeUI] No TextMeshProUGUI component found! Assign timeText.");
         }
         
-        SetTextColor(normalColor);
+        if (timeText != null)
+            timeText.color = normalColor;
         
         UpdateTimeDisplay();
     }
@@ -92,13 +93,9 @@ public class MapTimeUI : MonoBehaviour
         
         float timeRatio = mapManager.currentMapTime / mapManager.maxMapTime;
         
-        if (timeRatio <= lowTimeThreshold)
+        if (timeText != null)
         {
-            SetTextColor(lowTimeColor);
-        }
-        else
-        {
-            SetTextColor(normalColor);
+            timeText.color = (timeRatio <= lowTimeThreshold) ? lowTimeColor : normalColor;
         }
     }
     
@@ -119,11 +116,7 @@ public class MapTimeUI : MonoBehaviour
             timeText.text = text;
     }
     
-    void SetTextColor(Color color)
-    {
-        if (timeText != null)
-            timeText.color = color;
-    }
+    // Removed SetTextColor helper to avoid naming conflicts and keep it simple.
     
     [ContextMenu("Force Update Display")]
     public void ForceUpdateDisplay()
