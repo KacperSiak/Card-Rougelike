@@ -9,19 +9,19 @@ public class NoDiscard : Challenges
     {
         context = ctx;
         _questInfo = false;
-        RoundManager.OnCombatEnd += NoConsumableFightWon;
+        RoundManager.OnCombatEnd += NoDiscardFightWon;
         RoundManager.OnCombatEnd += QuestReset;
-        // discard used subscribe for questundone;
+        DiscardManager.OnDiscard.AddListener(QuestFailed);
     }
 
     public override void Unregister(ChallengeContext ctx)
     {
-        RoundManager.OnCombatEnd -= NoConsumableFightWon;
+        RoundManager.OnCombatEnd -= NoDiscardFightWon;
         RoundManager.OnCombatEnd -= QuestReset;
-        // discard used remove subscribe for questundone;
+        DiscardManager.OnDiscard.RemoveListener(QuestFailed);
     }
 
-    private void NoConsumableFightWon()
+    private void NoDiscardFightWon()
     {
         if (_questInfo)
         {

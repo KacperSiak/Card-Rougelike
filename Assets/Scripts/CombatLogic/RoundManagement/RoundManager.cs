@@ -292,4 +292,9 @@ public class RoundManager : PersistenSingleton<RoundManager>
     {
         Debug.Log($"[RoundManager][Result] Winner={UIManager.Instance.Winner} PlayerHP={_playerHP} EnemyHP={_enemyHP}");
     }
+
+    public void RemoveCard(CardsSO card)
+    {
+        PlayerCards.Remove(card);
+    }
 }

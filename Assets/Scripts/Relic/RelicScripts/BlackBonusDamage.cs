@@ -3,13 +3,23 @@
 [Serializable]
 public class BlackBonusDamage : RelicEffects
 {
+    private int _actuallDamage;
+    private RelicContext _context;
     public override void Register(RelicContext ctx)
     {
-        // plus damage for every played black card (no clue how to programm it XD)
+        CardHolderLogic.OnBlackPlay.AddListener(AddDamage);
+        _context = ctx;
     }
     public override void Unregister(RelicContext ctx)
     {
-        // no more damage
+        CardHolderLogic.OnBlackPlay.RemoveAllListeners();
+        ctx.damageManager.BonusDamageChange(_actuallDamage, true);
+    }
+
+    private void AddDamage()
+    {
+        _actuallDamage++;
+        _context.damageManager.BonusDamageChange(1, true);
     }
 }
 

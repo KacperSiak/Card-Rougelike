@@ -105,6 +105,10 @@ public class ChallengesMenager : PersistenSingleton<ChallengesMenager>
 
         trigger.Setup(challenge.challengeDescription);
         Debug.Log("Challenge Accepted");
+        foreach(var slot in _slots)
+        {
+            slot.SetActive(false);
+        }
 
         foreach (var chall in _currentChallenge.challenge)
         {
