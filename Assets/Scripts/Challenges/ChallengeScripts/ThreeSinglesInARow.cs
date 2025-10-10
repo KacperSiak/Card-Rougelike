@@ -12,14 +12,14 @@ public class ThreeSinglesInARow : Challenges
         context = ctx;
         _soloCards = 0;
         context.challengesMenager.ChallengeProgressUpdate(_soloCards, _maxSoloCards);
-        // onsolocard event += Quest Counter
-        // onOtherCardd event += Quest Reset
+        DamageManager.OnSingleDestroy.AddListener(QuestCounter);
+        DamageManager.OnSequenceDestroy.AddListener(QuestReset);
     }
 
     public override void Unregister(ChallengeContext ctx)
     {
-        // onsolocard event -= Quest Counter
-        // onOtherCardd event -= Quest Reset
+        DamageManager.OnSingleDestroy.RemoveListener(QuestCounter);
+        DamageManager.OnSequenceDestroy.RemoveListener(QuestReset);
     }
 
     private void QuestCounter()
