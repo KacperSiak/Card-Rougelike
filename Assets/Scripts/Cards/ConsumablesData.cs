@@ -8,6 +8,11 @@ public enum CardRarity
     rare
 }
 
+public enum ConsCardType
+{
+    Moirae,
+    OneUse
+}
 [CreateAssetMenu(fileName = "ConsumablesData", menuName = "Shop/Consumable")]
 public class ConsumablesData : ShopItem
 {
@@ -15,8 +20,10 @@ public class ConsumablesData : ShopItem
     [field: SerializeField] public string cardName { get; private set; }
     [field: SerializeField, TextArea]  public string cardDescription { get; private set; }
     [field: SerializeField] public CardRarity rarity { get; private set; }
+    [field: SerializeField] public ConsCardType type { get; private set; }
     [field: SerializeField] public int buyPrice { get; private set; }
     [field: SerializeField] public int sellPrice { get; private set; }
+
 
     [Header("ShaderGraph")]
     [field: SerializeField] public Texture2D atlasTexture { get; private set; }

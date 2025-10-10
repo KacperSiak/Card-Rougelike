@@ -16,6 +16,13 @@ namespace Systems.SceneManagement
         SceneGroup ActiveSceneGroup;
     readonly Dictionary<string, AsyncOperation> _deferredPreloads = new Dictionary<string, AsyncOperation>();
         readonly List<SceneGroup> _registeredGroups = new List<SceneGroup>();
+        readonly HashSet<string> _externalPersistent = new HashSet<string>(StringComparer.Ordinal);
+
+        public void RegisterExternalPersistent(string sceneName)
+        {
+            if (string.IsNullOrEmpty(sceneName)) return;
+            _externalPersistent.Add(sceneName);
+        }
 
         public void RegisterSceneGroups(IEnumerable<SceneGroup> groups)
         {
@@ -98,7 +105,7 @@ namespace Systems.SceneManagement
 
         }
 
-        public async Task UnloadScenes()
+    public async Task UnloadScenes()
         {
             var bootstrapper = SceneManager.GetSceneByName("Bootstrapper");
             if (bootstrapper.IsValid() && bootstrapper.isLoaded)
@@ -117,7 +124,20 @@ namespace Systems.SceneManagement
                 var sceneName = sceneAt.name;
                 if (sceneName == "Bootstrapper" || sceneName == "DontDestroyOnLoad") continue;
                 if (IsPersistent(sceneName)) continue;
-                scenesToUnload.Add(sceneName);
+
+                var policy = GetScenePolicy(sceneName);
+                if (policy.UnloadWhenInactive)
+                {
+                    scenesToUnload.Add(sceneName);
+                }
+                else if (policy.DeactivateWhenInactive)
+                {
+                    continue;
+                }
+                else
+                {
+                    scenesToUnload.Add(sceneName);
+                }
             }
 
             var operationGroup = new AsyncOperationGroup(scenesToUnload.Count);
@@ -147,6 +167,8 @@ namespace Systems.SceneManagement
             {
                 if (cam.gameObject.scene != activeScene)
                 {
+                    var sName = cam.gameObject.scene.name;
+                    if (!ShouldDeactivateScene(sName)) continue;
                     cam.enabled = false;
                 }
             }
@@ -172,6 +194,8 @@ namespace Systems.SceneManagement
             {
                 if (canvas.gameObject.scene != activeScene && canvas.renderMode == RenderMode.ScreenSpaceOverlay)
                 {
+                    var sName = canvas.gameObject.scene.name;
+                    if (!ShouldDeactivateScene(sName)) continue;
                     canvas.enabled = false;
                 }
             }
@@ -197,6 +221,8 @@ namespace Systems.SceneManagement
             {
                 if (light.gameObject.scene != activeScene)
                 {
+                    var sName = light.gameObject.scene.name;
+                    if (!ShouldDeactivateScene(sName)) continue;
                     light.enabled = false;
                 }
             }
@@ -214,7 +240,7 @@ namespace Systems.SceneManagement
             }
         }
 
-        void DisableInactiveSceneObjects(Scene activeScene)
+    void DisableInactiveSceneObjects(Scene activeScene)
         {
             Debug.Log($"DisableInactiveSceneObjects called for active scene: {activeScene.name}");
             
@@ -226,6 +252,12 @@ namespace Systems.SceneManagement
                 if (scene == activeScene || !scene.isLoaded) 
                 {
                     Debug.Log($"Skipping scene {scene.name} (active or not loaded)");
+                    continue;
+                }
+                var policy = GetScenePolicy(scene.name);
+                if (!policy.DeactivateWhenInactive)
+                {
+                    Debug.Log($"Policy keeps inactive scene objects active: {scene.name}");
                     continue;
                 }
                 
@@ -305,8 +337,14 @@ namespace Systems.SceneManagement
                 }
                 else if (obj.name.Contains("Map") || obj.name.Contains("Generation"))
                 {
-                    bool shouldBeActive = activeSceneName == "MapGeneration";
+                    bool shouldBeActive = activeSceneName.Contains("Map");
                     Debug.Log($"Map object {obj.name}: setting to {shouldBeActive}");
+                    obj.SetActive(shouldBeActive);
+                }
+                else if (obj.name.Contains("Menu"))
+                {
+                    bool shouldBeActive = activeSceneName.Contains("Menu");
+                    Debug.Log($"Menu object {obj.name}: setting to {shouldBeActive}");
                     obj.SetActive(shouldBeActive);
                 }
                 else if (obj.name.Contains("SceneLoader") || obj.name.Contains("Bootstrapper") ||
@@ -439,6 +477,7 @@ namespace Systems.SceneManagement
 
         private bool IsPersistent(string sceneName)
         {
+            if (_externalPersistent.Contains(sceneName)) return true;
             for (int g = 0; g < _registeredGroups.Count; g++)
             {
                 var group = _registeredGroups[g];
@@ -451,6 +490,28 @@ namespace Systems.SceneManagement
                 }
             }
             return false;
+        }
+
+        private (bool DeactivateWhenInactive, bool UnloadWhenInactive) GetScenePolicy(string sceneName)
+        {
+            for (int g = 0; g < _registeredGroups.Count; g++)
+            {
+                var group = _registeredGroups[g];
+                if (group?.Scenes == null) continue;
+                for (int s = 0; s < group.Scenes.Count; s++)
+                {
+                    var data = group.Scenes[s];
+                    if (data != null && data.Name == sceneName)
+                        return (data.DeactivateWhenInactive, data.UnloadWhenInactive && !data.Persistent);
+                }
+            }
+            return (true, false);
+        }
+
+        private bool ShouldDeactivateScene(string sceneName)
+        {
+            var policy = GetScenePolicy(sceneName);
+            return policy.DeactivateWhenInactive;
         }
     }
 

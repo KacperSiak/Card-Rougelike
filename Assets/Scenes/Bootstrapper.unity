@@ -727,6 +727,15 @@ MonoBehaviour:
   loadingCanvas: {fileID: 381594448}
   loadingCamera: {fileID: 328742885}
   sceneGroups:
+  - GroupName: MainMenu
+    Scenes:
+    - Reference:
+        asset: {fileID: 102900000, guid: 093346a840ebbff4b892f71494a96733, type: 3}
+        guid: 093346a840ebbff4b892f71494a96733
+      SceneType: 1
+      Persistent: 0
+      DeactivateWhenInactive: 1
+      UnloadWhenInactive: 0
   - GroupName: MapGeneration
     Scenes:
     - Reference:
@@ -734,6 +743,8 @@ MonoBehaviour:
         guid: 688c1fd6238f5414896758621fb92deb
       SceneType: 0
       Persistent: 1
+      DeactivateWhenInactive: 1
+      UnloadWhenInactive: 0
   - GroupName: Nodes
     Scenes:
     - Reference:
@@ -741,22 +752,33 @@ MonoBehaviour:
         guid: 1c5d67bfc39d4a045820c21ff3fc908d
       SceneType: 5
       Persistent: 0
+      DeactivateWhenInactive: 0
+      UnloadWhenInactive: 1
     - Reference:
         asset: {fileID: 102900000, guid: 7067715549785224fbeaf328ebf2a192, type: 3}
         guid: 7067715549785224fbeaf328ebf2a192
       SceneType: 6
       Persistent: 1
+      DeactivateWhenInactive: 1
+      UnloadWhenInactive: 0
     - Reference:
         asset: {fileID: 102900000, guid: 800e14468a144de4e86c22c1a92939f2, type: 3}
         guid: 800e14468a144de4e86c22c1a92939f2
       SceneType: 7
       Persistent: 1
+      DeactivateWhenInactive: 1
+      UnloadWhenInactive: 0
     - Reference:
         asset: {fileID: 102900000, guid: a9d81ada56ce34e419f1092ba770995d, type: 3}
         guid: a9d81ada56ce34e419f1092ba770995d
       SceneType: 10
       Persistent: 1
-  fadeHold: 0.15
+      DeactivateWhenInactive: 1
+      UnloadWhenInactive: 0
+  fadeHold: 0.2
+  loadSingleSceneOnStart: VideoMainMenu
+  loadGroupIfNoSingle: 1
+  initialSceneGroupIndex: 0
 --- !u!4 &644061552
 Transform:
   m_ObjectHideFlags: 0

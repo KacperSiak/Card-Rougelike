@@ -11,8 +11,8 @@ public class MapTimeUI : MonoBehaviour
     public MapManager mapManager;
     
     [Header("Display Settings")]
-    [Tooltip("Format wyświetlania czasu")]
-    public string timeFormat = "Time: {0:F1} / {1:F1}";
+    [Tooltip("Format wyświetlania czasu. Używa {0} i {1} jako miejsc na tekst czasu.")]
+    public string timeFormat = "Time: {0} / {1}";
     [Tooltip("Kolor tekstu gdy czas się kończy (czerwony)")]
     public Color lowTimeColor = Color.red;
     [Tooltip("Normalny kolor tekstu")]
@@ -20,6 +20,14 @@ public class MapTimeUI : MonoBehaviour
     [Tooltip("Próg poniżej którego tekst staje się czerwony (procent)")]
     [Range(0f, 1f)]
     public float lowTimeThreshold = 0.2f;
+
+    [Header("Hours/Minutes Display")]
+    [Tooltip("Czy wyświetlać czas jako godziny:minuty zamiast surowych jednostek.")]
+    public bool showAsHoursMinutes = true;
+    [Tooltip("Ile minut odpowiada jednej jednostce czasu (np. 12 => 80 jednostek = 16h)")]
+    public float minutesPerUnit = 12f;
+    [Tooltip("Czy dopełniać minuty zerem wiodącym (np. 5 -> 05)")]
+    public bool padMinutes = true;
 
     void Start()
     {
@@ -52,9 +60,24 @@ public class MapTimeUI : MonoBehaviour
             return;
         }
 
-        string displayText = string.Format(timeFormat, 
-            mapManager.currentMapTime, 
-            mapManager.maxMapTime);
+        if (showAsHoursMinutes && mapManager != null && mapManager.minutesPerUnit > 0f)
+        {
+            minutesPerUnit = mapManager.minutesPerUnit;
+        }
+
+        string displayText;
+        if (showAsHoursMinutes && minutesPerUnit > 0f)
+        {
+            string cur = FormatAsHoursMinutes(mapManager.currentMapTime);
+            string max = FormatAsHoursMinutes(mapManager.maxMapTime);
+            displayText = string.Format(timeFormat, cur, max);
+        }
+        else
+        {
+            displayText = string.Format(timeFormat,
+                mapManager.currentMapTime.ToString("F1"),
+                mapManager.maxMapTime.ToString("F1"));
+        }
             
         SetText(displayText);
         
@@ -112,5 +135,18 @@ public class MapTimeUI : MonoBehaviour
     {
         timeFormat = newFormat;
         UpdateTimeDisplay();
+    }
+
+    string FormatAsHoursMinutes(float units)
+    {
+        if (units < 0f) units = 0f;
+        float totalMinutesF = units * minutesPerUnit;
+        int totalMinutes = Mathf.RoundToInt(totalMinutesF);
+        int hours = totalMinutes / 60;
+        int minutes = Mathf.Abs(totalMinutes % 60);
+        if (padMinutes)
+            return $"{hours}:{minutes:00}h";
+        else
+            return $"{hours}:{minutes}h";
     }
 }

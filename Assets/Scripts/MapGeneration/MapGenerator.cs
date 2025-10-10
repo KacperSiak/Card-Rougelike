@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using MapSystem;
+using System.IO;
 
 [System.Serializable]
 public struct NodeTypeSettings
@@ -21,6 +22,7 @@ public class MapGenerator : MonoBehaviour
 {
     public static MapGenerator Instance { get; private set; }
     private const float PLAYER_MARKER_Y_OFFSET = 0.2f;
+        public static bool ForceFreshGeneration = false;
     
     [Header("Node Type Configuration")]
     public NodeTypeSettings[] nodeTypes;
@@ -106,6 +108,10 @@ public class MapGenerator : MonoBehaviour
     private Transform bossNodeTransform;
     private Dictionary<Vector3, Transform> nodeTransformCache = new Dictionary<Vector3, Transform>();
 
+    [Header("Debug")]
+    [Tooltip("If true, extra debug logs will be printed during generation.")]
+    public bool debugLogs = false;
+
     void Awake()
     {
         if (Instance != null && Instance != this)
@@ -121,9 +127,22 @@ public class MapGenerator : MonoBehaviour
     {
         InitializeSettings();
         
-    bool willLoadFromSave = mapSaveManager != null && mapSaveManager.HasSavedMap();
-        
-    if (willLoadFromSave)
+        bool hasSave = mapSaveManager != null && mapSaveManager.HasSavedMap();
+        if (ForceFreshGeneration)
+        {
+            if (debugLogs) Debug.Log("[MapGenerator] ForceFreshGeneration flag set -> ignoring save & using new random seed.");
+            if (mapSaveManager != null)
+            {
+                mapSaveManager.DeleteSavedMap();
+                if (debugLogs) Debug.Log("[MapGenerator] Deleted existing saved map for fresh generation.");
+            }
+            fixedSeed = 0;
+            ForceFreshGeneration = false;
+            GenerateMap();
+            return;
+        }
+
+        if (hasSave)
         {
             Debug.Log("Loading saved map.");
             mapSaveManager.LoadSavedMap();
@@ -133,6 +152,18 @@ public class MapGenerator : MonoBehaviour
             Debug.Log("Generating new map.");
             GenerateMap();
         }
+    }
+
+    public void NewGameFresh()
+    {
+        if (mapSaveManager != null)
+        {
+            mapSaveManager.DeleteSavedMap();
+            if (debugLogs) Debug.Log("[MapGenerator] NewGameFresh: deleted saved map.");
+        }
+        fixedSeed = 0;
+        GenerateMap();
+        TrySaveJsonMap();
     }
 
     void OnValidate()
@@ -178,9 +209,9 @@ public class MapGenerator : MonoBehaviour
             lastUsedSeed = (int)System.DateTime.Now.Ticks;
             Random.InitState(lastUsedSeed);
         }
-        
-    Debug.Log($"Generating map. Seed: {lastUsedSeed}.");
-        
+        if (debugLogs)
+            Debug.Log($"[MapGenerator] Generating map (seed={lastUsedSeed}).");
+
         ClearOldNodes();
         ResetMapState();
         GenerateMapStructure();
@@ -194,30 +225,20 @@ public class MapGenerator : MonoBehaviour
             mapManager.CalculateMaxMapTime();
     }
 
-    public void SetupCameraBounds() 
-    {
-        if (cameraController != null)
-        {
-            cameraController.SetBoundsFromMap(this);
-        }
-    }
-
     public void ResetMapState()
     {
         bossAssigned = false;
         mapLevels.Clear();
-        
         startNodeTransform = null;
         bossNodeTransform = null;
         nodeTransformCache.Clear();
-
         foreach (var type in currentCounts.Keys.ToList())
         {
             currentCounts[type] = 0;
         }
     }
 
-    void GenerateMapStructure()
+    public void GenerateMapStructure()
     {
         for (int level = 0; level < numberOfLevels; level++)
         {
@@ -246,9 +267,7 @@ public class MapGenerator : MonoBehaviour
                     if (level < settings.minLevel)
                         continue;
                     if (currentCounts[type] < settings.maxCount)
-                    {
                         availableTypes.Add(type);
-                    }
                 }
 
                 if (i > 0)
@@ -266,23 +285,17 @@ public class MapGenerator : MonoBehaviour
                         if (level < settings.minLevel)
                             continue;
                         if (currentCounts[type] < settings.maxCount)
-                        {
                             availableTypes.Add(type);
-                        }
                     }
                 }
 
                 if (availableTypes.Count == 0 && level != numberOfLevels - 1)
-                {
                     break;
-                }
 
                 float baseX = i * horizontalSpacing;
                 float baseY = -level * verticalSpacing;
-
                 baseX += Random.Range(-horizontalRandomRange, horizontalRandomRange);
                 baseY += Random.Range(-verticalRandomRange, verticalRandomRange);
-
                 float totalWidth = (nodesCount - 1) * horizontalSpacing;
                 float offsetX = -totalWidth / 2f;
 
@@ -302,6 +315,44 @@ public class MapGenerator : MonoBehaviour
             }
             mapLevels.Add(currentLevelNodes);
         }
+    }
+
+    public void SetupCameraBounds()
+    {
+        if (cameraController != null)
+            cameraController.SetBoundsFromMap(this);
+    }
+
+    [ContextMenu("Regenerate (same seed)")]
+    public void RegenerateSameSeed()
+    {
+        if (lastUsedSeed == 0 && fixedSeed == 0)
+        {
+            if (debugLogs) Debug.LogWarning("[MapGenerator] No previous seed; generating new map instead.");
+            GenerateMap();
+            return;
+        }
+        int seed = fixedSeed != 0 ? fixedSeed : lastUsedSeed;
+        Random.InitState(seed);
+        if (debugLogs) Debug.Log($"[MapGenerator] Regenerating with same seed {seed}");
+        ClearOldNodes();
+        ResetMapState();
+        GenerateMapStructure();
+        AdjustBossNodePosition();
+        ConnectNodes();
+        InstantiateMapVisuals();
+        SpawnPlayerMarker();
+        DrawConnections();
+        SetupCameraBounds();
+        if (mapManager != null) mapManager.CalculateMaxMapTime();
+    }
+
+    [ContextMenu("Regenerate (new seed)")]
+    public void RegenerateNewSeed()
+    {
+        fixedSeed = 0;
+        if (debugLogs) Debug.Log("[MapGenerator] Regenerating with new random seed");
+        GenerateMap();
     }
 
     public void InstantiateMapVisuals()
@@ -360,6 +411,11 @@ public class MapGenerator : MonoBehaviour
                     {
                         nodeHandler.nodeType = node.Type;
                         nodeHandler.mapNode = node;
+                        if (string.IsNullOrEmpty(node.UniqueId))
+                        {
+                            string guid = System.Guid.NewGuid().ToString("N");
+                            node.UniqueId = guid;
+                        }
                         nodeHandler.enemyVariant = node.EnemyVariant;
                         nodeHandler.eliteVariant = node.EliteVariant;
                         nodeHandler.InjectDependencies(this, mapManager, cameraController, nodeInfoUI, mapSaveManager);
@@ -388,11 +444,9 @@ public class MapGenerator : MonoBehaviour
         }
         if (elites.Count < 2) return;
 
-        // Force the first two elites to be different
         elites[0].EliteVariant = MapSystem.EliteVariant.Minotaur;
         elites[1].EliteVariant = MapSystem.EliteVariant.Arachne;
 
-        // If there are more, alternate for variety
         for (int i = 2; i < elites.Count; i++)
         {
             elites[i].EliteVariant = (i % 2 == 0) ? MapSystem.EliteVariant.Minotaur : MapSystem.EliteVariant.Arachne;
@@ -595,11 +649,6 @@ public class MapGenerator : MonoBehaviour
             }
         }
 
-        if (mapLevels.Count >= 2)
-        {
-            EnsureBossSingleConnection();
-        }
-
         EnsureAllNodesConnected();
     }
 
@@ -654,33 +703,6 @@ public class MapGenerator : MonoBehaviour
         edges.Add((from.Position, to.Position));
     }
 
-    void EnsureBossSingleConnection()
-    {
-        int bossLevel = numberOfLevels - 1;
-        if (bossLevel >= mapLevels.Count) return;
-
-        List<MapNode> bossNodes = mapLevels[bossLevel];
-        List<MapNode> preBossLevel = mapLevels[bossLevel - 1];
-
-        foreach (var bossNode in bossNodes)
-        {
-            if (bossNode.Type == NodeType.Boss)
-            {
-                foreach (var preBossNode in preBossLevel)
-                {
-                    preBossNode.ConnectedNodes.RemoveAll(n => n == bossNode);
-                }
-                bossNode.ConnectedNodes.Clear();
-
-                var closestPreBossNode = preBossLevel
-                    .OrderBy(n => Vector2.Distance(n.Position, bossNode.Position))
-                    .First();
-
-                closestPreBossNode.ConnectedNodes.Add(bossNode);
-                bossNode.ConnectedNodes.Add(closestPreBossNode);
-            }
-        }
-    }
 
     void AdjustBossNodePosition()
     {
@@ -852,6 +874,134 @@ public class MapGenerator : MonoBehaviour
             }
         }
     }
+
+    public JsonMapSave BuildJsonSave()
+    {
+        var save = new JsonMapSave();
+        save.version = "1.0";
+        save.seed = lastUsedSeed;
+        if (MapManager.Instance != null)
+        {
+            save.maxMapTime = MapManager.Instance.maxMapTime;
+            save.currentMapTime = MapManager.Instance.currentMapTime;
+        }
+
+        for (int level = 0; level < mapLevels.Count; level++)
+        {
+            foreach (var node in mapLevels[level])
+            {
+                if (node == null) continue;
+                if (string.IsNullOrEmpty(node.UniqueId))
+                    node.UniqueId = System.Guid.NewGuid().ToString("N");
+                var rec = new JsonNodeRecord
+                {
+                    guid = node.UniqueId,
+                    type = node.Type,
+                    position = node.Position,
+                    levelIndex = level,
+                    cleared = NodeClickHandler.IsCombatNode(node.Type) && NodeClickHandler.IsGuidCleared(node.UniqueId)
+                };
+                save.nodes.Add(rec);
+                if (node.ConnectedNodes != null)
+                {
+                    foreach (var other in node.ConnectedNodes)
+                    {
+                        if (other == null) continue;
+                        if (string.IsNullOrEmpty(other.UniqueId))
+                            other.UniqueId = System.Guid.NewGuid().ToString("N");
+                        if (string.Compare(rec.guid, other.UniqueId, System.StringComparison.Ordinal) < 0)
+                        {
+                            save.edges.Add(new JsonEdgeRecord { fromGuid = rec.guid, toGuid = other.UniqueId });
+                        }
+                    }
+                }
+            }
+        }
+        return save;
+    }
+
+    public void TrySaveJsonMap()
+    {
+        try
+        {
+            var data = BuildJsonSave();
+            JsonSaveManager.Save(data);
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogError($"[MapGenerator] TrySaveJsonMap failed: {ex}");
+        }
+    }
+
+    public void TryLoadLatestJsonAndApply()
+    {
+        string path = JsonSaveManager.GetLatestSavePath();
+        if (string.IsNullOrEmpty(path))
+        {
+            Debug.Log("[MapGenerator] No JSON save found.");
+            return;
+        }
+        var data = JsonSaveManager.Load(path);
+        if (data == null)
+        {
+            Debug.LogWarning("[MapGenerator] Failed to load JSON save.");
+            return;
+        }
+        ApplyJsonSave(data);
+    }
+
+    public void ApplyJsonSave(JsonMapSave data)
+    {
+        if (data == null)
+        {
+            Debug.LogWarning("[MapGenerator] ApplyJsonSave: data null");
+            return;
+        }
+        var levelsDict = new Dictionary<int, List<MapNode>>();
+        foreach (var rec in data.nodes)
+        {
+            if (!levelsDict.TryGetValue(rec.levelIndex, out var list))
+            {
+                list = new List<MapNode>();
+                levelsDict[rec.levelIndex] = list;
+            }
+            var mn = new MapNode
+            {
+                Type = rec.type,
+                Position = rec.position,
+                UniqueId = rec.guid
+            };
+            list.Add(mn);
+        }
+        var ordered = levelsDict.Keys.OrderBy(k => k).ToList();
+        mapLevels.Clear();
+        foreach (var k in ordered)
+            mapLevels.Add(levelsDict[k]);
+
+        var guidToNode = mapLevels.SelectMany(l => l).ToDictionary(n => n.UniqueId, n => n);
+        foreach (var e in data.edges)
+        {
+            if (guidToNode.TryGetValue(e.fromGuid, out var a) && guidToNode.TryGetValue(e.toGuid, out var b))
+            {
+                if (a.ConnectedNodes == null) a.ConnectedNodes = new List<MapNode>();
+                if (b.ConnectedNodes == null) b.ConnectedNodes = new List<MapNode>();
+                if (!a.ConnectedNodes.Contains(b)) a.ConnectedNodes.Add(b);
+                if (!b.ConnectedNodes.Contains(a)) b.ConnectedNodes.Add(a);
+            }
+        }
+
+        if (MapManager.Instance != null)
+        {
+            MapManager.Instance.maxMapTime = data.maxMapTime;
+            MapManager.Instance.currentMapTime = data.currentMapTime;
+        }
+
+        ClearOldNodes();
+        InstantiateMapVisuals();
+        SpawnPlayerMarker();
+        DrawConnections();
+        SetupCameraBounds();
+    }
     
     public Transform GetBossNodeTransform()
     {
@@ -878,4 +1028,16 @@ public class MapGenerator : MonoBehaviour
         Debug.LogWarning("[MapGenerator] Boss node not found!");
         return null;
     }
+
+    private MapNode GetBossMapNode()
+    {
+        if (mapLevels == null || mapLevels.Count == 0) return null;
+        var last = mapLevels[mapLevels.Count - 1];
+        for (int i = 0; i < last.Count; i++)
+        {
+            if (last[i].Type == NodeType.Boss) return last[i];
+        }
+        return null;
+    }
+
 }

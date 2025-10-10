@@ -48,7 +48,7 @@ public class GamblingSceneManager : PersistenSingleton<GamblingSceneManager>
             GamblingManager.Instance.GetHermesJoke(joke);
             return;
         }
-        
+
         canvas.SetActive(true);
         text.text = reward.reward.rewardName;
     }
