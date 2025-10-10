@@ -9,9 +9,11 @@ public class RewardManager : PersistenSingleton<RewardManager>
     [SerializeField] private List<StructForDictionary<NodeType, int>> _gold;
     private Dictionary<NodeType, int> _goldRewardDetails = new Dictionary<NodeType, int>();
     private int _maxGoldIndex = 16;
+    public bool IsBoss { get; private set; } = false;
 
     private void Start()
     {
+        IsBoss = CombatManager.Instance.CurrentNodeType == NodeType.Boss;
         foreach (var item in _gold)
         {
             _goldRewardDetails.Add(item.key, item.value);  
@@ -21,6 +23,7 @@ public class RewardManager : PersistenSingleton<RewardManager>
     public void HandleReward()
     {
         CountGold();
+        if (IsBoss) PlayerManager.Instance.MaxHP += 20;
         _rewardPanelLogic.ShowRewards(); 
     }
 

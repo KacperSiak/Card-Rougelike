@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class RewardPanelLogic : MonoBehaviour
 {
     [SerializeField] private GameObject _pressAnyButton;
+    [SerializeField] private GameObject _bossPanel;
     [SerializeField] private Transform _parent;
     [SerializeField] private GameObject _prefab;
     [SerializeField] private float _delay = 1f;
@@ -28,6 +29,7 @@ public class RewardPanelLogic : MonoBehaviour
     private IEnumerator DelayedInfo()
     {
         yield return new WaitForSeconds(1f);
+        if(RewardManager.Instance.IsBoss) _bossPanel.SetActive(true);
         _pressAnyButton.SetActive(true);
         _isShown = true;
     }
