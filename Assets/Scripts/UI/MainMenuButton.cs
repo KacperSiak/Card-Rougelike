@@ -202,6 +202,7 @@ public class MainMenuButton : MonoBehaviour, IPointerClickHandler
 
     void UnloadOwnScene()
     {
+        if (this == null || gameObject == null) return;
         var scene = gameObject.scene;
         if (scene.IsValid() && scene.isLoaded)
         {
