@@ -8,11 +8,15 @@ public class JsonMapSave
 {
     public string version = "1.0";
     public string savedAt;
+    public string slotName;
 
-    // Optional global info
     public int seed;
     public float maxMapTime;
     public float currentMapTime;
+    
+    public float playTimeSeconds;
+    public int totalNodesCleared;
+    public int totalCombatsWon;
 
     public List<JsonNodeRecord> nodes = new List<JsonNodeRecord>();
     public List<JsonEdgeRecord> edges = new List<JsonEdgeRecord>();
@@ -23,7 +27,7 @@ public class JsonNodeRecord
 {
     public string guid;
     public NodeType type;
-    public Vector2 position; // x,z
+    public Vector2 position;
     public int levelIndex;
     public bool cleared;
 }
