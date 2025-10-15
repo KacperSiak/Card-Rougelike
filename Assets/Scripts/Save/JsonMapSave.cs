@@ -17,6 +17,8 @@ public class JsonMapSave
     public float playTimeSeconds;
     public int totalNodesCleared;
     public int totalCombatsWon;
+    
+    public string currentPlayerNodeGuid;
 
     public List<JsonNodeRecord> nodes = new List<JsonNodeRecord>();
     public List<JsonEdgeRecord> edges = new List<JsonEdgeRecord>();
