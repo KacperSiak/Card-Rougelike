@@ -129,13 +129,23 @@ public class NodeClickHandler : MonoBehaviour
 
     bool CanMoveToThisNode()
     {
-    if (PlayerMovementState.IsMoving)
+        if (PlayerMovementState.IsMoving)
         { LogMoveBlock("Already moving"); return false; }
         
         if (currentPlayerNode == null) 
         { LogMoveInfo("No current player node (first placement)"); return true; }
         
-    if (mapGenerator == null || mapGenerator.mapLevels == null) { LogMoveBlock("MapGenerator/mapLevels null"); return false; }
+        if (mapGenerator == null)
+        {
+            LogMoveBlock("MapGenerator is null");
+            return false;
+        }
+        
+        if (mapGenerator.mapLevels == null || mapGenerator.mapLevels.Count == 0)
+        {
+            LogMoveBlock("MapGenerator.mapLevels is null or empty");
+            return false;
+        }
         
         if (mapManager != null && !mapManager.HasTimeLeft())
         {
@@ -143,55 +153,57 @@ public class NodeClickHandler : MonoBehaviour
             return false;
         }
         
-    var currentHandler = currentPlayerNode.GetComponent<NodeClickHandler>();
-    MapNode sourceMapNode = null;
-    if (currentHandler != null && currentHandler.mapNode != null)
-    {
-        sourceMapNode = currentHandler.mapNode;
-    }
-    else
-    {
-        if (currentPlayerMapNode != null)
+        var currentHandler = currentPlayerNode.GetComponent<NodeClickHandler>();
+        MapNode sourceMapNode = null;
+        if (currentHandler != null && currentHandler.mapNode != null)
         {
-            sourceMapNode = currentPlayerMapNode;
-            if (enableDebugLogs) Debug.Log("[NodeClickHandler] Using cached currentPlayerMapNode fallback");
+            sourceMapNode = currentHandler.mapNode;
         }
-        else if (mapGenerator != null && mapGenerator.mapLevels != null)
+        else
         {
-            Vector2 currPos2D = new Vector2(currentPlayerNode.position.x, currentPlayerNode.position.z);
-            const float EPS = 0.05f;
-            foreach (var level in mapGenerator.mapLevels)
+            if (currentPlayerMapNode != null)
             {
-                foreach (var n in level)
+                sourceMapNode = currentPlayerMapNode;
+                if (enableDebugLogs) Debug.Log("[NodeClickHandler] Using cached currentPlayerMapNode fallback");
+            }
+            else
+            {
+                Vector2 currPos2D = new Vector2(currentPlayerNode.position.x, currentPlayerNode.position.z);
+                const float EPS = 0.05f;
+                foreach (var level in mapGenerator.mapLevels)
                 {
-                    if (Vector2.Distance(n.Position, currPos2D) <= EPS)
+                    if (level == null) continue;
+                    foreach (var n in level)
                     {
-                        sourceMapNode = n;
-                        currentPlayerMapNode = n;
-                        if (enableDebugLogs) Debug.Log("[NodeClickHandler] Resolved current player MapNode by position search");
-                        break;
+                        if (n == null) continue;
+                        if (Vector2.Distance(n.Position, currPos2D) <= EPS)
+                        {
+                            sourceMapNode = n;
+                            currentPlayerMapNode = n;
+                            if (enableDebugLogs) Debug.Log("[NodeClickHandler] Resolved current player MapNode by position search");
+                            break;
+                        }
                     }
+                    if (sourceMapNode != null) break;
                 }
-                if (sourceMapNode != null) break;
             }
         }
-    }
-    if (sourceMapNode == null) { LogMoveBlock("Cannot resolve current MapNode"); return false; }
-    if (mapNode == null) { LogMoveBlock("Target mapNode null"); return false; }
+        if (sourceMapNode == null) { LogMoveBlock("Cannot resolve current MapNode"); return false; }
+        if (mapNode == null) { LogMoveBlock("Target mapNode null"); return false; }
 
-    bool reachable = mapManager != null ? mapManager.AreNodesAdjacent(sourceMapNode, mapNode) : (sourceMapNode.ConnectedNodes.Contains(mapNode));
-    if (enableDebugLogs)
-    {
-        int currentConn = sourceMapNode.ConnectedNodes != null ? sourceMapNode.ConnectedNodes.Count : -1;
-        Debug.Log($"[NodeClickHandler] Adjacency check: from '{currentPlayerNode.name}' -> '{name}' ({nodeType}) | currentConnections={currentConn} | reachable={reachable}");
-        if (!reachable)
+        bool reachable = mapManager != null ? mapManager.AreNodesAdjacent(sourceMapNode, mapNode) : (sourceMapNode.ConnectedNodes.Contains(mapNode));
+        if (enableDebugLogs)
         {
-            string list = string.Join(", ", sourceMapNode.ConnectedNodes.ConvertAll(n => n.Type + "@" + n.Position));
-            Debug.Log($"[NodeClickHandler] ConnectedNodes of current: {list}");
+            int currentConn = sourceMapNode.ConnectedNodes != null ? sourceMapNode.ConnectedNodes.Count : -1;
+            Debug.Log($"[NodeClickHandler] Adjacency check: from '{currentPlayerNode.name}' -> '{name}' ({nodeType}) | currentConnections={currentConn} | reachable={reachable}");
+            if (!reachable)
+            {
+                string list = string.Join(", ", sourceMapNode.ConnectedNodes.ConvertAll(n => n.Type + "@" + n.Position));
+                Debug.Log($"[NodeClickHandler] ConnectedNodes of current: {list}");
+            }
         }
-    }
-    if (!reachable) LogMoveBlock("Target not in ConnectedNodes list of current node"); else LogMoveInfo("Reachable OK");
-    return reachable;
+        if (!reachable) LogMoveBlock("Target not in ConnectedNodes list of current node"); else LogMoveInfo("Reachable OK");
+        return reachable;
     }
 
     void LogMoveBlock(string reason)
