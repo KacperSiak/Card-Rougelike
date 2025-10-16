@@ -56,6 +56,9 @@ public class DialogueManager : PersistenSingleton<DialogueManager>
     {
         if (Input.GetKeyDown(KeyCode.V))
             EnterDialogueMode(testText);
+
+        if (Input.GetKeyDown(KeyCode.C))
+            EnterDefeatDialogueMode("Minotaur");
     }
 
     public void InteractionWithDialogueBox()

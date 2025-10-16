@@ -107,6 +107,12 @@ public class MapGenerator : MonoBehaviour
     private Transform startNodeTransform;
     private Transform bossNodeTransform;
     private Dictionary<Vector3, Transform> nodeTransformCache = new Dictionary<Vector3, Transform>();
+    
+    private List<NodeType> _availableTypesBuffer = new List<NodeType>();
+    private List<int> _shuffleBuffer = new List<int>();
+    private HashSet<(MapNode, MapNode)> _edgeSet = new HashSet<(MapNode, MapNode)>();
+    private Dictionary<(Vector2, Vector2), float> _distanceCache = new Dictionary<(Vector2, Vector2), float>();
+    private List<GameObject> _instantiatedNodes = new List<GameObject>();
 
     [Header("Debug")]
     [Tooltip("If true, extra debug logs will be printed during generation.")]
@@ -232,6 +238,10 @@ public class MapGenerator : MonoBehaviour
         startNodeTransform = null;
         bossNodeTransform = null;
         nodeTransformCache.Clear();
+        _edgeSet.Clear();
+        _distanceCache.Clear();
+        _availableTypesBuffer.Clear();
+        _shuffleBuffer.Clear();
         foreach (var type in currentCounts.Keys.ToList())
         {
             currentCounts[type] = 0;
@@ -259,7 +269,7 @@ public class MapGenerator : MonoBehaviour
 
             for (int i = 0; i < nodesCount; i++)
             {
-                var availableTypes = new List<NodeType>();
+                _availableTypesBuffer.Clear();
                 foreach (var kvp in settingsLookup)
                 {
                     NodeType type = kvp.Key;
@@ -267,16 +277,16 @@ public class MapGenerator : MonoBehaviour
                     if (level < settings.minLevel)
                         continue;
                     if (currentCounts[type] < settings.maxCount)
-                        availableTypes.Add(type);
+                        _availableTypesBuffer.Add(type);
                 }
 
-                if (i > 0)
+                if (i > 0 && currentLevelNodes.Count > 0)
                 {
                     NodeType prevType = currentLevelNodes[i - 1].Type;
-                    availableTypes.Remove(prevType);
+                    _availableTypesBuffer.Remove(prevType);
                 }
 
-                if (availableTypes.Count == 0)
+                if (_availableTypesBuffer.Count == 0)
                 {
                     foreach (var kvp in settingsLookup)
                     {
@@ -285,11 +295,11 @@ public class MapGenerator : MonoBehaviour
                         if (level < settings.minLevel)
                             continue;
                         if (currentCounts[type] < settings.maxCount)
-                            availableTypes.Add(type);
+                            _availableTypesBuffer.Add(type);
                     }
                 }
 
-                if (availableTypes.Count == 0 && level != numberOfLevels - 1)
+                if (_availableTypesBuffer.Count == 0 && level != numberOfLevels - 1)
                     break;
 
                 float baseX = i * horizontalSpacing;
@@ -299,7 +309,7 @@ public class MapGenerator : MonoBehaviour
                 float totalWidth = (nodesCount - 1) * horizontalSpacing;
                 float offsetX = -totalWidth / 2f;
 
-                var chosenType = GetRandomNodeType(level, availableTypes);
+                var chosenType = GetRandomNodeType(level, _availableTypesBuffer);
                 MapNode node = new MapNode
                 {
                     Type = chosenType,
@@ -398,6 +408,8 @@ public class MapGenerator : MonoBehaviour
                     Vector3 pos3D = new Vector3(node.Position.x, nodeYOffset, node.Position.y);
                     Quaternion rotation = Quaternion.Euler(0, yRotation, 0);
                     GameObject instantiatedNode = Instantiate(prefab, pos3D, rotation, transform);
+                    
+                    _instantiatedNodes.Add(instantiatedNode);
 
                     nodeTransformCache[pos3D] = instantiatedNode.transform;
 
@@ -455,11 +467,27 @@ public class MapGenerator : MonoBehaviour
 
     void SpawnPlayerMarker()
     {
-        if (playerMarkerPrefab == null || mapLevels.Count == 0) return;
+        if (playerMarkerPrefab == null)
+        {
+            Debug.LogWarning("MapGenerator: playerMarkerPrefab is null");
+            return;
+        }
+        
+        if (mapLevels == null || mapLevels.Count == 0)
+        {
+            Debug.LogWarning("MapGenerator: mapLevels is null or empty");
+            return;
+        }
 
         if (mapLevels[0].Count > 0)
         {
             MapNode startNode = mapLevels[0][0];
+            if (startNode == null)
+            {
+                Debug.LogWarning("MapGenerator: Start node is null");
+                return;
+            }
+            
             Vector3 playerPos = new Vector3(startNode.Position.x, PLAYER_MARKER_Y_OFFSET, startNode.Position.y);
             
             if (currentPlayerMarker == null)
@@ -473,11 +501,22 @@ public class MapGenerator : MonoBehaviour
             }
             
             NodeClickHandler.playerMarker = currentPlayerMarker;
-            NodeClickHandler.currentPlayerNode = startNodeTransform;
-            if (mapLevels[0].Count > 0)
+            
+            Transform startTransform = GetStartNodeTransform();
+            if (startTransform != null)
             {
-                NodeClickHandler.currentPlayerMapNode = mapLevels[0][0];
+                NodeClickHandler.currentPlayerNode = startTransform;
             }
+            else
+            {
+                Debug.LogWarning("MapGenerator: Could not find start node transform");
+            }
+            
+            NodeClickHandler.currentPlayerMapNode = startNode;
+        }
+        else
+        {
+            Debug.LogWarning("MapGenerator: First level has no nodes");
         }
     }
 
@@ -518,7 +557,14 @@ public class MapGenerator : MonoBehaviour
                 Vector3 pos3D = new Vector3(node.Position.x, yOff, node.Position.y);
                 if (!nodeTransformCache.TryGetValue(pos3D, out var tf) || tf == null) continue;
                 Vector2 node2D = new Vector2(pos3D.x, pos3D.z);
-                float d = Vector2.Distance(node2D, target);
+                
+                var cacheKey = GetDistanceCacheKey(node2D, target);
+                if (!_distanceCache.TryGetValue(cacheKey, out float d))
+                {
+                    d = Vector2.Distance(node2D, target);
+                    _distanceCache[cacheKey] = d;
+                }
+                
                 if (d < bestDist)
                 {
                     bestDist = d;
@@ -527,6 +573,11 @@ public class MapGenerator : MonoBehaviour
             }
         }
         return best;
+    }
+
+    private (Vector2, Vector2) GetDistanceCacheKey(Vector2 a, Vector2 b)
+    {
+        return (a.x < b.x || (a.x == b.x && a.y <= b.y)) ? (a, b) : (b, a);
     }
 
     NodeType GetRandomNodeType(int level, List<NodeType> availableTypes)
@@ -577,7 +628,14 @@ public class MapGenerator : MonoBehaviour
                 {
                     int i = currOrder[ii];
                     if (degCurr[i] >= maxConnectionsPerNode) continue;
-                    float d = Vector2.Distance(curr[i].Position, targetPos);
+                    
+                    var cacheKey = GetDistanceCacheKey(curr[i].Position, targetPos);
+                    if (!_distanceCache.TryGetValue(cacheKey, out float d))
+                    {
+                        d = Vector2.Distance(curr[i].Position, targetPos);
+                        _distanceCache[cacheKey] = d;
+                    }
+                    
                     if (maxConnectionDistance > 0 && d > maxConnectionDistance) continue;
                     if (d < bestDist)
                     {
@@ -592,7 +650,14 @@ public class MapGenerator : MonoBehaviour
                     {
                         int i = currOrder[ii];
                         if (degCurr[i] >= maxConnectionsPerNode) continue;
-                        float d = Vector2.Distance(curr[i].Position, targetPos);
+                        
+                        var cacheKey = GetDistanceCacheKey(curr[i].Position, targetPos);
+                        if (!_distanceCache.TryGetValue(cacheKey, out float d))
+                        {
+                            d = Vector2.Distance(curr[i].Position, targetPos);
+                            _distanceCache[cacheKey] = d;
+                        }
+                        
                         if (d < bestDist)
                         {
                             bestDist = d;
@@ -617,7 +682,14 @@ public class MapGenerator : MonoBehaviour
                     for (int nj = 0; nj < next.Count; nj++)
                     {
                         if (curr[i].ConnectedNodes.Contains(next[nj])) continue;
-                        float d = Vector2.Distance(curr[i].Position, next[nj].Position);
+                        
+                        var cacheKey = GetDistanceCacheKey(curr[i].Position, next[nj].Position);
+                        if (!_distanceCache.TryGetValue(cacheKey, out float d))
+                        {
+                            d = Vector2.Distance(curr[i].Position, next[nj].Position);
+                            _distanceCache[cacheKey] = d;
+                        }
+                        
                         if (maxConnectionDistance > 0 && d > maxConnectionDistance) continue;
                         if (WouldCross(curr[i].Position, next[nj].Position, edges)) continue;
                         if (d < bestDist2)
@@ -633,7 +705,14 @@ public class MapGenerator : MonoBehaviour
                         {
                             if (degNext[nj] >= Mathf.Max(1, maxConnectionsPerNode)) continue;
                             if (curr[i].ConnectedNodes.Contains(next[nj])) continue;
-                            float d = Vector2.Distance(curr[i].Position, next[nj].Position);
+                            
+                            var cacheKey = GetDistanceCacheKey(curr[i].Position, next[nj].Position);
+                            if (!_distanceCache.TryGetValue(cacheKey, out float d))
+                            {
+                                d = Vector2.Distance(curr[i].Position, next[nj].Position);
+                                _distanceCache[cacheKey] = d;
+                            }
+                            
                             if (maxConnectionDistance > 0 && d > maxConnectionDistance) continue;
                             if (d < bestDist2)
                             {
@@ -654,9 +733,23 @@ public class MapGenerator : MonoBehaviour
 
     bool WouldCross(Vector2 a, Vector2 b, List<(Vector2, Vector2)> edges)
     {
+        float minX_ab = Mathf.Min(a.x, b.x);
+        float maxX_ab = Mathf.Max(a.x, b.x);
+        float minY_ab = Mathf.Min(a.y, b.y);
+        float maxY_ab = Mathf.Max(a.y, b.y);
+        
         for (int k = 0; k < edges.Count; k++)
         {
             var (c, d) = edges[k];
+            
+            float minX_cd = Mathf.Min(c.x, d.x);
+            float maxX_cd = Mathf.Max(c.x, d.x);
+            float minY_cd = Mathf.Min(c.y, d.y);
+            float maxY_cd = Mathf.Max(c.y, d.y);
+            
+            if (maxX_ab < minX_cd || minX_ab > maxX_cd || maxY_ab < minY_cd || minY_ab > maxY_cd)
+                continue;
+            
             if (SegmentsCross(a, b, c, d)) return true;
         }
         return false;
@@ -853,8 +946,20 @@ public class MapGenerator : MonoBehaviour
 
     void ClearOldNodes()
     {
+        for (int i = _instantiatedNodes.Count - 1; i >= 0; i--)
+        {
+            var node = _instantiatedNodes[i];
+            if (node != null && node != currentPlayerMarker)
+            {
+                if (Application.isPlaying)
+                    Destroy(node);
+                else
+                    DestroyImmediate(node);
+            }
+        }
+        _instantiatedNodes.Clear();
+        
         var childrenToDestroy = new List<GameObject>();
-
         foreach (Transform child in transform)
         {
             if (child.gameObject != currentPlayerMarker)
@@ -862,7 +967,6 @@ public class MapGenerator : MonoBehaviour
                 childrenToDestroy.Add(child.gameObject);
             }
         }
-
         foreach (var child in childrenToDestroy)
         {
             if (child != null)
@@ -884,6 +988,19 @@ public class MapGenerator : MonoBehaviour
         {
             save.maxMapTime = MapManager.Instance.maxMapTime;
             save.currentMapTime = MapManager.Instance.currentMapTime;
+        }
+        
+        if (NodeClickHandler.currentPlayerNode != null)
+        {
+            var currentHandler = NodeClickHandler.currentPlayerNode.GetComponent<NodeClickHandler>();
+            if (currentHandler != null && currentHandler.mapNode != null && !string.IsNullOrEmpty(currentHandler.mapNode.UniqueId))
+            {
+                save.currentPlayerNodeGuid = currentHandler.mapNode.UniqueId;
+            }
+            else if (NodeClickHandler.currentPlayerMapNode != null && !string.IsNullOrEmpty(NodeClickHandler.currentPlayerMapNode.UniqueId))
+            {
+                save.currentPlayerNodeGuid = NodeClickHandler.currentPlayerMapNode.UniqueId;
+            }
         }
 
         for (int level = 0; level < mapLevels.Count; level++)
@@ -1001,6 +1118,67 @@ public class MapGenerator : MonoBehaviour
         SpawnPlayerMarker();
         DrawConnections();
         SetupCameraBounds();
+        
+        if (!string.IsNullOrEmpty(data.currentPlayerNodeGuid))
+        {
+            RestorePlayerPosition(data.currentPlayerNodeGuid);
+        }
+    }
+    
+    private void RestorePlayerPosition(string nodeGuid)
+    {
+        if (string.IsNullOrEmpty(nodeGuid))
+        {
+            Debug.LogWarning("[MapGenerator] RestorePlayerPosition: nodeGuid is null or empty");
+            return;
+        }
+        
+        MapNode targetMapNode = null;
+        for (int level = 0; level < mapLevels.Count; level++)
+        {
+            foreach (var node in mapLevels[level])
+            {
+                if (node != null && node.UniqueId == nodeGuid)
+                {
+                    targetMapNode = node;
+                    break;
+                }
+            }
+            if (targetMapNode != null) break;
+        }
+        
+        if (targetMapNode == null)
+        {
+            Debug.LogWarning($"[MapGenerator] Could not find node with GUID: {nodeGuid}");
+            return;
+        }
+        
+        float yOff = 0f;
+        if (targetMapNode.Type == NodeType.Boss)
+            yOff = bossYOffset;
+        else if (settingsLookup.ContainsKey(targetMapNode.Type))
+            yOff = settingsLookup[targetMapNode.Type].yOffset;
+        
+        Vector3 pos3D = new Vector3(targetMapNode.Position.x, yOff, targetMapNode.Position.y);
+        
+        if (nodeTransformCache.TryGetValue(pos3D, out Transform nodeTransform))
+        {
+            NodeClickHandler.currentPlayerNode = nodeTransform;
+            NodeClickHandler.currentPlayerMapNode = targetMapNode;
+            
+            if (currentPlayerMarker != null)
+            {
+                Vector3 playerPos = new Vector3(targetMapNode.Position.x, PLAYER_MARKER_Y_OFFSET, targetMapNode.Position.y);
+                currentPlayerMarker.transform.position = playerPos;
+            }
+            
+            if (debugLogs)
+                Debug.Log($"[MapGenerator] Restored player to node: {targetMapNode.Type} at {targetMapNode.Position}");
+        }
+        else
+        {
+            Debug.LogWarning($"[MapGenerator] Could not find transform for node at position: {pos3D}");
+        }
     }
     
     public Transform GetBossNodeTransform()

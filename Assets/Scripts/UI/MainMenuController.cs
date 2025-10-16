@@ -14,19 +14,6 @@ public class MainMenuController : MonoBehaviour
     [Tooltip("Assign MapSaveManager manually (no auto find). Can be left empty if you don't use saving yet.")]
     public MapSaveManager mapSaveManager;
 
-    [Header("UI Panels (Optional)")]
-    [Tooltip("Panel / root GameObject for options menu (can be toggled on/off). Optional.")]
-    public GameObject optionsPanel;
-
-    [Tooltip("Automatically hide options panel on start.")]
-    public bool hideOptionsOnStart = true;
-
-    void Start()
-    {
-        if (optionsPanel != null && hideOptionsOnStart)
-            optionsPanel.SetActive(false);
-    }
-
     public void OnNewGame()
     {
         if (string.IsNullOrEmpty(mapSceneName))
@@ -82,25 +69,19 @@ public class MainMenuController : MonoBehaviour
         }
     }
 
-    public void OnOptions()
-    {
-        if (optionsPanel == null) return;
-        optionsPanel.SetActive(true);
-    }
-
-    public void OnCloseOptions()
-    {
-        if (optionsPanel == null) return;
-        optionsPanel.SetActive(false);
-    }
-
     public bool HasSave()
     {
         return mapSaveManager != null && mapSaveManager.HasSavedMap();
     }
 
+    public void OnOptions()
+    {
+        Debug.Log("[MainMenuController] Options button pressed (no panel configured).");
+    }
+
     public void OnQuit()
     {
+        Debug.Log("[MainMenuController] Quitting application...");
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #else
