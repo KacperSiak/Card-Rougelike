@@ -775,6 +775,13 @@ MonoBehaviour:
       Persistent: 1
       DeactivateWhenInactive: 1
       UnloadWhenInactive: 0
+    - Reference:
+        asset: {fileID: 102900000, guid: 9ccfa8c517a61d543ace288cd51523cf, type: 3}
+        guid: 9ccfa8c517a61d543ace288cd51523cf
+      SceneType: 8
+      Persistent: 1
+      DeactivateWhenInactive: 1
+      UnloadWhenInactive: 0
   fadeHold: 0.2
   loadSingleSceneOnStart: VideoMainMenu
   loadGroupIfNoSingle: 1
