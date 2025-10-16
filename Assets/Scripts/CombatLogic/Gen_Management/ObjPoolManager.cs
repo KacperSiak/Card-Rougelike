@@ -1,39 +1,23 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 //here changes
-public class ObjPoolManager : MonoBehaviour
+public class ObjPoolManager : PersistenSingleton<ObjPoolManager>
 {
-    public static ObjPoolManager Instance { get; private set; }
-
     [Header("Prefabs")]
     [SerializeField] private GameObject _prefabPlayer;
     [SerializeField] private GameObject _prefabEnemy;
 
     [Header("AnimationPositions")]
     [SerializeField] private Transform _startPlayer;
-    [SerializeField] private Transform _endPlayer;
     [SerializeField] private Transform _startEnemy;
-    [SerializeField] private Transform _endEnemy;
 
-    [SerializeField] float _duration = 0.2f;
-
-    private List<GameObject> _enemyPool = new();
-    private List<GameObject> _playerPool = new();
+    public List<GameObject> _enemyPool { get; private set; } = new();
+    public List<GameObject> _playerPool { get; private set; } = new();
     private List<GameObject> _usedCards = new();
 
     public int PlayerPoolSize { get; private set; } = 0;
     public int EnemyPoolSize { get; private set; } = 0;
-    public bool IsDeckReady { get; private set; } = false;
-
-
-    private void Awake()
-    {
-        if (Instance == null) Instance = this;
-
-        else Destroy(gameObject);
-    }
 
     private void Start()
     {
@@ -55,7 +39,7 @@ public class ObjPoolManager : MonoBehaviour
             CreateCard(_prefabEnemy, _startEnemy, _enemyPool);
         }
 
-        StartCoroutine(PlayDeckAnimation());
+        DeckAnimation.Instance.StartDeckAnimation();
     }
 
     private void CreateCard(GameObject prefab, Transform start, List<GameObject> pool)
@@ -64,52 +48,11 @@ public class ObjPoolManager : MonoBehaviour
         obj.SetActive(false);
         obj.transform.SetPositionAndRotation(start.position, Quaternion.identity);
         pool.Add(obj);
-        obj.transform.localScale *= 1.7f;
-    }
-
-    private IEnumerator PlayDeckAnimation()
-    {
-        Vector3 endPosPlayer = _endPlayer.transform.position;
-        Vector3 endPosEnemy = _endEnemy.transform.position;
-        GameObject obj;
-
-        //think for better later
-        for (int i = 0; i < PlayerPoolSize; i++)
-        {
-            obj = _playerPool[i];
-            obj.transform.GetPositionAndRotation(out Vector3 startPosP, out Quaternion startRotP);
-            obj.SetActive(true);
-            float elapsed = 0f;
-
-            while (elapsed < _duration)
-            {
-                elapsed += Time.deltaTime;
-                float t = Mathf.SmoothStep(0f, 1f, elapsed / _duration);
-                obj.transform.SetPositionAndRotation(Vector3.Lerp(startPosP, endPosPlayer, t), Quaternion.Slerp(startRotP, _endPlayer.transform.rotation, t));
-                yield return null;
-            }
-
-            endPosPlayer += new Vector3(0, 0.001f, 0);
-
-            if (i < EnemyPoolSize)
-            {
-                obj = _enemyPool[i];
-                obj.transform.GetPositionAndRotation(out Vector3 startPosE, out Quaternion startRotE);
-                obj.SetActive(true);
-                elapsed = 0f;
-
-                while (elapsed < _duration)
-                {
-                    elapsed += Time.deltaTime;
-                    float t = Mathf.SmoothStep(0f, 1f, elapsed / _duration);
-                    obj.transform.SetPositionAndRotation(Vector3.Lerp(startPosE, endPosEnemy, t), Quaternion.Slerp(startRotE, _endEnemy.transform.rotation, t));
-                    yield return null;
-                }
-                endPosEnemy += new Vector3(0, 0.001f, 0);
-            }
-        }
-
-        IsDeckReady = true;
+        if(prefab == _prefabPlayer) 
+            obj.transform.localScale *= 1.7f;
+        else
+            obj.transform.localScale *= 1.3f;
+        obj.transform.SetParent(transform, true);
     }
 
     public GameObject GetCardFromPool(bool isSenderPlayer)
@@ -117,14 +60,15 @@ public class ObjPoolManager : MonoBehaviour
         if (isSenderPlayer)
         {
             GameObject card = _playerPool[^1];
-            card.transform.localScale /= 1.7f; //temp
             _playerPool.Remove(card);
+            card.transform.SetParent(null, true);
             return card;
         }
         else
         {
             GameObject card = _enemyPool[^1];
             _enemyPool.Remove(card);
+            card.transform.SetParent(null, true);
             return card;
         }
     }
@@ -133,6 +77,7 @@ public class ObjPoolManager : MonoBehaviour
     { 
         _usedCards.Add(card);
         card.SetActive(false);
+        card.transform.SetParent(transform, true);
     }
     
 }

@@ -1,20 +1,18 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 //takes cards too early from the deck
 public class EnemyCardSpawner : MonoBehaviour
 {
     [SerializeField] private  EnemyAttackManager _enemyAttackManager;
-    [SerializeField] private EnemyCardAnimation _enemyCardAnimation;
+    [SerializeField] private List<EnemyCardAnimation> _enemyCardAnimations;
     [SerializeField] private ValidateClean _clean;
     [SerializeField] private ValidateDirty _dirty;
     [SerializeField] private ValidateSingle _single;
     private readonly int _cardsInCombo = 3;
     private readonly int _cardsBuffer = 2;
 
-    public void SpawnCombo(Transform indexObject, int indexCardHolder, Dictionary<int, List<CardsSOTest>> cardsBySuit)
+    public void SpawnCombo(Transform indexObject, int indexCardHolder, Dictionary<int, List<CardsSO>> cardsBySuit)
     {
         if (EnemyCardManager.Instance.CardsInGameCount >= RoundManager.Instance.CurrentCombatDetails.value)
         {
@@ -58,10 +56,10 @@ public class EnemyCardSpawner : MonoBehaviour
                 }
 
                 GameObject cardObject = ObjPoolManager.Instance.GetCardFromPool(isSenderPlayer: false);
-                CardsSOTest card = cardsBySuit[randomCleanSuit][randomCleanCard];
+                CardsSO card = cardsBySuit[randomCleanSuit][randomCleanCard];
                 cardsBySuit[randomCleanSuit].RemoveAt(randomCleanCard);
 
-                CardSetupManager.Instance.SetupCardVisual(cardObject.GetComponent<MeshRenderer>(), card.column, card.row);
+                MaterialSetupManager.Instance.SetupVisual(cardObject.GetComponent<MeshRenderer>(), card.column, card.row);
                 cardObject.GetComponent<EnemyCardLogic>().SetCardProperties(card);
                 power += card.power;
 
@@ -73,7 +71,7 @@ public class EnemyCardSpawner : MonoBehaviour
             EnemyCardManager.Instance.SetupCardHolder(key, validator: _clean);
             EnemyCardManager.Instance.SetupPower(key, power);
             _enemyAttackManager.SetRoundAttack(key);
-            _enemyCardAnimation.PlaceCards(indexObject, _cardsInCombo, key);
+            _enemyCardAnimations[key].PlaceCards(indexObject, _cardsInCombo, key);
             return;
         }
 
@@ -110,7 +108,7 @@ public class EnemyCardSpawner : MonoBehaviour
         {
             GameObject cardObject = ObjPoolManager.Instance.GetCardFromPool(isSenderPlayer: false);
 
-            CardsSOTest card = cardsBySuit[randomDirtySuit][index[i]];
+            CardsSO card = cardsBySuit[randomDirtySuit][index[i]];
              cardsBySuit[randomDirtySuit].Remove(card);
 
             if (cardsBySuit[randomDirtySuit].Count == 0)
@@ -121,7 +119,7 @@ public class EnemyCardSpawner : MonoBehaviour
 
             randomDirtySuit++;
 
-            CardSetupManager.Instance.SetupCardVisual(cardObject.GetComponent<MeshRenderer>(), card.column, card.row);
+            MaterialSetupManager.Instance.SetupVisual(cardObject.GetComponent<MeshRenderer>(), card.column, card.row);
             cardObject.GetComponent<EnemyCardLogic>().SetCardProperties(card);
             power += card.power;
 
@@ -131,22 +129,22 @@ public class EnemyCardSpawner : MonoBehaviour
         EnemyCardManager.Instance.SetupCardHolder(key, validator: _dirty);
         EnemyCardManager.Instance.SetupPower(key, power);
         _enemyAttackManager.SetRoundAttack(key);
-        _enemyCardAnimation.PlaceCards(indexObject, _cardsInCombo, key);
+        _enemyCardAnimations[key].PlaceCards(indexObject, _cardsInCombo, key);
     }
 
-    public void SpawnSingle(Transform cardObjectIndex, int indexCardHolder, Dictionary<int, List<CardsSOTest>> cardsBySuit)
+    public void SpawnSingle(Transform cardObjectIndex, int indexCardHolder, Dictionary<int, List<CardsSO>> cardsBySuit)
     { 
         int randomSuit = Random.Range(0, cardsBySuit.Count);
         int randomCard = Random.Range(0, cardsBySuit[randomSuit].Count); 
         int power = 0;
 
         GameObject cardObject = ObjPoolManager.Instance.GetCardFromPool(isSenderPlayer: false);
-        CardsSOTest card = cardsBySuit[randomSuit][randomCard]; 
+        CardsSO card = cardsBySuit[randomSuit][randomCard]; 
         cardsBySuit[randomSuit].RemoveAt(randomCard);
 
         CheckCardsInDeckAmount(cardsBySuit, randomSuit);
 
-        CardSetupManager.Instance.SetupCardVisual(cardObject.GetComponent<MeshRenderer>(), card.column, card.row);
+        MaterialSetupManager.Instance.SetupVisual(cardObject.GetComponent<MeshRenderer>(), card.column, card.row);
         cardObject.GetComponent<EnemyCardLogic>().SetCardProperties(card);
         power += card.power;
             
@@ -159,10 +157,10 @@ public class EnemyCardSpawner : MonoBehaviour
         EnemyCardManager.Instance.SetupPower(keySingle, power);
         _enemyAttackManager.SetRoundAttack(keySingle);
 
-        _enemyCardAnimation.PlaceCards(cardObjectIndex, amount: 1, keySingle);
+        _enemyCardAnimations[keySingle].PlaceCards(cardObjectIndex, amount: 1, keySingle);
     }
 
-    private void CheckCardsInDeckAmount(Dictionary<int, List<CardsSOTest>> deck, int key)
+    private void CheckCardsInDeckAmount(Dictionary<int, List<CardsSO>> deck, int key)
     {
         if (deck[key].Count == 0)
         {

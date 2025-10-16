@@ -27,13 +27,21 @@ public class RelicData : ShopItem
 
 public class RelicContext
 {
-    public PlayerOverlay player;
+    public PlayerManager player;
     public MapManager mapManager;
+    public RoundManager roundManager;
+    public GamblingManager gambler;
+    public DamageManager damageManager;
 
+    public bool CleanSequenceBeatEverythingEnable = false;
+    public bool Gaps = false;
     public RelicContext()
     {
-        player = PlayerOverlay.Instance;
-        mapManager = MapManager.instance;
+        player = PlayerManager.Instance;
+        mapManager = MapManager.Instance;
+        roundManager = RoundManager.Instance;
+        gambler = GamblingManager.Instance;
+        damageManager = DamageManager.Instance;
     }
 }
 

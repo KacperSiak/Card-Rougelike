@@ -2,10 +2,8 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerCardManager : MonoBehaviour
+public class PlayerCardManager : PersistenSingleton<PlayerCardManager>
 {
-    public static PlayerCardManager Instance { get; private set; }
-
     [SerializeField] private PlayerCardSpawner _spawner;
     [SerializeField] private BoxCollider _mainHand;
     [SerializeField] private BoxCollider _subMainHand;
@@ -15,22 +13,19 @@ public class PlayerCardManager : MonoBehaviour
     public List<GameObject> CardsInHand { get; private set; } = new();
     public List<GameObject> SelectedCards { get; private set; } = new();
     public int SelectedCardsPower { get; private set; }
-    public List<CardsSOTest> _playerDeckInGame { get; private set; }
+    public List<CardsSO> PlayerDeckInGame { get; private set; }
 
     [SerializeField] private int _cardsInHandDefault = 8;
-    private int _currentCardsInHand = 0; 
+    private int _currentCardsInHand = 0;
 
-    void Awake()
+    private ConsumableContext _consContext;
+
+    protected override void OnSingletonAwake()
     {
-        if (Instance == null) Instance = this;
-
-        else Destroy(gameObject);
-
+        //_cardsInHandDefault = PlayerManager.Instance.handsize;
     }
-
     private void OnEnable()
     {
-        RoundManager.OnCombatEnd += OnCombatEnd;
         RoundManager.OnRoundEnd += RefillCards; 
         RoundManager.OnRoundEnd += ClearSelectedStorage;
         RoundManager.OnCombatStart += StartCombat;
@@ -39,7 +34,6 @@ public class PlayerCardManager : MonoBehaviour
 
     private void OnDisable()
     {
-        RoundManager.OnCombatEnd -= OnCombatEnd;
         RoundManager.OnRoundEnd -= RefillCards;
         RoundManager.OnRoundEnd -= ClearSelectedStorage;
         RoundManager.OnCombatStart -= StartCombat;
@@ -47,11 +41,11 @@ public class PlayerCardManager : MonoBehaviour
 
     public void StartCombat()
     {
-        _playerDeckInGame = new List<CardsSOTest>(RoundManager.Instance.PlayerCards);
+        PlayerDeckInGame = new List<CardsSO>(RoundManager.Instance.PlayerCards);
         SelectedCards.Clear();
         CardsInHand.Clear();
         SetMainHand();
-        _spawner.SpawnCards(_playerDeckInGame, CardsInHand, _cardsInHandDefault);
+        _spawner.SpawnCards(PlayerDeckInGame, CardsInHand, _cardsInHandDefault);
     }
 
     public void SetMainHand()
@@ -70,6 +64,11 @@ public class PlayerCardManager : MonoBehaviour
         }
 
         OnViewChanged?.Invoke();
+    }
+
+    public GameObject GetMainHand()
+    {
+        return CamMovementManager.Instance.IsFirstSet? _mainHand.gameObject : _subMainHand.gameObject;
     }
 
     public void SetCards()
@@ -111,7 +110,7 @@ public class PlayerCardManager : MonoBehaviour
     public void UpdateAfterDiscard(int amount)
     { 
         ClearSelectedCards();
-        _spawner.SpawnCards(_playerDeckInGame, CardsInHand, cardsAmount: amount);
+        _spawner.SpawnCards(PlayerDeckInGame, CardsInHand, cardsAmount: amount);
     }
 
     public void IncreaseCardsInHandAmount()
@@ -121,30 +120,66 @@ public class PlayerCardManager : MonoBehaviour
 
     public bool CheckRoundReadiness()
     {
-        if(_playerDeckInGame.Count == 0 && _currentCardsInHand == 0) return false;
+        if(PlayerDeckInGame.Count == 0 && _currentCardsInHand == 0) return false;
         
         return true;
     }
     
     private void RefillCards()
     {
-        if (_playerDeckInGame.Count == 0) return;
+        //if (!_consContext.drawBlock)
+        //{
+        if (PlayerDeckInGame.Count == 0) return;
 
-        int amount = _currentCardsInHand >= _cardsInHandDefault? 1 : _cardsInHandDefault - _currentCardsInHand;
+        int amount = _currentCardsInHand >= _cardsInHandDefault ? 1 : _cardsInHandDefault - _currentCardsInHand;
 
-        _spawner.SpawnCards(_playerDeckInGame, CardsInHand, cardsAmount: amount);
+        _spawner.SpawnCards(PlayerDeckInGame, CardsInHand, cardsAmount: amount);
+        //}
+        //else return;
 
     }
 
-    private void OnCombatEnd()
+    public void Draw3Cards(int amount)
     {
-        foreach (var card in CardsInHand)
-        {
-            card.GetComponent<PlayerCardLogic>().ResetCard();
-            card.SetActive(false);
-            ObjPoolManager.Instance.ReturnCard(card);
-        }
-        ClearSelectedStorage();
+        _spawner.SpawnCards(PlayerDeckInGame, CardsInHand, amount);
     }
 
+    public void Reshuffle()
+    {
+        int cards = 0;
+        foreach(var go in CardsInHand)
+        {
+            var logic = go.GetComponent<PlayerCardLogic>();
+            if(logic != null && logic.Card != null )
+            {
+                PlayerDeckInGame.Add(logic.Card);
+            }
+
+            ObjPoolManager.Instance.ReturnCard(go);
+            cards++;
+        }
+
+        CardsInHand.Clear();
+        ClearSelectedStorage();
+        _currentCardsInHand = 0;
+
+        Shuffle(PlayerDeckInGame);
+      
+        int todraw = Math.Min(cards, PlayerDeckInGame.Count);
+
+        if( todraw > 0 )
+        {
+            _spawner.SpawnCards(PlayerDeckInGame, CardsInHand, todraw);
+            SetCards();
+        }
+    }
+
+    private static void Shuffle<T>(List<T> list)
+    {
+        for(int i = list.Count-1; i>0; i--)
+        {
+            int j = UnityEngine.Random.Range(0, i + 1);
+            (list[i], list[j]) = (list[j], list[i]);
+        }
+    }    
 }

@@ -129,10 +129,10 @@ MonoBehaviour:
   iconToAnimate: {fileID: 837920151927377946}
   liftHeight: 0.5
   animationSpeed: 3
-  disableShadows: 0
   raycastLayer:
     serializedVersion: 2
     m_Bits: 64
+  disableWhenOccupied: 1
 --- !u!114 &753868226939466668
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -145,11 +145,65 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 914779a2139080543ae8f3a5b2cdbeab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sceneToLoad: 
+  sceneToLoad: ShopScene
   playerMarkerPrefab: {fileID: 2953499796673057148, guid: 3a5a5f682334fbd4283dcb16d646bf80, type: 3}
   mapGenerator: {fileID: 0}
   mapManager: {fileID: 0}
+  cameraController: {fileID: 0}
+  nodeInfoUI: {fileID: 0}
+  mapSaveManager: {fileID: 0}
+  moveSpeed: 3
+  jumpHeight: 1
+  moveCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  jumpCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   nodeType: 4
+  enableDebugLogs: 0
 --- !u!1001 &876612639977420785
 PrefabInstance:
   m_ObjectHideFlags: 0

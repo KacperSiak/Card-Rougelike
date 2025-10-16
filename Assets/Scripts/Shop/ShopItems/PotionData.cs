@@ -15,17 +15,19 @@ public class PotionData : ShopItem
 
 public class PotionContext
 {
-    public PlayerOverlay player;
+    public PlayerManager player;
     public ShopMenager shopManager;
     public GamblingManager gambler;
     public BuffsAndDebuffsManager buffsAndDebuffsManager;
+    public DamageManager damageManager;
 
     public PotionContext()
     {
-        player = PlayerOverlay.Instance;
+        player = PlayerManager.Instance;
         shopManager = ShopMenager.Instance;
         gambler = GamblingManager.Instance;
         buffsAndDebuffsManager = BuffsAndDebuffsManager.Instance;
+        damageManager = DamageManager.Instance;
     }
 }
 

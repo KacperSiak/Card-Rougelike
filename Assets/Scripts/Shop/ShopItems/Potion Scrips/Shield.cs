@@ -12,13 +12,13 @@ public class Shield : PotionEffects
         localFightsLeft = fightsLeft;
         context = ctx;
         RoundManager.OnCombatEnd += FightsLeft;
-        //AddShield
+        PotionEvents.ModifyShield(chances, dmgReduction, true);
     }
 
     public override void Unregister(PotionContext ctx)
     {
         RoundManager.OnCombatEnd -= FightsLeft;
-        // RemoveShield
+        PotionEvents.ModifyShield(chances, dmgReduction, false);
     }
     public override void FightsLeft()
     {

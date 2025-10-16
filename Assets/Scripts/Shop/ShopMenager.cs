@@ -6,6 +6,7 @@ using UnityEngine.Events;
 
 public class ShopMenager : PersistenSingleton<ShopMenager>
 {
+    [SerializeField] private List<ShopItem> items;
     public List<ShopItem> allItems;
     [Header("Slot Lists")]
     [SerializeField] private List<GameObject> _slots;
@@ -19,7 +20,7 @@ public class ShopMenager : PersistenSingleton<ShopMenager>
     [SerializeField] private Button _eatLutter;
     [SerializeField] private Button _Lutter;
     [SerializeField] private Button _closeLuttMenu;
-    [SerializeField] private Button _closeShop;
+    // [SerializeField] private Button _closeShop;
 
     [Header("Rest")]
     [SerializeField] private TextMeshProUGUI _rerollText;
@@ -43,7 +44,8 @@ public class ShopMenager : PersistenSingleton<ShopMenager>
         _eatLutter.onClick.AddListener(EatLutter);
         _Lutter.onClick.AddListener(OpenMenu);
         _closeLuttMenu.onClick.AddListener(CloseMenu);
-        _closeShop.onClick.AddListener(CloseShop);
+        allItems = items;
+        //_closeShop.onClick.AddListener(CloseShop);
     }
 
     protected override void OnDestroy()
@@ -53,7 +55,7 @@ public class ShopMenager : PersistenSingleton<ShopMenager>
         _eatLutter.onClick.RemoveListener(EatLutter);
         _Lutter.onClick.RemoveListener(OpenMenu);
         _closeLuttMenu.onClick.RemoveListener(CloseMenu);
-        _closeShop.onClick.RemoveListener(CloseShop);
+        //_closeShop.onClick.RemoveListener(CloseShop);
 
         base.OnDestroy();
     }
@@ -128,10 +130,10 @@ public class ShopMenager : PersistenSingleton<ShopMenager>
     {
         foreach (var slotObj in cardslots)
             slotObj.SetActive(false);
-        if (PlayerOverlay.Instance.gold >= _goldForRerol)
+        if (PlayerManager.Instance.gold >= _goldForRerol)
         {
             RerollShop();
-            PlayerOverlay.Instance.SpendGold(_goldForRerol);
+            PlayerManager.Instance.GoldChange(_goldForRerol, false);
             _goldForRerol += 1;
             _rerollText.text = "Reroll: " + _goldForRerol;
             _lutterPanel.SetActive(false);

@@ -3,10 +3,20 @@
 [Serializable]
 public class LoseHpGetDamage : CardEffect
 {
+    public int bonusDamage;
+    private ConsumableContext _context;
     public override void ApplyEffect(ConsumableContext ctx)
     {
-        int _hpLose = (int)Math.Round(PlayerOverlay.Instance.currentHP * 0.25f);
-        ctx.player.LoseHealth(_hpLose);
-        //player.addDamage = 5;
+        _context = ctx;
+        int _hpLose = (int)Math.Round(PlayerManager.Instance.PlayerHP * 0.25f);
+        ctx.player.HealthChange(_hpLose, false);
+        ctx.damageManager.BonusDamageChange(bonusDamage, true);
+        RoundManager.OnCombatEnd += RevertDamage;
+    }
+
+    private void RevertDamage()
+    {
+        _context.damageManager.BonusDamageChange(bonusDamage, false);
+        RoundManager.OnCombatEnd -= RevertDamage;
     }
 }

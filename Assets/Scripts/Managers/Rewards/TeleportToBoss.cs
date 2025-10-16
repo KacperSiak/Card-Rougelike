@@ -5,6 +5,6 @@ public class TeleportToBoss : Rewards
 {
     public override void AddReward(RewardContext ctx)
     {
-        // Teleport to the boss
+        ctx.mapManager.ModifyTime(ctx.mapManager.currentMapTime, false);
     }
 }

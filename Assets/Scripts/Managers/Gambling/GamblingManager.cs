@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using TMPro;
 using System.Linq;
 using System.Collections;
+using System.Runtime.CompilerServices;
 
 
 public class GamblingManager : PersistenSingleton<GamblingManager>
@@ -12,18 +13,24 @@ public class GamblingManager : PersistenSingleton<GamblingManager>
     [SerializeField] private Button RollButton;
     [SerializeField] private Button ReturnButton;
 
-    [SerializeField] private Image jokeIcon;
-    [SerializeField] private TextMeshProUGUI joketext;
+    //[SerializeField] private Image jokeIcon;
+    //[SerializeField] private TextMeshProUGUI joketext;
 
     public float modifier;
+    private float potionModifier;
+    private bool potionModified;
     private float _time = 0.83f;
+    private Material[] _jokesMaterials;
 
     [Header("Particles")]
     [SerializeField] private GameObject _positiveParticles;
     [SerializeField] private GameObject _neutralParticles;
     [SerializeField] private GameObject _negativeParticles;
 
-    protected override void OnSingletonAwake() { }
+    protected override void OnSingletonAwake() 
+    {
+        _jokesMaterials = Resources.LoadAll<Material>("JokesMaterials");
+    }
 
     protected override void OnDestroy()
     {
@@ -45,13 +52,17 @@ public class GamblingManager : PersistenSingleton<GamblingManager>
             else acc += r.weight;
             if (roll < acc)
             {
-                Debug.Log("Rolled " + r.type);
                 ApplyEffect(r.type);
                 StartCoroutine(WaitForChest(_time, r.reward));
+                GamblingSceneManager.Instance.ShowReward(r);
                 break;
             }
         }
-        modifier = 1;
+        if (potionModified)
+        {
+            modifier /= potionModifier;
+            potionModified = false;
+        }
     }
 
     private void ApplyReward(RewardsData reward)
@@ -63,18 +74,23 @@ public class GamblingManager : PersistenSingleton<GamblingManager>
         }
     }
 
-    public void GetHermesJoke(HermesJoke joke)
+    public void GetHermesJoke(MeshRenderer joke)
     {
-        if (joke.jokeIcon != null)
-        {
-            jokeIcon.gameObject.SetActive(true);
-            jokeIcon.sprite = joke.jokeIcon;
-        }
-        else
-        {
-            jokeIcon.gameObject.SetActive(true);
-            joketext.text = joke.joke;
-        }
+        int index = Random.Range(0, _jokesMaterials.Length);
+        //MaterialSetupManager.Instance.SetupVisual(joke, col, row: 0); //for shader graph
+        joke.material = _jokesMaterials[index];
+        joke.gameObject.SetActive(true);
+
+        //if (joke.jokeIcon != null)
+        //{
+        //    jokeIcon.gameObject.SetActive(true);
+        //    jokeIcon.sprite = joke.jokeIcon;
+        //}
+        //else
+        //{
+        //    jokeIcon.gameObject.SetActive(true);
+        //    joketext.text = joke.joke;
+        //}
     }
     
     private void ApplyEffect(RewardType type)
@@ -88,9 +104,24 @@ public class GamblingManager : PersistenSingleton<GamblingManager>
            
     }
 
+    public void HideParticles()
+    {
+        _positiveParticles.SetActive(false);
+        _negativeParticles.SetActive(false);
+        _neutralParticles.SetActive(false);
+    }
+
     public void Modify(float newModifier)
     {
-        modifier = newModifier;
+        //if (potion)
+        //{
+        //    potionModifier = newModifier;
+        //    potionModified = true;
+        //}
+
+        //if (reset) modifier /= newModifier;
+        //else modifier *= newModifier;
+
     }
 
     IEnumerator WaitForChest(float time, RewardsData reward)

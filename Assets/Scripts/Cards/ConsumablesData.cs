@@ -8,30 +8,56 @@ public enum CardRarity
     rare
 }
 
+public enum ConsCardType
+{
+    Moirae,
+    OneUse
+}
 [CreateAssetMenu(fileName = "ConsumablesData", menuName = "Shop/Consumable")]
 public class ConsumablesData : ShopItem
 {
     [field: SerializeField] public string cardID { get; private set; }
     [field: SerializeField] public string cardName { get; private set; }
     [field: SerializeField, TextArea]  public string cardDescription { get; private set; }
-    [field: SerializeField] public Sprite icon { get; private set; }
     [field: SerializeField] public CardRarity rarity { get; private set; }
+    [field: SerializeField] public ConsCardType type { get; private set; }
     [field: SerializeField] public int buyPrice { get; private set; }
     [field: SerializeField] public int sellPrice { get; private set; }
+
+
+    [Header("ShaderGraph")]
+    [field: SerializeField] public Texture2D atlasTexture { get; private set; }
+    [field: SerializeField] public int rows {  get; private set; }
+    [field: SerializeField] public int cols { get; private set; }
+    [field: SerializeField] public int row { get; private set; }
+    [field: SerializeField] public int col { get; private set; }
+
+
     [SerializeReference] public List<CardEffect> cardEffects;
 }
 
 public class ConsumableContext
 {
-    public PlayerOverlay player;
+    public PlayerManager player;
     public ShopMenager shop;
     public ConsumablesAndRelicMenager consAndRel;
+    public DamageManager damageManager;
+    public PlayerCardManager playerCardManager;
+    public CombatManager combbatManager;
 
+    public bool immune;
+    public bool vulnerable;
+    public bool bonusRound;
+    public bool drawBlock;
+    public bool selfHit;
     public ConsumableContext()
     {
-        player = PlayerOverlay.Instance;
+        player = PlayerManager.Instance;
         shop = ShopMenager.Instance;
         consAndRel = ConsumablesAndRelicMenager.Instance;
+        damageManager = DamageManager.Instance;
+        playerCardManager = PlayerCardManager.Instance;
+        combbatManager = CombatManager.Instance;
     }
 }
 

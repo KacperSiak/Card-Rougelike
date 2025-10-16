@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using UnityEngine;
 
 [Serializable]
@@ -6,20 +6,21 @@ public class LowerSuitMarkDamage : PotionEffects
 {
     private int localFightsLeft;
     private PotionContext context;
+
+    public Suits suit;
     public override void Register(PotionContext ctx, int fightsLeft)
     {
         localFightsLeft = fightsLeft;
         context = ctx;
         RoundManager.OnCombatEnd += FightsLeft;
-        Debug.Log("Protection Started");
-        // Add lower damage from chosen suitmark
+        PotionEventScript.StartSuitProtect(suit);
     }
 
     public override void Unregister(PotionContext ctx)
     {
         RoundManager.OnCombatEnd -= FightsLeft;
         Debug.Log("Protection Ended");
-        // Remove protection form suitmark
+        PotionEventScript.StopSuitProtection(suit);
     }
 
     public override void FightsLeft()

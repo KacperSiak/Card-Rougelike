@@ -5,10 +5,10 @@ public class Handsize : RelicEffects
 {
     public override void Register(RelicContext ctx)
     {
-        // handsize +1
+        ctx.player.handsize++;
     }
     public override void Unregister(RelicContext ctx)
     {
-        // normal handsize
+        ctx.player.handsize--;
     }
 }

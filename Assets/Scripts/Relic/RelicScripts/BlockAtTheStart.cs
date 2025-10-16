@@ -3,14 +3,35 @@
 [Serializable]
 public class BlockAtTheStart : RelicEffects
 {
+    private RelicContext _context;
+    private int _counter = 2;
     public override void Register(RelicContext ctx)
     {
-        // prevent damage for first two turns
+        _context = ctx;
+        RoundManager.OnCombatStart += ResetRelic;
+        RoundManager.OnRoundEnd += Count;
     }
 
     public override void Unregister(RelicContext ctx)
     {
-        // do not work XD
+        RoundManager.OnCombatStart -= ResetRelic;
+        RoundManager.OnRoundEnd -= Count;
+        ctx.roundManager.damageBlock = false;
+    }
+
+    private void ResetRelic()
+    {
+        _context.roundManager.damageBlock = true;
+        _counter = 2;
+    }
+
+    private void Count()
+    {
+        _counter--;
+        if (_counter == 0)
+        {
+            _context.roundManager.damageBlock = false; 
+        }
     }
 }
 

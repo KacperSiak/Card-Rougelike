@@ -83,3 +83,23 @@ Assets/FishNet/Runtime/Transporting/Transports/Tugboat/LiteNetLib/LiteNetLib.csp
 Assets/FishNet/CodeGenerating/cecil-0.11.4/Mono.Cecil.sln.meta
 
 ProjectSettings/EditorBuildSettings.asset
+
+#FMOD
+!/[Aa]ssets/Plugins/FMOD//lib/*
+!/[Aa]ssets/Gizmos/FMOD/*
+!/[Aa]ssets/Editor Default Resources/FMOD/*
+/[Aa]ssets/Plugins/FMOD/Cache/*
+/[Aa]ssets/StreamingAssets//.bank
+/[Aa]ssets/StreamingAssets//.bank.meta
+
+fmod.log
+fmod_editor.log
+
+FMOD/FMODproject/project/.cache/
+FMOD/FMODproject/project/.user/
+FMOD/FMODproject/project/.unsaved/
+
+Assets/Plugins/FMOD//*.bundle text eol=lf
+Assets/Plugins/FMOD//Info.plist text eol=lf
+/[Aa]ssets/FMOD.unity
+Assets/Plugins/FMOD/Cache/Editor/FMODStudioCache.asset

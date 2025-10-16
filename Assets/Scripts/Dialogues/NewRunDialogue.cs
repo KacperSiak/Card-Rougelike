@@ -1,9 +1,5 @@
-using Ink.Parsed;
-using Ink.UnityIntegration;
-using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
-using Ink.Runtime;
 
 public class NewRunDialogue : MonoBehaviour
 {
@@ -26,14 +22,14 @@ public class NewRunDialogue : MonoBehaviour
 
     private void Start()
     {
-        dialogueManager = DialogueManager.GetInstance();
+        dialogueManager = DialogueManager.Instance;
         data = GetComponent<DialogueData>();
         info = data.OverallDialogueInformation;
     }
 
     public void DefeatDialogue(string defeatedBy)
     {
-        if (dialogueManager.isDialoguePlaying) return;
+        if (dialogueManager.IsDialoguePlaying) return;
 
         data.IncreaseDeathCount(defeatedBy);
 
