@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.Events;
 
 [System.Serializable]   
 public struct MaterialsByType
@@ -24,6 +25,8 @@ public class ConsCardProperties : MonoBehaviour
     private ConsumablesData _currCons;
     private ConsumableContext _consContext;
     private bool _visibleButtons = false;
+
+    public static UnityEvent OnConsumableUse = new UnityEvent();
 
     private void OnEnable()
     {
@@ -75,6 +78,8 @@ public class ConsCardProperties : MonoBehaviour
         gameObject.SetActive(false);
         _currCons = null;
         gameObject.SetActive(false);
+
+        OnConsumableUse?.Invoke();
     }
 
     private void Discard()

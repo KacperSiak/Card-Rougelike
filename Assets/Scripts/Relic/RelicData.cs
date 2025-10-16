@@ -35,6 +35,7 @@ public class RelicContext
 
     public bool CleanSequenceBeatEverythingEnable = false;
     public bool Gaps = false;
+    public bool doubleSingleDamage = false;
     public RelicContext()
     {
         player = PlayerManager.Instance;

@@ -33,6 +33,8 @@ public class NewRunDialogue : MonoBehaviour
 
         data.IncreaseDeathCount(defeatedBy);
 
+        data.LoadToDialogue();
+
         int deaths = info.numberOfDeaths;
         int goodGamble = info.goodGambleAttempts;
         int badGamble = info.badGambleAttempts;

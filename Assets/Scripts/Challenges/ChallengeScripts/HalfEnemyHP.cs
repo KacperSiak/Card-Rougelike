@@ -7,11 +7,11 @@ public class HalfEnemyHP : Challenges
     public override void Register(ChallengeContext ctx)
     {
         context = ctx;
-        // OnHPFallTo50 += ChallengeComplete;
+        DamageManager.OnEnemyHalfHP.AddListener(ChallengeComplete);
     }
     public override void Unregister(ChallengeContext ctx)
     {
-        // OnHPFallTo50 -= ChallengeCOmplete;
+        DamageManager.OnEnemyHalfHP.RemoveAllListeners();
     }
 
     private void ChallengeComplete()

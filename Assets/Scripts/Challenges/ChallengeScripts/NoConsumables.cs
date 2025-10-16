@@ -8,17 +8,17 @@ public class NoConsumables : Challenges
     public override void Register(ChallengeContext ctx)
     {
         context = ctx;
-        _questInfo = false;
+        _questInfo = true;
         RoundManager.OnCombatEnd += NoConsumableFightWon;
         RoundManager.OnCombatEnd += QuestReset;
-        // consumable used subscribe for questundone;
+        ConsCardProperties.OnConsumableUse.AddListener(QuestFailed);
     }
 
     public override void Unregister(ChallengeContext ctx)
     {
         RoundManager.OnCombatEnd -= NoConsumableFightWon;
         RoundManager.OnCombatEnd -= QuestReset;
-        // consumable used remove subscribe for questundone;
+        ConsCardProperties.OnConsumableUse.RemoveListener(QuestFailed);
     }
 
     private void NoConsumableFightWon()

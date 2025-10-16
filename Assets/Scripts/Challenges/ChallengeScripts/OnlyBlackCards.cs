@@ -9,19 +9,19 @@ public class OnlyBlackCards : Challenges
     {
         context = ctx;
         _questInfo = false;
-        RoundManager.OnCombatEnd += NoJokerFightWon;
+        RoundManager.OnCombatEnd += OnlyBlackPlayed;
         RoundManager.OnCombatEnd += QuestReset;
-        // Red card used subscribe for questundone;
+        CardHolderLogic.OnRedPlay.AddListener(QuestUndone);
     }
 
     public override void Unregister(ChallengeContext ctx)
     {
-        RoundManager.OnCombatEnd -= NoJokerFightWon;
+        RoundManager.OnCombatEnd -= OnlyBlackPlayed;
         RoundManager.OnCombatEnd -= QuestReset;
-        // Red card used remove subscribe for questundone;
+        CardHolderLogic.OnRedPlay.RemoveListener(QuestUndone);
     }
 
-    private void NoJokerFightWon()
+    private void OnlyBlackPlayed()
     {
         if (_questInfo)
         {
