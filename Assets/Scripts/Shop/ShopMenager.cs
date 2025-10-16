@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.Events;
+using Unity.VisualScripting;
 
 public class ShopMenager : PersistenSingleton<ShopMenager>
 {
@@ -31,7 +32,8 @@ public class ShopMenager : PersistenSingleton<ShopMenager>
     private float _priceMultiplier = 1f;
     private bool _freeBuyEffect = false;
     private int _goldForRerol;
-    private List<BaseCard> _cardsForVisual;
+    private int _carsToDraw = 5;
+    private List<CardsSO> _cardsForVisual;
 
     public bool inSellingMode { get; private set; } = false;
 
@@ -62,12 +64,11 @@ public class ShopMenager : PersistenSingleton<ShopMenager>
 
     private void Start()
     {
-        
         RerollShop();
         _goldForRerol = 5;
         _rerollText.text = "Reroll: " + _goldForRerol;
 
-        _cardsForVisual = DeckManager.instance.DrawACardForShop();
+        _cardsForVisual = DrawForSell();
         for (int i = 0; i < _cardsForVisual.Count; i++)
         {
             var card = _cardsForVisual[i];
@@ -77,6 +78,7 @@ public class ShopMenager : PersistenSingleton<ShopMenager>
             cardslots.Add(cardSlot);
             cardUI.Setup(card);
         }
+        
     }
 
     private void OnEnable()
@@ -254,6 +256,21 @@ public class ShopMenager : PersistenSingleton<ShopMenager>
         inSellingMode=false;
         OffSellingMode.Invoke();
         _lutterPanel.SetActive(false);
+    }
+
+    private List<CardsSO> DrawForSell()
+    {
+        List<CardsSO> playerDeck = RoundManager.Instance.PlayerCards;
+        List<CardsSO> drawnCards = new List<CardsSO>();
+
+        for(int i=0; i < _carsToDraw; i++)
+        {
+            int randomIndex = Random.Range(0, playerDeck.Count);
+            CardsSO drawnCardd = playerDeck[randomIndex];
+            drawnCards.Add(drawnCardd);
+            playerDeck.Remove(drawnCardd);
+        }
+        return drawnCards;
     }
 }
 

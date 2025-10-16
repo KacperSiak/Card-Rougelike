@@ -63,7 +63,7 @@ public class PlayerCardLogic : MonoBehaviour
 
     private void OnMouseEnter()
     {
-        if (_isSelected || !_isAvailable || DiscardManager.Instance.InUI || IsNew) return;
+        if (_isSelected || !_isAvailable || RoundManager.Instance.InUI || IsNew) return;
         transform.position += _hoverOffset;
         _isHovered = true;
     }
@@ -81,7 +81,7 @@ public class PlayerCardLogic : MonoBehaviour
     }
     private void OnMouseDown()
     {
-        if (DiscardManager.Instance.InUI) return;
+        if (RoundManager.Instance.InUI) return;
 
         if (!_isSelected && _isAvailable)
         {

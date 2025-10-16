@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
 public class DiscardManager : PersistenSingleton<DiscardManager>
@@ -7,7 +8,7 @@ public class DiscardManager : PersistenSingleton<DiscardManager>
     [SerializeField] private PlayerCardsAnimation _playerCardsAnimation;
     private int discardAvailableAmount = 3;
 
-    public bool InUI { get; private set; } = false;
+    public static UnityEvent OnDiscard = new UnityEvent();
 
     protected override void OnSingletonAwake()
     {
@@ -33,14 +34,14 @@ public class DiscardManager : PersistenSingleton<DiscardManager>
 
         _discardPanel.SetActive(true);
         Time.timeScale = 0f;
-        InUI = true;
+        RoundManager.Instance.InUI = true;
     }
 
     public void Cancel()
     {
         _discardPanel.SetActive(false);
         Time.timeScale = 1f;
-        InUI = false;
+        RoundManager.Instance.InUI = false;
     }
 
     public void Discard()
@@ -49,11 +50,13 @@ public class DiscardManager : PersistenSingleton<DiscardManager>
 
         _discardPanel.SetActive(false);
         Time.timeScale = 1f;
-        InUI = false;
+        RoundManager.Instance.InUI = false;
 
         discardAvailableAmount -= PlayerCardManager.Instance.SelectedCards.Count;
 
         _playerCardsAnimation.RemoveCard(PlayerCardManager.Instance.SelectedCards.ConvertAll(card => card.transform).ToArray());
+
+        OnDiscard?.Invoke();
 
         PlayerCardManager.Instance.UpdateAfterDiscard(amount: PlayerCardManager.Instance.SelectedCards.Count);
     }

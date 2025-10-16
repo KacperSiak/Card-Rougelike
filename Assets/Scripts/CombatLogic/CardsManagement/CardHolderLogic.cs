@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class CardHolderLogic : MonoBehaviour
 {
@@ -19,6 +20,10 @@ public class CardHolderLogic : MonoBehaviour
     public List<PlayerCardLogic> PCardScripts { get; private set; } = new();
 
     public int ValidatedPlayerCardsPower { get; private set; } = 0;
+
+    public static UnityEvent OnBlackPlay = new UnityEvent();
+    public static UnityEvent OnRedPlay = new UnityEvent();
+    public static UnityEvent OnTrumpSuitPlayed = new UnityEvent();
 
     private void OnEnable()
     {
@@ -42,7 +47,7 @@ public class CardHolderLogic : MonoBehaviour
 
     private void OnMouseEnter()
     {
-        if (DiscardManager.Instance.InUI) return;
+        if (RoundManager.Instance.InUI) return;
 
         if (!_isOccupied && PlayerCardManager.Instance.SelectedCards.Count != 0 && PlayerCardManager.Instance.SelectedCards.Count != 2)
         {
@@ -59,12 +64,12 @@ public class CardHolderLogic : MonoBehaviour
             gameObject.GetComponent<MeshRenderer>().material = _defaultMaterial;
             _isInspected = false;
         }
-        
+
     }
 
     private void OnMouseDown()
     {
-        if (PlayerCardManager.Instance.SelectedCards.Count == 2 || _isOccupied || DiscardManager.Instance.InUI) return;
+        if (PlayerCardManager.Instance.SelectedCards.Count == 2 || _isOccupied || RoundManager.Instance.InUI) return;
 
         foreach (GameObject card in PlayerCardManager.Instance.SelectedCards)
         {
@@ -85,6 +90,8 @@ public class CardHolderLogic : MonoBehaviour
 
     public void OnValidated()
     {
+        CheckColors(PlayerCardManager.Instance.SelectedCards);
+        CheckSuits(PlayerCardManager.Instance.SelectedCards, RoundManager.Instance.TrumpSuit);
         ValidatedPlayerCardsPower = PlayerCardManager.Instance.SelectedCardsPower;
         PlayerCardManager.Instance.ClearSelectedCards();
         StartCoroutine(PlaceCards());
@@ -101,7 +108,7 @@ public class CardHolderLogic : MonoBehaviour
         foreach (PlayerCardLogic card in PCardScripts)
         {
             float elapsed = 0f;
-            
+
             Vector3 scale = card.transform.localScale;
             card.transform.GetPositionAndRotation(out Vector3 startPos, out Quaternion startRot);
 
@@ -130,8 +137,8 @@ public class CardHolderLogic : MonoBehaviour
         PCardScripts.Clear();
     }
 
-    public void ResetCardHolderPlayerCards() 
-    { 
+    public void ResetCardHolderPlayerCards()
+    {
         _isOccupied = false;
         ValidatedPlayerCardsPower = 0;
         CardHolderAnimation.DisableAnimations();
@@ -148,9 +155,45 @@ public class CardHolderLogic : MonoBehaviour
     }
 
     private void OnCombatEnd()
-    { 
+    {
         ResetCardHolderEnemyCards();
         ResetCardHolderPlayerCards();
     }
 
+    private void CheckColors(List<GameObject> cardList)
+    {
+        foreach (var card in cardList)
+        {
+            var cardProps = card.GetComponent<PlayerCardLogic>();
+
+            if (cardProps.Card.color == CardColor.None)
+            {
+                OnRedPlay?.Invoke();
+                OnBlackPlay?.Invoke();
+                continue;
+            }
+
+            if (cardProps.Card.color == CardColor.Red)
+            {
+                OnRedPlay?.Invoke();
+            }
+            else if (cardProps.Card.color == CardColor.Black)
+            {
+                OnBlackPlay?.Invoke();
+            }
+        }
+    }
+
+    private void CheckSuits(List<GameObject> cardList, Suits suit)
+    {
+        foreach(var card in cardList)
+        {
+            var cardProps = card.GetComponent<PlayerCardLogic>();
+
+            if(cardProps.Card.suit == suit)
+            {
+                OnTrumpSuitPlayed?.Invoke();
+            }
+        }
+    }    
 }
