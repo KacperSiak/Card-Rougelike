@@ -32,6 +32,8 @@ public class JsonNodeRecord
     public Vector2 position;
     public int levelIndex;
     public bool cleared;
+    public MapSystem.EnemyVariant enemyVariant;
+    public MapSystem.EliteVariant eliteVariant;
 }
 
 [Serializable]

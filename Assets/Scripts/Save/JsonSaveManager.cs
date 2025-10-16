@@ -12,6 +12,7 @@ public static class JsonSaveManager
     const string SAVE_FILE_PATTERN = "*.json";
     const string TIMESTAMP_FORMAT = "yyyyMMdd_HHmmss";
     const string SAVE_FILE_PREFIX = "map_";
+    const string BACKUP_SUFFIX = ".backup";
     
     static string SavesRoot => Path.Combine(Application.persistentDataPath, "Saves");
 
@@ -104,6 +105,19 @@ public static class JsonSaveManager
         {
             path ??= CreateNewSavePath(slot);
             Directory.CreateDirectory(Path.GetDirectoryName(path) ?? SavesRoot);
+
+            if (File.Exists(path))
+            {
+                string backupPath = path + BACKUP_SUFFIX;
+                try
+                {
+                    File.Copy(path, backupPath, overwrite: true);
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogWarning($"[JsonSaveManager] Backup creation failed: {ex.Message}");
+                }
+            }
             
             data.savedAt = DateTime.UtcNow.ToString("o");
             
@@ -286,6 +300,45 @@ public static class JsonSaveManager
         if (data == null) return false;
         if (data.nodes == null || data.edges == null) return false;
         if (string.IsNullOrEmpty(data.version)) return false;
+        
+        var nodeGuids = new HashSet<string>();
+        foreach (var node in data.nodes)
+        {
+            if (string.IsNullOrEmpty(node.guid))
+            {
+                Debug.LogWarning("[JsonSaveManager] Found node with empty GUID");
+                return false;
+            }
+            if (!nodeGuids.Add(node.guid))
+            {
+                Debug.LogWarning($"[JsonSaveManager] Duplicate node GUID: {node.guid}");
+                return false;
+            }
+        }
+        
+        foreach (var edge in data.edges)
+        {
+            if (!nodeGuids.Contains(edge.fromGuid))
+            {
+                Debug.LogWarning($"[JsonSaveManager] Edge references non-existent node: {edge.fromGuid}");
+                return false;
+            }
+            if (!nodeGuids.Contains(edge.toGuid))
+            {
+                Debug.LogWarning($"[JsonSaveManager] Edge references non-existent node: {edge.toGuid}");
+                return false;
+            }
+        }
+        
+        if (!string.IsNullOrEmpty(data.currentPlayerNodeGuid))
+        {
+            if (!nodeGuids.Contains(data.currentPlayerNodeGuid))
+            {
+                Debug.LogWarning($"[JsonSaveManager] Player position references non-existent node: {data.currentPlayerNodeGuid}");
+                data.currentPlayerNodeGuid = null;
+            }
+        }
+        
         return true;
     }
 
@@ -294,4 +347,131 @@ public static class JsonSaveManager
         _lastSerializedData = null;
         _lastSerializedJson = null;
     }
+    
+    public static bool RestoreFromBackup(string savePath)
+    {
+        if (string.IsNullOrEmpty(savePath)) return false;
+        
+        string backupPath = savePath + BACKUP_SUFFIX;
+        if (!File.Exists(backupPath))
+        {
+            Debug.LogWarning($"[JsonSaveManager] No backup found for: {Path.GetFileName(savePath)}");
+            return false;
+        }
+        
+        try
+        {
+            File.Copy(backupPath, savePath, overwrite: true);
+            Debug.Log($"[JsonSaveManager] Restored from backup: {Path.GetFileName(savePath)}");
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"[JsonSaveManager] Restore from backup failed: {ex}");
+            return false;
+        }
+    }
+    
+    public static SaveFileInfo GetSaveInfo(string path)
+    {
+        if (string.IsNullOrEmpty(path) || !File.Exists(path)) return null;
+        
+        try
+        {
+            var fileInfo = new FileInfo(path);
+            string json = File.ReadAllText(path);
+            var data = JsonUtility.FromJson<JsonMapSave>(json);
+            
+            return new SaveFileInfo
+            {
+                filePath = path,
+                fileName = Path.GetFileName(path),
+                fileSize = fileInfo.Length,
+                lastModified = fileInfo.LastWriteTimeUtc,
+                seed = data?.seed ?? 0,
+                version = data?.version ?? "unknown",
+                nodesCount = data?.nodes?.Count ?? 0,
+                savedAt = data?.savedAt
+            };
+        }
+        catch (Exception ex)
+        {
+            Debug.LogWarning($"[JsonSaveManager] GetSaveInfo failed for '{Path.GetFileName(path)}': {ex.Message}");
+            return null;
+        }
+    }
+    
+    public static JsonMapSave TryRepairSave(string path)
+    {
+        if (string.IsNullOrEmpty(path) || !File.Exists(path)) return null;
+        
+        try
+        {
+            Debug.Log($"[JsonSaveManager] Attempting to repair save: {Path.GetFileName(path)}");
+            
+            string json = File.ReadAllText(path);
+            var data = JsonUtility.FromJson<JsonMapSave>(json);
+            
+            if (data == null)
+            {
+                Debug.LogError("[JsonSaveManager] Could not deserialize data");
+                return null;
+            }
+            
+            if (data.nodes == null) data.nodes = new List<JsonNodeRecord>();
+            if (data.edges == null) data.edges = new List<JsonEdgeRecord>();
+            
+            if (string.IsNullOrEmpty(data.version))
+            {
+                data.version = "1.0";
+                Debug.Log("[JsonSaveManager] Fixed missing version");
+            }
+            
+            int removedNodes = data.nodes.RemoveAll(n => string.IsNullOrEmpty(n.guid));
+            if (removedNodes > 0)
+                Debug.Log($"[JsonSaveManager] Removed {removedNodes} nodes with null GUIDs");
+            
+            var validGuids = new HashSet<string>(data.nodes.Select(n => n.guid));
+            
+            int removedEdges = data.edges.RemoveAll(e => 
+                !validGuids.Contains(e.fromGuid) || !validGuids.Contains(e.toGuid));
+            if (removedEdges > 0)
+                Debug.Log($"[JsonSaveManager] Removed {removedEdges} invalid edges");
+            
+            if (!string.IsNullOrEmpty(data.currentPlayerNodeGuid) && !validGuids.Contains(data.currentPlayerNodeGuid))
+            {
+                Debug.Log("[JsonSaveManager] Cleared invalid player position");
+                data.currentPlayerNodeGuid = null;
+            }
+            
+            if (ValidateSaveData(data))
+            {
+                Debug.Log("[JsonSaveManager] Save successfully repaired");
+                return data;
+            }
+            else
+            {
+                Debug.LogError("[JsonSaveManager] Repair validation failed");
+                return null;
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"[JsonSaveManager] Repair failed: {ex}");
+            return null;
+        }
+    }
+}
+
+[Serializable]
+public class SaveFileInfo
+{
+    public string filePath;
+    public string fileName;
+    public long fileSize;
+    public DateTime lastModified;
+    public int seed;
+    public string version;
+    public int nodesCount;
+    public string savedAt;
 }
