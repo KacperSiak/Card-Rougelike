@@ -1893,6 +1893,7 @@ GameObject:
   - component: {fileID: 774896741}
   - component: {fileID: 774896740}
   - component: {fileID: 774896739}
+  - component: {fileID: 774896743}
   m_Layer: 5
   m_Name: ExitButton
   m_TagString: Untagged
@@ -2001,6 +2002,21 @@ RectTransform:
   m_AnchoredPosition: {x: -105, y: -371}
   m_SizeDelta: {x: 550, y: 220}
   m_Pivot: {x: 1, y: 0.5}
+--- !u!114 &774896743
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 774896738}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9f17c960302bc14d9ea42b3baab024e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  buttonType: 3
+  controller: {fileID: 2025731359}
+  autoFindController: 0
 --- !u!1 &874288575
 GameObject:
   m_ObjectHideFlags: 0
@@ -2419,6 +2435,7 @@ GameObject:
   - component: {fileID: 988998673}
   - component: {fileID: 988998672}
   - component: {fileID: 988998674}
+  - component: {fileID: 988998675}
   m_Layer: 5
   m_Name: ContinueButton
   m_TagString: Untagged
@@ -2527,6 +2544,21 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &988998675
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 988998670}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9f17c960302bc14d9ea42b3baab024e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  buttonType: 1
+  controller: {fileID: 2025731359}
+  autoFindController: 1
 --- !u!1 &992378087
 GameObject:
   m_ObjectHideFlags: 0
@@ -6478,8 +6510,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mapSceneName: MapGeneration
   mapSaveManager: {fileID: 0}
-  optionsPanel: {fileID: 0}
-  hideOptionsOnStart: 1
 --- !u!1 &2027360944
 GameObject:
   m_ObjectHideFlags: 0

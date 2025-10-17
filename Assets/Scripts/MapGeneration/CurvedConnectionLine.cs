@@ -34,6 +34,8 @@ public class CurvedConnectionLine : MonoBehaviour
     private LineRenderer lr;
     private Vector3 lastStartPos, lastEndPos;
     private float lastYOffset;
+    private int _lastSegments;
+    private float _lastWidth;
 
     public void Initialize(Config cfg)
     {
@@ -72,7 +74,7 @@ public class CurvedConnectionLine : MonoBehaviour
         lr.alignment = LineAlignment.View;
         lr.numCapVertices = 4;
         lr.numCornerVertices = 2;
-        lr.sharedMaterial = material;
+        if (lr.sharedMaterial != material) lr.sharedMaterial = material;
         lr.textureMode = LineTextureMode.Stretch;
         lr.sortingOrder = -1;
         lr.receiveShadows = false;
@@ -141,13 +143,25 @@ public class CurvedConnectionLine : MonoBehaviour
     if (start == null || end == null) return;
 
     if (lr.sharedMaterial != material) lr.sharedMaterial = material;
-        lr.positionCount = Mathf.Max(2, segments + 1);
-
-        lr.startWidth = width;
-        lr.endWidth = width;
-
         var p0 = GetStart();
         var p3 = GetEnd();
+
+        // Adaptive segments by distance (respects a higher explicit 'segments')
+        float dist = Vector3.Distance(p0, p3);
+        int adaptive = Mathf.Clamp(Mathf.RoundToInt(Mathf.Lerp(8, 48, Mathf.InverseLerp(3f, 30f, dist))), 8, 64);
+        int segCount = Mathf.Max(2, Mathf.Max(segments, adaptive));
+        if (segCount != _lastSegments)
+        {
+            lr.positionCount = segCount + 1;
+            _lastSegments = segCount;
+        }
+
+        if (!Mathf.Approximately(_lastWidth, width))
+        {
+            lr.startWidth = width;
+            lr.endWidth = width;
+            _lastWidth = width;
+        }
 
         Vector3 dir = (p3 - p0);
         Vector3 mid = (p0 + p3) * 0.5f;
@@ -157,9 +171,10 @@ public class CurvedConnectionLine : MonoBehaviour
         Vector3 c2 = Vector3.Lerp(mid, p3, 0.5f) + ortho * -arc;
         c1.y = yOffset; c2.y = yOffset;
 
-        for (int i = 0; i <= segments; i++)
+        int loopSegments = _lastSegments > 0 ? _lastSegments : Mathf.Max(2, segments);
+        for (int i = 0; i <= loopSegments; i++)
         {
-            float t = i / (float)segments;
+            float t = i / (float)loopSegments;
             Vector3 pt = Bezier(p0, c1, c2, p3, t);
             lr.SetPosition(i, pt);
         }

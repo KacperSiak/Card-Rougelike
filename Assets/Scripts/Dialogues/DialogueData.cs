@@ -8,7 +8,7 @@ public class DialogueData : MonoBehaviour
     public OverallDialogueInformation OverallDialogueInformation;
 
     [SerializeField] private TextAsset dialogueVariablesInkFile;
-    private Story story;
+    public Story story;
 
     private void Start()=>
         story = new Story(dialogueVariablesInkFile.text);
@@ -33,9 +33,6 @@ public class DialogueData : MonoBehaviour
         OverallDialogueInformation.goodGambleAttempts++;
         OverallDialogueInformation.allGambleAttempts++;
 
-        story.variablesState["goodGamblingAttempts"] = OverallDialogueInformation.goodGambleAttempts;
-        story.variablesState["totalGamblingAttempts"] = OverallDialogueInformation.allGambleAttempts;
-
         SaveToJson();
     }
 
@@ -43,9 +40,6 @@ public class DialogueData : MonoBehaviour
     {
         OverallDialogueInformation.badGambleAttempts++;
         OverallDialogueInformation.allGambleAttempts++;
-
-        story.variablesState["totalGamblingAttempts"] = OverallDialogueInformation.allGambleAttempts;
-        story.variablesState["badGamblingAttempts"]   = OverallDialogueInformation.badGambleAttempts;
 
         SaveToJson();
     }
@@ -55,15 +49,24 @@ public class DialogueData : MonoBehaviour
         OverallDialogueInformation.allGambleAttempts  = 0;
         OverallDialogueInformation.badGambleAttempts  = 0;
         OverallDialogueInformation.goodGambleAttempts = 0;
+
+        SaveToJson();
     }
 
     public void IncreaseDeathCount(string defeatedBy)
     {
-        var oppoonent = OverallDialogueInformation.opponentInformation.FirstOrDefault(c => c.opponentName == defeatedBy);
-        oppoonent.numberOfDefeatsByOpponent++;
+        var opponent = OverallDialogueInformation.opponentInformation.FirstOrDefault(c => c.opponentName == defeatedBy);
+        opponent.numberOfDefeatsByOpponent++;
         OverallDialogueInformation.numberOfDeaths++;
 
         SaveToJson();
+    }
+
+    public void LoadToDialogue()
+    {
+        story.variablesState["badGamblingAttempts"] = OverallDialogueInformation.badGambleAttempts;
+        story.variablesState["goodGamblingAttempts"] = OverallDialogueInformation.goodGambleAttempts;
+        story.variablesState["totalGamblingAttempts"] = OverallDialogueInformation.allGambleAttempts;
     }
 
     public void Update()
