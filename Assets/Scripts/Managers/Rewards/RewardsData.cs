@@ -22,6 +22,7 @@ public enum RewardType
 public class RewardsData : ScriptableObject
 {
     [field: SerializeField] public string rewardName { get; private set; }
+    [field: SerializeField] public string rewardDesc { get; private set; }
     [SerializeReference] public List<Rewards> rewardEffect;
 }
 
