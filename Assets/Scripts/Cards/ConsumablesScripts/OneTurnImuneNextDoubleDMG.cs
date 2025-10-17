@@ -1,6 +1,4 @@
 ﻿using System;
-using TMPro.EditorUtilities;
-using UnityEngine.Rendering;
 
 [Serializable]
 public class OneTurnImuneNextDoubleDMG : CardEffect
