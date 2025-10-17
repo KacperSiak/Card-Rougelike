@@ -14851,7 +14851,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2581641551542474102, guid: bfe4728489db81e49884386efaf0c384, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2838976923631966213, guid: bfe4728489db81e49884386efaf0c384, type: 3}
       propertyPath: m_LocalScale.x
@@ -14910,6 +14910,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bfe4728489db81e49884386efaf0c384, type: 3}
+--- !u!1 &113371368 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2581641551542474102, guid: bfe4728489db81e49884386efaf0c384, type: 3}
+  m_PrefabInstance: {fileID: 113371367}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &134750699
 GameObject:
   m_ObjectHideFlags: 0
@@ -73556,7 +73561,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2581641551542474102, guid: bfe4728489db81e49884386efaf0c384, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2838976923631966213, guid: bfe4728489db81e49884386efaf0c384, type: 3}
       propertyPath: m_LocalScale.x
@@ -84820,7 +84825,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2581641551542474102, guid: bfe4728489db81e49884386efaf0c384, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2838976923631966213, guid: bfe4728489db81e49884386efaf0c384, type: 3}
       propertyPath: m_LocalScale.x
@@ -97948,7 +97953,7 @@ MonoBehaviour:
   _prefabs:
   - {fileID: 531574771}
   - {fileID: 1363416163}
-  - {fileID: 0}
+  - {fileID: 113371368}
 --- !u!4 &2037205323
 Transform:
   m_ObjectHideFlags: 0
