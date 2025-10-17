@@ -1016,7 +1016,9 @@ public class MapGenerator : MonoBehaviour
                     type = node.Type,
                     position = node.Position,
                     levelIndex = level,
-                    cleared = NodeClickHandler.IsCombatNode(node.Type) && NodeClickHandler.IsGuidCleared(node.UniqueId)
+                    cleared = NodeClickHandler.IsCombatNode(node.Type) && NodeClickHandler.IsGuidCleared(node.UniqueId),
+                    enemyVariant = node.EnemyVariant,
+                    eliteVariant = node.EliteVariant
                 };
                 save.nodes.Add(rec);
                 if (node.ConnectedNodes != null)
@@ -1086,7 +1088,9 @@ public class MapGenerator : MonoBehaviour
             {
                 Type = rec.type,
                 Position = rec.position,
-                UniqueId = rec.guid
+                UniqueId = rec.guid,
+                EnemyVariant = rec.enemyVariant,
+                EliteVariant = rec.eliteVariant
             };
             list.Add(mn);
         }
