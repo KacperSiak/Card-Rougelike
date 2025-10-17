@@ -13,14 +13,20 @@ public class GamblingManager : PersistenSingleton<GamblingManager>
     [SerializeField] private Button RollButton;
     [SerializeField] private Button ReturnButton;
 
-    //[SerializeField] private Image jokeIcon;
-    //[SerializeField] private TextMeshProUGUI joketext;
+
+    [Header("ShowReward")]
+    [SerializeField] private GameObject _panel;
+    [SerializeField] private TextMeshProUGUI _rewardText;
+    [SerializeField] private Image _rewardImage;
+    [SerializeField] private Button _accButton;
 
     public float modifier;
     private float potionModifier;
     private bool potionModified;
-    private float _time = 0.83f;
+    private float _time = 1.5f;
     private Material[] _jokesMaterials;
+    private RewardsData _currentReward;
+    private RewardContext _ctx;
 
     [Header("Particles")]
     [SerializeField] private GameObject _positiveParticles;
@@ -30,6 +36,8 @@ public class GamblingManager : PersistenSingleton<GamblingManager>
     protected override void OnSingletonAwake() 
     {
         _jokesMaterials = Resources.LoadAll<Material>("JokesMaterials");
+        _accButton.onClick.AddListener(ApplyReward);
+        _ctx = new RewardContext();
     }
 
     protected override void OnDestroy()
@@ -53,7 +61,7 @@ public class GamblingManager : PersistenSingleton<GamblingManager>
             if (roll < acc)
             {
                 ApplyEffect(r.type);
-                StartCoroutine(WaitForChest(_time, r.reward));
+                StartCoroutine(WaitForChest(_time, r.reward, r.type));
                 GamblingSceneManager.Instance.ShowReward(r);
                 break;
             }
@@ -65,32 +73,32 @@ public class GamblingManager : PersistenSingleton<GamblingManager>
         }
     }
 
-    private void ApplyReward(RewardsData reward)
+    private void ApplyReward()
     {
-        var ctx = new RewardContext();
-        foreach (var effect in reward.rewardEffect)
+        foreach (var effect in _currentReward.rewardEffect)
         {
-            effect.AddReward(ctx);
+            effect.AddReward(_ctx);
         }
     }
 
-    public void GetHermesJoke(MeshRenderer joke)
+    public void ShowHermesJoke(HermesJoke joke)
     {
-        int index = Random.Range(0, _jokesMaterials.Length);
-        //MaterialSetupManager.Instance.SetupVisual(joke, col, row: 0); //for shader graph
-        joke.material = _jokesMaterials[index];
-        joke.gameObject.SetActive(true);
-
-        //if (joke.jokeIcon != null)
-        //{
-        //    jokeIcon.gameObject.SetActive(true);
-        //    jokeIcon.sprite = joke.jokeIcon;
-        //}
-        //else
-        //{
-        //    jokeIcon.gameObject.SetActive(true);
-        //    joketext.text = joke.joke;
-        //}
+        Sprite sp = AtlasHelper.Cutoff(
+            joke.atlas,
+            joke.rows,
+            joke.cols,
+            joke.row,
+            joke.col,
+            rowZeroTop: true
+        );
+        _rewardImage.sprite = sp;
+        _rewardImage.rectTransform.rotation = Quaternion.Euler(0, 0, -90f);
+        _panel.SetActive(true);
+        _rewardImage.gameObject.SetActive(true);
+        _accButton.onClick.RemoveAllListeners();
+        _accButton.onClick.AddListener(Close);
+        
+            
     }
     
     private void ApplyEffect(RewardType type)
@@ -102,6 +110,30 @@ public class GamblingManager : PersistenSingleton<GamblingManager>
             case RewardType.Neutral: _neutralParticles.SetActive(true); break;
         }
            
+    }
+
+    private void ShowReward(RewardsData reward, RewardType type)
+    {
+        
+        if(type != RewardType.Neutral)
+        {
+            _panel.SetActive(true);
+            _rewardText.gameObject.SetActive(true);
+            _rewardText.text = reward.rewardDesc;
+            _currentReward = reward;
+        }
+        else
+        {
+            foreach (var effect in reward.rewardEffect)
+            {
+                effect.AddReward(_ctx);
+            }
+        } 
+    }
+
+    private void Close()
+    {
+        _panel.SetActive(false);
     }
 
     public void HideParticles()
@@ -124,9 +156,10 @@ public class GamblingManager : PersistenSingleton<GamblingManager>
 
     }
 
-    IEnumerator WaitForChest(float time, RewardsData reward)
+    IEnumerator WaitForChest(float time, RewardsData reward, RewardType type)
     {
         yield return new WaitForSeconds(time);
-        ApplyReward(reward);
+        GamblingSceneManager.Instance.CompleteTransaction();
+        ShowReward(reward, type); // ...
     }
 }

@@ -10,7 +10,7 @@ public class HermesJokesReward : Rewards
     [SerializeField] private List<HermesJoke> hermesJokes;
     public override void AddReward(RewardContext ctx)
     {
-        // HermesJoke joke = hermesJokes[UnityEngine.Random.Range(0, hermesJokes.Count)];
-        // ctx.gambling.GetHermesJoke(joke);
+        HermesJoke joke = hermesJokes[UnityEngine.Random.Range(0, hermesJokes.Count)];
+        ctx.gambling.ShowHermesJoke(joke);
     }
 }
