@@ -26,10 +26,10 @@ public class ChestOpen : MonoBehaviour
             _anim.SetTrigger("ChestOpen");
             timerStarted = true;
         }
-        if (rewardGranted)
-        {
-            GamblingSceneManager.Instance.CompleteTransaction();
-        }
+        //if (rewardGranted)
+        //{
+        //    GamblingSceneManager.Instance.CompleteTransaction();
+        //}
     }
 
     private void Update()
