@@ -7,7 +7,7 @@ public class ConsumableCardsSetup : MonoBehaviour
 
     private void Awake()
     {
-        //RoundManager.OnCombatStart += SetupCards;
+        RoundManager.OnCombatStart += SetupCards;
     }
 
     private void SetupCards()
@@ -20,6 +20,7 @@ public class ConsumableCardsSetup : MonoBehaviour
             {
                 var set = _prefabs[i].GetComponent<ConsCardProperties>();
                 set.Setup(consCards[i]);
+                _prefabs[i].gameObject.SetActive(true);
             }
         }
     }
