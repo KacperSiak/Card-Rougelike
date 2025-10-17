@@ -479,7 +479,7 @@ public class MapGenerator : MonoBehaviour
             return;
         }
 
-        if (mapLevels[0].Count > 0)
+        if (mapLevels.Count > 0 && mapLevels[0] != null && mapLevels[0].Count > 0)
         {
             MapNode startNode = mapLevels[0][0];
             if (startNode == null)
@@ -525,7 +525,7 @@ public class MapGenerator : MonoBehaviour
         if (startNodeTransform != null)
             return startNodeTransform;
             
-        if (mapLevels.Count > 0)
+        if (mapLevels.Count > 0 && mapLevels[0] != null && mapLevels[0].Count > 0)
         {
             float startNodeYOffset = 0f;
             if (settingsLookup.ContainsKey(NodeType.Start))
@@ -946,6 +946,15 @@ public class MapGenerator : MonoBehaviour
 
     void ClearOldNodes()
     {
+        ClearTrackedNodes();
+        ClearUnparentedChildren();
+        nodeTransformCache.Clear();
+        startNodeTransform = null;
+        bossNodeTransform = null;
+    }
+
+    private void ClearTrackedNodes()
+    {
         for (int i = _instantiatedNodes.Count - 1; i >= 0; i--)
         {
             var node = _instantiatedNodes[i];
@@ -958,7 +967,10 @@ public class MapGenerator : MonoBehaviour
             }
         }
         _instantiatedNodes.Clear();
-        
+    }
+
+    private void ClearUnparentedChildren()
+    {
         var childrenToDestroy = new List<GameObject>();
         foreach (Transform child in transform)
         {
