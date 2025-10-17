@@ -348,7 +348,9 @@ namespace Systems.SceneManagement
                     obj.SetActive(shouldBeActive);
                 }
                 else if (obj.name.Contains("SceneLoader") || obj.name.Contains("Bootstrapper") ||
-                         obj.name.Contains("EventSystem") || obj.name.Contains("Manager"))
+                         obj.name.Contains("EventSystem") || obj.name.Contains("Manager") ||
+                         obj.name.Contains("ReturnToMap") || obj.name.Contains("ReturnToScene") ||
+                         obj.name.Contains("PersistentUI") || obj.name.Contains("ReturnButton"))
                 {
                     Debug.Log($"System object {obj.name}: keeping active");
                 }
