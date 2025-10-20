@@ -81,6 +81,17 @@ public class CurvedConnectionLine : MonoBehaviour
         lr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
     }
 
+    void OnDestroy()
+    {
+        if (lr != null)
+        {
+            if (Application.isPlaying)
+                Destroy(lr);
+            else
+                DestroyImmediate(lr);
+        }
+    }
+
     void Update()
     {
         if (start == null || end == null)

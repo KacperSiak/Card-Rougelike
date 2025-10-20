@@ -29,6 +29,15 @@ public class SaveSlotUI : MonoBehaviour
             
         RefreshSaveList();
     }
+
+    private void OnDestroy()
+    {
+        if (refreshButton != null)
+            refreshButton.onClick.RemoveListener(RefreshSaveList);
+            
+        if (deleteAllButton != null)
+            deleteAllButton.onClick.RemoveListener(DeleteAllSaves);
+    }
     
     public void RefreshSaveList()
     {
