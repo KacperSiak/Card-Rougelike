@@ -2073,6 +2073,10 @@ MonoBehaviour:
   _icon: {fileID: 5775382}
   _priceText: {fileID: 1356714020}
   _descritpion: {fileID: 2030016977}
+  _relicIcon: {fileID: 21300000, guid: 10f4f6638ab96dd46a0a32005c982f71, type: 3}
+  _oneUseIcon: {fileID: 21300000, guid: 41dfd4605acb2ff4dac2df22fba5d20c, type: 3}
+  _vaseIcon: {fileID: 21300000, guid: c76f82c6cb32e1a49bc693165f393896, type: 3}
+  _moiraeIcon: {fileID: 21300000, guid: d7dc65bfaee894d4aa19eb7cf0850faa, type: 3}
 --- !u!1 &1189399956
 GameObject:
   m_ObjectHideFlags: 0
@@ -2475,6 +2479,10 @@ MonoBehaviour:
   _icon: {fileID: 1426672294}
   _priceText: {fileID: 1723854657}
   _descritpion: {fileID: 2125021154}
+  _relicIcon: {fileID: 21300000, guid: 10f4f6638ab96dd46a0a32005c982f71, type: 3}
+  _oneUseIcon: {fileID: 21300000, guid: 41dfd4605acb2ff4dac2df22fba5d20c, type: 3}
+  _vaseIcon: {fileID: 21300000, guid: c76f82c6cb32e1a49bc693165f393896, type: 3}
+  _moiraeIcon: {fileID: 21300000, guid: d7dc65bfaee894d4aa19eb7cf0850faa, type: 3}
 --- !u!1 &1356714018
 GameObject:
   m_ObjectHideFlags: 0
@@ -2742,6 +2750,10 @@ MonoBehaviour:
   _icon: {fileID: 154411678}
   _priceText: {fileID: 630977254}
   _descritpion: {fileID: 551012099}
+  _relicIcon: {fileID: 21300000, guid: 10f4f6638ab96dd46a0a32005c982f71, type: 3}
+  _oneUseIcon: {fileID: 21300000, guid: 41dfd4605acb2ff4dac2df22fba5d20c, type: 3}
+  _vaseIcon: {fileID: 21300000, guid: c76f82c6cb32e1a49bc693165f393896, type: 3}
+  _moiraeIcon: {fileID: 21300000, guid: d7dc65bfaee894d4aa19eb7cf0850faa, type: 3}
 --- !u!1 &1513656330
 GameObject:
   m_ObjectHideFlags: 0
