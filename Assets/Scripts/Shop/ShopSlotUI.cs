@@ -9,7 +9,13 @@ public class ShopSlotUI : MonoBehaviour
     [SerializeField] private Image _icon;
     [SerializeField] private TextMeshProUGUI _priceText;
     [SerializeField] private TextMeshProUGUI _descritpion;
-    
+
+
+    [Header("Shop Icons")]
+    [SerializeField] private Sprite _relicIcon;
+    [SerializeField] private Sprite _oneUseIcon;
+    [SerializeField] private Sprite _vaseIcon;
+    [SerializeField] private Sprite _moiraeIcon;
 
     private ScriptableObject _currentItem;
     private int _currentPrice;
@@ -51,21 +57,13 @@ public class ShopSlotUI : MonoBehaviour
         switch (item)
         {
             case RelicData relic:
-                _icon.sprite = relic.icon;
+                _icon.sprite = _relicIcon;
                 _descritpion.text = relic.description;
                 break;
 
             case ConsumablesData consumable:
-                Sprite sp = AtlasHelper.Cutoff(
-                    consumable.atlasTexture,
-                    consumable.rows,
-                    consumable.cols,
-                    consumable.row,
-                    consumable.col,
-                    rowZeroTop: true
-                );
-                _icon.sprite = sp;
-                _icon.rectTransform.rotation = Quaternion.Euler(0, 0, 180f);
+                if(consumable.type == ConsCardType.Moirae) _icon.sprite = _moiraeIcon;
+                else _icon.sprite = _oneUseIcon;
                 _descritpion.text = consumable.cardDescription;
                 break;
 
@@ -73,7 +71,7 @@ public class ShopSlotUI : MonoBehaviour
                 _icon.sprite = normal.icon; break;
 
             case VaseRelicUpgrade vase:
-                _icon.sprite = vase.icon;
+                _icon.sprite = _vaseIcon;
                 _descritpion.text = "Vase you can use for Relic upgrade";
                 break;
 
