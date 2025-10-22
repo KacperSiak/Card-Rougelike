@@ -8,8 +8,11 @@ public class ReturnToSceneButton : MonoBehaviour
 {
     [Tooltip("Nazwa sceny do aktywacji przez SceneLoader")] public string targetSceneName = "MapGeneration";
     private bool _isActivating;
-    [Header("Widoczność")] [SerializeField] bool hideIfAlreadyOnTarget = true;
+    [Header("Widoczność")] 
+    [SerializeField] bool hideIfAlreadyOnTarget = true;
     [SerializeField] string targetGroupName = "Nodes";
+    [Tooltip("Sceny gdzie button ma być UKRYTY (blacklist)")]
+    [SerializeField] string[] hideInScenes = new string[] { "MapGeneration", "VideoMainMenu", "MainMenu", "Bootstrapper" };
     [Header("Auto pozycja")] [SerializeField] bool autoPlaceBottomLeft = true;
     [SerializeField] Vector2 bottomLeftOffset = new Vector2(40f, 40f);
     CanvasGroup _cg;
@@ -19,10 +22,12 @@ public class ReturnToSceneButton : MonoBehaviour
     {
         if (_instance != null && _instance != this)
         {
+            Debug.Log($"[ReturnToSceneButton] Duplicate found, destroying. Instance={_instance.gameObject.name}, This={gameObject.name}");
             Destroy(gameObject);
             return;
         }
         _instance = this;
+        Debug.Log($"[ReturnToSceneButton] Awake: {gameObject.name} in scene {gameObject.scene.name}");
         EnsurePersistentCanvas();
 
         var btn = GetComponent<Button>();
@@ -33,6 +38,7 @@ public class ReturnToSceneButton : MonoBehaviour
 
         UnityEngine.SceneManagement.SceneManager.activeSceneChanged += OnActiveSceneChanged;
         RefreshVisibility(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+        Debug.Log($"[ReturnToSceneButton] Awake complete. GameObject.activeSelf={gameObject.activeSelf}");
     }
 
     private void OnDestroy()
@@ -42,18 +48,24 @@ public class ReturnToSceneButton : MonoBehaviour
 
     void OnActiveSceneChanged(UnityEngine.SceneManagement.Scene oldScene, UnityEngine.SceneManagement.Scene newScene)
     {
+        Debug.Log($"[ReturnToSceneButton] OnActiveSceneChanged: {oldScene.name} -> {newScene.name}");
         RefreshVisibility(newScene.name);
     }
 
     void RefreshVisibility(string sceneName)
     {
-        bool allowed = false;
-        var loader = Systems.SceneManagement.SceneLoader.Instance;
-        if (loader != null)
+        if (string.IsNullOrEmpty(sceneName))
         {
-            allowed = loader.IsSceneInGroup(sceneName, targetGroupName);
+            Debug.LogWarning("[ReturnToSceneButton] RefreshVisibility called with empty scene name");
+            return;
         }
-        if (hideIfAlreadyOnTarget && sceneName == targetSceneName) allowed = false;
+        
+        bool allowed = true;
+        
+        if (hideInScenes != null && System.Array.Exists(hideInScenes, s => s == sceneName))
+        {
+            allowed = false;
+        }
 
         if (_cg != null)
         {
@@ -61,11 +73,10 @@ public class ReturnToSceneButton : MonoBehaviour
             _cg.blocksRaycasts = allowed;
             _cg.interactable = allowed;
         }
-        else
-        {
-            gameObject.SetActive(allowed);
-        }
-        Debug.Log($"[ReturnToSceneButton] RefreshVisibility scene={sceneName} allowed={allowed}");
+        
+        gameObject.SetActive(allowed);
+        
+        Debug.Log($"[ReturnToSceneButton] RefreshVisibility scene={sceneName} allowed={allowed} gameObject.activeSelf={gameObject.activeSelf} parent={(transform.parent != null ? transform.parent.gameObject.name : "null")}");
     }
 
     private void HandleClick()
@@ -79,67 +90,87 @@ public class ReturnToSceneButton : MonoBehaviour
 
     void EnsurePersistentCanvas()
     {
-        if (gameObject.scene.name == "DontDestroyOnLoad")
-            return;
-
-        Canvas parentCanvas = GetComponentInParent<Canvas>();
-        if (parentCanvas != null && parentCanvas.gameObject.scene.name == "DontDestroyOnLoad")
-        {
-            DontDestroyOnLoad(parentCanvas.gameObject);
-            return;
-        }
-
-    var allCanvases = UnityEngine.Object.FindObjectsByType<Canvas>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        Canvas parentCanvas = null;
+        var allCanvases = UnityEngine.Object.FindObjectsByType<Canvas>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        
         foreach (var c in allCanvases)
         {
-            if (c.gameObject.scene.name == "DontDestroyOnLoad" && c.renderMode == RenderMode.ScreenSpaceOverlay)
+            if (c.gameObject.name == "ReturnButton_PersistentCanvas")
             {
                 parentCanvas = c;
+                Debug.Log($"[ReturnToSceneButton] Found existing ReturnButton canvas");
                 break;
             }
         }
 
         if (parentCanvas == null)
         {
-            var go = new GameObject("PersistentUI_Canvas_Manager", typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
+            var go = new GameObject("ReturnButton_PersistentCanvas", typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
             var canvas = go.GetComponent<Canvas>();
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.sortingOrder = 9999;
             var scaler = go.GetComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
             scaler.referenceResolution = new Vector2(1920, 1080);
             DontDestroyOnLoad(go);
             parentCanvas = canvas;
-            Debug.Log("[ReturnToSceneButton] Created persistent canvas");
-        }
-        else
-        {
-            DontDestroyOnLoad(parentCanvas.gameObject);
+            Debug.Log("[ReturnToSceneButton] Created NEW persistent canvas for button");
         }
 
         var rt = transform as RectTransform;
         if (rt == null) rt = gameObject.AddComponent<RectTransform>();
-        rt.SetParent(parentCanvas.transform, false);
+        
+        if (rt.parent != parentCanvas.transform)
+        {
+            rt.SetParent(parentCanvas.transform, false);
+            Debug.Log($"[ReturnToSceneButton] Button reparented to: {parentCanvas.gameObject.name}");
+        }
+        
         if (autoPlaceBottomLeft)
         {
             rt.anchorMin = Vector2.zero;
             rt.anchorMax = Vector2.zero;
             rt.pivot = Vector2.zero;
             rt.anchoredPosition = bottomLeftOffset;
+            rt.sizeDelta = new Vector2(200, 80);
         }
-        DontDestroyOnLoad(gameObject);
     }
 
     void Update()
     {
-        if (!gameObject.activeSelf) gameObject.SetActive(true);
-        var parentCanvas = GetComponentInParent<Canvas>();
-        if (parentCanvas != null && !parentCanvas.gameObject.activeSelf)
+        var currentScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+        if (_lastCheckedScene != currentScene)
         {
-            parentCanvas.gameObject.SetActive(true);
+            _lastCheckedScene = currentScene;
+            RefreshVisibility(currentScene);
         }
-        if (parentCanvas != null && !parentCanvas.enabled)
-            parentCanvas.enabled = true;
+        
+        var parentCanvas = GetComponentInParent<Canvas>();
+        if (parentCanvas != null)
+        {
+            if (!parentCanvas.gameObject.activeSelf)
+            {
+                Debug.LogWarning($"[ReturnToSceneButton] Parent canvas DISABLED: {parentCanvas.gameObject.name}. Enabling!");
+                parentCanvas.gameObject.SetActive(true);
+            }
+            if (!parentCanvas.enabled)
+            {
+                Debug.LogWarning($"[ReturnToSceneButton] Canvas component DISABLED: {parentCanvas.gameObject.name}. Enabling!");
+                parentCanvas.enabled = true;
+            }
+        }
+        else
+        {
+            Debug.LogError($"[ReturnToSceneButton] NO PARENT CANVAS FOUND! Button: {gameObject.name}");
+        }
+        
+        if (!gameObject.activeSelf)
+        {
+            Debug.LogError($"[ReturnToSceneButton] Button DISABLED! Scene: {currentScene}");
+        }
     }
+    
+    private string _lastCheckedScene = "";
 
     private IEnumerator ActivateRoutine()
     {

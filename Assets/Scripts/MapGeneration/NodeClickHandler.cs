@@ -81,6 +81,11 @@ public class NodeClickHandler : MonoBehaviour
         }
     }
 
+    void OnDestroy()
+    {
+        ConsumablesEventSystem.OnSceneBlock.RemoveListener(BlockScene);
+    }
+
     void Update()
     {
         if (Input.GetMouseButtonDown(1))
@@ -129,11 +134,38 @@ public class NodeClickHandler : MonoBehaviour
 
     bool CanMoveToThisNode()
     {
+        if (!ValidateBasicConditions())
+            return false;
+
+        MapNode sourceMapNode = TryGetSourceMapNode();
+        if (sourceMapNode == null) 
+        { 
+            LogMoveBlock("Cannot resolve current MapNode"); 
+            return false; 
+        }
+
+        if (mapNode == null) 
+        { 
+            LogMoveBlock("Target mapNode null"); 
+            return false; 
+        }
+
+        return CheckAdjacency(sourceMapNode);
+    }
+
+    private bool ValidateBasicConditions()
+    {
         if (PlayerMovementState.IsMoving)
-        { LogMoveBlock("Already moving"); return false; }
+        { 
+            LogMoveBlock("Already moving"); 
+            return false; 
+        }
         
         if (currentPlayerNode == null) 
-        { LogMoveInfo("No current player node (first placement)"); return true; }
+        { 
+            LogMoveInfo("No current player node (first placement)"); 
+            return true; 
+        }
         
         if (mapGenerator == null)
         {
@@ -152,46 +184,56 @@ public class NodeClickHandler : MonoBehaviour
             Debug.Log("[NodeClickHandler] No more time left");
             return false;
         }
-        
+
+        return true;
+    }
+
+    private MapNode TryGetSourceMapNode()
+    {
         var currentHandler = currentPlayerNode.GetComponent<NodeClickHandler>();
-        MapNode sourceMapNode = null;
         if (currentHandler != null && currentHandler.mapNode != null)
         {
-            sourceMapNode = currentHandler.mapNode;
+            return currentHandler.mapNode;
         }
-        else
+
+        if (currentPlayerMapNode != null)
         {
-            if (currentPlayerMapNode != null)
+            if (enableDebugLogs) Debug.Log("[NodeClickHandler] Using cached currentPlayerMapNode fallback");
+            return currentPlayerMapNode;
+        }
+
+        return ResolveMapNodeByPosition();
+    }
+
+    private MapNode ResolveMapNodeByPosition()
+    {
+        Vector2 currPos2D = new Vector2(currentPlayerNode.position.x, currentPlayerNode.position.z);
+        const float EPS = 0.05f;
+
+        foreach (var level in mapGenerator.mapLevels)
+        {
+            if (level == null) continue;
+            foreach (var n in level)
             {
-                sourceMapNode = currentPlayerMapNode;
-                if (enableDebugLogs) Debug.Log("[NodeClickHandler] Using cached currentPlayerMapNode fallback");
-            }
-            else
-            {
-                Vector2 currPos2D = new Vector2(currentPlayerNode.position.x, currentPlayerNode.position.z);
-                const float EPS = 0.05f;
-                foreach (var level in mapGenerator.mapLevels)
+                if (n == null) continue;
+                if (Vector2.Distance(n.Position, currPos2D) <= EPS)
                 {
-                    if (level == null) continue;
-                    foreach (var n in level)
-                    {
-                        if (n == null) continue;
-                        if (Vector2.Distance(n.Position, currPos2D) <= EPS)
-                        {
-                            sourceMapNode = n;
-                            currentPlayerMapNode = n;
-                            if (enableDebugLogs) Debug.Log("[NodeClickHandler] Resolved current player MapNode by position search");
-                            break;
-                        }
-                    }
-                    if (sourceMapNode != null) break;
+                    currentPlayerMapNode = n;
+                    if (enableDebugLogs) Debug.Log("[NodeClickHandler] Resolved current player MapNode by position search");
+                    return n;
                 }
             }
         }
-        if (sourceMapNode == null) { LogMoveBlock("Cannot resolve current MapNode"); return false; }
-        if (mapNode == null) { LogMoveBlock("Target mapNode null"); return false; }
 
-        bool reachable = mapManager != null ? mapManager.AreNodesAdjacent(sourceMapNode, mapNode) : (sourceMapNode.ConnectedNodes.Contains(mapNode));
+        return null;
+    }
+
+    private bool CheckAdjacency(MapNode sourceMapNode)
+    {
+        bool reachable = mapManager != null 
+            ? mapManager.AreNodesAdjacent(sourceMapNode, mapNode) 
+            : sourceMapNode.ConnectedNodes.Contains(mapNode);
+
         if (enableDebugLogs)
         {
             int currentConn = sourceMapNode.ConnectedNodes != null ? sourceMapNode.ConnectedNodes.Count : -1;
@@ -202,7 +244,12 @@ public class NodeClickHandler : MonoBehaviour
                 Debug.Log($"[NodeClickHandler] ConnectedNodes of current: {list}");
             }
         }
-        if (!reachable) LogMoveBlock("Target not in ConnectedNodes list of current node"); else LogMoveInfo("Reachable OK");
+
+        if (!reachable) 
+            LogMoveBlock("Target not in ConnectedNodes list of current node"); 
+        else 
+            LogMoveInfo("Reachable OK");
+
         return reachable;
     }
 
